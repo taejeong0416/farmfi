@@ -1,0 +1,210 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── 사용자 ───
+model User {
+  id            String         @id @default(cuid())
+  name          String
+  role          String         // investor, landlord, operator
+  email         String?
+  walletAddress String?
+  balance       BigInt         @default(0) // 원화 잔액 (모의)
+  createdAt     DateTime       @default(now())
+  transactions  Transaction[]
+  tokenHoldings TokenHolding[]
+  dividendClaims DividendClaim[]
+}
+
+// ─── 프로젝트 ───
+model Project {
+  id              String          @id @default(cuid())
+  name            String
+  description     String?
+  location        String?
+  buildingType    String?
+  areaSqm         Float?
+  tokenSymbol     String
+  tokenPrice      BigInt          // 원화 단가
+  totalTokens     Int
+  soldTokens      Int             @default(0)
+  targetAmount    BigInt
+  currentAmount   BigInt          @default(0)
+  totalCapex      BigInt          @default(0)
+  status          String          @default("upcoming") // upcoming, funding, funded, operating, completed
+  fundingStart    DateTime?
+  fundingEnd      DateTime?
+  imageUrl        String?
+  contractAddress String?
+  createdAt       DateTime        @default(now())
+  escrow          Escrow?
+  milestones      Milestone[]
+  transactions    Transaction[]
+  tokenHoldings   TokenHolding[]
+  dividends       Dividend[]
+  iotData         IotData[]
+  partners        ProjectPartner[]
+  navSnapshots    NavSnapshot[]
+}
+
+// ─── 에스크로 ───
+model Escrow {
+  id              String  @id @default(cuid())
+  projectId       String  @unique
+  project         Project @relation(fields: [projectId], references: [id])
+  totalLocked     BigInt  @default(0)
+  totalReleased   BigInt  @default(0)
+  remaining       BigInt  @default(0)
+  status          String  @default("active")
+  contractAddress String?
+}
+
+// ─── 마일스톤 ───
+model Milestone {
+  id                   String         @id @default(cuid())
+  projectId            String
+  project              Project        @relation(fields: [projectId], references: [id])
+  seq                  Int
+  name                 String
+  description          String?
+  releasePct           Int            // 3500 = 35%
+  releaseAmount        BigInt         @default(0)
+  status               String         @default("pending") // pending, in_progress, verified, completed, failed, manual_review
+  conditionText        String?
+  requiredSignals      String[]       // ["contract", "receipt", "photo", "iot"]
+  iotMinDays           Int            @default(0)
+  retryCount           Int            @default(0)
+  crossCheck           String?
+  assetValue           BigInt         @default(0)
+  evidenceUrl          String?
+  aiVerificationResult Json?
+  completedAt          DateTime?
+  notifications        Notification[]
+
+  @@unique([projectId, seq])
+}
+
+// ─── 거래 내역 ───
+model Transaction {
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id])
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  type        String   // subscription, tranche_release, dividend, revenue
+  amount      BigInt
+  tokenAmount Int?
+  txHash      String?
+  blockNumber Int?
+  memo        String?
+  createdAt   DateTime @default(now())
+}
+
+// ─── 토큰 보유 ───
+model TokenHolding {
+  id        String  @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
+  amount    Int
+  avgPrice  BigInt
+
+  @@unique([userId, projectId])
+}
+
+// ─── 배당 ───
+model Dividend {
+  id            String          @id @default(cuid())
+  projectId     String
+  project       Project         @relation(fields: [projectId], references: [id])
+  totalRevenue  BigInt
+  totalDividend BigInt
+  perToken      BigInt
+  period        String
+  createdAt     DateTime        @default(now())
+  claims        DividendClaim[]
+}
+
+// ─── 배당 수령 ───
+model DividendClaim {
+  id          String   @id @default(cuid())
+  dividendId  String
+  dividend    Dividend @relation(fields: [dividendId], references: [id])
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  tokenAmount Int
+  claimAmount BigInt
+  claimed     Boolean  @default(false)
+  claimedAt   DateTime?
+}
+
+// ─── IoT 데이터 ───
+model IotData {
+  id             String   @id @default(cuid())
+  projectId      String
+  project        Project  @relation(fields: [projectId], references: [id])
+  temperature    Float
+  humidity       Float
+  co2Level       Float
+  lightIntensity Float
+  phLevel        Float
+  growthRate     Float    @default(0)
+  anomalyScore   Float    @default(0)
+  isAnomaly      Boolean  @default(false)
+  recordedAt     DateTime @default(now())
+}
+
+// ─── 알림 ───
+model Notification {
+  id          String    @id @default(cuid())
+  milestoneId String
+  milestone   Milestone @relation(fields: [milestoneId], references: [id])
+  type        String    // verification_failed, anomaly_detected, manual_review
+  message     String
+  evidenceUrl String?
+  isRead      Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+}
+
+// ─── 프로젝트 파트너 ───
+model ProjectPartner {
+  id                     String  @id @default(cuid())
+  projectId              String
+  project                Project @relation(fields: [projectId], references: [id])
+  role                   String  // landlord, equipment_partner
+  name                   String
+  totalContribution      BigInt  @default(0)
+  recoveredAmount        BigInt  @default(0)
+  monthlyRecoveryAmount  BigInt  @default(0)
+  recoveryComplete       Boolean @default(false)
+}
+
+// ─── NAV 스냅샷 ───
+model NavSnapshot {
+  id                 String   @id @default(cuid())
+  projectId          String
+  project            Project  @relation(fields: [projectId], references: [id])
+  nav                Float
+  escrowBalance      BigInt
+  assetValue         BigInt
+  cumulativeCashFlow BigInt
+  recordedAt         DateTime @default(now())
+}
+
+// ─── 데모 캐시 ───
+model DemoCache {
+  id          String   @id @default(cuid())
+  step        Int
+  signalType  String?
+  txHash      String?
+  blockNumber Int?
+  result      Json?
+  createdAt   DateTime @default(now())
+}
