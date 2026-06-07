@@ -1,0 +1,2 @@
+# 모든 텍스트 파일 줄바꿈을 LF로 통일 (크로스 OS 일관성, Linux/Vercel 배포 일치)
+* text=auto eol=lf
