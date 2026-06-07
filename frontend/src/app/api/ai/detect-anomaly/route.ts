@@ -18,9 +18,9 @@ export async function POST(req: NextRequest) {
     }
 
     // Fetch last 100 IoT readings for this project
-    const iotRecords = await prisma.ioTData.findMany({
+    const iotRecords = await prisma.iotData.findMany({
       where: { projectId },
-      orderBy: { createdAt: "desc" },
+      orderBy: { recordedAt: "desc" },
       take: 100,
     });
 

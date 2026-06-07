@@ -40,7 +40,7 @@ export async function POST(
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              image: contractImage,
+              imageBase64: contractImage,
               milestoneId: id,
               milestoneType,
             }),
@@ -54,7 +54,7 @@ export async function POST(
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              image: receiptImage,
+              imageBase64: receiptImage,
               milestoneId: id,
               milestoneType,
             }),
@@ -68,7 +68,7 @@ export async function POST(
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              image: photoImage,
+              imageBase64: photoImage,
               milestoneId: id,
               milestoneType,
             }),

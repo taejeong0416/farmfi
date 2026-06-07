@@ -40,6 +40,13 @@ async function subscribe(userName: string, tokenAmount: number) {
   return await res.json();
 }
 
+const milestoneTypeBySeq: Record<number, string> = {
+  1: "construction",
+  2: "trial_run",
+  3: "harvest",
+  4: "operation",
+};
+
 async function verifyAndCompleteMilestone(seq: number) {
   const project = await findProjectFirst();
 
@@ -56,7 +63,7 @@ async function verifyAndCompleteMilestone(seq: number) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        milestoneType: milestone.name,
+        milestoneType: milestoneTypeBySeq[seq],
         contractImage: "demo-contract.png",
         receiptImage: "demo-receipt.png",
         photoImage: "demo-photo.png",
