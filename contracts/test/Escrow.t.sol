@@ -118,6 +118,84 @@ contract EscrowTest is Test {
     }
 
     // ---------------------------------------------------------------
+    // refund: only callable after admin marks the project failed
+    // ---------------------------------------------------------------
+    function test_refund_revertsWhenNotFailed() public {
+        vm.prank(investor);
+        escrow.subscribe{value: 1 ether}();
+
+        vm.prank(investor);
+        vm.expectRevert("Project not failed");
+        escrow.refund();
+    }
+
+    function test_refund_proportionalAfterFailure() public {
+        address investor2 = makeAddr("investor2");
+        vm.deal(investor2, 100 ether);
+
+        // investor 6 ETH, investor2 4 ETH → totalLocked 10 ETH
+        vm.prank(investor);
+        escrow.subscribe{value: 6 ether}();
+        vm.prank(investor2);
+        escrow.subscribe{value: 4 ether}();
+
+        // Release milestone 1 (35%) → remaining 6.5 ETH
+        vm.prank(verifier);
+        escrow.verifyMilestone(1, true);
+        escrow.releaseTranche(1);
+
+        escrow.markFailed();
+
+        // investor: 6 * 6.5 / 10 = 3.9 ETH
+        uint256 bal1Before = investor.balance;
+        vm.prank(investor);
+        escrow.refund();
+        assertEq(investor.balance - bal1Before, 3.9 ether);
+
+        // investor2: 4 * 2.6 / 4 = 2.6 ETH (same as 4 * 6.5 / 10)
+        uint256 bal2Before = investor2.balance;
+        vm.prank(investor2);
+        escrow.refund();
+        assertEq(investor2.balance - bal2Before, 2.6 ether);
+
+        assertEq(escrow.remaining(), 0);
+        assertEq(escrow.totalLocked(), 0);
+    }
+
+    function test_failedProject_blocksSubscribeAndRelease() public {
+        vm.prank(investor);
+        escrow.subscribe{value: 1 ether}();
+
+        vm.prank(verifier);
+        escrow.verifyMilestone(1, true);
+
+        escrow.markFailed();
+
+        vm.prank(investor);
+        vm.expectRevert("Project failed");
+        escrow.subscribe{value: 1 ether}();
+
+        vm.expectRevert("Project failed");
+        escrow.releaseTranche(1);
+    }
+
+    // ---------------------------------------------------------------
+    // subscribe: closed once the first tranche has been released
+    // ---------------------------------------------------------------
+    function test_subscribe_revertsAfterFirstRelease() public {
+        vm.prank(investor);
+        escrow.subscribe{value: 1 ether}();
+
+        vm.prank(verifier);
+        escrow.verifyMilestone(1, true);
+        escrow.releaseTranche(1);
+
+        vm.prank(investor);
+        vm.expectRevert("Funding closed");
+        escrow.subscribe{value: 1 ether}();
+    }
+
+    // ---------------------------------------------------------------
     // Full scenario: subscribe → verify/release all 4 → remaining == 0
     // ---------------------------------------------------------------
     function test_fullScenario() public {

@@ -8,9 +8,12 @@ import "../src/Dividend.sol";
 
 contract Deploy is Script {
     function run() external {
-        address deployer = msg.sender;
+        // msg.sender는 --sender 미지정 시 Foundry DEFAULT_SENDER가 잡히므로
+        // PRIVATE_KEY에서 배포자 주소를 직접 유도한다.
+        uint256 deployerKey = vm.envUint("PRIVATE_KEY");
+        address deployer = vm.addr(deployerKey);
 
-        vm.startBroadcast();
+        vm.startBroadcast(deployerKey);
 
         // 1. Deploy FarmToken
         FarmToken farmToken = new FarmToken("FarmFi MiniParm 1", "MF01", 1000);

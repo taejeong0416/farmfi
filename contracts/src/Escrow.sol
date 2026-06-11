@@ -18,6 +18,7 @@ contract Escrow is ReentrancyGuard, AccessControl {
     uint256 public tokenPrice; // wei per token
     uint256 public milestoneCount;
     uint256 public currentMilestone; // next milestone seq to release (1-based)
+    bool public projectFailed;
 
     struct Milestone {
         string name;
@@ -33,6 +34,7 @@ contract Escrow is ReentrancyGuard, AccessControl {
     event Subscribed(address indexed investor, uint256 amount, uint256 tokenAmount);
     event MilestoneVerified(uint256 indexed seq, bool passed);
     event TrancheReleased(uint256 indexed seq, uint256 amount, address indexed operator);
+    event ProjectFailed();
     event Refunded(address indexed investor, uint256 amount);
 
     constructor(
@@ -68,6 +70,8 @@ contract Escrow is ReentrancyGuard, AccessControl {
     }
 
     function subscribe() external payable nonReentrant {
+        require(!projectFailed, "Project failed");
+        require(currentMilestone == 1, "Funding closed");
         require(msg.value > 0, "Must send ETH");
         require(msg.value % tokenPrice == 0, "Must be multiple of token price");
 
@@ -95,6 +99,7 @@ contract Escrow is ReentrancyGuard, AccessControl {
     }
 
     function releaseTranche(uint256 seq) external nonReentrant {
+        require(!projectFailed, "Project failed");
         require(seq == currentMilestone, "Wrong sequence");
         require(milestones[seq].verified, "Not verified");
         require(!milestones[seq].released, "Already released");
@@ -114,7 +119,15 @@ contract Escrow is ReentrancyGuard, AccessControl {
         emit TrancheReleased(seq, amount, operator);
     }
 
+    function markFailed() external onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(!projectFailed, "Already failed");
+        projectFailed = true;
+        emit ProjectFailed();
+    }
+
     function refund() external nonReentrant {
+        require(projectFailed, "Project not failed");
+
         uint256 invested = investments[msg.sender];
         require(invested > 0, "No investment");
 
@@ -123,6 +136,8 @@ contract Escrow is ReentrancyGuard, AccessControl {
         require(refundAmount > 0, "Nothing to refund");
 
         investments[msg.sender] = 0;
+        totalLocked -= invested;
+        remaining -= refundAmount;
 
         (bool sent, ) = msg.sender.call{value: refundAmount}("");
         require(sent, "Transfer failed");
