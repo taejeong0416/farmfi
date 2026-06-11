@@ -5,6 +5,38 @@
 
 ---
 
+## 2026-06-11 — 박태정
+
+### 전체 점검 결과 (코드 리뷰)
+- 컨트랙트 테스트 13개 재실행 → 전부 통과. `tsc --noEmit` 통과.
+- ⚠️ **DB 연결 깨짐 확인**: dev 서버에서 실호출 시 `tenant/user not found` — Supabase 프로젝트 일시정지(무료 티어 자동 정지) 또는 연결 문자열 오류로 추정. **다음 작업자: Supabase 대시보드에서 프로젝트 Restore 후 connection string 재확인 필요.**
+- ⚠️ `next build`는 Windows + 한글 경로(`D:\해커톤`)에서 EISDIR 에러로 실패 (tsc는 통과 — 코드 문제 아님). Vercel(Linux)에선 괜찮을 가능성 높으나 조기 배포로 확인 권장.
+
+### 한 일 (DB 연결 없이 수정 가능한 버그 일괄 수정)
+- **컨트랙트** (`forge test` 17/17 통과):
+  - Escrow: refund에 projectFailed 게이트(markFailed) 추가, 환불 시 totalLocked/remaining 차감, 첫 해제 후 청약 차단
+  - Deploy.s.sol: msg.sender 대신 PRIVATE_KEY에서 배포자 유도 (DEFAULT_SENDER 오배정 방지)
+- **P0 (데모 차단 버그)**:
+  - complete: `userId: "system"` FK 위반 → Transaction.userId optional화 (트랜치 해제가 항상 500 나던 버그)
+  - verify: iot 신호가 없는 필드(`data.passed`) 참조 → 마일스톤 3이 항상 실패하던 버그 수정
+  - demo/step: 이미지 파일명을 base64인 척 전달 + 실패 시 강제 verified 처리 → 실제 base64 로드 + 강제 통과 제거 (**mock 이미지 + API 키 준비 전까지 데모 스텝 4~8은 검증 실패가 정상**)
+  - demo/reset: IoT·NAV 재시드 누락 → `src/lib/iot-seed.ts` 공용 모듈로 추가
+  - detect-anomaly: 가동률을 iotMinDays 기간 기준으로 + 데이터 0건 자동 통과 차단
+- **P1 (검증 고도화)**:
+  - verify-contract: 프로젝트 주소·면적(±20%) 대조 / verify-receipt: conditionText 부합 판단
+  - verify: crossCheck(영수증↔사진 설비 카테고리 매칭) + 실패 시 Notification 생성
+  - ai-cache: DemoCache 오용 버그 → 전용 AiCache 모델 + vision 라우트 3종 연결
+  - waterfall: 운영자 기본급 이중 차감 제거 + 순차 차감 / dividends: 자동 클레임(잔액 반영)
+- **plan.md 보강**: L2-4-6 온체인 연동 모듈 신설, 실패용 mock 이미지 추가, NEXT_PUBLIC_BASE_URL·EISDIR 메모, Dividend 스냅샷 한계 등 L1-11 항목 추가
+
+### 미해결 / 다음 할 일
+- Supabase 복구 → `prisma db push`(AiCache 모델 추가됨) → seed → API 실동작 확인
+- OPENAI/ANTHROPIC 키 + mock 이미지 준비 → AI 검증 실테스트 (이제 진짜로 거부/통과가 갈림)
+- 컨트랙트 Amoy 배포 (PRIVATE_KEY 필요) → L2-4-6 온체인 연동
+- 프론트엔드 페이지 전체 미착수 (가장 큰 일정 리스크)
+
+---
+
 ## 2026-06-07 (2) — 박태정
 
 ### 한 일

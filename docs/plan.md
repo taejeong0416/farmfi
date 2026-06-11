@@ -99,6 +99,7 @@
   - 출력: `{ nav: number, breakdown: { escrow, asset, cashFlow }, previousNav, changeRate }`
   - 마일스톤 통과 → 자산가치 확정 → 큰 점프
   - IoT 데이터 축적·시간 경과 → 점진적 상승
+  - 산식 메모: cashFlow에 누적 배당(이미 투자자에게 지급된 금액)을 합산한다 — 엄밀한 순자산이 아니라 "프로젝트가 만들어낸 가치"를 보여주는 데모 산식. 심사 질의 대비 설명 준비.
 - [ ] `src/lib/format.ts`
   - `formatKRW(amount)` → "5,000,000원"
   - `formatPercent(value)` → "72.5%"
@@ -169,7 +170,12 @@
     - totalReleased += releaseAmount, remaining -= releaseAmount
     - currentMilestone++
     - 이벤트: `TrancheReleased(seq, amount, operator)`
-  - `refund()` — 프로젝트 실패 시 남은 자금 투자자 비례 환불
+  - `markFailed()` — 관리자(DEFAULT_ADMIN_ROLE)만 호출, 프로젝트 실패 선언
+    - 실패 후 subscribe / releaseTranche 차단 (남은 자금은 환불 전용)
+  - `refund()` — **projectFailed 상태에서만** 남은 자금 투자자 비례 환불
+    - 환불 시 totalLocked / remaining 차감 (회계 정합 유지)
+    - 알려진 한계: 환불 후 토큰 미소각 (실서비스 전환 시 소각/블랙리스트 필요 → L1-11)
+  - subscribe는 첫 트랜치 해제 이후 차단 (`currentMilestone == 1` 요구) — 해제 후 청약 시 releaseAmount 재계산이 꼬이는 것 방지
 - [ ] `contracts/test/Escrow.t.sol`
   - **검증 명제 ①**: 마일스톤 미검증 상태에서 releaseTranche 호출 → revert
   - **검증 명제 ②**: VERIFIER_ROLE 없는 주소가 verifyMilestone 호출 → revert
@@ -197,6 +203,8 @@
   - 배당 분배 + 보유 비율에 따른 정확한 금액 클레임 테스트
   - 중복 클레임 시 revert
   - 토큰 0개 보유자 클레임 시 revert
+- 알려진 한계 (데모 범위에서 수용, 실서비스 시 L1-11에서 처리):
+  - claim이 분배 시점이 아닌 **현재 잔고** 기준 → 토큰을 다른 지갑으로 옮기면 같은 라운드 중복 수령 가능. 실서비스에서는 스냅샷(체크포인트) 방식 필요.
 
 ### L2-2-4. Vesting 컨트랙트
 
@@ -228,6 +236,7 @@
   - FarmToken 배포 → Escrow 배포 (FarmToken 주소 전달) → Dividend 배포 (→ Vesting 배포는 시간 여유 시)
   - Escrow에 MINTER_ROLE 부여 (FarmToken에서)
   - 배포 주소 콘솔 출력
+  - 주의: 배포자 주소는 `msg.sender`가 아니라 `vm.addr(vm.envUint("PRIVATE_KEY"))`로 유도 (--sender 미지정 시 Foundry DEFAULT_SENDER가 잡혀 역할이 엉뚱한 주소로 가는 것 방지 — 반영됨)
 - [ ] `.env`에 `PRIVATE_KEY`, `AMOY_RPC_URL` 설정
 - [ ] `forge script script/Deploy.s.sol --rpc-url $AMOY_RPC_URL --broadcast`
 - [ ] 배포된 주소를 `frontend/src/lib/contracts.ts`에 반영
@@ -306,13 +315,13 @@
        - `receipt` → 영수증 OCR API
        - `photo` → 사진 Vision API
        - `iot` → IoT 이상 탐지 API (iotMinDays > 0이면 가동률 ≥ 90% 추가 확인)
-    3. crossCheck 설정 시 교차검증 수행 (예: 영수증 항목 ↔ 사진 검출 객체 일치 확인)
+    3. crossCheck 설정 시 교차검증 수행 — 영수증 구매 항목 ↔ 사진 검출 객체가 같은 설비 카테고리(LED/센서/재배대/관수)를 하나 이상 공유하는지 키워드 매칭 (반영됨)
     4. **AND 조건**: 필수 신호 전부 통과 + 교차검증 통과 시 최종 passed
   - 최종 passed → 온체인 `escrow.verifyMilestone(seq, true)` 트랜잭션 전송 (서버 지갑)
   - 최종 failed:
     1. `milestone.retryCount++`
-    2. retryCount == 1 (첫 실패) → **재검증 1회 허용**, `POST /api/admin/notify` 호출 (관리자에게 실패 사유 + 증빙 전달)
-    3. retryCount >= 2 (2회 실패) → `milestone.status = 'manual_review'`, 자동 차단, 관리자 수동 검토 대기
+    2. retryCount == 1 (첫 실패) → **재검증 1회 허용**, Notification 레코드 직접 생성 (실패 사유 + 미통과 신호 — admin/notify API 경유 대신 직접 생성으로 변경, 반영됨)
+    3. retryCount >= 2 (2회 실패) → `milestone.status = 'manual_review'`, 자동 차단, 관리자 수동 검토 대기 + Notification 생성
     4. 온체인 `escrow.verifyMilestone(seq, false)` + 거부 사유 기록
   - DB에 milestone.aiVerificationResult 업데이트
   - 응답: `{ passed, signals: { contract?, receipt?, photo?, iot? }, retryCount, txHash }`
@@ -420,7 +429,8 @@
     4. **운영자 성과 보상 (후순위)** → 잔여 수익 전액, 파이를 키울수록 보상 증가
   - 출력: `{ opex, operatorBase, platformFee, landlordShare, partnerRecovery, investorDividend, operatorBonus, breakdown }`
   - 설비파트너 선회수 완료 후 → 해당 몫이 투자자·운영자에게 환원
-  - 운영자 기본급은 OPEX에서 보장, 후순위 보상은 순수 성과 인센티브
+  - 운영자 기본급은 OPEX에서 보장(별도 차감 아님 — 이중 차감 금지), 후순위 보상은 순수 성과 인센티브
+  - 각 단계는 순차 차감(남은 금액 한도) — breakdown 합계가 매출을 초과하지 않음 (반영됨)
 - [ ] DB 모델 추가: `ProjectPartner` (id, projectId, role, name, totalContribution, recoveredAmount, monthlyRecoveryAmount, recoveryComplete)
   - 시드: 설비파트너 DRB (기여분 1200만원, 월 회수 30만원), 건물주 최영호 (공간 제공)
 - [ ] `src/app/api/dividends/distribute/route.ts` — POST
@@ -430,6 +440,7 @@
     2. 투자자 배당분만 → **온체인** Dividend 컨트랙트 `distributeDividend()` 호출
     3. 나머지 (운영자·설비파트너·건물주·플랫폼) → **오프체인** DB 기록
     4. `ProjectPartner.recoveredAmount` 업데이트
+    5. **배당 자동 클레임 (데모 범위 결정)**: DividendClaim을 claimed=true로 생성 + 투자자 잔액 즉시 반영 + dividend 거래 기록 생성 — 라운드별 수동 클레임 UI는 실서비스 단계(L1-11)로
   - 응답: 워터폴 breakdown + 투자자 배당 정보 + txHash
 - [ ] `src/components/dashboard/waterfall-chart.tsx`
   - Recharts StackedBarChart — 월 매출의 배분 구조 시각화
@@ -461,7 +472,25 @@
     - [DB 초기화] 버튼 → `POST /api/demo/reset`
 - [ ] `src/app/api/demo/reset/route.ts` — POST
   - DB 데이터 전부 초기화 (transactions, tokenHoldings, dividends, iotData 등)
-  - 시드 데이터 재생성
+  - 시드 데이터 재생성 — **IoT 60일치 + NAV 스냅샷 포함** (`src/lib/iot-seed.ts` 공용 모듈, 반영됨. 누락 시 마일스톤 2·4 가동률 검증과 대시보드 차트가 빈 상태가 됨)
+
+### L2-4-6. 온체인 연동 모듈 (Amoy 배포 후)
+
+> API 코드 곳곳의 "온체인 호출"을 실제로 구현하는 작업 덩어리. 현재 txHash는 전부 null.
+> **설계 결정**: 데모에서는 서버 지갑 1개가 모든 트랜잭션을 서명한다 (투자자별 지갑 주소는 표시용).
+
+#### L3 태스크
+- [ ] `src/lib/onchain.ts` — viem walletClient + publicClient 셋업
+  - 서버 지갑: `PRIVATE_KEY` env에서 로드 (Amoy 배포 지갑과 동일)
+  - 컨트랙트 주소·ABI는 `src/lib/contracts.ts`에서 import
+  - 함수: `subscribeOnchain(amount)`, `verifyMilestoneOnchain(seq, passed)`, `releaseTrancheOnchain(seq)`, `distributeDividendOnchain(amount)` — 각각 tx 전송 + receipt 대기 + `{ txHash, blockNumber }` 반환
+- [ ] 라우트 연결 (txHash null → 실제 해시):
+  - `subscribe` → subscribeOnchain (DB 사전 검증 → tx → DB 확정 순서 유지)
+  - `milestones/[id]/verify` → verifyMilestoneOnchain
+  - `milestones/[id]/complete` → releaseTrancheOnchain
+  - `dividends/distribute` → distributeDividendOnchain (투자자 배당분만)
+- [ ] 에스크로 현황은 온체인에서 직접 읽기 (`escrow-summary`, 대시보드 API)
+- [ ] DEMO_MODE=cached일 때는 온체인 호출 스킵 (L2-10-1 dryRun 전략과 연동)
 
 ---
 
@@ -590,8 +619,9 @@
     - **6**: 마일스톤 3 "첫 수확 + 판매" AI 검증 (사진 + 영수증 + IoT, AND) → 통과 → 트랜치 해제 20%
     - **7**: 배당 분배 (매출 300만, 비율 70%)
     - **8**: 마일스톤 4 "지속 운영" AI 검증 (IoT 60일 + 영수증 + 사진, AND) → 통과 → 트랜치 해제 15% → operating
+  - 검증 실패 시 트랜치 해제 없이 실패 결과를 그대로 반환 (강제 verified 처리 금지 — 검증 명제 ①의 신뢰성)
   - **실패 케이스 데모** (선택):
-    - **F1**: 영수증 미달 → AI 거부 → 컨트랙트 자동 차단
+    - **F1**: 영수증 미달(조건 불일치 mock 이미지 사용) → AI 거부 → 컨트랙트 자동 차단
     - **F2**: 관리자 강제 해제 시도 → 컨트랙트 revert
     - **F3**: 재검증 1회 실패 → 관리자 알림 → 2회 실패 → manual_review 전환 → 관리자 수동 승인
   - 응답: 현재 step 결과 + 갱신된 상태
@@ -656,7 +686,8 @@
 
 #### L3 태스크
 - [ ] GitHub 리포 push
-- [ ] Vercel 연동 (환경 변수: DATABASE_URL, OPENAI_API_KEY, ANTHROPIC_API_KEY, NEXT_PUBLIC_AMOY_RPC)
+- [ ] Vercel 연동 (환경 변수: DATABASE_URL, OPENAI_API_KEY, ANTHROPIC_API_KEY, NEXT_PUBLIC_AMOY_RPC, **NEXT_PUBLIC_BASE_URL** — verify 라우트가 내부 AI API를 self-fetch하므로 미설정 시 localhost로 가서 전부 실패)
+- [ ] **Vercel 조기 배포 권장**: 로컬(Windows)에서 `next build`가 한글 경로(`D:\해커톤`) 때문에 EISDIR 에러로 실패함. tsc는 통과하므로 코드 문제는 아니지만, 프로덕션 빌드 검증은 Vercel(Linux)에서만 가능 — L1-9까지 미루지 말고 일찍 1회 배포해서 확인
 - [ ] Polygon Amoy 컨트랙트 배포 확인
 - [ ] QA: 데모 전체 시나리오 3회 반복 (리셋 → 자동재생 → 실패 케이스 → 완료)
 - [ ] QA: 온체인 트랜잭션이 Polygonscan에서 확인되는지 검증
@@ -693,11 +724,12 @@
 > 핵심 문제: 시연 중 GPT-4o API가 느리거나 터지면 데모가 멈춘다.
 
 #### L3 태스크
-- [ ] `src/lib/ai-cache.ts`
-  - AI 검증 API 호출 시 결과를 DB에 캐시 (milestoneId + signalType → result)
+- [ ] `src/lib/ai-cache.ts` (반영됨)
+  - 전용 `AiCache` 모델에 캐시 (milestoneId + signalType unique → result)
   - 호출 순서: 캐시 확인 → 캐시 있으면 즉시 반환 → 없으면 API 호출 → 결과 캐시 저장
-  - 타임아웃: AI API 호출 **5초 초과 시** 캐시된 결과로 자동 fallback
-- [ ] 각 AI 검증 API (`verify-contract`, `verify-receipt`, `verify-photo`, `detect-anomaly`)에 캐시 레이어 적용
+  - 타임아웃: AI API 호출 **15초 초과 시** 캐시된 결과로 자동 fallback (vision 호출이 5초를 넘는 경우가 흔해 5초→15초로 조정)
+- [ ] vision 검증 API 3종 (`verify-contract`, `verify-receipt`, `verify-photo`)에 캐시 레이어 적용 (반영됨)
+  - `detect-anomaly`는 제외 — 외부 API 호출이 없고(DB 계산) 데이터가 계속 갱신되므로 캐시가 오히려 해로움
 - [ ] 데모 리셋 시 AI 캐시도 유지 (DemoCache와 동일 정책)
 - [ ] 캐시 히트 시 응답에 `fromCache: true` 플래그 추가 (디버깅용, UI에는 미표시)
 
@@ -706,8 +738,12 @@
 #### L3 태스크
 - [ ] mock 이미지 수급 방법:
   - 계약서: 인터넷 임대차 계약서 샘플 이미지 + 프로젝트 정보(금정구, 50㎡)에 맞게 편집
+    - **주소·면적 대조가 구현됨** — 계약서에 "금정구" 등 위치 토큰과 면적 50㎡(±20%)가 실제로 적혀 있어야 통과
   - 영수증: LED 조명·센서·재배대 구매 영수증 (직접 촬영 or 샘플 이미지)
+    - **conditionText 대조 + 영수증↔사진 교차검증이 구현됨** — 영수증 항목에 설비 키워드(LED/센서/재배대/관수)가 있어야 마일스톤 1 교차검증 통과
   - 현장 사진: 실내농장/스마트팜 사진 (Unsplash 등 무료 소스)
+- [ ] **실패 케이스용 mock 이미지** (F1 시연에 필요):
+  - `mock-receipt-fail.jpg` — 마일스톤 조건과 무관한 영수증 (예: 식당 영수증) → AI가 조건 불일치로 거부하는 장면 시연
 - [ ] 각 이미지가 AI 검증을 실제로 통과하는지 사전 테스트
   - `verify-contract`: 주소·면적 추출 가능한 해상도인지
   - `verify-receipt`: 금액·항목 추출 가능한지
@@ -811,7 +847,9 @@
 ### L2-11-6. 확장 기능 (중요도: 중간)
 - [ ] 다중 프로젝트 관리 (생성/수정/마감, 현재 단일 프로젝트)
 - [ ] 토큰 2차 거래(유통시장)
-- [ ] 배당 자동 클레임 (현재 라운드별 수동)
+- [ ] 배당 라운드별 수동 클레임 UI (데모는 분배 시 자동 클레임으로 처리 — L2-4-4 참고)
+- [ ] Dividend 컨트랙트 스냅샷 방식 전환 (현재 클레임 시점 잔고 기준 — 토큰 이동 시 중복 수령 가능)
+- [ ] Escrow 환불 시 토큰 소각 처리 (현재 환불 후에도 토큰 보유)
 - [ ] Vesting 컨트랙트 실사용 연동 (L2-2-4에서 보류됨)
 
 ---
