@@ -10,6 +10,28 @@ function serialize(obj: any): any {
 const baseUrl =
   process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
+// 교차검증(receipt↔photo): 영수증 구매 항목과 사진 검출 객체가
+// 같은 설비 카테고리를 하나 이상 공유하는지 확인
+const CROSS_CHECK_CATEGORIES: string[][] = [
+  ["led", "조명", "라이트", "light", "lamp"],
+  ["센서", "sensor"],
+  ["재배", "선반", "베드", "rack", "bed", "shelf"],
+  ["관수", "급수", "펌프", "양액", "pump", "irrigation"],
+];
+
+function crossCheckReceiptPhoto(
+  receiptItems: string[],
+  photoObjects: string[]
+): boolean {
+  const receiptText = receiptItems.join(" ").toLowerCase();
+  const photoText = photoObjects.join(" ").toLowerCase();
+  return CROSS_CHECK_CATEGORIES.some(
+    (category) =>
+      category.some((k) => receiptText.includes(k)) &&
+      category.some((k) => photoText.includes(k))
+  );
+}
+
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -32,6 +54,7 @@ export async function POST(
     }
 
     const signals: Record<string, boolean> = {};
+    const signalDetails: Record<string, any> = {};
 
     for (const signal of milestone.requiredSignals) {
       switch (signal) {
@@ -61,6 +84,7 @@ export async function POST(
           });
           const data = await res.json();
           signals.receipt = !!data.passed;
+          signalDetails.receipt = data;
           break;
         }
         case "photo": {
@@ -75,6 +99,7 @@ export async function POST(
           });
           const data = await res.json();
           signals.photo = !!data.passed;
+          signalDetails.photo = data;
           break;
         }
         case "iot": {
@@ -96,6 +121,15 @@ export async function POST(
           break;
         }
       }
+    }
+
+    // 교차검증 (예: 마일스톤 1 — 영수증 구매 항목 ↔ 사진 검출 설비 일치)
+    if (milestone.crossCheck === "receipt↔photo") {
+      const receiptItems: string[] =
+        signalDetails.receipt?.extractedData?.items ?? [];
+      const photoObjects: string[] =
+        signalDetails.photo?.detectedObjects ?? [];
+      signals.crossCheck = crossCheckReceiptPhoto(receiptItems, photoObjects);
     }
 
     const passed = Object.values(signals).every((v) => v === true);
@@ -122,12 +156,28 @@ export async function POST(
     const newRetryCount = milestone.retryCount + 1;
     const newStatus = newRetryCount >= 2 ? "manual_review" : milestone.status;
 
+    const failedSignals = Object.entries(signals)
+      .filter(([, v]) => !v)
+      .map(([k]) => k);
+
     await prisma.milestone.update({
       where: { id },
       data: {
         retryCount: newRetryCount,
         status: newStatus,
         aiVerificationResult: signals,
+      },
+    });
+
+    // 관리자 알림 (1회 실패: 재검증 안내 / 2회 실패: 수동 검토 전환)
+    await prisma.notification.create({
+      data: {
+        milestoneId: id,
+        type: newRetryCount >= 2 ? "manual_review" : "verification_failed",
+        message:
+          newRetryCount >= 2
+            ? `마일스톤 "${milestone.name}" AI 검증 2회 실패 — 수동 검토로 전환됨 (미통과 신호: ${failedSignals.join(", ")})`
+            : `마일스톤 "${milestone.name}" AI 검증 실패 (${newRetryCount}회) — 미통과 신호: ${failedSignals.join(", ")}. 재검증 1회 가능.`,
       },
     });
 

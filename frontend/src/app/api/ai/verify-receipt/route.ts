@@ -2,17 +2,34 @@ import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import Anthropic from "@anthropic-ai/sdk";
 import { detectImageMediaType } from "@/lib/image";
+import { prisma } from "@/lib/db";
+import { withAICache } from "@/lib/ai-cache";
 
-const PROMPT =
-  "영수증 이미지에서 금액, 항목, 일자를 JSON으로 추출해주세요. 응답 형식: { amount: number, items: string[], date: string }";
+function buildPrompt(conditionText: string | null): string {
+  const base =
+    "영수증 이미지에서 금액, 항목, 일자를 JSON으로 추출해주세요.";
+  const condition = conditionText
+    ? ` 그리고 이 영수증이 다음 마일스톤 조건에 부합하는 증빙인지 판단해주세요: "${conditionText}".`
+    : "";
+  return (
+    base +
+    condition +
+    " 응답 형식: { amount: number, items: string[], date: string, matchesCondition: boolean, matchReason: string }"
+  );
+}
 
 interface ExtractedData {
   amount: number;
   items: string[];
   date: string;
+  matchesCondition?: boolean;
+  matchReason?: string;
 }
 
-async function callOpenAI(imageBase64: string): Promise<ExtractedData> {
+async function callOpenAI(
+  imageBase64: string,
+  prompt: string
+): Promise<ExtractedData> {
   const openai = new OpenAI();
   const res = await openai.chat.completions.create({
     model: "gpt-4o",
@@ -20,7 +37,7 @@ async function callOpenAI(imageBase64: string): Promise<ExtractedData> {
       {
         role: "user",
         content: [
-          { type: "text", text: PROMPT },
+          { type: "text", text: prompt },
           {
             type: "image_url",
             image_url: {
@@ -39,7 +56,10 @@ async function callOpenAI(imageBase64: string): Promise<ExtractedData> {
   return JSON.parse(jsonMatch[0]);
 }
 
-async function callAnthropic(imageBase64: string): Promise<ExtractedData> {
+async function callAnthropic(
+  imageBase64: string,
+  prompt: string
+): Promise<ExtractedData> {
   const anthropic = new Anthropic();
   const res = await anthropic.messages.create({
     model: "claude-sonnet-4-20250514",
@@ -56,7 +76,7 @@ async function callAnthropic(imageBase64: string): Promise<ExtractedData> {
               data: imageBase64,
             },
           },
-          { type: "text", text: PROMPT },
+          { type: "text", text: prompt },
         ],
       },
     ],
@@ -80,30 +100,46 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    let extractedData: ExtractedData;
-    let confidence = 0;
-    let reason = "";
+    const milestone = await prisma.milestone.findUnique({
+      where: { id: milestoneId },
+    });
 
-    try {
-      extractedData = await callOpenAI(imageBase64);
-    } catch {
-      extractedData = await callAnthropic(imageBase64);
-    }
+    const result = await withAICache(milestoneId, "receipt", async () => {
+      const prompt = buildPrompt(milestone?.conditionText ?? null);
 
-    const passed =
-      extractedData != null &&
-      extractedData.amount > 0 &&
-      Array.isArray(extractedData.items) &&
-      extractedData.items.length > 0 &&
-      typeof extractedData.date === "string" &&
-      extractedData.date.length > 0;
+      let extractedData: ExtractedData;
+      try {
+        extractedData = await callOpenAI(imageBase64, prompt);
+      } catch {
+        extractedData = await callAnthropic(imageBase64, prompt);
+      }
 
-    confidence = passed ? 0.9 : 0.3;
-    reason = passed
-      ? `영수증 인식 성공: ${extractedData.items.length}개 항목, 총 ${extractedData.amount}원`
-      : "영수증에서 유효한 데이터를 추출하지 못했습니다.";
+      const extractionOk =
+        extractedData != null &&
+        extractedData.amount > 0 &&
+        Array.isArray(extractedData.items) &&
+        extractedData.items.length > 0 &&
+        typeof extractedData.date === "string" &&
+        extractedData.date.length > 0;
 
-    return NextResponse.json({ passed, extractedData, confidence, reason });
+      // 마일스톤 조건과의 부합 여부까지 통과해야 passed (conditionText 대조)
+      const matchesCondition = milestone?.conditionText
+        ? extractedData?.matchesCondition === true
+        : true;
+
+      const passed = extractionOk && matchesCondition;
+
+      const confidence = passed ? 0.9 : 0.3;
+      const reason = passed
+        ? `영수증 인식 성공: ${extractedData.items.length}개 항목, 총 ${extractedData.amount}원`
+        : !extractionOk
+          ? "영수증에서 유효한 데이터를 추출하지 못했습니다."
+          : `마일스톤 조건 불일치: ${extractedData?.matchReason ?? "사유 미상"}`;
+
+      return { passed, extractedData, confidence, reason };
+    });
+
+    return NextResponse.json(result);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(

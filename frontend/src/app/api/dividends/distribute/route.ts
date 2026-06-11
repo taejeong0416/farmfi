@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      // Create dividend claims for each token holder
+      // 토큰 보유자별 배당 — 데모에서는 자동 클레임 (잔액 즉시 반영)
       for (const holding of project.tokenHoldings) {
         const claimAmount = BigInt(perToken) * BigInt(holding.amount);
         await tx.dividendClaim.create({
@@ -81,6 +81,24 @@ export async function POST(request: NextRequest) {
             userId: holding.userId,
             tokenAmount: holding.amount,
             claimAmount,
+            claimed: true,
+            claimedAt: now,
+          },
+        });
+
+        await tx.user.update({
+          where: { id: holding.userId },
+          data: { balance: { increment: claimAmount } },
+        });
+
+        await tx.transaction.create({
+          data: {
+            projectId,
+            userId: holding.userId,
+            type: "dividend",
+            amount: claimAmount,
+            tokenAmount: holding.amount,
+            memo: `${period} 배당 (${holding.amount} 토큰)`,
           },
         });
       }

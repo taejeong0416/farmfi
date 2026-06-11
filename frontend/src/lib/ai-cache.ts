@@ -4,11 +4,8 @@ export async function getCachedAIResult(
   milestoneId: string,
   signalType: string
 ): Promise<any | null> {
-  const entry = await prisma.demoCache.findFirst({
-    where: {
-      step: parseInt(milestoneId, 10),
-      signalType,
-    },
+  const entry = await prisma.aiCache.findUnique({
+    where: { milestoneId_signalType: { milestoneId, signalType } },
   });
   return entry?.result ?? null;
 }
@@ -18,34 +15,20 @@ export async function cacheAIResult(
   signalType: string,
   result: any
 ): Promise<void> {
-  const existing = await prisma.demoCache.findFirst({
-    where: {
-      step: parseInt(milestoneId, 10),
-      signalType,
-    },
+  await prisma.aiCache.upsert({
+    where: { milestoneId_signalType: { milestoneId, signalType } },
+    update: { result },
+    create: { milestoneId, signalType, result },
   });
-
-  if (existing) {
-    await prisma.demoCache.update({
-      where: { id: existing.id },
-      data: { result },
-    });
-  } else {
-    await prisma.demoCache.create({
-      data: {
-        step: parseInt(milestoneId, 10),
-        signalType,
-        result,
-      },
-    });
-  }
 }
 
+// AI 호출 캐시 레이어 — 캐시 히트 시 즉시 반환, 타임아웃/실패 시 캐시로 fallback.
+// 시연 중 외부 API 장애에도 데모가 멈추지 않게 한다 (L2-10-2).
 export async function withAICache<T>(
   milestoneId: string,
   signalType: string,
   apiFn: () => Promise<T>,
-  timeoutMs: number = 5000
+  timeoutMs: number = 15000
 ): Promise<T & { fromCache?: boolean }> {
   const cached = await getCachedAIResult(milestoneId, signalType);
   if (cached) {

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import Anthropic from "@anthropic-ai/sdk";
 import { detectImageMediaType } from "@/lib/image";
+import { withAICache } from "@/lib/ai-cache";
 
 type MilestoneType = "construction" | "trial_run" | "harvest" | "operation";
 
@@ -108,30 +109,33 @@ export async function POST(req: NextRequest) {
 
     const prompt = PROMPTS[milestoneType as MilestoneType] + SUFFIX;
 
-    let result: DetectionResult;
+    const response = await withAICache(milestoneId, "photo", async () => {
+      let result: DetectionResult;
+      try {
+        result = await callOpenAI(imageBase64, prompt);
+      } catch {
+        result = await callAnthropic(imageBase64, prompt);
+      }
 
-    try {
-      result = await callOpenAI(imageBase64, prompt);
-    } catch {
-      result = await callAnthropic(imageBase64, prompt);
-    }
+      const passed =
+        result != null &&
+        result.confidence >= 0.6 &&
+        Array.isArray(result.objects) &&
+        result.objects.length > 0;
 
-    const passed =
-      result != null &&
-      result.confidence >= 0.6 &&
-      Array.isArray(result.objects) &&
-      result.objects.length > 0;
+      const reason = passed
+        ? `${result.objects.length}개 객체 감지: ${result.objects.join(", ")}`
+        : "사진에서 충분한 객체를 감지하지 못했습니다.";
 
-    const reason = passed
-      ? `${result.objects.length}개 객체 감지: ${result.objects.join(", ")}`
-      : "사진에서 충분한 객체를 감지하지 못했습니다.";
-
-    return NextResponse.json({
-      passed,
-      detectedObjects: result?.objects ?? [],
-      confidence: result?.confidence ?? 0,
-      reason,
+      return {
+        passed,
+        detectedObjects: result?.objects ?? [],
+        confidence: result?.confidence ?? 0,
+        reason,
+      };
     });
+
+    return NextResponse.json(response);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
