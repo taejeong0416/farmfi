@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { buildIotRecords, buildNavSnapshots } from "@/lib/iot-seed";
 
 export async function POST(_request: NextRequest) {
   try {
@@ -188,6 +189,19 @@ export async function POST(_request: NextRequest) {
           recoveryComplete: false,
         },
       ],
+    });
+
+    // ─── Re-seed: IoT 60일치 + NAV 스냅샷 (마일스톤 2·4의 가동률 검증에 필요) ───
+    const now = new Date();
+    const iotRecords = buildIotRecords(project.id, now);
+    const batchSize = 500;
+    for (let i = 0; i < iotRecords.length; i += batchSize) {
+      await prisma.iotData.createMany({
+        data: iotRecords.slice(i, i + batchSize),
+      });
+    }
+    await prisma.navSnapshot.createMany({
+      data: buildNavSnapshots(project.id, Number(project.tokenPrice), now),
     });
 
     return NextResponse.json({

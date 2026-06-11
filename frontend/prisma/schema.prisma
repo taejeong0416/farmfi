@@ -94,8 +94,8 @@ model Transaction {
   id          String   @id @default(cuid())
   projectId   String
   project     Project  @relation(fields: [projectId], references: [id])
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
+  userId      String?  // null = 시스템 거래 (트랜치 해제 등)
+  user        User?    @relation(fields: [userId], references: [id])
   type        String   // subscription, tranche_release, dividend, revenue
   amount      BigInt
   tokenAmount Int?
@@ -195,6 +195,17 @@ model NavSnapshot {
   assetValue         BigInt
   cumulativeCashFlow BigInt
   recordedAt         DateTime @default(now())
+}
+
+// ─── AI 검증 결과 캐시 (시연 안정성용) ───
+model AiCache {
+  id          String   @id @default(cuid())
+  milestoneId String
+  signalType  String   // contract, receipt, photo
+  result      Json?
+  createdAt   DateTime @default(now())
+
+  @@unique([milestoneId, signalType])
 }
 
 // ─── 데모 캐시 ───

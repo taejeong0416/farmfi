@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { promises as fs } from "fs";
+import path from "path";
 import { prisma } from "@/lib/db";
 import { getDemoMode, getCachedResult, saveCacheResult } from "@/lib/demo-mode";
 
@@ -47,6 +49,27 @@ const milestoneTypeBySeq: Record<number, string> = {
   4: "operation",
 };
 
+// public/demo/의 mock 증빙 이미지 (L2-10-3에서 준비)
+const mockImagesBySeq: Record<
+  number,
+  { contract?: string; receipt?: string; photo?: string }
+> = {
+  1: { contract: "mock-contract.jpg", receipt: "mock-receipt-1.jpg", photo: "mock-photo-1.jpg" },
+  2: { photo: "mock-photo-2.jpg" },
+  3: { receipt: "mock-receipt-1.jpg", photo: "mock-photo-3.jpg" },
+  4: { receipt: "mock-receipt-2.jpg", photo: "mock-photo-4.jpg" },
+};
+
+async function loadMockImageBase64(filename: string): Promise<string> {
+  const filePath = path.join(process.cwd(), "public", "demo", filename);
+  try {
+    const buf = await fs.readFile(filePath);
+    return buf.toString("base64");
+  } catch {
+    throw new Error(`mock 증빙 이미지가 없습니다: public/demo/${filename}`);
+  }
+}
+
 async function verifyAndCompleteMilestone(seq: number) {
   const project = await findProjectFirst();
 
@@ -56,29 +79,36 @@ async function verifyAndCompleteMilestone(seq: number) {
 
   if (!milestone) throw new Error(`Milestone seq ${seq} not found`);
 
+  // requiredSignals에 필요한 mock 이미지만 base64로 로드
+  const mockImages = mockImagesBySeq[seq] ?? {};
+  const body: Record<string, string> = {
+    milestoneType: milestoneTypeBySeq[seq],
+  };
+  if (milestone.requiredSignals.includes("contract") && mockImages.contract) {
+    body.contractImage = await loadMockImageBase64(mockImages.contract);
+  }
+  if (milestone.requiredSignals.includes("receipt") && mockImages.receipt) {
+    body.receiptImage = await loadMockImageBase64(mockImages.receipt);
+  }
+  if (milestone.requiredSignals.includes("photo") && mockImages.photo) {
+    body.photoImage = await loadMockImageBase64(mockImages.photo);
+  }
+
   // Verify
   const verifyRes = await fetch(
     `${baseUrl}/api/milestones/${milestone.id}/verify`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        milestoneType: milestoneTypeBySeq[seq],
-        contractImage: "demo-contract.png",
-        receiptImage: "demo-receipt.png",
-        photoImage: "demo-photo.png",
-      }),
+      body: JSON.stringify(body),
     }
   );
 
   const verifyData = await verifyRes.json();
 
-  // If verification didn't pass, force verified status for demo
+  // AI 검증 실패 시 트랜치 해제 없이 그대로 반환 (검증 명제 ① — 강제 통과 금지)
   if (!verifyData.passed) {
-    await prisma.milestone.update({
-      where: { id: milestone.id },
-      data: { status: "verified", aiVerificationResult: { demo: true } },
-    });
+    return { verify: verifyData, complete: null };
   }
 
   // Complete (tranche release)

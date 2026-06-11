@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import Anthropic from "@anthropic-ai/sdk";
+import { detectImageMediaType } from "@/lib/image";
 
 const PROMPT =
   "임대차 계약서 이미지에서 임대인, 임차인, 주소, 면적(㎡), 계약기간, 월세를 JSON으로 추출해주세요. 응답 형식: { landlord: string, tenant: string, address: string, areaSqm: number, period: string, rent: number }";
@@ -25,7 +26,9 @@ async function callOpenAI(imageBase64: string): Promise<ExtractedData> {
           { type: "text", text: PROMPT },
           {
             type: "image_url",
-            image_url: { url: `data:image/png;base64,${imageBase64}` },
+            image_url: {
+              url: `data:${detectImageMediaType(imageBase64)};base64,${imageBase64}`,
+            },
           },
         ],
       },
@@ -50,7 +53,11 @@ async function callAnthropic(imageBase64: string): Promise<ExtractedData> {
         content: [
           {
             type: "image",
-            source: { type: "base64", media_type: "image/png", data: imageBase64 },
+            source: {
+              type: "base64",
+              media_type: detectImageMediaType(imageBase64),
+              data: imageBase64,
+            },
           },
           { type: "text", text: PROMPT },
         ],

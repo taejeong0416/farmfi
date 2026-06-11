@@ -25,11 +25,13 @@ export async function POST(req: NextRequest) {
     });
 
     if (iotRecords.length === 0) {
+      // 데이터가 없으면 검증 불가 — 가동률 0으로 fail-closed
       return NextResponse.json({
         anomalyDetected: false,
         anomalyScore: 0,
         affectedSensors: [],
-        uptimeRate: milestoneId ? 100 : undefined,
+        dataCount: 0,
+        uptimeRate: milestoneId ? 0 : undefined,
       });
     }
 
@@ -57,7 +59,29 @@ export async function POST(req: NextRequest) {
       });
 
       if (milestone?.iotMinDays) {
-        uptimeRate = calculateUptimeRate(anomalyResults);
+        // 가동률은 최근 100건이 아니라 iotMinDays 기간 전체로 계산
+        const windowStart = new Date(
+          Date.now() - milestone.iotMinDays * 24 * 60 * 60 * 1000
+        );
+        const windowRecords = await prisma.iotData.findMany({
+          where: { projectId, recordedAt: { gte: windowStart } },
+          orderBy: { recordedAt: "desc" },
+        });
+
+        if (windowRecords.length === 0) {
+          uptimeRate = 0;
+        } else {
+          const windowResults = detectAnomalies(
+            windowRecords.map((r) => ({
+              temperature: r.temperature,
+              humidity: r.humidity,
+              co2Level: r.co2Level,
+              lightIntensity: r.lightIntensity,
+              phLevel: r.phLevel,
+            }))
+          );
+          uptimeRate = calculateUptimeRate(windowResults);
+        }
       }
     }
 
@@ -65,6 +89,7 @@ export async function POST(req: NextRequest) {
       anomalyDetected: hasAnomaly,
       anomalyScore: Math.round(maxScore * 100) / 100,
       affectedSensors: allAffected,
+      dataCount: iotRecords.length,
       uptimeRate,
     });
   } catch (error) {

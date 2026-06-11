@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import Anthropic from "@anthropic-ai/sdk";
+import { detectImageMediaType } from "@/lib/image";
 
 type MilestoneType = "construction" | "trial_run" | "harvest" | "operation";
 
@@ -38,7 +39,9 @@ async function callOpenAI(
           { type: "text", text: prompt },
           {
             type: "image_url",
-            image_url: { url: `data:image/png;base64,${imageBase64}` },
+            image_url: {
+              url: `data:${detectImageMediaType(imageBase64)};base64,${imageBase64}`,
+            },
           },
         ],
       },
@@ -66,7 +69,11 @@ async function callAnthropic(
         content: [
           {
             type: "image",
-            source: { type: "base64", media_type: "image/png", data: imageBase64 },
+            source: {
+              type: "base64",
+              media_type: detectImageMediaType(imageBase64),
+              data: imageBase64,
+            },
           },
           { type: "text", text: prompt },
         ],

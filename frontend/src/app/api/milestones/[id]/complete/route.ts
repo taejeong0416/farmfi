@@ -75,7 +75,6 @@ export async function POST(
       await tx.transaction.create({
         data: {
           projectId: milestone.projectId,
-          userId: "system",
           type: "tranche_release",
           amount: releaseAmount,
           memo: `Milestone ${milestone.seq} completed: ${milestone.name}`,

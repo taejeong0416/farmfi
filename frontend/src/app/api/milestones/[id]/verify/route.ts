@@ -90,7 +90,8 @@ export async function POST(
           if (milestone.iotMinDays > 0) {
             signals.iot = (data.uptimeRate ?? 0) >= 90;
           } else {
-            signals.iot = !!data.passed;
+            // 데이터가 1건 이상 있고 이상 미감지일 때만 통과 (0건 자동 통과 방지)
+            signals.iot = (data.dataCount ?? 0) > 0 && !data.anomalyDetected;
           }
           break;
         }
