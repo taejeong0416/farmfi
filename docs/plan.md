@@ -76,14 +76,14 @@
     - 운영자: 정하은
     - 각 사용자에 테스트넷 지갑 주소 부여
   - 프로젝트 1개 시딩
-    - "금정구 미니팜 1호", 심볼 MF01, 초기 토큰가격 5000원, 총 토큰 1000개, 목표 500만원, totalCapex: 3000만원
+    - "금정구 미니팜 1호", 심볼 MF01, 토큰가격 10,000원(1구좌), 총 토큰 1,750개, 목표 1,750만원, totalCapex: 1,750만원, 면적 25평(≈83㎡), 작물 새싹삼 (사업계획서 표7 단위경제)
     - status: 'funding', contractAddress: 배포된 FarmToken 주소
   - 에스크로 1개 시딩 (contractAddress: 배포된 Escrow 주소)
-  - 마일스톤 4개 시딩
-    - seq 1: "공간 준비", 35%, 175만원, requiredSignals: [contract, receipt, photo], iotMinDays: 0, crossCheck: receipt↔photo, assetValue: 1800만원 (설비 잔존가치 60%)
-    - seq 2: "시운전 + 안정성", 30%, 150만원, requiredSignals: [photo, iot], iotMinDays: 14, assetValue: 0 (자산 추가 없음, 운영 검증)
-    - seq 3: "첫 수확 + 판매", 20%, 100만원, requiredSignals: [photo, receipt, iot], iotMinDays: 0, assetValue: 0 (매출 실현 → 현금흐름 반영)
-    - seq 4: "지속 운영", 15%, 75만원, requiredSignals: [iot, receipt, photo], iotMinDays: 60, assetValue: 0 (BEP 접근 → 현금흐름 누적 반영)
+  - 마일스톤 4개 시딩 (집행액 = 1,750만원 × 비율)
+    - seq 1: "공간 준비", 35%, 612.5만원, requiredSignals: [contract, receipt, photo], iotMinDays: 0, crossCheck: receipt↔photo, assetValue: 1,050만원 (설비 잔존가치 60%)
+    - seq 2: "시운전 + 안정성", 30%, 525만원, requiredSignals: [photo, iot], iotMinDays: 14, assetValue: 0 (자산 추가 없음, 운영 검증)
+    - seq 3: "첫 수확 + 판매", 20%, 350만원, requiredSignals: [photo, receipt, iot], iotMinDays: 0, assetValue: 0 (매출 실현 → 현금흐름 반영)
+    - seq 4: "지속 운영", 15%, 262.5만원, requiredSignals: [iot, receipt, photo], iotMinDays: 60, assetValue: 0 (BEP 접근 → 현금흐름 누적 반영)
 - [ ] `npx prisma db seed` 실행
 
 ### L2-1-6. 공통 유틸리티
@@ -606,13 +606,13 @@
   - mock 이미지는 `public/demo/`에서 읽어 base64 변환 후 AI 검증 API에 전달
   - 요청: `{ step: number }`
   - step별 로직:
-    - **1**: 김민수 200토큰 청약 (온체인 subscribe)
-    - **2**: 이서연 150토큰 청약
-    - **3**: 박준혁 650토큰 청약 → 목표 달성 → funded
+    - **1**: 김민수 500토큰 청약 (온체인 subscribe)
+    - **2**: 이서연 250토큰 청약
+    - **3**: 박준혁 1,000토큰 청약 → 목표 1,750만원 달성 → funded
     - **4**: 마일스톤 1 "공간 준비" AI 검증 (계약서 + 영수증 + 사진, AND, 영수증↔사진 교차검증) → 통과 → 트랜치 해제 35%
     - **5**: 마일스톤 2 "시운전 + 안정성" AI 검증 (사진 + IoT 14일, AND) → 통과 → 트랜치 해제 30%
     - **6**: 마일스톤 3 "첫 수확 + 판매" AI 검증 (사진 + 영수증 + IoT, AND) → 통과 → 트랜치 해제 20%
-    - **7**: 배당 분배 (매출 300만, 비율 70%)
+    - **7**: 배당 분배 (매출 297만, 투자자 배당 비율 70%)
     - **8**: 마일스톤 4 "지속 운영" AI 검증 (IoT 60일 + 영수증 + 사진, AND) → 통과 → 트랜치 해제 15% → operating
   - 검증 실패 시 트랜치 해제 없이 실패 결과를 그대로 반환 (강제 verified 처리 금지 — 검증 명제 ①의 신뢰성)
   - **실패 케이스 데모** (선택):

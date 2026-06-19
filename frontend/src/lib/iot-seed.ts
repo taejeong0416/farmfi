@@ -98,8 +98,8 @@ export function buildNavSnapshots(
     navRecords.push({
       projectId,
       nav: Math.round(runningNav * 100) / 100,
-      escrowBalance: BigInt(Math.round(5_000_000 * (1 - dayIndex * 0.01))),
-      assetValue: BigInt(dayIndex > 10 ? 18_000_000 : 0),
+      escrowBalance: BigInt(Math.round(17_500_000 * (1 - dayIndex * 0.01))),
+      assetValue: BigInt(dayIndex > 10 ? 10_500_000 : 0),
       cumulativeCashFlow: BigInt(Math.round(dayIndex * 15_000)),
       recordedAt,
     });

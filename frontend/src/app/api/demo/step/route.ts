@@ -134,7 +134,7 @@ async function distributeDividends() {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       projectId: project.id,
-      totalRevenue: 3_000_000,
+      totalRevenue: 2_970_000,
     }),
   });
 
@@ -144,9 +144,9 @@ async function distributeDividends() {
 type StepExecutor = () => Promise<any>;
 
 const stepExecutors: Record<number, StepExecutor> = {
-  1: () => subscribe("김민수", 200),
-  2: () => subscribe("이서연", 150),
-  3: () => subscribe("박준혁", 650),
+  1: () => subscribe("김민수", 500),
+  2: () => subscribe("이서연", 250),
+  3: () => subscribe("박준혁", 1000),
   4: () => verifyAndCompleteMilestone(1),
   5: () => verifyAndCompleteMilestone(2),
   6: () => verifyAndCompleteMilestone(3),
