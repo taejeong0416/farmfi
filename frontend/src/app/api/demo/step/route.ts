@@ -54,10 +54,10 @@ const mockImagesBySeq: Record<
   number,
   { contract?: string; receipt?: string; photo?: string }
 > = {
-  1: { contract: "mock-contract.jpg", receipt: "mock-receipt-1.jpg", photo: "mock-photo-1.jpg" },
-  2: { photo: "mock-photo-2.jpg" },
-  3: { receipt: "mock-receipt-1.jpg", photo: "mock-photo-3.jpg" },
-  4: { receipt: "mock-receipt-2.jpg", photo: "mock-photo-4.jpg" },
+  1: { contract: "mock-contract.jpg", receipt: "mock-receipt-1.jpg", photo: "mock-photo-1.jpg" }, // 설비 영수증
+  2: {}, // IoT 14일 가동률만 검증 (이미지 없음)
+  3: { receipt: "mock-receipt-2.jpg", photo: "mock-photo-3.jpg" }, // 판매 영수증 + 수확 사진
+  4: { receipt: "mock-receipt-2.jpg" }, // IoT 60일 + 복수 판매 영수증
 };
 
 async function loadMockImageBase64(filename: string): Promise<string> {

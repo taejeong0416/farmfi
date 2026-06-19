@@ -81,9 +81,9 @@
   - 에스크로 1개 시딩 (contractAddress: 배포된 Escrow 주소)
   - 마일스톤 4개 시딩 (집행액 = 1,750만원 × 비율)
     - seq 1: "공간 준비", 35%, 612.5만원, requiredSignals: [contract, receipt, photo], iotMinDays: 0, crossCheck: receipt↔photo, assetValue: 1,050만원 (설비 잔존가치 60%)
-    - seq 2: "시운전 + 안정성", 30%, 525만원, requiredSignals: [photo, iot], iotMinDays: 14, assetValue: 0 (자산 추가 없음, 운영 검증)
-    - seq 3: "첫 수확 + 판매", 20%, 350만원, requiredSignals: [photo, receipt, iot], iotMinDays: 0, assetValue: 0 (매출 실현 → 현금흐름 반영)
-    - seq 4: "지속 운영", 15%, 262.5만원, requiredSignals: [iot, receipt, photo], iotMinDays: 60, assetValue: 0 (BEP 접근 → 현금흐름 누적 반영)
+    - seq 2: "시운전 + 안정성", 30%, 525만원, requiredSignals: [iot], iotMinDays: 14, assetValue: 0 (센서 정상 가동 검증, 표3)
+    - seq 3: "첫 수확 + 판매", 20%, 350만원, requiredSignals: [photo, receipt], iotMinDays: 0, assetValue: 0 (수확 사진 + 판매 영수증, 표3)
+    - seq 4: "지속 운영", 15%, 262.5만원, requiredSignals: [iot, receipt], iotMinDays: 60, assetValue: 0 (센서 60일 + 복수 판매 영수증, 표3)
 - [ ] `npx prisma db seed` 실행
 
 ### L2-1-6. 공통 유틸리티
@@ -594,14 +594,13 @@
 ### L2-7-1. 데모 API
 
 #### L3 태스크
-- [ ] `public/demo/` — 데모용 mock 증빙 이미지
-  - `mock-contract.jpg` — 임대차 계약서
-  - `mock-receipt-1.jpg` — 설비 구매 영수증 (마일스톤 1, 3)
-  - `mock-receipt-2.jpg` — 운영비 영수증 (마일스톤 4)
-  - `mock-photo-1.jpg` — 공간 준비 현장 사진
-  - `mock-photo-2.jpg` — 시운전 사진 (LED 점등, 관수 작동)
-  - `mock-photo-3.jpg` — 수확 사진
-  - `mock-photo-4.jpg` — 지속 운영 사진
+- [ ] `public/demo/` — 데모용 mock 증빙 이미지 (표3 검증 신호 기준)
+  - `mock-contract.jpg` — 임대차 계약서 (M1)
+  - `mock-receipt-1.jpg` — 설비 구매 영수증 (M1)
+  - `mock-receipt-2.jpg` — 판매 영수증 (M3·M4)
+  - `mock-photo-1.jpg` — 공간 준비 현장 사진 (M1)
+  - `mock-photo-3.jpg` — 수확 사진 (M3)
+  - ※ M2는 IoT 단독 검증, M4는 사진 미사용이라 시운전·운영 사진 불필요 (기존 mock-photo-2/4 제거)
 - [ ] `src/app/api/demo/step/route.ts` — POST
   - mock 이미지는 `public/demo/`에서 읽어 base64 변환 후 AI 검증 API에 전달
   - 요청: `{ step: number }`
@@ -610,10 +609,10 @@
     - **2**: 이서연 250토큰 청약
     - **3**: 박준혁 1,000토큰 청약 → 목표 1,750만원 달성 → funded
     - **4**: 마일스톤 1 "공간 준비" AI 검증 (계약서 + 영수증 + 사진, AND, 영수증↔사진 교차검증) → 통과 → 트랜치 해제 35%
-    - **5**: 마일스톤 2 "시운전 + 안정성" AI 검증 (사진 + IoT 14일, AND) → 통과 → 트랜치 해제 30%
-    - **6**: 마일스톤 3 "첫 수확 + 판매" AI 검증 (사진 + 영수증 + IoT, AND) → 통과 → 트랜치 해제 20%
+    - **5**: 마일스톤 2 "시운전 + 안정성" AI 검증 (IoT 14일 가동률, 단일 신호) → 통과 → 트랜치 해제 30%
+    - **6**: 마일스톤 3 "첫 수확 + 판매" AI 검증 (수확 사진 + 판매 영수증, AND) → 통과 → 트랜치 해제 20%
     - **7**: 배당 분배 (매출 297만, 투자자 배당 비율 70%)
-    - **8**: 마일스톤 4 "지속 운영" AI 검증 (IoT 60일 + 영수증 + 사진, AND) → 통과 → 트랜치 해제 15% → operating
+    - **8**: 마일스톤 4 "지속 운영" AI 검증 (IoT 60일 가동률 + 복수 판매 영수증, AND) → 통과 → 트랜치 해제 15% → operating
   - 검증 실패 시 트랜치 해제 없이 실패 결과를 그대로 반환 (강제 verified 처리 금지 — 검증 명제 ①의 신뢰성)
   - **실패 케이스 데모** (선택):
     - **F1**: 영수증 미달(조건 불일치 mock 이미지 사용) → AI 거부 → 컨트랙트 자동 차단
@@ -732,11 +731,11 @@
 
 #### L3 태스크
 - [ ] mock 이미지 수급 방법:
-  - 계약서: 인터넷 임대차 계약서 샘플 이미지 + 프로젝트 정보(금정구, 50㎡)에 맞게 편집
-    - **주소·면적 대조가 구현됨** — 계약서에 "금정구" 등 위치 토큰과 면적 50㎡(±20%)가 실제로 적혀 있어야 통과
-  - 영수증: LED 조명·센서·재배대 구매 영수증 (직접 촬영 or 샘플 이미지)
-    - **conditionText 대조 + 영수증↔사진 교차검증이 구현됨** — 영수증 항목에 설비 키워드(LED/센서/재배대/관수)가 있어야 마일스톤 1 교차검증 통과
-  - 현장 사진: 실내농장/스마트팜 사진 (Unsplash 등 무료 소스)
+  - 계약서: 인터넷 임대차 계약서 샘플 이미지 + 프로젝트 정보(금정구, 25평≈83㎡)에 맞게 편집
+    - **주소·면적 대조가 구현됨** — 계약서에 "금정구" 등 위치 토큰과 면적 83㎡(±20%, 약 66~100㎡)가 실제로 적혀 있어야 통과
+  - 영수증: ① 설비(LED·센서·재배대) 구매 영수증(mock-receipt-1, M1) ② 새싹삼 판매 영수증(mock-receipt-2, M3·M4)
+    - **conditionText 대조 + 영수증↔사진 교차검증이 구현됨** — mock-receipt-1 항목에 설비 키워드(LED/센서/재배대/관수)가 있어야 마일스톤 1 교차검증 통과
+  - 현장 사진: 실내농장/스마트팜 사진 (Unsplash 등 무료 소스) — 공간 준비(M1), 수확(M3)
 - [ ] **실패 케이스용 mock 이미지** (F1 시연에 필요):
   - `mock-receipt-fail.jpg` — 마일스톤 조건과 무관한 영수증 (예: 식당 영수증) → AI가 조건 불일치로 거부하는 장면 시연
 - [ ] 각 이미지가 AI 검증을 실제로 통과하는지 사전 테스트
@@ -883,13 +882,11 @@ FarmFi/
 ├── frontend/                           # Next.js 14
 │   ├── public/
 │   │   └── demo/                       # 데모용 mock 증빙 이미지
-│   │       ├── mock-contract.jpg
-│   │       ├── mock-receipt-1.jpg
-│   │       ├── mock-receipt-2.jpg
-│   │       ├── mock-photo-1.jpg
-│   │       ├── mock-photo-2.jpg
-│   │       ├── mock-photo-3.jpg
-│   │       └── mock-photo-4.jpg
+│   │       ├── mock-contract.jpg       # M1 임대차 계약서
+│   │       ├── mock-receipt-1.jpg      # M1 설비 구매 영수증
+│   │       ├── mock-receipt-2.jpg      # M3·M4 판매 영수증
+│   │       ├── mock-photo-1.jpg        # M1 공간 준비 사진
+│   │       └── mock-photo-3.jpg        # M3 수확 사진
 │   ├── src/
 │   │   ├── app/
 │   │   │   ├── layout.tsx
