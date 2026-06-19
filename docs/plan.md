@@ -410,42 +410,38 @@
     4. 다음 seq 마일스톤 status = 'in_progress'
     5. 모든 마일스톤(4개) completed → project.status = 'operating'
 
-### L2-4-4. 월 정산 + 다자간 회수 배분
+### L2-4-4. 월 정산 + 수익 배분
 
-> 매출은 한 곳에 들어오지만, 참여 주체마다 회수 순서와 속도가 다르다.
+> 매출에서 운영비·고정 임대료를 차감한 월 순이익을 투자자·운영자가 나눈다.
 > 워터폴(우선순위 배분) 로직은 API에서 처리하고, 온체인 Dividend는 투자자 배분만 담당한다.
 
 #### L3 태스크
-- [ ] `src/lib/waterfall.ts` — 월 정산 워터폴 계산
+- [ ] `src/lib/waterfall.ts` — 월 정산 워터폴 계산 (사업계획서 표9·표10·표11·표13 단위경제 기준)
   - 입력: `{ totalRevenue, projectId }`
   - 배분 순서 (매월 매출에서 순차 차감):
-    0. **OPEX + 운영자 기본급 + 플랫폼 수수료** 차감
-       - 운영비(전기·유지보수·소모품·물류 등): 약 130~150만원/월
-       - 운영자 기본급: 약 40~50만원/월 (최소 보상, OPEX에 포함)
-       - 플랫폼 수수료: 정산 총액의 10%
-    1. **건물주 (1순위, 20~25%)** → 장기·안정적 임대 수익, 매달 우선 수령
-    2. **설비파트너 DRB (2순위, 10~15%)** → CAPEX 기여분 선회수 + 유지보수·추가설비 장기 수익
-    3. **투자자 (3순위)** → 투자비중 비례 배당, 토큰 보유량에 따라 분배
-    4. **운영자 성과 보상 (후순위)** → 잔여 수익 전액, 파이를 키울수록 보상 증가
-  - 출력: `{ opex, operatorBase, platformFee, landlordShare, partnerRecovery, investorDividend, operatorBonus, breakdown }`
-  - 설비파트너 선회수 완료 후 → 해당 몫이 투자자·운영자에게 환원
-  - 운영자 기본급은 OPEX에서 보장(별도 차감 아님 — 이중 차감 금지), 후순위 보상은 순수 성과 인센티브
-  - 각 단계는 순차 차감(남은 금액 한도) — breakdown 합계가 매출을 초과하지 않음 (반영됨)
-- [ ] DB 모델 추가: `ProjectPartner` (id, projectId, role, name, totalContribution, recoveredAmount, monthlyRecoveryAmount, recoveryComplete)
-  - 시드: 설비파트너 DRB (기여분 1200만원, 월 회수 30만원), 건물주 최영호 (공간 제공)
+    0. **OPEX 100만원** 차감 (전기 60만 + 재료 40만, 표9)
+    1. **건물주 월 고정 임대료 50만원** (매출 무관 고정, 표10) → 우선 지급
+       → 매출 − OPEX − 임대료 = **월 순이익** (단위경제 기준 147만원)
+    2. **플랫폼 정산 수수료** = 순이익의 1.5% (표13 운영 수수료)
+    3. **투자자 배당** = (순이익 − 수수료) × 배당비율 (BEP 전 60~70% / BEP 후 ~40%, 표11)
+    4. **운영자 잔여수익** = 나머지 (BEP 전 30~40% / BEP 후 ~60%)
+  - 출력: `{ opex, landlordRent, platformFee, investorDividend, operatorResidual, breakdown }`
+  - 각 단계는 순차 차감(남은 금액 한도) — breakdown 합계가 매출을 초과하지 않음
+  - 참고: 발행 수수료 3%(청약 1회성)·자체몰 유통 10%는 별도 수익원(표13)으로 월 정산 워터폴에는 포함하지 않음
+  - 참고: 설비공급사 DRB동일은 사업계획서상 설비 공급·기술 자문 협력사이며 정산 분배 주체가 아님 (정산 주체 = 건물주·투자자·운영자 + 플랫폼 수수료)
+- [ ] DB 모델: `ProjectPartner` (id, projectId, role, name, totalContribution, recoveredAmount, monthlyRecoveryAmount, recoveryComplete)
+  - 시드: 건물주 최영호 (공간 제공, 월 고정 임대료 50만원). 회수 필드(totalContribution/recoveredAmount/recoveryComplete)는 현재 미사용
 - [ ] `src/app/api/dividends/distribute/route.ts` — POST
   - 요청: `{ projectId, totalRevenue }`
   - 순서:
     1. `waterfall.ts`로 워터폴 계산
     2. 투자자 배당분만 → **온체인** Dividend 컨트랙트 `distributeDividend()` 호출
-    3. 나머지 (운영자·설비파트너·건물주·플랫폼) → **오프체인** DB 기록
-    4. `ProjectPartner.recoveredAmount` 업데이트
-    5. **배당 자동 클레임 (데모 범위 결정)**: DividendClaim을 claimed=true로 생성 + 투자자 잔액 즉시 반영 + dividend 거래 기록 생성 — 라운드별 수동 클레임 UI는 실서비스 단계(L1-11)로
+    3. 나머지 (운영자·건물주·플랫폼) → **오프체인** DB 기록
+    4. **배당 자동 클레임 (데모 범위 결정)**: DividendClaim을 claimed=true로 생성 + 투자자 잔액 즉시 반영 + dividend 거래 기록 생성 — 라운드별 수동 클레임 UI는 실서비스 단계(L1-11)로
   - 응답: 워터폴 breakdown + 투자자 배당 정보 + txHash
 - [ ] `src/components/dashboard/waterfall-chart.tsx`
   - Recharts StackedBarChart — 월 매출의 배분 구조 시각화
-  - 색상 구분: 운영비(회색) / 설비파트너(주황) / 건물주(파랑) / 투자자(초록) / 운영자(보라) / 플랫폼(연회색)
-  - 설비파트너 회수 완료 시점 이후 해당 구간이 투자자로 넘어가는 것이 보이도록
+  - 색상 구분: 운영비(회색) / 건물주 임대료(파랑) / 플랫폼 수수료(연회색) / 투자자 배당(초록) / 운영자 잔여(보라)
 
 ### L2-4-5. 관리자 페이지
 
@@ -465,8 +461,7 @@
     - 최근 이상 탐지 이력
     - 이상 감지 시 빨간 뱃지 표시
   - 월 정산 실행 섹션
-    - 매출액 input → 워터폴 미리보기 (OPEX·설비파트너·건물주·투자자·운영자·플랫폼 각 몫 표시)
-    - 설비파트너 회수 진행률 프로그레스바
+    - 매출액 input → 워터폴 미리보기 (OPEX·건물주 임대료·플랫폼 수수료·투자자 배당·운영자 잔여 각 몫 표시)
     - [정산 실행] 버튼 → 워터폴 계산 + 투자자 배당 온체인 실행
   - 데모 리셋 섹션
     - [DB 초기화] 버튼 → `POST /api/demo/reset`

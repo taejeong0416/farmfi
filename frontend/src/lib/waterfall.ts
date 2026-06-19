@@ -1,76 +1,54 @@
-import { prisma } from "@/lib/db";
-
 export interface WaterfallResult {
   opex: number;
-  operatorBase: number;
+  landlordRent: number;
   platformFee: number;
-  landlordShare: number;
-  partnerRecovery: number;
   investorDividend: number;
-  operatorBonus: number;
+  operatorResidual: number;
   breakdown: { label: string; amount: number; color: string }[];
 }
 
+// 사업계획서 단위경제(표9·표10·표11·표13) 기준 월 정산 워터폴
+// 매출 → OPEX(100만) → 건물주 고정 임대료(50만) → 순이익 → 투자자 배당 / 운영자 잔여
+// 플랫폼 정산 수수료는 순이익의 1.5% (표13). 발행 3%·자체몰 10%는 별도 수익원.
 export async function calculateWaterfall(
-  projectId: string,
+  _projectId: string,
   totalRevenue: number
 ): Promise<WaterfallResult> {
-  // 운영자 기본급(45만)은 OPEX(140만)에 포함 — 별도 차감하지 않는다 (plan L2-4-4)
-  const OPEX_TOTAL = 1_400_000;
-  const operatorBase = 450_000;
+  const OPEX_TOTAL = 1_000_000; // 전기 60만 + 재료 40만 (표9)
+  const LANDLORD_RENT = 500_000; // 건물주 월 고정 임대료, 매출 무관 (표10)
+  const PLATFORM_FEE_RATE = 0.015; // 정산 운영 수수료 1.5% (표13)
+  const INVESTOR_SHARE = 0.7; // BEP 전 투자자 배당 70% (표11)
 
   // 순차 차감: 각 단계는 남은 금액을 넘지 못함 (breakdown 합계 ≤ 매출)
   let remaining = totalRevenue;
 
-  const platformFee = Math.min(Math.round(totalRevenue * 0.1), remaining);
-  remaining -= platformFee;
-
   const opex = Math.min(OPEX_TOTAL, remaining);
   remaining -= opex;
 
-  let landlordShare = 0;
-  let partnerRecovery = 0;
-  let investorDividend = 0;
-  let operatorBonus = 0;
+  const landlordRent = Math.min(LANDLORD_RENT, remaining);
+  remaining -= landlordRent;
 
-  if (remaining > 0) {
-    landlordShare = Math.round(remaining * 0.22);
-    remaining -= landlordShare;
+  // 남은 금액 = 월 순이익. 플랫폼 수수료(1.5%) 차감 후 투자자/운영자 분배.
+  const platformFee = Math.round(remaining * PLATFORM_FEE_RATE);
+  const distributable = remaining - platformFee;
 
-    const partner = await prisma.projectPartner.findFirst({
-      where: { projectId, role: "equipment_partner" },
-    });
-
-    if (partner && !partner.recoveryComplete) {
-      partnerRecovery = Math.min(
-        Number(partner.monthlyRecoveryAmount),
-        remaining
-      );
-    }
-
-    remaining -= partnerRecovery;
-
-    investorDividend = Math.round(remaining * 0.7);
-    operatorBonus = remaining - investorDividend;
-  }
+  const investorDividend = Math.round(distributable * INVESTOR_SHARE);
+  const operatorResidual = distributable - investorDividend;
 
   const breakdown = [
-    { label: "운영비 (운영자 기본급 포함)", amount: opex, color: "#9CA3AF" },
+    { label: "운영비(OPEX)", amount: opex, color: "#9CA3AF" },
+    { label: "건물주 임대료", amount: landlordRent, color: "#3B82F6" },
     { label: "플랫폼 수수료", amount: platformFee, color: "#D1D5DB" },
-    { label: "건물주", amount: landlordShare, color: "#3B82F6" },
-    { label: "설비파트너", amount: partnerRecovery, color: "#F97316" },
     { label: "투자자 배당", amount: investorDividend, color: "#22C55E" },
-    { label: "운영자 보상", amount: operatorBonus, color: "#8B5CF6" },
+    { label: "운영자 잔여수익", amount: operatorResidual, color: "#8B5CF6" },
   ];
 
   return {
     opex,
-    operatorBase,
+    landlordRent,
     platformFee,
-    landlordShare,
-    partnerRecovery,
     investorDividend,
-    operatorBonus,
+    operatorResidual,
     breakdown,
   };
 }

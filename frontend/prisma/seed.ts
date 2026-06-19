@@ -153,28 +153,17 @@ async function main() {
     ],
   });
 
-  // ─── 프로젝트 파트너 ───
-  await prisma.projectPartner.createMany({
-    data: [
-      {
-        projectId: project.id,
-        role: "equipment_partner",
-        name: "DRB동일",
-        totalContribution: BigInt(12_000_000),
-        recoveredAmount: BigInt(0),
-        monthlyRecoveryAmount: BigInt(300_000),
-        recoveryComplete: false,
-      },
-      {
-        projectId: project.id,
-        role: "landlord",
-        name: "최영호",
-        totalContribution: BigInt(0),
-        recoveredAmount: BigInt(0),
-        monthlyRecoveryAmount: BigInt(0),
-        recoveryComplete: false,
-      },
-    ],
+  // ─── 프로젝트 파트너 (건물주: 월 고정 임대료 50만원, 회수 필드 미사용) ───
+  await prisma.projectPartner.create({
+    data: {
+      projectId: project.id,
+      role: "landlord",
+      name: "최영호",
+      totalContribution: BigInt(0),
+      recoveredAmount: BigInt(0),
+      monthlyRecoveryAmount: BigInt(500_000),
+      recoveryComplete: false,
+    },
   });
 
   console.log("✅ Seed data created successfully");

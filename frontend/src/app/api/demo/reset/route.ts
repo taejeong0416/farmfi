@@ -167,28 +167,17 @@ export async function POST(_request: NextRequest) {
       ],
     });
 
-    // ─── Re-seed: Partners ───
-    await prisma.projectPartner.createMany({
-      data: [
-        {
-          projectId: project.id,
-          role: "equipment_partner",
-          name: "DRB동일",
-          totalContribution: BigInt(12_000_000),
-          recoveredAmount: BigInt(0),
-          monthlyRecoveryAmount: BigInt(300_000),
-          recoveryComplete: false,
-        },
-        {
-          projectId: project.id,
-          role: "landlord",
-          name: "최영호",
-          totalContribution: BigInt(0),
-          recoveredAmount: BigInt(0),
-          monthlyRecoveryAmount: BigInt(0),
-          recoveryComplete: false,
-        },
-      ],
+    // ─── Re-seed: Partners (건물주: 월 고정 임대료 50만원, 회수 필드 미사용) ───
+    await prisma.projectPartner.create({
+      data: {
+        projectId: project.id,
+        role: "landlord",
+        name: "최영호",
+        totalContribution: BigInt(0),
+        recoveredAmount: BigInt(0),
+        monthlyRecoveryAmount: BigInt(500_000),
+        recoveryComplete: false,
+      },
     });
 
     // ─── Re-seed: IoT 60일치 + NAV 스냅샷 (마일스톤 2·4의 가동률 검증에 필요) ───

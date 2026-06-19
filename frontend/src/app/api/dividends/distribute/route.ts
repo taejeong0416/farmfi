@@ -50,28 +50,6 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      // Update partner recovered amount
-      if (waterfall.partnerRecovery > 0) {
-        const partner = await tx.projectPartner.findFirst({
-          where: { projectId, role: "equipment_partner" },
-        });
-
-        if (partner) {
-          const newRecovered =
-            Number(partner.recoveredAmount) + waterfall.partnerRecovery;
-          const recoveryComplete =
-            newRecovered >= Number(partner.totalContribution);
-
-          await tx.projectPartner.update({
-            where: { id: partner.id },
-            data: {
-              recoveredAmount: BigInt(Math.floor(newRecovered)),
-              recoveryComplete,
-            },
-          });
-        }
-      }
-
       // 토큰 보유자별 배당 — 데모에서는 자동 클레임 (잔액 즉시 반영)
       for (const holding of project.tokenHoldings) {
         const claimAmount = BigInt(perToken) * BigInt(holding.amount);
