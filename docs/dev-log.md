@@ -5,6 +5,20 @@
 
 ---
 
+## 2026-06-19 (2) — 박태정
+
+### DB 온라인화 (Supabase) — 이제 실제로 붙고 시드됨
+- **원인 규명**: 6/11의 `tenant/user not found`는 IPv4/IPv6 문제가 **아니었음**(`.env`는 이미 IPv4 pooler). 무료 플랜 **자동 일시정지(paused)** 가 원인. 대시보드 Restore로 복구.
+- **스키마 push**: 트랜잭션 pooler(6543, pgbouncer)는 `prisma db pull/push`가 멈춤 → **세션 pooler(같은 호스트 5432, pgbouncer 파라미터 제거)** 로 `db push` 성공. (런타임 쿼리·시드 INSERT는 6543으로 정상)
+- **시드 완료**: `npm run seed` + `npm run seed:iot` → 사용자 5·프로젝트 1·마일스톤 4·IoT 2,880·NAV 60. **정합값 DB 반영 확인**: 토큰가 10,000/총 1,750, 마일스톤 신호 표3(M2 [iot]/M3 [photo,receipt]/M4 [iot,receipt]), 파트너 건물주만(DRB 없음).
+- **시드 .env 버그 수정** (`57a05d1`): `tsx`가 `.env` 자동 로드 안 해 `DATABASE_URL` undefined → seed.ts/seed-iot.ts에 `import "dotenv/config"` 추가.
+- **RLS 경고 처리**: Supabase Security Advisor "RLS disabled in public" → 14개 테이블 `enable row level security`(SQL Editor). Prisma는 테이블 소유자라 통과(읽기 정상 확인). ⚠️ 이후 `db push`로 새 테이블 만들면 해당 테이블에 재적용 필요.
+
+### 다음 할 일
+- API 실동작 스모크(`npm run dev` → `/api/projects`) → AI 검증(키는 `.env`에 있음 + mock 이미지 준비) → 컨트랙트 Amoy 배포 → 프론트 페이지(랜딩 외 전부 미착수).
+
+---
+
 ## 2026-06-19 — 박태정
 
 ### 배경
