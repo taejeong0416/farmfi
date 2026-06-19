@@ -44,5 +44,4 @@ FarmFi 개발 가이드.
 |---|---|
 | [docs/plan.md](docs/plan.md) | 구현 플랜 |
 | [docs/api-spec.md](docs/api-spec.md) | API 명세 |
-| [docs/dev-report.md](docs/dev-report.md) | 개발 현황 보고서 |
 | [docs/dev-log.md](docs/dev-log.md) | 진행상황·결정 기록 |

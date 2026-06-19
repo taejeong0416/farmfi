@@ -941,7 +941,6 @@ FarmFi/
     ├── README.md
     ├── plan.md
     ├── api-spec.md
-    ├── dev-report.md
     ├── dev-log.md
     └── images/
 ```

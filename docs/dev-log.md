@@ -17,6 +17,7 @@
 - **시드 숫자** (`ecf3543`): CAPEX 3000만→**1,750만**(=모집목표), 토큰가 5천→**1만원**, 총 1000→**1,750토큰**, 면적 50㎡→**25평(83㎡)**, 마일스톤 612.5/525/350/262.5만, M1 자산가치 1800→1,050만, 작물 엽채류→**새싹삼**. 데모 청약 500/250/1000, 정산 매출 297만. seed/reset/demo-step/iot-seed/plan.
 - **검증 신호(표3)** (`47231ee`): M2 `[photo,iot]`→`[iot]`(센서 단독), M3 `[photo,receipt,iot]`→`[photo,receipt]`, M4 `[iot,receipt,photo]`→`[iot,receipt]`. conditionText·데모 mock 매핑(M2 무이미지, receipt-2=판매 영수증). seed/reset/demo-step/plan.
 - **참조 문서** (`ca33655`): api-spec 워터폴 응답 키·시드 기준값, dev-report ProjectPartner·waterfall에서 DRB 제거.
+- **문서 정리**: `dev-report.md` 삭제 — 레퍼런스인데 plan/api-spec/dev-log/git history와 중복이 크고 이미 낡음(커밋이력·파트너 수). 참조 4곳(CLAUDE.md·CONTRIBUTING.md·plan 파일트리·docs/README 목록) 정리.
 
 ### 미해결 / 다음 할 일
 - **DB 재시드 필요**: seed 코드만 바뀌어 실행 중 DB엔 옛 값이 남아 있음 → `cd frontend && npm run seed && npm run seed:iot` (스키마 불변이라 push 불필요).
