@@ -5,6 +5,26 @@
 
 ---
 
+## 2026-06-19 — 박태정
+
+### 배경
+- 사업계획서(`팜피_FarmFi_사업계획서_B301_최종.md`)와 plan·코드를 대조 → 3종류 불일치 발견.
+- **확인 결과 `코드 == plan.md`이고 둘 다 사업계획서와 달랐음.** 방향 결정: 사업계획서를 기준으로 plan+코드 전부 정합(전부 맞춤).
+
+### 한 일 — 사업계획서 기준 정합 (커밋 5개, 각 단계 `tsc --noEmit` 통과)
+- **정산 구조** (`0153a7b`): OPEX 140→100만(전기60+재료40), 건물주 매출22%→**월 고정 임대료 50만(매출 무관)**, 플랫폼 수수료 10%→**1.5%**(표13), **설비파트너 DRB 정산 분배 제거**(설비공급·자문 협력사로만), 운영자 기본급 제거. `waterfall.ts`/`dividends/distribute`(파트너 회수 블록 삭제)/seed/reset/plan L2-4-4·admin.
+  - 워터폴 출력 키 변경: `{opex, landlordRent, platformFee, investorDividend, operatorResidual, breakdown}`.
+- **시드 숫자** (`ecf3543`): CAPEX 3000만→**1,750만**(=모집목표), 토큰가 5천→**1만원**, 총 1000→**1,750토큰**, 면적 50㎡→**25평(83㎡)**, 마일스톤 612.5/525/350/262.5만, M1 자산가치 1800→1,050만, 작물 엽채류→**새싹삼**. 데모 청약 500/250/1000, 정산 매출 297만. seed/reset/demo-step/iot-seed/plan.
+- **검증 신호(표3)** (`47231ee`): M2 `[photo,iot]`→`[iot]`(센서 단독), M3 `[photo,receipt,iot]`→`[photo,receipt]`, M4 `[iot,receipt,photo]`→`[iot,receipt]`. conditionText·데모 mock 매핑(M2 무이미지, receipt-2=판매 영수증). seed/reset/demo-step/plan.
+- **참조 문서** (`ca33655`): api-spec 워터폴 응답 키·시드 기준값, dev-report ProjectPartner·waterfall에서 DRB 제거.
+
+### 미해결 / 다음 할 일
+- **DB 재시드 필요**: seed 코드만 바뀌어 실행 중 DB엔 옛 값이 남아 있음 → `cd frontend && npm run seed && npm run seed:iot` (스키마 불변이라 push 불필요).
+- **mock 이미지**: `public/demo/` 미생성 상태. 필요분 축소됨 — mock-contract(83㎡/25평 표기), mock-receipt-1(설비), mock-receipt-2(**판매**), mock-photo-1, mock-photo-3, 실패용 mock-receipt-fail. (시운전·운영 사진 불필요)
+- `schema.prisma` ProjectPartner.role 주석에 `equipment_partner` 잔존 — 모델은 그대로 둠(향후 실서비스 여지). 시드에선 미사용.
+
+---
+
 ## 2026-06-11 — 박태정
 
 ### 전체 점검 결과 (코드 리뷰)
