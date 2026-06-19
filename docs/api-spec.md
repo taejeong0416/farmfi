@@ -82,13 +82,12 @@
 ## 배당
 
 ### `POST /api/dividends/distribute` — 월 정산 + 배당
-- 요청: `{ "projectId": "...", "totalRevenue": 3000000 }`
+- 요청: `{ "projectId": "...", "totalRevenue": 2970000 }`
 - 응답:
 ```json
 { "waterfall": {
-    "opex": 0, "operatorBase": 0, "platformFee": 0,
-    "landlordShare": 0, "partnerRecovery": 0,
-    "investorDividend": 0, "operatorBonus": 0, "breakdown": {}
+    "opex": 0, "landlordRent": 0, "platformFee": 0,
+    "investorDividend": 0, "operatorResidual": 0, "breakdown": []
   },
   "dividend": { "id": "...", "perToken": 0, "period": "2026-06", "...": "..." },
   "txHash": null }
@@ -168,6 +167,6 @@
 ## 시드 기준값 (프론트 더미/기대값 참고)
 
 - 투자자: 김민수(잔액 500만), 이서연(300만), 박준혁(1000만) / 건물주 최영호 / 운영자 정하은
-- 프로젝트: 금정구 미니팜 1호, MF01, 토큰가 5,000원, 총 1000개, 목표 500만원, CAPEX 3000만원
-- 마일스톤 4개: 공간준비(35%, 175만) / 시운전(30%, 150만, IoT14일) / 첫수확(20%, 100만) / 지속운영(15%, 75만, IoT60일)
-- 파트너: DRB동일(기여 1200만, 월회수 30만), 건물주 최영호
+- 프로젝트: 금정구 미니팜 1호, MF01, 토큰가 10,000원, 총 1,750개, 목표 1,750만원, CAPEX 1,750만원, 면적 25평(≈83㎡), 작물 새싹삼
+- 마일스톤 4개: 공간준비(35%, 612.5만, 계약서+영수증+사진) / 시운전(30%, 525만, IoT14일) / 첫수확(20%, 350만, 사진+영수증) / 지속운영(15%, 262.5만, IoT60일+영수증)
+- 파트너: 건물주 최영호 (월 고정 임대료 50만)

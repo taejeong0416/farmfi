@@ -51,7 +51,7 @@
 | Dividend / DividendClaim | 배당 내역 + 수령 기록 |
 | IotData | IoT 센서 데이터 (온도, 습도, CO2, 광량, pH) |
 | Notification | 관리자 알림 (검증 실패, 이상 탐지) |
-| ProjectPartner | 참여 주체 (DRB동일, 건물주) |
+| ProjectPartner | 참여 주체 (건물주) |
 | NavSnapshot | 토큰 가치(NAV) 일별 기록 |
 | DemoCache | 데모 재생용 캐시 |
 
@@ -114,7 +114,7 @@
 | 파일 | 역할 |
 |---|---|
 | `nav-calculator.ts` | 토큰 현재 가치(NAV) 실시간 계산 |
-| `waterfall.ts` | 매출 워터폴 배분 (운영비 → 건물주 → DRB → 투자자 → 운영자) |
+| `waterfall.ts` | 매출 워터폴 배분 (운영비 → 건물주 임대료 → 플랫폼 수수료 → 투자자 → 운영자) |
 | `anomaly-detector.ts` | Z-score 기반 IoT 이상 탐지 |
 | `format.ts` | 금액/날짜/해시 표시 포맷 |
 | `constants.ts` | 상태값 상수 정의 |
