@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
-import Anthropic from "@anthropic-ai/sdk";
-import { detectImageMediaType } from "@/lib/image";
 import { withAICache } from "@/lib/ai-cache";
+import { extractFromImage } from "@/lib/ai-vision";
 
 type MilestoneType = "construction" | "trial_run" | "harvest" | "operation";
 
@@ -26,69 +24,6 @@ interface DetectionResult {
   confidence: number;
 }
 
-async function callOpenAI(
-  imageBase64: string,
-  prompt: string
-): Promise<DetectionResult> {
-  const openai = new OpenAI();
-  const res = await openai.chat.completions.create({
-    model: "gpt-4o",
-    messages: [
-      {
-        role: "user",
-        content: [
-          { type: "text", text: prompt },
-          {
-            type: "image_url",
-            image_url: {
-              url: `data:${detectImageMediaType(imageBase64)};base64,${imageBase64}`,
-            },
-          },
-        ],
-      },
-    ],
-    max_tokens: 1024,
-  });
-
-  const text = res.choices[0]?.message?.content ?? "";
-  const jsonMatch = text.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) throw new Error("No JSON in OpenAI response");
-  return JSON.parse(jsonMatch[0]);
-}
-
-async function callAnthropic(
-  imageBase64: string,
-  prompt: string
-): Promise<DetectionResult> {
-  const anthropic = new Anthropic();
-  const res = await anthropic.messages.create({
-    model: "claude-sonnet-4-20250514",
-    max_tokens: 1024,
-    messages: [
-      {
-        role: "user",
-        content: [
-          {
-            type: "image",
-            source: {
-              type: "base64",
-              media_type: detectImageMediaType(imageBase64),
-              data: imageBase64,
-            },
-          },
-          { type: "text", text: prompt },
-        ],
-      },
-    ],
-  });
-
-  const text =
-    res.content[0]?.type === "text" ? res.content[0].text : "";
-  const jsonMatch = text.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) throw new Error("No JSON in Anthropic response");
-  return JSON.parse(jsonMatch[0]);
-}
-
 export async function POST(req: NextRequest) {
   try {
     const { milestoneId, imageBase64, milestoneType } = await req.json();
@@ -110,12 +45,10 @@ export async function POST(req: NextRequest) {
     const prompt = PROMPTS[milestoneType as MilestoneType] + SUFFIX;
 
     const response = await withAICache(milestoneId, "photo", async () => {
-      let result: DetectionResult;
-      try {
-        result = await callOpenAI(imageBase64, prompt);
-      } catch {
-        result = await callAnthropic(imageBase64, prompt);
-      }
+      const result = await extractFromImage<DetectionResult>(
+        imageBase64,
+        prompt
+      );
 
       const passed =
         result != null &&
