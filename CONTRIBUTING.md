@@ -6,7 +6,7 @@ FarmFi 개발 가이드.
 - **프론트/백엔드**: Next.js 14 (App Router + API Routes), TypeScript
 - **DB**: PostgreSQL (Supabase) + Prisma ORM
 - **블록체인**: Foundry (Solidity), Polygon Amoy 테스트넷, wagmi / viem
-- **AI 검증**: OpenAI GPT-4o + Anthropic Claude (이중화)
+- **AI 검증**: Google Gemini (무료·기본) + OpenAI GPT-4o / Anthropic Claude 폴백
 - **배포**: Vercel (도커 미사용)
 
 ## 개발 환경 셋업
@@ -16,8 +16,9 @@ FarmFi 개발 가이드.
    | 키 | 용도 |
    |---|---|
    | `DATABASE_URL` | Supabase PostgreSQL 연결 문자열 |
-   | `OPENAI_API_KEY` | GPT-4o 검증 |
-   | `ANTHROPIC_API_KEY` | Claude 검증 (fallback) |
+   | `GEMINI_API_KEY` | Gemini 이미지 검증 (기본·무료) |
+   | `OPENAI_API_KEY` | GPT-4o 검증 (선택·폴백) |
+   | `ANTHROPIC_API_KEY` | Claude 검증 (선택·폴백) |
    | `NEXT_PUBLIC_BASE_URL` | 내부 API 호출용 (로컬: `http://localhost:3000`) |
    | `DEMO_MODE` | `live` 또는 `cached` |
    | `FARM_TOKEN_ADDRESS`, `ESCROW_ADDRESS` | 배포된 컨트랙트 주소 (배포 후) |

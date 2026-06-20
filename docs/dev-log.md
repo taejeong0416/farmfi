@@ -5,6 +5,22 @@
 
 ---
 
+## 2026-06-20 — 박태정
+
+### AI 검증 무료화 — Gemini provider + mock 이미지 (verify 실테스트 통과)
+- **provider 추상화** (`src/lib/ai-vision.ts` 신규): `extractFromImage()` 공용 헬퍼 — 키가 설정된 provider만 **Gemini → OpenAI → Anthropic** 순서로 폴백. verify-receipt/contract/photo 라우트의 중복 callOpenAI/callAnthropic 제거 → 헬퍼 호출로 교체(검증 로직 불변).
+- **무료 Gemini** (`@google/genai`, 모델 `gemini-3.5-flash`): 현재 `GEMINI_API_KEY`만 설정 → 무료로 동작. 유료 전환은 `OPENAI/ANTHROPIC_API_KEY`만 채우면 라우트 수정 없이 폴백 체인에 자동 합류.
+- **mock 이미지 5장** (`public/demo/`): ChatGPT 콜라주 1장을 sharp로 5분할(mock-contract / mock-receipt-1·2 / mock-photo-1·3). 원본 콜라주는 삭제.
+- **verify 실테스트 통과**(Gemini 단독): 계약서 금정구·83㎡ 정상 추출(프로젝트 정합), 구매영수증 LED/센서/재배대/관수 키워드 확보(교차검증용), 사진 설비·작물 confidence 0.95+. → **무료 모델로 데모 검증 충분.**
+
+### 다음 할 일
+- 지갑 `PRIVATE_KEY` + faucet POL 준비 → Amoy 배포 + `onchain.ts` 연결 (현재 txHash 전부 null)
+- 데모 e2e: dev 서버 + `/api/demo/step` 8단계 실제 실행(검증→트랜치 해제→NAV까지 도는지). 지금까진 AI 추출만 단독 검증함.
+- 프론트 페이지 전체 미착수(랜딩 외). 배포: Vercel 환경변수(**`GEMINI_API_KEY` 추가**)·시연 전 Supabase Active 확인.
+- 잔여 메모: `next build`는 Windows 한글경로 EISDIR → Vercel(Linux)로만 검증. `NEXT_PUBLIC_BASE_URL` 미설정 시 verify self-fetch 실패. `schema.prisma` ProjectPartner.role 주석 `equipment_partner` 잔존(모델 유지, 시드 미사용).
+
+---
+
 ## 2026-06-19 — 박태정
 
 ### 사업계획서 기준 정합 (plan + 코드 + 문서)
@@ -18,14 +34,7 @@
 - 6/11 `tenant/user not found`의 원인 = **무료 플랜 자동 일시정지**(IPv4/IPv6 아님 — 이미 IPv4 pooler). 대시보드 Restore로 복구.
 - **마이그레이션 gotcha**: 트랜잭션 pooler(6543)는 `prisma db push/pull`이 멈춤 → **세션 pooler(같은 호스트 5432, pgbouncer 제거)** 로 push. 런타임/시드 INSERT는 6543 정상.
 - 시드 완료 + 정합값 DB 반영 확인. **API 스모크 통과**(`/api/projects`·`/api/dashboard` 200). 시드 .env 미로딩 버그 수정(`57a05d1`, dotenv import).
-- **RLS**: Security Advisor 경고 → 14개 테이블 `enable row level security`. Prisma는 소유자라 통과. ⚠️ 새 테이블 `db push` 시 재적용 필요.
 - 관찰: 시드 직후 라이브 NAV=0/-100%(청약·완료 0건) → 데모 돌리면 해소.
-
-### 다음 할 일
-- **[님] AI 키**(`OPENAI/ANTHROPIC_API_KEY`) 입력 + mock 이미지 5장(`public/demo/`) → **[나] verify 실테스트**
-- **[님] 지갑 `PRIVATE_KEY` + faucet POL** → **[나] Amoy 배포 + `onchain.ts` 연결** (현재 txHash 전부 null)
-- **[프론트/우민성]** 페이지 전체 미착수(랜딩 외). **[배포]** Vercel 환경변수·시연 전 Supabase Active 확인.
-- 잔여 메모: `schema.prisma` ProjectPartner.role 주석 `equipment_partner` 잔존(모델 유지, 시드 미사용). `next build`는 Windows 한글경로 EISDIR → Vercel(Linux)로만 검증. `NEXT_PUBLIC_BASE_URL` 미설정 시 verify self-fetch 실패.
 
 ---
 
