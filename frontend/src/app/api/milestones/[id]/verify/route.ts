@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { verifyMilestoneOnChain } from "@/lib/onchain";
 
 function serialize(obj: any): any {
   return JSON.parse(
@@ -143,12 +144,20 @@ export async function POST(
         },
       });
 
+      // 검증 통과를 온체인에 기록 (배포 전이면 null, 체인 오류 시 DB는 유지)
+      let txHash: string | null = null;
+      try {
+        txHash = await verifyMilestoneOnChain(milestone.seq);
+      } catch (e) {
+        console.error("verifyMilestoneOnChain failed:", e);
+      }
+
       return NextResponse.json(
         serialize({
           passed: true,
           signals,
           retryCount: milestone.retryCount,
-          txHash: null,
+          txHash,
         })
       );
     }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { releaseTrancheOnChain } from "@/lib/onchain";
 
 function serialize(obj: any): any {
   return JSON.parse(
@@ -116,11 +117,19 @@ export async function POST(
       return completed;
     });
 
+    // 트랜치 자동집행을 온체인에 실행 (배포 전이면 null, 체인 오류 시 DB는 유지)
+    let txHash: string | null = null;
+    try {
+      txHash = await releaseTrancheOnChain(milestone.seq);
+    } catch (e) {
+      console.error("releaseTrancheOnChain failed:", e);
+    }
+
     return NextResponse.json(
       serialize({
         success: true,
         milestone: updatedMilestone,
-        txHash: null,
+        txHash,
       })
     );
   } catch (error) {
