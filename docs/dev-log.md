@@ -5,19 +5,31 @@
 
 ---
 
+## 2026-06-21 — 박태정
+
+### 데모 8단계 e2e 실제 실행 — 검증 차단 버그 2건 잡고 전체 통과
+dev 서버 띄우고 `/api/demo/reset` → `step 1~8` 실제 실행(Gemini 실호출). 그동안 AI 추출만 단독 검증했는데, e2e로 처음 끝까지 돌려 **2건의 신호 정합 버그** 발견·수정:
+- **사진 객체 정규화** (`verify-photo`): Gemini가 객체를 `{label, box_2d}` 배열로 반환 → 코드가 `string[]` 가정으로 `join()`해 `"[object Object]"`가 됨. **마일스톤1 crossCheck(영수증↔사진)가 항상 실패**. label 문자열로 정규화해 해결.
+- **영수증 신호 분리** (`verify-receipt`): 마일스톤4 `conditionText`가 "IoT 60일 + 복수 판매 영수증"을 묶어 전달 → 영수증 검증기가 IoT 가동률까지 떠안아 `matchesCondition=false`. 프롬프트에 "영수증으로 확인 불가한 IoT·센서·사진 요건은 별도 신호로 검증되니 판단 제외" 명시. 영수증은 자기 조건(복수 판매)만 평가.
+- **결과**: 8단계 전부 통과 — 청약 1,750구좌 완판, 트랜치 17,500,000 **전액 해제**(remaining 0), 마일스톤 1~4 completed, 배당 분배, status `operating`. 정산 워터폴도 정합(투자자배당 1,013,565 / perToken 579).
+- 메모: AiCache는 `milestoneId`별 키라 reset(새 마일스톤 id)하면 자동 무효화. 단일 스텝 재검증 시엔 해당 캐시 행 삭제 필요.
+
+### 다음 할 일
+- 지갑 `PRIVATE_KEY` + faucet POL 준비 → Amoy 배포 + `onchain.ts`(미생성) 연결 (현재 txHash 전부 null)
+- 프론트 페이지 전체 미착수(랜딩 외) — 대시보드/프로젝트상세/청약 화면. 백엔드 API는 e2e 검증 완료라 붙이기만 하면 됨.
+- 배포: Vercel 환경변수(**`GEMINI_API_KEY` 추가**)·시연 전 Supabase Active 확인.
+- 잔여 메모: `next build`는 Windows 한글경로 EISDIR → Vercel(Linux)로만 검증. `frontend/_iot-test.ts`는 IoT 검증용 임시 스크래치(언트랙, 정리 대상).
+
+---
+
 ## 2026-06-20 — 박태정
 
 ### AI 검증 무료화 — Gemini provider + mock 이미지 (verify 실테스트 통과)
 - **provider 추상화** (`src/lib/ai-vision.ts` 신규): `extractFromImage()` 공용 헬퍼 — 키가 설정된 provider만 **Gemini → OpenAI → Anthropic** 순서로 폴백. verify-receipt/contract/photo 라우트의 중복 callOpenAI/callAnthropic 제거 → 헬퍼 호출로 교체(검증 로직 불변).
 - **무료 Gemini** (`@google/genai`, 모델 `gemini-3.5-flash`): 현재 `GEMINI_API_KEY`만 설정 → 무료로 동작. 유료 전환은 `OPENAI/ANTHROPIC_API_KEY`만 채우면 라우트 수정 없이 폴백 체인에 자동 합류.
 - **mock 이미지 5장** (`public/demo/`): ChatGPT 콜라주 1장을 sharp로 5분할(mock-contract / mock-receipt-1·2 / mock-photo-1·3). 원본 콜라주는 삭제.
-- **verify 실테스트 통과**(Gemini 단독): 계약서 금정구·83㎡ 정상 추출(프로젝트 정합), 구매영수증 LED/센서/재배대/관수 키워드 확보(교차검증용), 사진 설비·작물 confidence 0.95+. → **무료 모델로 데모 검증 충분.**
-
-### 다음 할 일
-- 지갑 `PRIVATE_KEY` + faucet POL 준비 → Amoy 배포 + `onchain.ts` 연결 (현재 txHash 전부 null)
-- 데모 e2e: dev 서버 + `/api/demo/step` 8단계 실제 실행(검증→트랜치 해제→NAV까지 도는지). 지금까진 AI 추출만 단독 검증함.
-- 프론트 페이지 전체 미착수(랜딩 외). 배포: Vercel 환경변수(**`GEMINI_API_KEY` 추가**)·시연 전 Supabase Active 확인.
-- 잔여 메모: `next build`는 Windows 한글경로 EISDIR → Vercel(Linux)로만 검증. `NEXT_PUBLIC_BASE_URL` 미설정 시 verify self-fetch 실패. `schema.prisma` ProjectPartner.role 주석 `equipment_partner` 잔존(모델 유지, 시드 미사용).
+- **verify 실테스트 통과**(Gemini 단독): 계약서 금정구·83㎡ 정상 추출(프로젝트 정합), 구매영수증 LED/센서/재배대/관수 키워드 확보(교차검증용), 사진 설비·작물 confidence 0.95+. → **무료 모델로 데모 검증 충분.** (※ e2e crossCheck/조건 정합 버그는 06-21에 수정)
+- 잔여 메모: `NEXT_PUBLIC_BASE_URL` 미설정 시 verify self-fetch는 localhost:3000 기본값 사용. `schema.prisma` ProjectPartner.role 주석 `equipment_partner` 잔존(모델 유지, 시드 미사용).
 
 ---
 
