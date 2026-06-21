@@ -50,19 +50,22 @@ export async function POST(req: NextRequest) {
         prompt
       );
 
+      // Gemini가 객체를 {label, box_2d} 형태로 반환할 수 있어 label 문자열로 정규화
+      const rawObjects = Array.isArray(result?.objects) ? result.objects : [];
+      const objects: string[] = rawObjects.map((o: any) =>
+        typeof o === "string" ? o : (o?.label ?? o?.name ?? String(o))
+      );
+
       const passed =
-        result != null &&
-        result.confidence >= 0.6 &&
-        Array.isArray(result.objects) &&
-        result.objects.length > 0;
+        result != null && result.confidence >= 0.6 && objects.length > 0;
 
       const reason = passed
-        ? `${result.objects.length}개 객체 감지: ${result.objects.join(", ")}`
+        ? `${objects.length}개 객체 감지: ${objects.join(", ")}`
         : "사진에서 충분한 객체를 감지하지 못했습니다.";
 
       return {
         passed,
-        detectedObjects: result?.objects ?? [],
+        detectedObjects: objects,
         confidence: result?.confidence ?? 0,
         reason,
       };

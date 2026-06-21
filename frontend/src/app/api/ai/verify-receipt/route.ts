@@ -7,7 +7,7 @@ function buildPrompt(conditionText: string | null): string {
   const base =
     "영수증 이미지에서 금액, 항목, 일자를 JSON으로 추출해주세요.";
   const condition = conditionText
-    ? ` 그리고 이 영수증이 다음 마일스톤 조건에 부합하는 증빙인지 판단해주세요: "${conditionText}".`
+    ? ` 그리고 이 영수증이 다음 마일스톤의 영수증 관련 요건에 부합하는 증빙인지 판단해주세요: "${conditionText}". 단, IoT 가동률·센서 데이터·현장 사진 등 영수증만으로 확인할 수 없는 요건은 별도 신호로 검증되므로 판단에서 제외하고, 영수증으로 확인 가능한 부분만 평가하세요.`
     : "";
   return (
     base +
