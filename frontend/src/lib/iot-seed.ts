@@ -37,7 +37,7 @@ export function buildIotRecords(projectId: string, now: Date): IotSeedRecord[] {
       const isAnomaly = Math.random() < 0.02; // 2% anomaly rate
 
       let temperature = 23 + Math.sin(hour / 3) * 2 + (Math.random() - 0.5);
-      let humidity = 65 + Math.cos(hour / 4) * 8 + (Math.random() * 3 - 1.5);
+      let humidity = 80 + Math.cos(hour / 4) * 5 + (Math.random() * 3 - 1.5);
       let co2Level = 800 + Math.random() * 200;
       let lightIntensity = hour >= 6 && hour <= 20 ? 12000 + Math.random() * 3000 : 0;
       let phLevel = 6.0 + Math.random() * 0.5;

@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   detectAnomalies,
-  calculateUptimeRate,
+  uptimeRate,
   IoTReading,
-} from "@/lib/anomaly-detector";
+} from "@/lib/iot-health";
 import { prisma } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
       ...new Set(anomalyResults.flatMap((r) => r.affectedSensors)),
     ];
 
-    let uptimeRate: number | undefined;
+    let uptime: number | undefined;
 
     if (milestoneId) {
       const milestone = await prisma.milestone.findUnique({
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
       });
 
       if (milestone?.iotMinDays) {
-        // 가동률은 최근 100건이 아니라 iotMinDays 기간 전체로 계산
+        // 가동률은 최근 100건이 아니라 iotMinDays 기간 전체를 도메인 정상범위로 판정
         const windowStart = new Date(
           Date.now() - milestone.iotMinDays * 24 * 60 * 60 * 1000
         );
@@ -68,20 +68,16 @@ export async function POST(req: NextRequest) {
           orderBy: { recordedAt: "desc" },
         });
 
-        if (windowRecords.length === 0) {
-          uptimeRate = 0;
-        } else {
-          const windowResults = detectAnomalies(
-            windowRecords.map((r) => ({
-              temperature: r.temperature,
-              humidity: r.humidity,
-              co2Level: r.co2Level,
-              lightIntensity: r.lightIntensity,
-              phLevel: r.phLevel,
-            }))
-          );
-          uptimeRate = calculateUptimeRate(windowResults);
-        }
+        // 데이터 없으면 uptimeRate가 0 반환 (fail-closed)
+        uptime = uptimeRate(
+          windowRecords.map((r) => ({
+            temperature: r.temperature,
+            humidity: r.humidity,
+            co2Level: r.co2Level,
+            lightIntensity: r.lightIntensity,
+            phLevel: r.phLevel,
+          }))
+        );
       }
     }
 
@@ -90,7 +86,7 @@ export async function POST(req: NextRequest) {
       anomalyScore: Math.round(maxScore * 100) / 100,
       affectedSensors: allAffected,
       dataCount: iotRecords.length,
-      uptimeRate,
+      uptimeRate: uptime,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { detectAnomalies } from "@/lib/anomaly-detector";
+import { detectAnomalies } from "@/lib/iot-health";
 
 function serialize(obj: any): any {
   return JSON.parse(
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
 
     const temperature = 23 + Math.sin(hour / 3) * 2 + (Math.random() - 0.5);
     const humidity =
-      65 + Math.cos(hour / 4) * 8 + (Math.random() * 3 - 1.5);
+      80 + Math.cos(hour / 4) * 5 + (Math.random() * 3 - 1.5);
     const co2Level = 800 + Math.random() * 200;
     const lightIntensity =
       hour >= 6 && hour <= 20 ? 12000 + Math.random() * 3000 : 0;
