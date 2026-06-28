@@ -1,101 +1,51 @@
-import Image from "next/image";
+import Link from "next/link";
+import {
+  Flow,
+  GreenBand,
+  Hero,
+  MarketProducts,
+  ProjectGrid,
+  RoleCards,
+  Section,
+  Stats,
+} from "@/components/FarmFi";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+    <main className="page">
+      <Hero
+        eyebrow="공간 · 운영 · 투자 · 소비를 연결"
+        title="도심 유휴공간을 함께 키우는"
+        green="스마트팜 플랫폼"
+        lead="건물주는 공간을 제공하고, 운영자는 농장을 운영합니다. 투자자는 프로젝트를 지원하고, 소비자는 신선한 농산물을 만납니다."
+        actions={
+          <>
+            <Link className="btn" href="/projects">
+              프로젝트 보기 →
+            </Link>
+            <Link className="ghost" href="/space">
+              공간 등록하기 →
+            </Link>
+          </>
+        }
+        chips={["투명한 운영과 안전한 기록", "부산광역시", "BIFC", "Chainlink"]}
+      />
+      <Section title="FarmFi는 이렇게 연결됩니다">
+        <RoleCards />
+      </Section>
+      <Section title="도시 유휴공간이 수익 농장으로 바뀌는 과정">
+        <Flow />
+      </Section>
+      <Section title="주목할 만한 프로젝트" aside={<Link className="link" href="/projects">모든 프로젝트 보기 →</Link>}>
+        <ProjectGrid limit={3} />
+      </Section>
+      <Section title="플랫폼 현황">
+        <Stats />
+      </Section>
+      <Section title="지금, 가까운 미니팜에서 신선함을 만나보세요" aside={<Link className="link" href="/market">마켓 더 보기 →</Link>}>
+        <MarketProducts />
+      </Section>
+      <GreenBand />
+    </main>
   );
 }

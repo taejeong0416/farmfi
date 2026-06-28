@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-label="Fresh produce illustration">
+  <defs>
+    <linearGradient id="fresh" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#f7fff8"/>
+      <stop offset="1" stop-color="#dceee0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="760" fill="url(#fresh)"/>
+  <g opacity=".24" fill="#0b6b3e">
+    <path d="M85 630c77-132 187-197 330-194-72 120-182 185-330 194Z"/>
+    <path d="M795 156c128 24 219 98 273 222-133-15-224-89-273-222Z"/>
+  </g>
+  <rect x="267" y="397" width="650" height="190" rx="18" fill="#b58252"/>
+  <path d="M267 438h650M304 397v190M430 397v190M556 397v190M682 397v190M808 397v190" stroke="#8c603e" stroke-width="8"/>
+  <g>
+    <g fill="#37a957">
+      <ellipse cx="372" cy="328" rx="96" ry="142" transform="rotate(-26 372 328)"/>
+      <ellipse cx="462" cy="324" rx="88" ry="135" transform="rotate(18 462 324)"/>
+      <ellipse cx="786" cy="326" rx="98" ry="144" transform="rotate(24 786 326)"/>
+      <ellipse cx="690" cy="318" rx="92" ry="128" transform="rotate(-18 690 318)"/>
+    </g>
+    <g fill="#0c7b43">
+      <ellipse cx="594" cy="324" rx="72" ry="112" transform="rotate(8 594 324)"/>
+      <ellipse cx="860" cy="340" rx="76" ry="118" transform="rotate(-22 860 340)"/>
+    </g>
+    <g fill="#e23c2f">
+      <circle cx="528" cy="405" r="42"/><circle cx="590" cy="392" r="38"/><circle cx="646" cy="418" r="44"/>
+      <circle cx="710" cy="400" r="38"/><circle cx="758" cy="430" r="36"/>
+    </g>
+    <g stroke="#1f8c50" stroke-width="10" stroke-linecap="round">
+      <path d="M528 365c-12-32-2-55 28-70M646 374c-6-30 8-52 42-67M758 395c-6-28 8-48 40-58"/>
+    </g>
+  </g>
+</svg>

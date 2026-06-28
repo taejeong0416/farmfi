@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 820" role="img" aria-label="Urban rooftop smart farm illustration">
+  <defs>
+    <linearGradient id="sky" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#eaf6ff"/>
+      <stop offset=".55" stop-color="#f9fcf8"/>
+      <stop offset="1" stop-color="#dfeee2"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" x2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".92"/>
+      <stop offset="1" stop-color="#cfe3dc" stop-opacity=".72"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#063d25" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <rect width="1400" height="820" fill="url(#sky)"/>
+  <g opacity=".34" fill="#9eb4c1">
+    <rect x="740" y="132" width="76" height="430" rx="4"/>
+    <rect x="835" y="84" width="98" height="478" rx="4"/>
+    <rect x="958" y="178" width="74" height="384" rx="4"/>
+    <rect x="1054" y="58" width="108" height="504" rx="4"/>
+    <rect x="1186" y="156" width="80" height="406" rx="4"/>
+    <rect x="1284" y="112" width="58" height="450" rx="4"/>
+  </g>
+  <path d="M0 545c137-66 276-77 413-35 163 51 260 35 402-29 186-84 383-51 585 39v300H0Z" fill="#d7ead9"/>
+  <path d="M0 604c174-45 331-42 470 8 143 52 294 50 454-3 168-56 326-52 476 3v208H0Z" fill="#c8e2c9"/>
+  <g filter="url(#shadow)">
+    <path d="M615 362h550l116 90v198H711L615 570Z" fill="#f9fbf8"/>
+    <path d="M665 394h470l87 65H744Z" fill="url(#glass)" stroke="#b9cec4" stroke-width="6"/>
+    <path d="M744 459h478v151H744Z" fill="url(#glass)" stroke="#9fb8ad" stroke-width="6"/>
+    <path d="M665 394v176l79 40V459Z" fill="#eff6f2" stroke="#9fb8ad" stroke-width="6"/>
+    <g stroke="#7f9c90" stroke-width="7">
+      <path d="M830 459v151M916 459v151M1002 459v151M1088 459v151M744 508h478M744 560h478"/>
+      <path d="M725 430h470M692 482h72M692 532h72"/>
+    </g>
+    <g fill="#0b6f3e">
+      <path d="M802 494c38-42 88-29 106 8-35 16-70 14-106-8Z"/>
+      <path d="M930 546c43-43 98-27 114 13-41 17-78 13-114-13Z"/>
+      <path d="M1058 496c39-41 92-28 110 10-37 18-74 15-110-10Z"/>
+      <path d="M846 579c35-33 80-23 96 10-34 14-64 11-96-10Z"/>
+    </g>
+  </g>
+  <g fill="#0a6b3f">
+    <ellipse cx="220" cy="665" rx="42" ry="18"/>
+    <path d="M220 665c-7-67 18-111 68-138-2 64-21 109-68 138Z"/>
+    <path d="M220 665c-47-30-70-67-72-112 45 14 70 51 72 112Z"/>
+    <ellipse cx="360" cy="688" rx="48" ry="20"/>
+    <path d="M360 688c-9-74 22-124 79-154-4 72-26 122-79 154Z"/>
+    <path d="M360 688c-51-34-78-76-80-127 50 15 78 58 80 127Z"/>
+  </g>
+  <rect x="648" y="652" width="620" height="36" rx="18" fill="#8d6f4b"/>
+</svg>
