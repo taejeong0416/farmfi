@@ -13,12 +13,33 @@ model User {
   name          String
   role          String         // investor, landlord, operator
   email         String?
-  walletAddress String?
+  walletAddress String?        @unique
+  nonce         String?        // SIWE 로그인 챌린지 nonce
   balance       BigInt         @default(0) // 원화 잔액 (모의)
   createdAt     DateTime       @default(now())
   transactions  Transaction[]
   tokenHoldings TokenHolding[]
   dividendClaims DividendClaim[]
+  spaces        Space[]
+}
+
+// ─── 유휴공간 등록 ───
+model Space {
+  id               String   @id @default(cuid())
+  ownerId          String?
+  owner            User?    @relation(fields: [ownerId], references: [id])
+  spaceType        String   // rooftop, vacant_store, indoor
+  address          String
+  area             String   // ~50평, 50~100평 등 구간 문자열
+  electricity      String   // 전기 가능/부분 가능 등
+  water            String   // 수도 가능/부분 가능 등
+  lighting         String   // 채광 조건: 매우 좋음/좋음/보통/낮음
+  preferredMode    String   // 임대형, 수익 공유형, 협의 가능
+  photos           String[] // Supabase Storage URL 목록
+  suitabilityScore Int?     // 스마트팜 적합도 (%)
+  estimatedRent    Int?     // 예상 월 임대 수익 (원)
+  status           String   @default("submitted") // submitted, reviewing, approved, rejected
+  createdAt        DateTime @default(now())
 }
 
 // ─── 프로젝트 ───
