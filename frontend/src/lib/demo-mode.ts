@@ -31,16 +31,19 @@ export async function saveCacheResult(
   blockNumber: number | null,
   result: any
 ) {
-  await prisma.demoCache.upsert({
-    where: {
-      id:
-        (
-          await prisma.demoCache.findFirst({
-            where: { step, signalType: signalType ?? undefined },
-          })
-        )?.id ?? "",
-    },
-    update: { txHash, blockNumber, result },
-    create: { step, signalType, txHash, blockNumber, result },
+  // (step, signalType) 조합당 1건 유지. DemoCache에는 복합 unique가 없어
+  // findFirst → update/create 로 멱등 저장한다.
+  const existing = await prisma.demoCache.findFirst({
+    where: { step, signalType: signalType ?? null },
   });
+  if (existing) {
+    await prisma.demoCache.update({
+      where: { id: existing.id },
+      data: { txHash, blockNumber, result },
+    });
+  } else {
+    await prisma.demoCache.create({
+      data: { step, signalType, txHash, blockNumber, result },
+    });
+  }
 }

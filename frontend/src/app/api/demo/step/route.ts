@@ -154,9 +154,39 @@ const stepExecutors: Record<number, StepExecutor> = {
   8: () => verifyAndCompleteMilestone(4),
 };
 
+// 마일스톤 검증 스텝(4·5·6·8)은 verify.passed가 true여야 성공.
+// 그 외 스텝(청약 1·2·3, 배당 7)은 error 필드가 없으면 성공으로 본다.
+// 실패한 스텝은 캐시하지 않는다 (cached 모드에서 실패를 재생하지 않도록).
+function isStepSuccess(result: any): boolean {
+  if (!result || typeof result !== "object") return false;
+  if ("error" in result && result.error) return false;
+  if ("verify" in result) {
+    return result.verify?.passed === true;
+  }
+  return true;
+}
+
+// 결과에서 온체인 txHash를 추출 (트랜치 해제 → 검증 → 최상위 순).
+function extractTxHash(result: any): string | null {
+  if (!result || typeof result !== "object") return null;
+  return (
+    result?.complete?.txHash ??
+    result?.verify?.txHash ??
+    result?.txHash ??
+    null
+  );
+}
+
+function extractBlockNumber(result: any): number | null {
+  if (!result || typeof result !== "object") return null;
+  const bn = result?.complete?.blockNumber ?? result?.blockNumber ?? null;
+  return typeof bn === "number" ? bn : null;
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const { step } = await request.json();
+    const body = await request.json();
+    const { step } = body;
 
     if (!step || step < 1 || step > 8) {
       return NextResponse.json(
@@ -165,14 +195,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check cache
-    if (getDemoMode() === "cached") {
+    // 모드 결정: 요청 body의 mode가 있으면 우선(시연 중 재시작 없이 토글), 없으면 env.
+    const mode =
+      body.mode === "cached" || body.mode === "live"
+        ? body.mode
+        : getDemoMode();
+
+    // cached 모드: 저장된 결과/ txHash를 재생 (컨트랙트·AI 재호출 없음).
+    if (mode === "cached") {
       const cached = await getCachedResult(step);
       if (cached) {
         return NextResponse.json(
-          serialize({ step, status: "completed", result: cached, fromCache: true })
+          serialize({
+            step,
+            status: "completed",
+            result: cached,
+            fromCache: true,
+          })
         );
       }
+      // 캐시 미스 시에는 아래에서 실제 실행으로 폴백 (시연 안전망).
     }
 
     // Execute step
@@ -186,8 +228,16 @@ export async function POST(request: NextRequest) {
 
     const result = await executor();
 
-    // Save to cache
-    await saveCacheResult(step, null, null, null, result);
+    // 성공한 스텝만 결과 + txHash를 캐시에 저장 (재실행 시 replay 소스가 됨).
+    if (isStepSuccess(result)) {
+      await saveCacheResult(
+        step,
+        null,
+        extractTxHash(result),
+        extractBlockNumber(result),
+        result
+      );
+    }
 
     return NextResponse.json(
       serialize({ step, status: "completed", result })
