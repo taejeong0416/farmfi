@@ -16,11 +16,43 @@ model User {
   walletAddress String?        @unique
   nonce         String?        // SIWE 로그인 챌린지 nonce
   balance       BigInt         @default(0) // 원화 잔액 (모의)
+  // ─── 신원 인증 / KYC (OpenDID K-DID 연동 예정) ───
+  identityVerified    Boolean   @default(false) // 실명 인증 완료 여부
+  verifiedAt          DateTime? // 인증 완료 시각
+  realName            String?   // 검증된 실명
+  birthDate           DateTime? // 생년월일 (적격투자 연령 판단)
+  investorAnnualLimit BigInt?   // 연간 투자한도 (원 단위, 자본시장법 룰엔진 산출)
+  businessRegNo       String?   // 사업자등록번호 (건물주/운영자)
   createdAt     DateTime       @default(now())
   transactions  Transaction[]
   tokenHoldings TokenHolding[]
   dividendClaims DividendClaim[]
   spaces        Space[]
+  operatorApplications  OperatorApplication[]
+  identityVerifications IdentityVerification[]
+}
+
+// ─── 운영자 지원 신청 ───
+model OperatorApplication {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+  region         String   // 희망 운영 지역
+  cropExperience String   // 작물 재배 경험
+  availableHours String   // 주간 투입 가능 시간
+  status         String   @default("applied") // applied → docs → education → matched → operating
+  createdAt      DateTime @default(now())
+}
+
+// ─── 신원 인증 세션 (OpenDID Verifier 흐름) ───
+model IdentityVerification {
+  id        String   @id @default(cuid())
+  userId    String?  // 로그인 전 세션도 허용 (익명 → 인증 후 연결)
+  user      User?    @relation(fields: [userId], references: [id])
+  txId      String   @unique // Verifier 트랜잭션 ID (request-offer-qr)
+  status    String   @default("pending") // pending → submitted → verified → failed
+  claims    Json?    // confirm-verify로 받은 검증 클레임
+  createdAt DateTime @default(now())
 }
 
 // ─── 유휴공간 등록 ───
