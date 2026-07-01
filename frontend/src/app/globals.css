@@ -869,6 +869,64 @@ h2 strong {
   line-height: 1.55;
 }
 
+/* ── Hero detail thumb content ─────────────────────── */
+.thumb-detail-inner {
+  padding-top: 210px;
+}
+
+/* ── Mobile nav: hamburger + drawer ────────────────── */
+.nav-hamburger {
+  display: none;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.nav-hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--ink);
+  border-radius: 2px;
+  transition: opacity 180ms ease;
+}
+
+.nav-mobile-menu {
+  padding: 4px 0 20px;
+  border-top: 1px solid var(--line);
+}
+
+.nav-mobile-menu a {
+  display: block;
+  padding: 13px 0;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
+}
+
+.nav-mobile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+/* ── Table horizontal scroll ────────────────────────── */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 @media (max-width: 980px) {
   .shell {
     width: min(100% - 32px, 720px);
@@ -876,13 +934,17 @@ h2 strong {
 
   .nav-inner {
     min-height: auto;
-    padding: 18px 0;
-    align-items: flex-start;
+    padding: 14px 0;
+    align-items: center;
   }
 
   .nav-links,
   .nav-actions {
     display: none;
+  }
+
+  .nav-hamburger {
+    display: flex;
   }
 
   .hero-grid,
@@ -899,6 +961,7 @@ h2 strong {
 
   .hero-art {
     min-height: 320px;
+    margin-right: 0;
   }
 
   .grid-4,
@@ -929,5 +992,118 @@ h2 strong {
   .band {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .section-head {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+}
+
+/* ── 480 px: genuine phone widths ───────────────────── */
+@media (max-width: 480px) {
+  .shell {
+    width: min(100% - 24px, 720px);
+  }
+
+  h1 {
+    font-size: clamp(32px, 9vw, 48px);
+  }
+
+  .section h2 {
+    font-size: 22px;
+  }
+
+  .section-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  /* 4-col and 5-col grids → 2-col on phones (denser than 1-col) */
+  .grid-4,
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* kv: 3-col → 2-col so amounts don't clip */
+  .kv {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* filterbar: 2-col at 980px → 1-col on phones */
+  .filterbar {
+    grid-template-columns: 1fr;
+  }
+
+  /* hero art adjustments for mobile */
+  .hero-art::before {
+    inset: 0;
+    opacity: 0.42;
+  }
+
+  .hero-art::after {
+    width: 90px;
+  }
+
+  .farm-visual-card {
+    right: 0;
+    top: 16px;
+    width: 100%;
+    height: 200px;
+  }
+
+  /* project detail hero: reduce height so content isn't cut */
+  .thumb.detail {
+    height: 200px;
+  }
+
+  .thumb-detail-inner {
+    padding-top: 100px;
+  }
+
+  /* reduce card padding on narrow screens */
+  .report-card {
+    padding: 16px;
+  }
+
+  .form-panel {
+    padding: 16px;
+  }
+
+  .chart {
+    padding: 16px;
+  }
+
+  .band {
+    padding: 20px 18px;
+    gap: 14px;
+  }
+
+  /* scale down oversized numerals */
+  .big-number {
+    font-size: 28px;
+  }
+
+  .metric strong {
+    font-size: 22px;
+  }
+
+  /* seg chips: tighter on very small screens */
+  .seg span {
+    min-width: auto;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  /* timeline: shrink auto column so long amounts don't overflow */
+  .timeline li {
+    grid-template-columns: 24px 1fr;
+    row-gap: 2px;
+  }
+
+  .timeline li > :last-child {
+    grid-column: 2;
+    text-align: left;
   }
 }

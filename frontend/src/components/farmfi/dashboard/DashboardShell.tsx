@@ -309,43 +309,47 @@ export function DashboardShell({
 
           <div className="grid-2" style={{ marginTop: 24 }}>
             <Panel title="최근 거래 내역">
-              <table className="table">
-                <tbody>
-                  {transactions.length > 0 ? (
-                    transactions.map((tx) => (
-                      <tr key={tx.id}>
-                        <td>{formatDate(tx.createdAt)}</td>
-                        <td>{TX_TYPE_LABEL[tx.type] ?? tx.type}</td>
-                        <td>{formatCompactWon(tx.amount)}</td>
-                        <td>{tx.txHash ?? "대기"}</td>
+              <div className="table-scroll">
+                <table className="table">
+                  <tbody>
+                    {transactions.length > 0 ? (
+                      transactions.map((tx) => (
+                        <tr key={tx.id}>
+                          <td>{formatDate(tx.createdAt)}</td>
+                          <td>{TX_TYPE_LABEL[tx.type] ?? tx.type}</td>
+                          <td>{formatCompactWon(tx.amount)}</td>
+                          <td>{tx.txHash ?? "대기"}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td className="muted">거래 내역이 없습니다</td>
                       </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td className="muted">거래 내역이 없습니다</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </Panel>
             <Panel title="배당 내역">
-              <table className="table">
-                <tbody>
-                  {dividends.length > 0 ? (
-                    dividends.map((d) => (
-                      <tr key={d.id}>
-                        <td>{d.period}</td>
-                        <td>{formatCompactWon(d.totalDividend)}</td>
-                        <td>좌당 {formatWon(d.perToken)}</td>
+              <div className="table-scroll">
+                <table className="table">
+                  <tbody>
+                    {dividends.length > 0 ? (
+                      dividends.map((d) => (
+                        <tr key={d.id}>
+                          <td>{d.period}</td>
+                          <td>{formatCompactWon(d.totalDividend)}</td>
+                          <td>좌당 {formatWon(d.perToken)}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td className="muted">배당 내역이 없습니다</td>
                       </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td className="muted">배당 내역이 없습니다</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </Panel>
           </div>
         </section>

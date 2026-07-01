@@ -60,7 +60,7 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
       <main className="page">
         <section className="hero">
           <div className="thumb detail">
-            <div className="shell" style={{ paddingTop: 210, color: "#fff" }}>
+            <div className="shell thumb-detail-inner" style={{ color: "#fff" }}>
               <span className="badge">{projectStatusLabel(project.status)}</span>
               <h1 style={{ marginTop: 18 }}>{project.name}</h1>
               <p className="lead" style={{ color: "rgba(255,255,255,.9)" }}>

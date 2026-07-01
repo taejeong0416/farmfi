@@ -66,7 +66,7 @@ export function AdminDashboard() {
 
         {project ? (
           <>
-            <div className="stats-grid" style={{ gridTemplateColumns: "repeat(4, minmax(0,1fr))" }}>
+            <div className="grid-4">
               <Metric label="모집 금액" value={`${formatKRW(project.currentAmount)} / ${formatKRW(project.targetAmount)}`} />
               <Metric label="에스크로 보관액" value={formatKRW(project.escrow?.remaining ?? 0)} />
               <Metric label="총 해제액" value={formatKRW(project.escrow?.totalReleased ?? 0)} />
