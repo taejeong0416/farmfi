@@ -28,7 +28,7 @@ export async function withAICache<T>(
   milestoneId: string,
   signalType: string,
   apiFn: () => Promise<T>,
-  timeoutMs: number = 15000
+  timeoutMs: number = 30000
 ): Promise<T & { fromCache?: boolean }> {
   const cached = await getCachedAIResult(milestoneId, signalType);
   if (cached) {
