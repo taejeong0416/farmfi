@@ -1107,3 +1107,104 @@ h2 strong {
     text-align: left;
   }
 }
+
+/* ─────────────────────────────────────────────────────────────
+   Phase 0 공용 클래스 — onboarding / signup / identity / role / mypage
+   (Phase 1 페이지가 재사용. globals.css는 Phase 1에서 수정 금지)
+   ───────────────────────────────────────────────────────────── */
+
+/* 선택형 세그먼트를 인터랙티브로 사용할 때: 컨테이너에 .is-interactive 부여.
+   기존 첫 항목 자동 강조를 해제하고, .is-active가 붙은 항목만 강조한다. */
+.seg span {
+  cursor: pointer;
+}
+.seg.is-interactive span:first-child {
+  border-color: var(--line);
+  background: #fff;
+  color: #4e5b54;
+}
+.seg span.is-active,
+.seg.is-interactive span.is-active {
+  border-color: #72aa86;
+  background: #f0f8f3;
+  color: var(--green-800);
+}
+
+/* 세로 스택 입력 필드 (온보딩/가입 폼). 입력 요소는 기존 .input 재사용. */
+.field-stack {
+  display: grid;
+  gap: 8px;
+}
+.field-stack label {
+  font-size: 14px;
+  font-weight: 900;
+}
+
+/* 신원 인증(OpenDID) QR 패널 */
+.qr-panel {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  padding: 32px;
+  text-align: center;
+}
+.qr-box {
+  display: grid;
+  width: 220px;
+  height: 220px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--muted);
+  font-size: 13px;
+}
+.qr-status {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--green-800);
+}
+
+/* 신청/인증 진행 단계 표시 (applied → docs → education → matched → operating 등) */
+.stepline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.stepline .step {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: #fff;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+.stepline .step.is-active {
+  border-color: #72aa86;
+  background: #f0f8f3;
+  color: var(--green-800);
+}
+.stepline .step.is-done {
+  border-color: var(--green-700);
+  background: var(--green-700);
+  color: #fff;
+}
+
+/* 상태 배지 색상 변형 (기존 .badge 기반). */
+.badge.is-pending {
+  background: #b98900;
+}
+.badge.is-ok {
+  background: var(--green-700);
+}
+.badge.is-fail {
+  background: #b02a2a;
+}
+.badge.is-muted {
+  background: #7a867d;
+}

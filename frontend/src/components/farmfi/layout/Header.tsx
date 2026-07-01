@@ -18,26 +18,11 @@ const nav = [
 ];
 
 export function Header() {
-  const { user, isAuthenticated, isLoading, login, logout } = useAuth();
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
   const [authError, setAuthError] = useState<string | null>(null);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const closeMobile = () => setIsMobileOpen(false);
-
-  const handleLogin = async () => {
-    setAuthError(null);
-    setIsLoggingIn(true);
-    try {
-      await login();
-    } catch (err) {
-      setAuthError(
-        err instanceof Error ? err.message : "로그인에 실패했습니다.",
-      );
-    } finally {
-      setIsLoggingIn(false);
-    }
-  };
 
   const handleLogout = async () => {
     setAuthError(null);
@@ -48,6 +33,45 @@ export function Header() {
         err instanceof Error ? err.message : "로그아웃에 실패했습니다.",
       );
     }
+  };
+
+  // 세션 상태 기반 계정 메뉴 라벨 (이름 우선, 없으면 지갑 주소 축약).
+  const accountLabel =
+    user?.name ??
+    (user?.walletAddress ? shortenHash(user.walletAddress) : "내 정보");
+
+  // 로그인/회원가입 vs 내 정보/로그아웃 — 데스크톱·모바일 공통 렌더.
+  const renderAuthNav = (onNavigate?: () => void) => {
+    if (isLoading) return null;
+    if (isAuthenticated) {
+      return (
+        <>
+          <Link className="ghost" href="/mypage" onClick={onNavigate}>
+            {accountLabel}
+          </Link>
+          <button
+            className="ghost"
+            type="button"
+            onClick={() => {
+              handleLogout();
+              onNavigate?.();
+            }}
+          >
+            로그아웃
+          </button>
+        </>
+      );
+    }
+    return (
+      <>
+        <Link className="ghost" href="/login" onClick={onNavigate}>
+          로그인
+        </Link>
+        <Link className="btn" href="/signup" onClick={onNavigate}>
+          회원가입
+        </Link>
+      </>
+    );
   };
 
   return (
@@ -77,6 +101,7 @@ export function Header() {
                 {authError}
               </span>
             )}
+            {renderAuthNav()}
             <ConnectButton.Custom>
               {({
                 account,
@@ -121,41 +146,14 @@ export function Header() {
                   );
                 }
 
-                const sessionMatchesWallet =
-                  isAuthenticated &&
-                  user?.walletAddress?.toLowerCase() ===
-                    account.address.toLowerCase();
-
                 return (
-                  <>
-                    <button
-                      className="ghost"
-                      type="button"
-                      onClick={openAccountModal}
-                    >
-                      {sessionMatchesWallet && user?.name
-                        ? user.name
-                        : shortenHash(account.address)}
-                    </button>
-                    {sessionMatchesWallet ? (
-                      <button
-                        className="ghost"
-                        type="button"
-                        onClick={handleLogout}
-                      >
-                        로그아웃
-                      </button>
-                    ) : (
-                      <button
-                        className="btn"
-                        type="button"
-                        onClick={handleLogin}
-                        disabled={isLoggingIn || isLoading}
-                      >
-                        {isLoggingIn ? "로그인 중..." : "로그인"}
-                      </button>
-                    )}
-                  </>
+                  <button
+                    className="ghost"
+                    type="button"
+                    onClick={openAccountModal}
+                  >
+                    {shortenHash(account.address)}
+                  </button>
                 );
               }}
             </ConnectButton.Custom>
@@ -189,6 +187,7 @@ export function Header() {
                   {authError}
                 </span>
               )}
+              {renderAuthNav(closeMobile)}
               <ConnectButton.Custom>
                 {({
                   account,
@@ -231,50 +230,17 @@ export function Header() {
                     );
                   }
 
-                  const sessionMatchesWallet =
-                    isAuthenticated &&
-                    user?.walletAddress?.toLowerCase() ===
-                      account.address.toLowerCase();
-
                   return (
-                    <>
-                      <button
-                        className="ghost"
-                        type="button"
-                        onClick={() => {
-                          openAccountModal();
-                          closeMobile();
-                        }}
-                      >
-                        {sessionMatchesWallet && user?.name
-                          ? user.name
-                          : shortenHash(account.address)}
-                      </button>
-                      {sessionMatchesWallet ? (
-                        <button
-                          className="ghost"
-                          type="button"
-                          onClick={() => {
-                            handleLogout();
-                            closeMobile();
-                          }}
-                        >
-                          로그아웃
-                        </button>
-                      ) : (
-                        <button
-                          className="btn"
-                          type="button"
-                          onClick={() => {
-                            handleLogin();
-                            closeMobile();
-                          }}
-                          disabled={isLoggingIn || isLoading}
-                        >
-                          {isLoggingIn ? "로그인 중..." : "로그인"}
-                        </button>
-                      )}
-                    </>
+                    <button
+                      className="ghost"
+                      type="button"
+                      onClick={() => {
+                        openAccountModal();
+                        closeMobile();
+                      }}
+                    >
+                      {shortenHash(account.address)}
+                    </button>
                   );
                 }}
               </ConnectButton.Custom>
