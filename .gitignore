@@ -1,3 +1,5 @@
 
 # OMC 상태 파일 (커밋 제외)
 .omc/
+
+.DS_Store
