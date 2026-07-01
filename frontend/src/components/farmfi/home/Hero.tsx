@@ -1,0 +1,77 @@
+import type { ReactNode } from "react";
+import { Icon } from "../ui/Icon";
+
+export function Hero({
+  eyebrow,
+  title,
+  green,
+  lead,
+  art = "",
+  actions,
+  chips,
+}: {
+  eyebrow?: string;
+  title: string;
+  green?: string;
+  lead: string;
+  art?: string;
+  actions?: ReactNode;
+  chips?: string[];
+}) {
+  return (
+    <section className="hero">
+      <div className="shell hero-grid">
+        <div className="hero-copy">
+          {eyebrow ? <span className="eyebrow">{eyebrow}</span> : null}
+          <h1>
+            {title}
+            {green ? (
+              <>
+                <br />
+                <strong>{green}</strong>
+              </>
+            ) : null}
+          </h1>
+          <p className="lead">{lead}</p>
+          {actions ? <div className="hero-actions">{actions}</div> : null}
+          {chips ? <TrustStrip items={chips} /> : null}
+        </div>
+        <div className={`hero-art ${art}`} aria-hidden="true">
+          <div className="farm-visual-card">
+            <div className="farm-visual-skyline" />
+            <div className="farm-visual-house">
+              <span />
+              <span />
+              <span />
+              <span />
+            </div>
+            <div className="farm-visual-crops">
+              {Array.from({ length: 18 }, (_, i) => (
+                <i key={i} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TrustStrip({ items }: { items: string[] }) {
+  const labelMap: Record<string, string> = {
+    "투명한 운영과 안전한 기록": "투명한 운영과 안전한 블록체인 기록",
+    부산광역시: "부산광역시",
+    BIFC: "BIFC 부산국제금융센터",
+    Chainlink: "Chainlink",
+  };
+  return (
+    <div className="trust-row">
+      {items.map((item) => (
+        <span className="trust-chip" key={item}>
+          <Icon name={item === "BIFC" ? "shield" : "check"} />
+          {labelMap[item] ?? item}
+        </span>
+      ))}
+    </div>
+  );
+}

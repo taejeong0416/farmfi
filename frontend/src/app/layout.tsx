@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Footer, Header } from "@/components/FarmFi";
+import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "FarmFi | 도심 유휴공간 스마트팜 플랫폼",
@@ -16,9 +17,11 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body>
-        <Header />
-        {children}
-        <Footer />
+        <Providers>
+          <Header />
+          {children}
+          <Footer />
+        </Providers>
       </body>
     </html>
   );
