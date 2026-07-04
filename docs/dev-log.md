@@ -5,6 +5,21 @@
 
 ---
 
+## 2026-07-04 — 박태정
+
+### 병합 코드 리뷰 → 결함 수정 2건 커밋
+7/2 병합분(온보딩·본인인증·포트폴리오·프로젝트생성 등 7커밋) 전체 리뷰 후 결함만 수정:
+- **신원인증** (`b98dad7`): `identity/status`가 txId 소유자 확인 없이 현재 세션 유저를 인증 완료 처리하던 구멍 수정(소유자 불일치 시 미반영, userId 미연결 세션은 귀속). `IDENTITY_PROVIDER` 오타 `opmenid`→`opendid`, StubVerifier의 미사용 `simulate` 파라미터 제거.
+- **청약 인증·한도 집행** (`c54ae8c`): `/api/subscribe`가 클라이언트 body의 userId를 신뢰하던 것을 **세션(JWT) 전용**으로 전환 + `identityVerified` 미완료 403 + **연간 투자한도 집행**(올해 청약 누적 기준 — investor-limit 룰엔진 산출값이 처음으로 실제 작동). 핵심 로직은 `src/lib/subscription.ts`로 추출, `demo/step`은 self-fetch 대신 lib 직접 호출(신뢰 경로, `NEXT_PUBLIC_BASE_URL` 의존 1곳 제거). 시드·리셋 투자자 3명 인증완료 상태로 시딩. **demo/reset FK 위반 수정**: OperatorApplication/IdentityVerification/Space를 안 지우고 `user.deleteMany()` 하면 500 나던 것.
+- 리뷰에서 확인만 하고 보류한 것: admin·milestones·dividends·demo 라우트 무인증(plan L2-11-1 잔여 — MVP 우선순위 낮음), 프로젝트 생성 시 온체인 컨트랙트 미연결(다중 프로젝트는 DB 전용).
+
+### 다음 할 일
+- 프론트에서 subscribe 시나리오 확인 (미인증 유저 403 → `/verify-identity` 유도 링크 동작)
+- plan.md 현행화 (L1-11 확장 기능들 미기재 + 체크박스 0/187)
+- 참고: T7 외장SSD 폴더 이동 중 node_modules `.bin` 심링크 유실 — `npm install` 재실행으로 복구 필요
+
+---
+
 ## 2026-06-26 — 박태정
 
 ### 온체인 Amoy 배포 완료 — txHash 실증명 (트랙 B 완수)
