@@ -16,10 +16,23 @@ export async function POST(_request: NextRequest) {
     await prisma.escrow.deleteMany();
     await prisma.projectPartner.deleteMany();
     await prisma.project.deleteMany();
+    // User를 FK로 참조하는 테이블 먼저 정리 — 안 지우면 user.deleteMany()가 FK 위반으로 실패
+    await prisma.operatorApplication.deleteMany();
+    await prisma.identityVerification.deleteMany();
+    await prisma.space.deleteMany();
     await prisma.user.deleteMany();
     // Do NOT delete DemoCache (preserve cache for cached mode)
 
     // ─── Re-seed: Users ───
+    // 투자자는 본인인증 완료 상태로 시딩 — /api/subscribe의 identityVerified·
+    // 연간한도 게이트 통과용 (prisma/seed.ts와 동일 정책).
+    const verifiedInvestor = (realName: string) => ({
+      identityVerified: true,
+      verifiedAt: new Date(),
+      realName,
+      investorAnnualLimit: BigInt(20_000_000),
+    });
+
     const investor1 = await prisma.user.create({
       data: {
         name: "김민수",
@@ -27,6 +40,7 @@ export async function POST(_request: NextRequest) {
         email: "minsu@test.com",
         walletAddress: "0x1111111111111111111111111111111111111111",
         balance: BigInt(5_000_000),
+        ...verifiedInvestor("김민수"),
       },
     });
 
@@ -37,6 +51,7 @@ export async function POST(_request: NextRequest) {
         email: "seoyeon@test.com",
         walletAddress: "0x2222222222222222222222222222222222222222",
         balance: BigInt(3_000_000),
+        ...verifiedInvestor("이서연"),
       },
     });
 
@@ -47,6 +62,7 @@ export async function POST(_request: NextRequest) {
         email: "junhyuk@test.com",
         walletAddress: "0x3333333333333333333333333333333333333333",
         balance: BigInt(10_000_000),
+        ...verifiedInvestor("박준혁"),
       },
     });
 

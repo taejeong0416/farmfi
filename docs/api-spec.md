@@ -48,14 +48,19 @@
 ## 청약
 
 ### `POST /api/subscribe` — 토큰 청약
-- 요청: `{ "userId": "...", "projectId": "...", "tokenAmount": 200 }`
-- 검증: 잔액 부족 → 400 "Insufficient balance" / 토큰 초과 → 400 "Not enough tokens available"
+- 인증: 세션(JWT) 필수 — userId는 항상 세션에서 읽음 (클라이언트가 보낸 값 무시)
+- 요청: `{ "projectId": "...", "tokenAmount": 200 }`
+- 검증:
+  - 미로그인 → 401 "Unauthorized"
+  - 본인인증 미완료 → 403 "Identity verification required"
+  - 연간 투자한도(User.investorAnnualLimit) 초과 → 400 "Annual investment limit exceeded" (올해 청약 누적 + 이번 금액 기준)
+  - 잔액 부족 → 400 "Insufficient balance" / 토큰 초과 → 400 "Not enough tokens available"
 - 응답:
 ```json
 { "success": true,
   "transaction": { "txHash": null, "amount": 1000000, "tokenAmount": 200 } }
 ```
-- 처리: user.balance 차감, project.soldTokens·currentAmount 증가, escrow 갱신, tokenHolding upsert, transaction 생성. 목표 달성 시 status `funded`.
+- 처리: user.balance 차감, project.soldTokens·currentAmount 증가, escrow 갱신, tokenHolding upsert, transaction 생성. 목표 달성 시 status `funded`. (핵심 로직은 `src/lib/subscription.ts` — 데모 `demo/step`은 이 lib을 직접 호출하는 신뢰 경로라 인증·한도 게이트 없음)
 
 ---
 

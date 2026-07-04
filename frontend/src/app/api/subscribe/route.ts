@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { getServerSession } from "@/lib/auth";
+import { executeSubscription } from "@/lib/subscription";
 
 function serializeBigInt(obj: any): any {
   return JSON.parse(
@@ -7,133 +9,55 @@ function serializeBigInt(obj: any): any {
   );
 }
 
+// POST /api/subscribe — 청약. userId는 반드시 세션(JWT)에서만 가져온다 —
+// 클라이언트가 보내는 값은 절대 신뢰하지 않는다 (IDOR 방지).
+// 게이트: 본인인증(identityVerified) 완료 + 연간 투자한도 이내여야 청약 가능.
 export async function POST(request: NextRequest) {
   try {
-    const { userId, projectId, tokenAmount } = await request.json();
+    const session = await getServerSession();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-    if (!userId || !projectId || !tokenAmount || tokenAmount <= 0) {
+    const { projectId, tokenAmount } = await request.json();
+
+    if (!projectId || !tokenAmount || tokenAmount <= 0) {
       return NextResponse.json(
         { error: "Invalid request body" },
         { status: 400 }
       );
     }
 
-    const [user, project] = await Promise.all([
-      prisma.user.findUnique({ where: { id: userId } }),
-      prisma.project.findUnique({
-        where: { id: projectId },
-        include: { escrow: true },
-      }),
-    ]);
-
+    const user = await prisma.user.findUnique({
+      where: { id: session.userId },
+    });
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
-    if (!project) {
+    if (!user.identityVerified) {
       return NextResponse.json(
-        { error: "Project not found" },
-        { status: 404 }
-      );
-    }
-    if (!project.escrow) {
-      return NextResponse.json(
-        { error: "Project escrow not found" },
-        { status: 404 }
+        { error: "Identity verification required" },
+        { status: 403 }
       );
     }
 
-    const totalCost = BigInt(tokenAmount) * project.tokenPrice;
-
-    if (user.balance < totalCost) {
-      return NextResponse.json(
-        { error: "Insufficient balance" },
-        { status: 400 }
-      );
-    }
-
-    if (project.soldTokens + tokenAmount > project.totalTokens) {
-      return NextResponse.json(
-        { error: "Not enough tokens available" },
-        { status: 400 }
-      );
-    }
-
-    // Look up existing holding for avgPrice calculation
-    const existingHolding = await prisma.tokenHolding.findUnique({
-      where: { userId_projectId: { userId, projectId } },
+    const result = await executeSubscription({
+      userId: session.userId,
+      projectId,
+      tokenAmount,
+      annualLimit: user.investorAnnualLimit,
     });
 
-    const newAvgPrice = existingHolding
-      ? (existingHolding.avgPrice * BigInt(existingHolding.amount) + totalCost) /
-        BigInt(existingHolding.amount + tokenAmount)
-      : project.tokenPrice;
-
-    const newCurrentAmount = project.currentAmount + totalCost;
-    const isFunded = newCurrentAmount >= project.targetAmount;
-
-    const transaction = await prisma.$transaction(async (tx) => {
-      // 1. Deduct user balance
-      await tx.user.update({
-        where: { id: userId },
-        data: { balance: { decrement: totalCost } },
-      });
-
-      // 2. Update project
-      await tx.project.update({
-        where: { id: projectId },
-        data: {
-          soldTokens: { increment: tokenAmount },
-          currentAmount: { increment: totalCost },
-          ...(isFunded ? { status: "funded" } : {}),
-        },
-      });
-
-      // 3. Update escrow
-      await tx.escrow.update({
-        where: { id: project.escrow!.id },
-        data: {
-          totalLocked: { increment: totalCost },
-          remaining: { increment: totalCost },
-        },
-      });
-
-      // 4. Upsert token holding
-      await tx.tokenHolding.upsert({
-        where: { userId_projectId: { userId, projectId } },
-        create: {
-          userId,
-          projectId,
-          amount: tokenAmount,
-          avgPrice: project.tokenPrice,
-        },
-        update: {
-          amount: { increment: tokenAmount },
-          avgPrice: newAvgPrice,
-        },
-      });
-
-      // 5. Create transaction record
-      const txRecord = await tx.transaction.create({
-        data: {
-          projectId,
-          userId,
-          type: "subscription",
-          amount: totalCost,
-          tokenAmount,
-          memo: `Subscribed ${tokenAmount} tokens`,
-        },
-      });
-
-      return txRecord;
-    });
+    if (!result.ok) {
+      return NextResponse.json(
+        { error: result.error },
+        { status: result.status }
+      );
+    }
 
     return NextResponse.json({
       success: true,
-      transaction: serializeBigInt({
-        txHash: null,
-        amount: transaction.amount,
-        tokenAmount: transaction.tokenAmount,
-      }),
+      transaction: serializeBigInt(result.transaction),
     });
   } catch (error) {
     console.error("POST /api/subscribe error:", error);

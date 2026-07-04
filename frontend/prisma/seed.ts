@@ -7,6 +7,15 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   // ─── 사용자 5명 ───
+  // 투자자는 본인인증 완료 상태로 시딩 — /api/subscribe의 identityVerified·
+  // 연간한도 게이트를 통과해야 청약 데모가 동작한다 (한도는 일반투자자 2,000만원).
+  const verifiedInvestor = (realName: string) => ({
+    identityVerified: true,
+    verifiedAt: new Date(),
+    realName,
+    investorAnnualLimit: BigInt(20_000_000),
+  });
+
   const investor1 = await prisma.user.create({
     data: {
       name: "김민수",
@@ -14,6 +23,7 @@ async function main() {
       email: "minsu@test.com",
       walletAddress: "0x1111111111111111111111111111111111111111",
       balance: BigInt(5_000_000),
+      ...verifiedInvestor("김민수"),
     },
   });
 
@@ -24,6 +34,7 @@ async function main() {
       email: "seoyeon@test.com",
       walletAddress: "0x2222222222222222222222222222222222222222",
       balance: BigInt(3_000_000),
+      ...verifiedInvestor("이서연"),
     },
   });
 
@@ -34,6 +45,7 @@ async function main() {
       email: "junhyuk@test.com",
       walletAddress: "0x3333333333333333333333333333333333333333",
       balance: BigInt(10_000_000),
+      ...verifiedInvestor("박준혁"),
     },
   });
 

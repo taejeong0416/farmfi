@@ -30,8 +30,8 @@ export async function fetchProject(id: string): Promise<ProjectDetail> {
   return (await res.json()) as ProjectDetail;
 }
 
+// userId는 보내지 않는다 — 서버가 세션(JWT)에서만 읽는다.
 export type SubscribeInput = {
-  userId: string;
   projectId: string;
   tokenAmount: number;
 };

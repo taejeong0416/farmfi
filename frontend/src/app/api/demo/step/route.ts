@@ -3,6 +3,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import { prisma } from "@/lib/db";
 import { getDemoMode, getCachedResult, saveCacheResult } from "@/lib/demo-mode";
+import { executeSubscription } from "@/lib/subscription";
 
 function serialize(obj: any): any {
   return JSON.parse(
@@ -25,21 +26,29 @@ async function findProjectFirst() {
   return project;
 }
 
+// 시드 투자자로 직접 실행하는 신뢰된 서버 내부 경로.
+// 세션·본인인증·한도 게이트는 사용자 경로(/api/subscribe)에만 적용된다.
 async function subscribe(userName: string, tokenAmount: number) {
   const user = await findUserByName(userName);
   const project = await findProjectFirst();
 
-  const res = await fetch(`${baseUrl}/api/subscribe`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      userId: user.id,
-      projectId: project.id,
-      tokenAmount,
-    }),
+  const result = await executeSubscription({
+    userId: user.id,
+    projectId: project.id,
+    tokenAmount,
   });
 
-  return await res.json();
+  if (!result.ok) {
+    return { error: result.error };
+  }
+  return {
+    success: true,
+    transaction: {
+      txHash: result.transaction.txHash,
+      amount: Number(result.transaction.amount),
+      tokenAmount: result.transaction.tokenAmount,
+    },
+  };
 }
 
 const milestoneTypeBySeq: Record<number, string> = {

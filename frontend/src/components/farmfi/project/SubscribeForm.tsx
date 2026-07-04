@@ -11,6 +11,9 @@ const SUBSCRIBE_ERROR_MESSAGES: Record<string, string> = {
   "Insufficient balance": "잔액이 부족합니다.",
   "Not enough tokens available": "남은 토큰 수량이 부족합니다.",
   "Invalid request body": "입력값을 다시 확인해주세요.",
+  Unauthorized: "로그인이 필요합니다.",
+  "Identity verification required": "본인인증 후 청약할 수 있습니다.",
+  "Annual investment limit exceeded": "연간 투자한도를 초과했습니다.",
   "User not found": "사용자 정보를 찾을 수 없습니다. 다시 로그인해주세요.",
   "Project not found": "프로젝트를 찾을 수 없습니다.",
   "Project escrow not found": "에스크로 정보를 찾을 수 없습니다.",
@@ -42,7 +45,6 @@ export function SubscribeForm({ project }: { project: ProjectDetail }) {
         throw new Error("로그인이 필요합니다.");
       }
       return subscribeToProject({
-        userId: user.id,
         projectId: project.id,
         tokenAmount: amount,
       });
@@ -148,6 +150,14 @@ export function SubscribeForm({ project }: { project: ProjectDetail }) {
           }}
         >
           {feedback.message}
+          {feedback.type === "error" && feedback.message.includes("본인인증") ? (
+            <>
+              {" "}
+              <a className="link" href="/verify-identity">
+                본인인증 하러 가기 →
+              </a>
+            </>
+          ) : null}
           {feedback.type === "success" ? (
             feedback.txHash ? (
               <>
