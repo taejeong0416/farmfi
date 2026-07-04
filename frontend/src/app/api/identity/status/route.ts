@@ -36,20 +36,37 @@ export async function GET(request: NextRequest) {
 
     const session = await getServerSession();
     if (session) {
-      try {
-        await prisma.user.update({
-          where: { id: session.userId },
-          data: {
-            identityVerified: true,
-            verifiedAt: new Date(),
-            ...(claims?.realName ? { realName: String(claims.realName) } : {}),
-            ...(claims?.birthDate ? { birthDate: new Date(claims.birthDate) } : {}),
-            investorAnnualLimit: eligibility.annualLimit,
-          },
-        });
-      } catch (persistError) {
-        // 표시용 응답은 그대로 내려주되, 영속화 실패는 로그로만 남긴다.
-        console.error("GET /api/identity/status: failed to persist verified user:", persistError);
+      // txId 소유자 확인 — 다른 유저에게 연결된 인증 세션(txId)으로는 내 계정을
+      // 인증 완료 처리할 수 없다. userId가 비어 있으면(로그인 전 발급) 현재
+      // 세션 유저의 것으로 귀속시킨다.
+      const record = await prisma.identityVerification.findUnique({
+        where: { txId },
+      });
+      const ownsTx =
+        !!record && (record.userId === null || record.userId === session.userId);
+
+      if (ownsTx) {
+        try {
+          if (record.userId === null) {
+            await prisma.identityVerification.update({
+              where: { txId },
+              data: { userId: session.userId },
+            });
+          }
+          await prisma.user.update({
+            where: { id: session.userId },
+            data: {
+              identityVerified: true,
+              verifiedAt: new Date(),
+              ...(claims?.realName ? { realName: String(claims.realName) } : {}),
+              ...(claims?.birthDate ? { birthDate: new Date(claims.birthDate) } : {}),
+              investorAnnualLimit: eligibility.annualLimit,
+            },
+          });
+        } catch (persistError) {
+          // 표시용 응답은 그대로 내려주되, 영속화 실패는 로그로만 남긴다.
+          console.error("GET /api/identity/status: failed to persist verified user:", persistError);
+        }
       }
     }
 

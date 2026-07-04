@@ -11,7 +11,7 @@ import type { Prisma } from "@/generated/prisma/client";
  *   3. getClaims    ≈ confirm-verify    — 검증 완료 시 클레임(실명/생년 등) 반환
  *
  * OpenDID Verifier가 아직 준비되지 않아 지금은 StubVerifier가 동작하고,
- * env `IDENTITY_PROVIDER === "opmenid"`일 때만 실제 구현으로 교체된다.
+ * env `IDENTITY_PROVIDER === "opendid"`일 때만 실제 구현으로 교체된다.
  */
 export type IdentityStatus = "pending" | "submitted" | "verified" | "failed";
 
@@ -77,20 +77,16 @@ export class StubVerifier implements IdentityVerifier {
     };
   }
 
-  // opts.simulate === true → 3초 대기 없이 즉시 verified 전이 (데모용 `?simulate` 플래그).
-  async getStatus(
-    txId: string,
-    opts?: { simulate?: boolean },
-  ): Promise<IdentityStatus> {
+  async getStatus(txId: string): Promise<IdentityStatus> {
     const row = await prisma.identityVerification.findUnique({
       where: { txId },
     });
     if (!row) return "failed";
     if (row.status !== "pending") return row.status as IdentityStatus;
 
-    // 생성 후 AUTO_VERIFY_MS 경과 시(또는 simulate 시 즉시) verified 전이 (UI 폴링 루프용).
+    // 생성 후 AUTO_VERIFY_MS 경과 시 verified 전이 (UI 폴링 루프용).
     const elapsed = Date.now() - row.createdAt.getTime();
-    if (opts?.simulate || elapsed >= AUTO_VERIFY_MS) {
+    if (elapsed >= AUTO_VERIFY_MS) {
       const updated = await prisma.identityVerification.update({
         where: { txId },
         data: {
@@ -136,10 +132,10 @@ export class OmniOneVerifier implements IdentityVerifier {
 
 /**
  * 환경에 맞는 IdentityVerifier 구현을 반환하는 팩토리.
- * IDENTITY_PROVIDER === "opmenid"일 때만 실제 OpenDID Verifier로 교체된다.
+ * IDENTITY_PROVIDER === "opendid"일 때만 실제 OpenDID Verifier로 교체된다.
  */
 export function getVerifier(): IdentityVerifier {
-  if (process.env.IDENTITY_PROVIDER === "opmenid") {
+  if (process.env.IDENTITY_PROVIDER === "opendid") {
     const baseUrl = process.env.IDENTITY_VERIFIER_URL ?? "";
     return new OmniOneVerifier(baseUrl);
   }
