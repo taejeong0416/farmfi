@@ -8,7 +8,7 @@
 - 모든 응답은 JSON. 에러 응답: `{ "error": "메시지" }` + HTTP 400/401/404/500.
 - 성공 상태코드는 별도 표기 없으면 200 (생성은 201).
 - 금액(amount, unitPrice, revenue 등)은 **원화 정수**(예: `3000` = 3,000원).
-- 운영 데이터 조회 API(dashboard·iot·tasks·sales·reports·notifications)는 현재 **인증 없이 `projectId`/`institutionId` 파라미터**로 조회한다(MVP). 세션 인증은 auth·spaces·operator-applications·upload에 적용.
+- 운영 데이터 조회 API(dashboard·iot·tasks·sales·reports·notifications)는 현재 **인증 없이 `projectId`/`institutionId` 파라미터**로 조회한다(MVP). 세션 인증은 auth·operator-applications·upload에 적용. spaces는 인증 불요(아래 참고).
 
 ---
 
@@ -36,13 +36,18 @@
 ### `GET /api/spaces` — 공간 목록 / `POST /api/spaces` — 공간 등록
 - 등록 요청(주요 필드): `{ spaceType, address, area, electricity, water, lighting, preferredMode, photos[] }`
 - 서버가 스마트팜 적합도(`suitabilityScore`)·상태(`status`)를 관리. 정확한 필드는 `schema.prisma` model `Space` 참고.
+- GET은 인증 없음(전체 목록). POST도 인증 불요 — 세션이 있으면 `ownerId`를 연결하고 없으면 `null`로 생성. (단, 폼의 사진 업로드가 쓰는 `/api/upload`는 세션 필수)
 
 ---
 
 ## 운영자
 
 ### `POST /api/operator-applications` — 운영자 지원 접수
-- 요청: `{ region, cropExperience, availableHours }` (세션 유저 기준). status: `applied → docs → education → matched → operating`.
+- 요청: `{ region, cropExperience, availableHours }` (세션 유저 기준, 미인증 401). status: `applied → docs → education → matched → operating`.
+- 응답: 신규 201 `{ "application": {...}, "alreadyApplied": false }`. 이미 지원한 유저(1인 1지원)는 200 `{ "application": 기존 레코드, "alreadyApplied": true }`. 필드 누락/초과 400.
+
+### `GET /api/operator-applications` — 내 지원 이력 조회
+- 세션 유저 본인의 지원 내역 반환 (미인증 401).
 
 ---
 
@@ -95,7 +100,8 @@
 
 ### `POST /api/sales` — 판매 수기입력
 - 요청: `{ "projectId": "...", "productId": "...", "quantity": 7, "soldAt": "ISO"(선택) }`
-- 처리: `amount = quantity × product.unitPrice`. 응답 201 `{ "record": { ... } }`.
+- 검증: `quantity`는 양의 정수(아니면 400), `soldAt` 파싱 불가 400, `projectId`/`productId` 미존재 404.
+- 처리: `amount = quantity × product.unitPrice` 기록 + **같은 트랜잭션에서 해당 품목 `Inventory.inStock`을 차감**(0 미만 방지 클램프) — '오늘 할 일'의 보충 판정이 실판매를 반영. 응답 201 `{ "record": { ... } }`.
 
 ### `GET /api/sales/trend?projectId=&days=14` — 품목별 판매 추이
 - 응답:
@@ -105,7 +111,7 @@
     "recommendation": "증산 검토|유지|감축 검토" }
 ] }
 ```
-- 판매량 내림차순. 최상위=증산, 최하위=감축, 나머지=유지.
+- 판매량 내림차순. 품목 3개 이상이면 최상위=증산 검토, 최하위=감축 검토, 나머지=유지. 3개 미만이면 전부 유지.
 
 ---
 

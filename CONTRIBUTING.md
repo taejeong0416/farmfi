@@ -6,7 +6,7 @@ FarmFi 개발 가이드.
 - **프론트/백엔드**: Next.js 14 (App Router + API Routes), TypeScript
 - **DB**: PostgreSQL (Supabase) + Prisma ORM (Prisma 7, driver adapter)
 - **인증**: 이메일 + 비밀번호 (bcrypt), jose 세션(JWT)
-- **AI 검증**: Google Gemini (기본·무료) + OpenAI GPT-4o / Anthropic Claude 폴백
+- **이상 탐지**: Z-score + 도메인 정상범위 판정 (자체 구현 — 외부 AI API 미사용)
 - **배포**: Vercel (도커 미사용)
 
 ## 개발 환경 셋업
@@ -17,10 +17,6 @@ FarmFi 개발 가이드.
    |---|---|
    | `DATABASE_URL` | Supabase PostgreSQL 연결 문자열 (트랜잭션 pooler 6543) |
    | `JWT_SECRET` | 세션(JWT) 서명 키 |
-   | `GEMINI_API_KEY` | 이미지·이상 판정 (기본·무료) |
-   | `OPENAI_API_KEY` | GPT-4o 검증 (선택·폴백) |
-   | `ANTHROPIC_API_KEY` | Claude 검증 (선택·폴백) |
-   | `NEXT_PUBLIC_BASE_URL` | 내부 API 호출용 (로컬: `http://localhost:3000`) |
 
 3. `npm run prisma:generate` → `npm run prisma:push` → `npm run seed`
    - `prisma db push`(DDL)는 **세션 pooler(5432)** 필요 — 일반 URL이 6543(트랜잭션 pooler)이면 `--url`로 5432 오버라이드. 시드(DML)는 6543으로 OK.
