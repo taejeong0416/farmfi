@@ -52,16 +52,21 @@ model Space {
 
 // ─── 지점 (모델명 Project 유지, 도메인 표기는 '지점') ───
 model Project {
-  id           String    @id @default(cuid())
-  name         String
-  description  String?
-  location     String?
-  buildingType String?
-  areaSqm      Float?
-  status       String    @default("operating") // operating, paused, closed
-  imageUrl     String?
-  createdAt    DateTime  @default(now())
-  iotData      IotData[]
+  id            String       @id @default(cuid())
+  name          String
+  description   String?
+  location      String?
+  buildingType  String?
+  areaSqm       Float?
+  status        String       @default("operating") // operating, paused, closed
+  imageUrl      String?
+  institutionId String?      // 도입 기관 (성과 리포트 집계 단위)
+  institution   Institution? @relation(fields: [institutionId], references: [id])
+  createdAt     DateTime     @default(now())
+  iotData        IotData[]
+  inventories    Inventory[]
+  harvestRecords HarvestRecord[]
+  salesRecords   SalesRecord[]
 }
 
 // ─── IoT 데이터 ───
@@ -80,12 +85,77 @@ model IotData {
   recordedAt     DateTime @default(now())
 }
 
-// ─── 알림 (생육 이상 알림 — 지점/IoT FK 재설계·발송 경로는 후속 phase) ───
+// ─── 알림 (생육 이상 알림) ───
 model Notification {
   id          String   @id @default(cuid())
+  projectId   String?  // 발생 지점
   type        String   // anomaly_detected
   message     String
   evidenceUrl String?
   isRead      Boolean  @default(false)
   createdAt   DateTime @default(now())
+}
+
+// ─── 도입 기관 (공공·대학·ESG 기업) — 성과 리포트 소유자 ───
+model Institution {
+  id           String    @id @default(cuid())
+  name         String
+  type         String    // public, university, esg_company
+  contactName  String?
+  contactEmail String?
+  createdAt    DateTime  @default(now())
+  projects     Project[]
+}
+
+// ─── 품목 마스터 (재배·판매 대상 작물) ───
+model Product {
+  id        String   @id @default(cuid())
+  name      String   // 상추, 루꼴라, 바질
+  category  String   // leafy, herb
+  unit      String   @default("봉")
+  unitPrice Int      // 판매단가 (원)
+  growDays  Int      // 파종~수확 재배일수
+  createdAt DateTime @default(now())
+  inventories    Inventory[]
+  harvestRecords HarvestRecord[]
+  salesRecords   SalesRecord[]
+}
+
+// ─── 재고-생육 (지점×품목 현재 상태) — '오늘 할 일' 집계 원천 ───
+model Inventory {
+  id                String    @id @default(cuid())
+  projectId         String
+  project           Project   @relation(fields: [projectId], references: [id])
+  productId         String
+  product           Product   @relation(fields: [productId], references: [id])
+  inStock           Int       @default(0) // 매장 진열 재고 (봉)
+  growing           Int       @default(0) // 재배중 수량 (봉)
+  plantedAt         DateTime? // 파종일
+  expectedHarvestAt DateTime? // 예상 수확일
+  updatedAt         DateTime  @updatedAt
+
+  @@unique([projectId, productId])
+}
+
+// ─── 수확 실적 (생산량 집계 — 검증 필드 없음) ───
+model HarvestRecord {
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id])
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id])
+  quantity    Int      // 수확량 (봉)
+  harvestedAt DateTime @default(now())
+}
+
+// ─── 판매 실적 (운영자 수기입력 — 판매-재배 연동 원천) ───
+model SalesRecord {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id])
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int      // 판매 수량 (봉)
+  amount    Int      // 매출 (원)
+  soldAt    DateTime @default(now())
 }

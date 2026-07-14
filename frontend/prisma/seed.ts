@@ -1,194 +1,109 @@
 import "dotenv/config";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import bcrypt from "bcryptjs";
+import { buildIotRecords } from "../src/lib/iot-seed";
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
 
+const DAY = 24 * 60 * 60 * 1000;
+
 async function main() {
-  // ─── 사용자 5명 ───
-  // 투자자는 본인인증 완료 상태로 시딩 — /api/subscribe의 identityVerified·
-  // 연간한도 게이트를 통과해야 청약 데모가 동작한다 (한도는 일반투자자 2,000만원).
-  const verifiedInvestor = (realName: string) => ({
-    identityVerified: true,
-    verifiedAt: new Date(),
-    realName,
-    investorAnnualLimit: BigInt(20_000_000),
-  });
+  const now = new Date();
+  const pw = await bcrypt.hash("farmfi123", 10);
 
-  const investor1 = await prisma.user.create({
-    data: {
-      name: "김민수",
-      role: "investor",
-      email: "minsu@test.com",
-      walletAddress: "0x1111111111111111111111111111111111111111",
-      balance: BigInt(5_000_000),
-      ...verifiedInvestor("김민수"),
-    },
+  // ─── 사용자 (비밀번호 farmfi123) ───
+  await prisma.user.create({
+    data: { name: "관리자", role: "admin", email: "admin@farmfi.test", passwordHash: pw },
   });
-
-  const investor2 = await prisma.user.create({
-    data: {
-      name: "이서연",
-      role: "investor",
-      email: "seoyeon@test.com",
-      walletAddress: "0x2222222222222222222222222222222222222222",
-      balance: BigInt(3_000_000),
-      ...verifiedInvestor("이서연"),
-    },
-  });
-
-  const investor3 = await prisma.user.create({
-    data: {
-      name: "박준혁",
-      role: "investor",
-      email: "junhyuk@test.com",
-      walletAddress: "0x3333333333333333333333333333333333333333",
-      balance: BigInt(10_000_000),
-      ...verifiedInvestor("박준혁"),
-    },
-  });
-
-  const landlord = await prisma.user.create({
-    data: {
-      name: "최영호",
-      role: "landlord",
-      email: "youngho@test.com",
-      walletAddress: "0x4444444444444444444444444444444444444444",
-      balance: BigInt(0),
-    },
-  });
-
   const operator = await prisma.user.create({
+    data: { name: "정하은", role: "operator", email: "operator@farmfi.test", passwordHash: pw },
+  });
+  const landlord = await prisma.user.create({
+    data: { name: "최영호", role: "landlord", email: "landlord@farmfi.test", passwordHash: pw },
+  });
+
+  // ─── 공간 ───
+  await prisma.space.create({
     data: {
-      name: "정하은",
-      role: "operator",
-      email: "haeun@test.com",
-      walletAddress: "0x5555555555555555555555555555555555555555",
-      balance: BigInt(0),
+      ownerId: landlord.id,
+      spaceType: "vacant_store",
+      address: "부산 동래구 온천장로 12",
+      area: "50~100평",
+      electricity: "가능",
+      water: "가능",
+      lighting: "좋음",
+      preferredMode: "임대형",
+      suitabilityScore: 88,
+      estimatedRent: 1_200_000,
+      status: "approved",
     },
   });
 
-  // ─── 프로젝트 1개 ───
-  const project = await prisma.project.create({
-    data: {
-      name: "금정구 미니팜 1호",
-      description:
-        "부산 금정구 공실 상가를 스마트팜으로 전환하는 첫 번째 프로젝트입니다. LED 수직농장 설비를 설치하고 새싹삼을 수경재배합니다.",
-      location: "부산 금정구 장전동",
-      buildingType: "상가 1층",
-      areaSqm: 83, // 25평 ≈ 82.6㎡ (표7)
-      tokenSymbol: "MF01",
-      tokenPrice: BigInt(10_000), // 1구좌 1만원 (표2·표4)
-      totalTokens: 1750,
-      soldTokens: 0,
-      targetAmount: BigInt(17_500_000), // 모집 목표 = CAPEX (표7)
-      currentAmount: BigInt(0),
-      totalCapex: BigInt(17_500_000), // 70만/평 × 25평 (표7)
-      status: "funding",
-      fundingStart: new Date(),
-      fundingEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      contractAddress: process.env.FARM_TOKEN_ADDRESS || "",
-    },
+  // ─── 도입 기관 ───
+  const institution = await prisma.institution.create({
+    data: { name: "부산진구 도시재생지원센터", type: "public", contactName: "김담당", contactEmail: "cs@bjgu.go.kr" },
   });
 
-  // ─── 에스크로 ───
-  await prisma.escrow.create({
-    data: {
-      projectId: project.id,
-      totalLocked: BigInt(0),
-      totalReleased: BigInt(0),
-      remaining: BigInt(0),
-      status: "active",
-      contractAddress: process.env.ESCROW_ADDRESS || "",
-    },
+  // ─── 품목 (v18 엽채류·허브, 프리미엄 소포장 3,000~4,000원/봉) ───
+  const sangchu = await prisma.product.create({ data: { name: "상추", category: "leafy", unitPrice: 3000, growDays: 28 } });
+  const rucola = await prisma.product.create({ data: { name: "루꼴라", category: "leafy", unitPrice: 3500, growDays: 30 } });
+  const basil = await prisma.product.create({ data: { name: "바질", category: "herb", unitPrice: 4000, growDays: 35 } });
+  const products = [sangchu, rucola, basil];
+
+  // ─── 지점 2곳 (기관 소속) ───
+  const p1 = await prisma.project.create({
+    data: { name: "온천장 스마트팜 1호점", location: "부산 동래구", buildingType: "vacant_store", areaSqm: 83, status: "operating", institutionId: institution.id },
+  });
+  const p2 = await prisma.project.create({
+    data: { name: "장전동 스마트팜 2호점", location: "부산 금정구", buildingType: "vacant_store", areaSqm: 66, status: "operating", institutionId: institution.id },
+  });
+  const projects = [p1, p2];
+
+  for (const proj of projects) {
+    // 재고-생육: '오늘 할 일'이 나오도록 — 상추=수확 임박+재고부족, 바질=오늘 수확, 루꼴라=여유
+    await prisma.inventory.createMany({
+      data: [
+        { projectId: proj.id, productId: sangchu.id, inStock: 4, growing: 120, plantedAt: new Date(now.getTime() - 27 * DAY), expectedHarvestAt: new Date(now.getTime() - 1 * DAY) },
+        { projectId: proj.id, productId: rucola.id, inStock: 22, growing: 80, plantedAt: new Date(now.getTime() - 10 * DAY), expectedHarvestAt: new Date(now.getTime() + 12 * DAY) },
+        { projectId: proj.id, productId: basil.id, inStock: 3, growing: 60, plantedAt: new Date(now.getTime() - 35 * DAY), expectedHarvestAt: now },
+      ],
+    });
+
+    // 수확·판매 실적 14일치 (판매-재배 추이 + 기관 리포트 집계용)
+    const harvests: { projectId: string; productId: string; quantity: number; harvestedAt: Date }[] = [];
+    const sales: { projectId: string; productId: string; quantity: number; amount: number; soldAt: Date }[] = [];
+    for (let d = 14; d >= 1; d--) {
+      const day = new Date(now.getTime() - d * DAY);
+      for (const prod of products) {
+        const qtyH = 30 + Math.floor(Math.random() * 20);
+        harvests.push({ projectId: proj.id, productId: prod.id, quantity: qtyH, harvestedAt: day });
+        const qtyS = 25 + Math.floor(Math.random() * 15);
+        sales.push({ projectId: proj.id, productId: prod.id, quantity: qtyS, amount: qtyS * prod.unitPrice, soldAt: day });
+      }
+    }
+    await prisma.harvestRecord.createMany({ data: harvests });
+    await prisma.salesRecord.createMany({ data: sales });
+
+    // IoT 60일치 (생육 모니터링·이상감지)
+    await prisma.iotData.createMany({ data: buildIotRecords(proj.id, now) });
+  }
+
+  // ─── 생육 이상 알림 ───
+  await prisma.notification.create({
+    data: { projectId: p1.id, type: "anomaly_detected", message: "온도 이상 감지 · 현재 31.2℃ (정상범위 18~28℃)" },
   });
 
-  // ─── 마일스톤 4개 ───
-  await prisma.milestone.createMany({
-    data: [
-      {
-        projectId: project.id,
-        seq: 1,
-        name: "공간 준비",
-        description: "임대차 계약 체결, 설비 구매, 공간 셋업 완료",
-        releasePct: 3500,
-        releaseAmount: BigInt(6_125_000),
-        status: "in_progress",
-        conditionText: "임대차 계약서, 설비 구매 영수증, 현장 사진 제출",
-        requiredSignals: ["contract", "receipt", "photo"],
-        iotMinDays: 0,
-        crossCheck: "receipt↔photo",
-        assetValue: BigInt(10_500_000),
-      },
-      {
-        projectId: project.id,
-        seq: 2,
-        name: "시운전 + 안정성",
-        description: "설비 가동 테스트 및 14일간 안정성 검증",
-        releasePct: 3000,
-        releaseAmount: BigInt(5_250_000),
-        status: "pending",
-        conditionText: "IoT 14일 가동률 90% 이상 (온도·습도·조도 정상 범위)",
-        requiredSignals: ["iot"],
-        iotMinDays: 14,
-        crossCheck: null,
-        assetValue: BigInt(0),
-      },
-      {
-        projectId: project.id,
-        seq: 3,
-        name: "첫 수확 + 판매",
-        description: "첫 작물 수확 및 판매 실적 확인",
-        releasePct: 2000,
-        releaseAmount: BigInt(3_500_000),
-        status: "pending",
-        conditionText: "수확 사진, 판매 영수증",
-        requiredSignals: ["photo", "receipt"],
-        iotMinDays: 0,
-        crossCheck: null,
-        assetValue: BigInt(0),
-      },
-      {
-        projectId: project.id,
-        seq: 4,
-        name: "지속 운영",
-        description: "60일간 지속 운영 검증 및 BEP 접근 확인",
-        releasePct: 1500,
-        releaseAmount: BigInt(2_625_000),
-        status: "pending",
-        conditionText: "IoT 60일 가동률 90% 이상, 복수 판매 영수증",
-        requiredSignals: ["iot", "receipt"],
-        iotMinDays: 60,
-        crossCheck: null,
-        assetValue: BigInt(0),
-      },
-    ],
-  });
-
-  // ─── 프로젝트 파트너 (건물주: 월 고정 임대료 50만원, 회수 필드 미사용) ───
-  await prisma.projectPartner.create({
-    data: {
-      projectId: project.id,
-      role: "landlord",
-      name: "최영호",
-      totalContribution: BigInt(0),
-      recoveredAmount: BigInt(0),
-      monthlyRecoveryAmount: BigInt(500_000),
-      recoveryComplete: false,
-    },
-  });
-
-  console.log("✅ Seed data created successfully");
-  console.log(`   Users: ${investor1.name}, ${investor2.name}, ${investor3.name}, ${landlord.name}, ${operator.name}`);
-  console.log(`   Project: ${project.name}`);
+  console.log(`v18 seed done — 지점 ${projects.length}, 품목 ${products.length}, 운영자 ${operator.name}`);
 }
 
 main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
+  .then(async () => {
     await prisma.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
   });
