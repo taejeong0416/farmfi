@@ -32,10 +32,10 @@ export async function POST(request: NextRequest) {
 
     const hour = new Date().getHours();
 
-    const temperature = 23 + Math.sin(hour / 3) * 2 + (Math.random() - 0.5);
+    const temperature = 22 + Math.sin(hour / 3) * 2 + (Math.random() - 0.5);
     const humidity =
-      80 + Math.cos(hour / 4) * 5 + (Math.random() * 3 - 1.5);
-    const co2Level = 800 + Math.random() * 200;
+      65 + Math.cos(hour / 4) * 5 + (Math.random() * 3 - 1.5);
+    const co2Level = 950 + Math.random() * 250;
     const lightIntensity =
       hour >= 6 && hour <= 20 ? 12000 + Math.random() * 3000 : 0;
     const phLevel = 6.0 + Math.random() * 0.5;

@@ -10,6 +10,19 @@ const prisma = new PrismaClient({ adapter });
 const DAY = 24 * 60 * 60 * 1000;
 
 async function main() {
+  // 재실행 가능하도록 기존 데이터 정리 (FK 자식 먼저)
+  await prisma.salesRecord.deleteMany();
+  await prisma.harvestRecord.deleteMany();
+  await prisma.inventory.deleteMany();
+  await prisma.iotData.deleteMany();
+  await prisma.product.deleteMany();
+  await prisma.project.deleteMany();
+  await prisma.institution.deleteMany();
+  await prisma.notification.deleteMany();
+  await prisma.operatorApplication.deleteMany();
+  await prisma.space.deleteMany();
+  await prisma.user.deleteMany();
+
   const now = new Date();
   const pw = await bcrypt.hash("farmfi123", 10);
 
