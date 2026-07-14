@@ -20,11 +20,11 @@ const SENSOR_KEYS: (keyof IoTReading)[] = [
   "phLevel",
 ];
 
-// ── 마일스톤 게이트용: 새싹삼 도메인 정상범위 (절대 기준) ──────────────────
-// 가동률(uptime)은 "최근 분포 대비 튀었나"(상대)가 아니라 "도메인상 건강한가"(절대)로
-// 판정해야 한다. Z-score는 판정 윈도우 자체에서 평균을 뽑으므로 지속성 고장
-// (예: 히터 고장으로 60일 내내 35℃)을 새 '정상'으로 흡수해 못 잡는 맹점이 있다.
-// 따라서 게이트는 아래 절대범위로 판정한다.
+// ── 생육 이상 판정용: 도메인 정상범위 (절대 기준) ──────────────────────────
+// 이상 알림은 "최근 분포 대비 튀었나"(상대, Z-score)만으로는 부족하다. Z-score는
+// 판정 윈도우에서 평균을 뽑으므로 지속성 고장(예: 히터 고장으로 내내 35℃)을 새
+// '정상'으로 흡수해 못 잡는 맹점이 있어, 아래 절대범위로도 판정한다.
+// (범위는 새싹삼/인삼 기준 — Phase 5에서 확정 작물로 갱신)
 //
 // 근거 (새싹삼/인삼 재배):
 //  - temperature 18~28℃ : 생육가능 12~28, 권장 18~25, 25℃↑ 환풍 (진로교육원·RDA)
@@ -49,13 +49,6 @@ export function isHealthy(reading: IoTReading): boolean {
     const [lo, hi] = HEALTHY_RANGES[key];
     return reading[key] >= lo && reading[key] <= hi;
   });
-}
-
-// 가동률 = 윈도우 내 정상 가동 비율(%). 데이터 없으면 0 (fail-closed).
-export function uptimeRate(readings: IoTReading[]): number {
-  if (readings.length === 0) return 0;
-  const healthy = readings.filter(isHealthy).length;
-  return (healthy / readings.length) * 100;
 }
 
 // ── 대시보드용: 단발 이상치(스파이크) 탐지 ─────────────────────────────────

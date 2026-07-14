@@ -2,9 +2,8 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Icon } from "../ui/Icon";
-import { Metric } from "../ui/Metric";
 import { Panel } from "../ui/Panel";
-import { Chart, Donut, type ChartPoint, type DonutSlice } from "./Chart";
+import { Chart, type ChartPoint } from "./Chart";
 import { HEALTHY_RANGES, type IoTReading } from "@/lib/iot-health";
 
 const MENU = [
@@ -16,44 +15,13 @@ const MENU = [
   "작업 관리",
   "수확·출하 관리",
   "판매·출하 분석",
-  "수익 분석",
   "리포트",
 ];
 
-// ---- API response shapes (subset of GET /api/dashboard/[projectId] we use) ----
+// ---- API response shapes (GET /api/dashboard/[projectId]) ----
 interface ProjectDTO {
   id: string;
   name: string;
-}
-
-interface EscrowDTO {
-  totalLocked: number;
-  totalReleased: number;
-  remaining: number;
-  status: string;
-}
-
-interface MilestoneDTO {
-  id: string;
-  seq: number;
-  name: string;
-  releaseAmount: number;
-  status: string;
-}
-
-interface TransactionDTO {
-  id: string;
-  type: string;
-  amount: number;
-  txHash: string | null;
-  createdAt: string;
-}
-
-interface DividendDTO {
-  id: string;
-  totalDividend: number;
-  perToken: number;
-  period: string;
 }
 
 interface IotRecordDTO {
@@ -67,34 +35,10 @@ interface IotRecordDTO {
   recordedAt: string;
 }
 
-interface NavSnapshotDTO {
-  nav: number;
-  recordedAt: string;
-}
-
 interface DashboardResponse {
   project: ProjectDTO;
-  escrow: EscrowDTO | null;
-  milestones: MilestoneDTO[];
-  transactions: TransactionDTO[];
-  tokenHoldersCount: number;
-  dividends: DividendDTO[];
   iot: { latest: IotRecordDTO | null; history: IotRecordDTO[] };
-  navSnapshots: NavSnapshotDTO[];
-  nav: { nav: number; breakdown: { escrow: number; asset: number; cashFlow: number } };
   esg: { co2Reduction: number; foodMileReduction: number };
-}
-
-interface ProjectListItem {
-  id: string;
-}
-
-// ---- fetchers ----
-async function fetchProjects(): Promise<ProjectListItem[]> {
-  const res = await fetch("/api/projects");
-  if (!res.ok) throw new Error("프로젝트 목록을 불러오지 못했습니다");
-  const json = await res.json();
-  return json.projects ?? [];
 }
 
 async function fetchDashboard(projectId: string): Promise<DashboardResponse> {
@@ -104,30 +48,9 @@ async function fetchDashboard(projectId: string): Promise<DashboardResponse> {
 }
 
 // ---- formatting helpers ----
-function formatWon(value: number): string {
-  return `₩${Math.round(value).toLocaleString("ko-KR")}`;
-}
-
-function formatCompactWon(value: number): string {
-  if (Math.abs(value) >= 100_000_000) return `₩${(value / 100_000_000).toFixed(1)}억`;
-  if (Math.abs(value) >= 10_000) return `₩${(value / 10_000).toFixed(0)}만`;
-  return formatWon(value);
-}
-
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("ko-KR", { month: "2-digit", day: "2-digit" });
-}
-
 function formatTime(iso: string): string {
   return new Date(iso).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
 }
-
-const TX_TYPE_LABEL: Record<string, string> = {
-  subscription: "청약 입금",
-  tranche_release: "마일스톤 해제",
-  dividend: "배당 지급",
-  revenue: "매출 정산",
-};
 
 const SENSOR_LABEL: Record<keyof IoTReading, string> = {
   temperature: "온도",
@@ -168,60 +91,22 @@ export function DashboardShell({
   operator?: boolean;
   projectId?: string;
 }) {
-  const projectsQuery = useQuery({
-    queryKey: ["projects"],
-    queryFn: fetchProjects,
-    enabled: !projectId,
-  });
-
-  const resolvedProjectId = projectId ?? projectsQuery.data?.[0]?.id;
-
   const dashboardQuery = useQuery({
-    queryKey: ["dashboard", resolvedProjectId],
-    queryFn: () => fetchDashboard(resolvedProjectId as string),
-    enabled: Boolean(resolvedProjectId),
+    queryKey: ["dashboard", projectId],
+    queryFn: () => fetchDashboard(projectId as string),
+    enabled: Boolean(projectId),
     refetchInterval: 5000,
   });
 
   const data = dashboardQuery.data;
-  const escrow = data?.escrow ?? null;
-  const dividends = data?.dividends ?? [];
-  const transactions = data?.transactions ?? [];
-  const milestones = data?.milestones ?? [];
   const iotLatest = data?.iot.latest ?? null;
-  const navSnapshots = data?.navSnapshots ?? [];
-
-  const cumulativeDividend = dividends.reduce((sum, d) => sum + d.totalDividend, 0);
-
-  const summaryMetrics = [
-    { label: "에스크로 잔액", value: formatCompactWon(escrow?.remaining ?? 0) },
-    { label: "총 해제", value: formatCompactWon(escrow?.totalReleased ?? 0) },
-    { label: "투자자 수", value: `${data?.tokenHoldersCount ?? 0}명` },
-    { label: "누적 배당", value: formatCompactWon(cumulativeDividend) },
-  ];
+  const iotHistory = data?.iot.history ?? [];
 
   const warnings = buildAnomalyWarnings(iotLatest);
 
-  const milestoneChartData: ChartPoint[] = milestones.map((m) => ({
-    name: m.name,
-    value: m.releaseAmount,
-    status: m.status === "completed" ? "completed" : m.status === "pending" ? "pending" : "active",
-  }));
-
-  const navChartData: ChartPoint[] =
-    navSnapshots.length > 0
-      ? [...navSnapshots].reverse().map((snap) => ({ name: formatDate(snap.recordedAt), value: snap.nav }))
-      : data
-        ? [{ name: "현재", value: data.nav.nav }]
-        : [];
-
-  const navDonutData: DonutSlice[] = data
-    ? [
-        { name: "에스크로", value: data.nav.breakdown.escrow },
-        { name: "자산가치", value: data.nav.breakdown.asset },
-        { name: "누적 현금흐름", value: data.nav.breakdown.cashFlow },
-      ]
-    : [];
+  const tempChartData: ChartPoint[] = [...iotHistory]
+    .reverse()
+    .map((r) => ({ name: formatTime(r.recordedAt), value: r.temperature }));
 
   return (
     <main className="page">
@@ -237,10 +122,14 @@ export function DashboardShell({
           <h1>{operator ? "운영자 운영 대시보드" : "통합 대시보드"}</h1>
           <p className="lead">
             {data ? `${data.project.name} · ` : ""}
-            투자자, 건물주, 운영자, 소비자가 한 플랫폼에서 각자의 활동을 관리하고
-            실시간 데이터를 확인합니다.
+            지점의 생육 환경과 이상 신호를 실시간으로 확인합니다.
           </p>
 
+          {!projectId && (
+            <p className="muted" style={{ marginTop: 24 }}>
+              표시할 지점이 선택되지 않았습니다.
+            </p>
+          )}
           {dashboardQuery.isLoading && (
             <p className="muted" style={{ marginTop: 24 }}>
               데이터를 불러오는 중입니다...
@@ -252,13 +141,7 @@ export function DashboardShell({
             </p>
           )}
 
-          <div className="grid-4" style={{ marginTop: 30 }}>
-            {summaryMetrics.map((m) => (
-              <Metric key={m.label} label={m.label} value={m.value} />
-            ))}
-          </div>
-
-          <div className="grid-3" style={{ marginTop: 24 }}>
+          <div className="grid-3" style={{ marginTop: 30 }}>
             <Panel title="실시간 IoT 환경">
               <div className="seg">
                 <span>{SENSOR_LABEL.temperature} {iotLatest ? `${iotLatest.temperature}${SENSOR_UNIT.temperature}` : "-"}</span>
@@ -291,66 +174,13 @@ export function DashboardShell({
             </Panel>
           </div>
 
-          <div className="grid-3" style={{ marginTop: 24 }}>
+          <div style={{ marginTop: 24 }}>
             <Chart
-              title="마일스톤별 자금 흐름"
-              data={milestoneChartData}
-              type="bar"
-              valueFormatter={formatCompactWon}
+              title="온도 추이 (최근 24시간)"
+              data={tempChartData}
+              type="area"
+              valueFormatter={(v) => `${v}℃`}
             />
-            <Chart title="NAV 추이" data={navChartData} type="area" valueFormatter={formatCompactWon} />
-            <Donut
-              title="NAV 구성"
-              data={navDonutData}
-              centerLabel={data ? `좌당 ${formatCompactWon(data.nav.nav)}` : undefined}
-              valueFormatter={formatCompactWon}
-            />
-          </div>
-
-          <div className="grid-2" style={{ marginTop: 24 }}>
-            <Panel title="최근 거래 내역">
-              <div className="table-scroll">
-                <table className="table">
-                  <tbody>
-                    {transactions.length > 0 ? (
-                      transactions.map((tx) => (
-                        <tr key={tx.id}>
-                          <td>{formatDate(tx.createdAt)}</td>
-                          <td>{TX_TYPE_LABEL[tx.type] ?? tx.type}</td>
-                          <td>{formatCompactWon(tx.amount)}</td>
-                          <td>{tx.txHash ?? "대기"}</td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td className="muted">거래 내역이 없습니다</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </Panel>
-            <Panel title="배당 내역">
-              <div className="table-scroll">
-                <table className="table">
-                  <tbody>
-                    {dividends.length > 0 ? (
-                      dividends.map((d) => (
-                        <tr key={d.id}>
-                          <td>{d.period}</td>
-                          <td>{formatCompactWon(d.totalDividend)}</td>
-                          <td>좌당 {formatWon(d.perToken)}</td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td className="muted">배당 내역이 없습니다</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </Panel>
           </div>
         </section>
       </div>
