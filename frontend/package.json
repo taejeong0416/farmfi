@@ -17,7 +17,6 @@
     "@google/genai": "^2.9.0",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
-    "@rainbow-me/rainbowkit": "^2.2.11",
     "@supabase/supabase-js": "^2.110.0",
     "@tanstack/react-query": "^5.101.2",
     "bcryptjs": "^3.0.3",
@@ -31,10 +30,7 @@
     "react": "^18",
     "react-dom": "^18",
     "recharts": "^3.9.1",
-    "siwe": "^3.0.0",
-    "tsx": "^4.22.4",
-    "viem": "^2.52.0",
-    "wagmi": "^2.19.5"
+    "tsx": "^4.22.4"
   },
   "devDependencies": {
     "@types/node": "^20",

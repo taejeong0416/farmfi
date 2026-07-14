@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { calculateNAV } from "@/lib/nav-calculator";
 
 function serialize(obj: any): any {
   return JSON.parse(
@@ -64,8 +63,6 @@ export async function GET(
       orderBy: { recordedAt: "desc" },
     });
 
-    const nav = await calculateNAV(projectId);
-
     const co2Reduction = (project.areaSqm || 0) * 2.5;
     const foodMileReduction = (project.areaSqm || 0) * 15;
 
@@ -82,7 +79,6 @@ export async function GET(
           history: iotHistory,
         },
         navSnapshots,
-        nav,
         esg: {
           co2Reduction,
           foodMileReduction,
