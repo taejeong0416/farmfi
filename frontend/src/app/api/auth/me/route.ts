@@ -16,16 +16,7 @@ function serializeBigInt<T>(obj: T): T {
 // 마이페이지/온보딩 응답 shape. 항상 세션의 userId로만 조회 — 클라이언트가
 // 보낼 수 있는 어떤 id도 신뢰하지 않는다.
 async function loadUserPayload(userId: string) {
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    include: {
-      tokenHoldings: {
-        include: {
-          project: { select: { id: true, name: true, tokenSymbol: true } },
-        },
-      },
-    },
-  });
+  const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) return null;
 
   return serializeBigInt({
@@ -33,19 +24,6 @@ async function loadUserPayload(userId: string) {
     name: user.name,
     role: user.role,
     email: user.email,
-    walletAddress: user.walletAddress,
-    identityVerified: user.identityVerified,
-    verifiedAt: user.verifiedAt,
-    realName: user.realName,
-    investorAnnualLimit: user.investorAnnualLimit,
-    businessRegNo: user.businessRegNo,
-    tokenHoldings: user.tokenHoldings.map((h) => ({
-      projectId: h.projectId,
-      projectName: h.project.name,
-      tokenSymbol: h.project.tokenSymbol,
-      amount: h.amount,
-      avgPrice: h.avgPrice,
-    })),
   });
 }
 

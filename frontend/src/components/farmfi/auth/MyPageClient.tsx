@@ -4,9 +4,6 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Panel } from "@/components/FarmFi";
 import { useAuth, type AuthUserRole } from "@/lib/useAuth";
-import { formatKRW, shortenHash } from "@/lib/format";
-import { IdentityBadge } from "./IdentityBadge";
-import { TokenHoldingsPanel } from "./TokenHoldingsPanel";
 
 const ROLE_LABEL: Record<AuthUserRole, string> = {
   investor: "투자자",
@@ -56,31 +53,13 @@ export function MyPageClient() {
       <span className="eyebrow">마이페이지</span>
       <h1 style={{ fontSize: 36 }}>{user.name}님</h1>
 
-      <div className="grid-2" style={{ marginTop: 28 }}>
+      <div style={{ marginTop: 28 }}>
         <Panel title="내 정보">
           <div style={{ display: "grid", gap: 16 }}>
             <InfoRow label="역할" value={ROLE_LABEL[user.role] ?? user.role} />
-            <InfoRow
-              label="지갑 주소"
-              value={user.walletAddress ? shortenHash(user.walletAddress) : "미연결"}
-            />
             {user.email && <InfoRow label="이메일" value={user.email} />}
-            {user.role === "investor" && user.investorAnnualLimit != null && (
-              <InfoRow label="연간 투자한도" value={formatKRW(user.investorAnnualLimit)} />
-            )}
-            {(user.role === "landlord" || user.role === "operator") && (
-              <InfoRow label="사업자등록번호" value={user.businessRegNo ?? "미등록"} />
-            )}
           </div>
         </Panel>
-
-        <Panel title="본인인증">
-          <IdentityBadge identityVerified={user.identityVerified} verifiedAt={user.verifiedAt} />
-        </Panel>
-      </div>
-
-      <div style={{ marginTop: 24 }}>
-        <TokenHoldingsPanel holdings={user.tokenHoldings} />
       </div>
 
       <button className="ghost" type="button" style={{ marginTop: 28 }} onClick={handleLogout}>

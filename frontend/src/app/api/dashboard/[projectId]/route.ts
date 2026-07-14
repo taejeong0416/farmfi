@@ -16,11 +16,6 @@ export async function GET(
 
     const project = await prisma.project.findUnique({
       where: { id: projectId },
-      include: {
-        escrow: true,
-        milestones: { orderBy: { seq: "asc" } },
-        partners: true,
-      },
     });
 
     if (!project) {
@@ -29,21 +24,6 @@ export async function GET(
         { status: 404 }
       );
     }
-
-    const transactions = await prisma.transaction.findMany({
-      where: { projectId },
-      orderBy: { createdAt: "desc" },
-      take: 10,
-    });
-
-    const tokenHoldersCount = await prisma.tokenHolding.count({
-      where: { projectId },
-    });
-
-    const dividends = await prisma.dividend.findMany({
-      where: { projectId },
-      orderBy: { createdAt: "desc" },
-    });
 
     // Latest IoT data + last 24h (48 records)
     const latestIot = await prisma.iotData.findFirst({
@@ -58,27 +38,16 @@ export async function GET(
       take: 48,
     });
 
-    const navSnapshots = await prisma.navSnapshot.findMany({
-      where: { projectId },
-      orderBy: { recordedAt: "desc" },
-    });
-
     const co2Reduction = (project.areaSqm || 0) * 2.5;
     const foodMileReduction = (project.areaSqm || 0) * 15;
 
     return NextResponse.json(
       serialize({
         project,
-        escrow: project.escrow,
-        milestones: project.milestones,
-        transactions,
-        tokenHoldersCount,
-        dividends,
         iot: {
           latest: latestIot,
           history: iotHistory,
         },
-        navSnapshots,
         esg: {
           co2Reduction,
           foodMileReduction,

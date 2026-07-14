@@ -8,27 +8,11 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 export type AssignableRole = "landlord" | "operator";
 export type AuthUserRole = AssignableRole | "admin" | "investor";
 
-export type TokenHoldingSummary = {
-  projectId: string;
-  projectName: string;
-  tokenSymbol: string;
-  amount: number;
-  avgPrice: number;
-};
-
 export type AuthUser = {
   id: string;
   name: string;
   role: AuthUserRole;
   email: string | null;
-  walletAddress: string | null;
-  // ─── 신원 인증 / 투자 자격 (OpenDID 연동, /verify-identity 흐름) ───
-  identityVerified: boolean;
-  verifiedAt: string | null;
-  realName: string | null;
-  investorAnnualLimit: number | null;
-  businessRegNo: string | null;
-  tokenHoldings: TokenHoldingSummary[];
 };
 
 export type SignupInput = {

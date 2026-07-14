@@ -9,28 +9,14 @@ datasource db {
 
 // ─── 사용자 ───
 model User {
-  id            String         @id @default(cuid())
-  name          String
-  role          String         // investor, landlord, operator
-  email         String?        @unique
-  passwordHash  String?        // 이메일+비밀번호 로그인 (bcrypt 해시)
-  walletAddress String?        @unique
-  nonce         String?        // SIWE 로그인 챌린지 nonce
-  balance       BigInt         @default(0) // 원화 잔액 (모의)
-  // ─── 신원 인증 / KYC (OpenDID K-DID 연동 예정) ───
-  identityVerified    Boolean   @default(false) // 실명 인증 완료 여부
-  verifiedAt          DateTime? // 인증 완료 시각
-  realName            String?   // 검증된 실명
-  birthDate           DateTime? // 생년월일 (적격투자 연령 판단)
-  investorAnnualLimit BigInt?   // 연간 투자한도 (원 단위, 자본시장법 룰엔진 산출)
-  businessRegNo       String?   // 사업자등록번호 (건물주/운영자)
-  createdAt     DateTime       @default(now())
-  transactions  Transaction[]
-  tokenHoldings TokenHolding[]
-  dividendClaims DividendClaim[]
-  spaces        Space[]
-  operatorApplications  OperatorApplication[]
-  identityVerifications IdentityVerification[]
+  id           String   @id @default(cuid())
+  name         String
+  role         String   // landlord, operator, admin
+  email        String?  @unique
+  passwordHash String?  // 이메일+비밀번호 로그인 (bcrypt 해시)
+  createdAt    DateTime @default(now())
+  spaces               Space[]
+  operatorApplications OperatorApplication[]
 }
 
 // ─── 운영자 지원 신청 ───
@@ -43,17 +29,6 @@ model OperatorApplication {
   availableHours String   // 주간 투입 가능 시간
   status         String   @default("applied") // applied → docs → education → matched → operating
   createdAt      DateTime @default(now())
-}
-
-// ─── 신원 인증 세션 (OpenDID Verifier 흐름) ───
-model IdentityVerification {
-  id        String   @id @default(cuid())
-  userId    String?  // 로그인 전 세션도 허용 (익명 → 인증 후 연결)
-  user      User?    @relation(fields: [userId], references: [id])
-  txId      String   @unique // Verifier 트랜잭션 ID (request-offer-qr)
-  status    String   @default("pending") // pending → submitted → verified → failed
-  claims    Json?    // confirm-verify로 받은 검증 클레임
-  createdAt DateTime @default(now())
 }
 
 // ─── 유휴공간 등록 ───
@@ -75,127 +50,18 @@ model Space {
   createdAt        DateTime @default(now())
 }
 
-// ─── 프로젝트 ───
+// ─── 지점 (모델명 Project 유지, 도메인 표기는 '지점') ───
 model Project {
-  id              String          @id @default(cuid())
-  name            String
-  description     String?
-  location        String?
-  buildingType    String?
-  areaSqm         Float?
-  tokenSymbol     String
-  tokenPrice      BigInt          // 원화 단가
-  totalTokens     Int
-  soldTokens      Int             @default(0)
-  targetAmount    BigInt
-  currentAmount   BigInt          @default(0)
-  totalCapex      BigInt          @default(0)
-  status          String          @default("upcoming") // upcoming, funding, funded, operating, completed
-  fundingStart    DateTime?
-  fundingEnd      DateTime?
-  imageUrl        String?
-  contractAddress String?
-  createdAt       DateTime        @default(now())
-  escrow          Escrow?
-  milestones      Milestone[]
-  transactions    Transaction[]
-  tokenHoldings   TokenHolding[]
-  dividends       Dividend[]
-  iotData         IotData[]
-  partners        ProjectPartner[]
-  navSnapshots    NavSnapshot[]
-}
-
-// ─── 에스크로 ───
-model Escrow {
-  id              String  @id @default(cuid())
-  projectId       String  @unique
-  project         Project @relation(fields: [projectId], references: [id])
-  totalLocked     BigInt  @default(0)
-  totalReleased   BigInt  @default(0)
-  remaining       BigInt  @default(0)
-  status          String  @default("active")
-  contractAddress String?
-}
-
-// ─── 마일스톤 ───
-model Milestone {
-  id                   String         @id @default(cuid())
-  projectId            String
-  project              Project        @relation(fields: [projectId], references: [id])
-  seq                  Int
-  name                 String
-  description          String?
-  releasePct           Int            // 3500 = 35%
-  releaseAmount        BigInt         @default(0)
-  status               String         @default("pending") // pending, in_progress, verified, completed, failed, manual_review
-  conditionText        String?
-  requiredSignals      String[]       // ["contract", "receipt", "photo", "iot"]
-  iotMinDays           Int            @default(0)
-  retryCount           Int            @default(0)
-  crossCheck           String?
-  assetValue           BigInt         @default(0)
-  evidenceUrl          String?
-  aiVerificationResult Json?
-  completedAt          DateTime?
-  notifications        Notification[]
-
-  @@unique([projectId, seq])
-}
-
-// ─── 거래 내역 ───
-model Transaction {
-  id          String   @id @default(cuid())
-  projectId   String
-  project     Project  @relation(fields: [projectId], references: [id])
-  userId      String?  // null = 시스템 거래 (트랜치 해제 등)
-  user        User?    @relation(fields: [userId], references: [id])
-  type        String   // subscription, tranche_release, dividend, revenue
-  amount      BigInt
-  tokenAmount Int?
-  txHash      String?
-  blockNumber Int?
-  memo        String?
-  createdAt   DateTime @default(now())
-}
-
-// ─── 토큰 보유 ───
-model TokenHolding {
-  id        String  @id @default(cuid())
-  userId    String
-  user      User    @relation(fields: [userId], references: [id])
-  projectId String
-  project   Project @relation(fields: [projectId], references: [id])
-  amount    Int
-  avgPrice  BigInt
-
-  @@unique([userId, projectId])
-}
-
-// ─── 배당 ───
-model Dividend {
-  id            String          @id @default(cuid())
-  projectId     String
-  project       Project         @relation(fields: [projectId], references: [id])
-  totalRevenue  BigInt
-  totalDividend BigInt
-  perToken      BigInt
-  period        String
-  createdAt     DateTime        @default(now())
-  claims        DividendClaim[]
-}
-
-// ─── 배당 수령 ───
-model DividendClaim {
-  id          String   @id @default(cuid())
-  dividendId  String
-  dividend    Dividend @relation(fields: [dividendId], references: [id])
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  tokenAmount Int
-  claimAmount BigInt
-  claimed     Boolean  @default(false)
-  claimedAt   DateTime?
+  id           String    @id @default(cuid())
+  name         String
+  description  String?
+  location     String?
+  buildingType String?
+  areaSqm      Float?
+  status       String    @default("operating") // operating, paused, closed
+  imageUrl     String?
+  createdAt    DateTime  @default(now())
+  iotData      IotData[]
 }
 
 // ─── IoT 데이터 ───
@@ -214,61 +80,12 @@ model IotData {
   recordedAt     DateTime @default(now())
 }
 
-// ─── 알림 ───
+// ─── 알림 (생육 이상 알림 — 지점/IoT FK 재설계·발송 경로는 후속 phase) ───
 model Notification {
-  id          String    @id @default(cuid())
-  milestoneId String
-  milestone   Milestone @relation(fields: [milestoneId], references: [id])
-  type        String    // verification_failed, anomaly_detected, manual_review
+  id          String   @id @default(cuid())
+  type        String   // anomaly_detected
   message     String
   evidenceUrl String?
-  isRead      Boolean   @default(false)
-  createdAt   DateTime  @default(now())
-}
-
-// ─── 프로젝트 파트너 ───
-model ProjectPartner {
-  id                     String  @id @default(cuid())
-  projectId              String
-  project                Project @relation(fields: [projectId], references: [id])
-  role                   String  // landlord, equipment_partner
-  name                   String
-  totalContribution      BigInt  @default(0)
-  recoveredAmount        BigInt  @default(0)
-  monthlyRecoveryAmount  BigInt  @default(0)
-  recoveryComplete       Boolean @default(false)
-}
-
-// ─── NAV 스냅샷 ───
-model NavSnapshot {
-  id                 String   @id @default(cuid())
-  projectId          String
-  project            Project  @relation(fields: [projectId], references: [id])
-  nav                Float
-  escrowBalance      BigInt
-  assetValue         BigInt
-  cumulativeCashFlow BigInt
-  recordedAt         DateTime @default(now())
-}
-
-// ─── AI 검증 결과 캐시 (시연 안정성용) ───
-model AiCache {
-  id          String   @id @default(cuid())
-  milestoneId String
-  signalType  String   // contract, receipt, photo
-  result      Json?
-  createdAt   DateTime @default(now())
-
-  @@unique([milestoneId, signalType])
-}
-
-// ─── 데모 캐시 ───
-model DemoCache {
-  id          String   @id @default(cuid())
-  step        Int
-  signalType  String?
-  txHash      String?
-  blockNumber Int?
-  result      Json?
+  isRead      Boolean  @default(false)
   createdAt   DateTime @default(now())
 }
