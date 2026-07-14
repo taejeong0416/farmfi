@@ -1,6 +1,6 @@
 # FarmFi 피벗 실행계획 (v18 기준)
 
-본 문서는 `docs/FarmFi_전체서비스_기획안_v18.md`(유일 정답 문서)를 기준으로, 현재 코드(`frontend/`, `contracts/`, `iot-mock/`)를 STO 투자 플랫폼에서 v18 "공실전환 창업 지원 인프라"로 전환하기 위한 실행계획이다. 모든 판정은 실제 파일경로에 근거하며, 미확인 항목은 "추정"으로 표기한다. 이번 산출물은 격차분석 + 실행계획까지이며 실제 삭제/수정은 포함하지 않는다.
+본 문서는 `docs/service-plan.md`(유일 정답 문서)를 기준으로, 현재 코드(`frontend/`, `contracts/`, `iot-mock/`)를 STO 투자 플랫폼에서 v18 "공실전환 창업 지원 인프라"로 전환하기 위한 실행계획이다. 모든 판정은 실제 파일경로에 근거하며, 미확인 항목은 "추정"으로 표기한다. 이번 산출물은 격차분석 + 실행계획까지이며 실제 삭제/수정은 포함하지 않는다.
 
 전제(확정 스코프): 블록체인/STO/투자자 레이어(투자·토큰·청약·배당·에스크로·마일스톤 검증·온체인 앵커·DID/VC)는 전부 제거 대상이다. 수익은 두 주머니뿐 — FarmFi 인프라 수익(도입비/운영관리 패키지/성과 리포트/설비 연결 수수료, 기관 지불)과 운영자 매장 직접판매(FarmFi 미경유)다.
 
@@ -17,7 +17,7 @@
 | 3 | `ai-vision.ts` | **제거** (마일스톤 증빙 OCR 전용, 공간진단 재배치 안 함 — 스코프 단순화) |
 | 4 | 판매데이터 입력 | **운영자 수기입력 API**(`api/sales` POST) + 시드 목데이터. 외부 POS 연동 안 함 |
 | 5 | `Project` 모델 | **모델명 유지**(광범위 참조로 churn 최소화), 도메인·UI 표기만 '지점' |
-| 6 | 스코프 밖 문서 | `docs/pivot-plan.md` **제거**(사업계획서 v4 기반, DID/VC·앵커링이 v18 스코프와 충돌 — 본 문서가 대체). `SAMPLE_README1.md` **유지**(해커톤 제출 템플릿, 무관) |
+| 6 | 스코프 밖 문서 | 옛 DID/VC 핸드오프 문서(사업계획서 v4 기반, DID/VC·앵커링이 v18 스코프와 충돌) **제거** — 본 문서가 대체. `SAMPLE_README1.md` **유지**(해커톤 제출 템플릿, 무관) |
 
 ---
 
@@ -134,7 +134,7 @@ Project에서 제거할 필드: `tokenSymbol`(L86), `tokenPrice`(L87), `totalTok
 - `frontend/src/components/farmfi/home/{Hero,Flow,RoleCards,Stats}.tsx`, `ui/GreenBand.tsx`, `layout/{Footer,Header}.tsx` — 투자자·소비자·에스크로·지갑·블록체인/Chainlink/BIFC 배지 카피를 v18 메시지(생육 모니터링·오늘 할 일·성과 리포트)로 교체. Stats의 currentAmount/targetAmount/escrow.remaining 데이터 소스도 재정의
 - `docs/plan.md`, `docs/api-spec.md`, `docs/verification-spec.md` — 레퍼런스(제자리 갱신) 규칙에 따라 STO 플랜/명세를 v18 기능 기준으로 재작성. verification-spec의 다중신호 AND 검증은 온체인 집행·검증명제 부분 폐기 후 재해석 여부 판단
 - `CLAUDE.md`, `CONTRIBUTING.md` — 'STO 플랫폼' 정체성·온체인 gotcha·Foundry/wagmi/viem 스택·FARM_TOKEN_ADDRESS/ESCROW_ADDRESS env 제거
-- `docs/pivot-plan.md` — 사업계획서 v4 기반의 옛 핸드오프 문서로 DID/VC·AnchorRegistry·블록체인 앵커링을 전제한다. v18 확정 스코프(블록체인 완전 제거)와 정면 충돌하므로 **제거**(본 문서가 대체). `SAMPLE_README1.md` — 해커톤 제출용 README 템플릿(STO 무관)이라 **그대로 유지**
+- 옛 DID/VC 핸드오프 문서 — 사업계획서 v4 기반으로 DID/VC·AnchorRegistry·블록체인 앵커링을 전제한다. v18 확정 스코프(블록체인 완전 제거)와 정면 충돌하므로 **제거**(본 문서가 대체). `SAMPLE_README1.md` — 해커톤 제출용 README 템플릿(STO 무관)이라 **그대로 유지**
 
 ---
 
@@ -224,7 +224,7 @@ OperatorApplication에 매칭 결과(어느 Space에 어느 operator)를 담는 
 - **검증**: 3핵심 페이지가 시드 데이터로 렌더, `npm run seed` 성공, 스키마-클라이언트 desync 해소
 
 ### Phase 6 — 문서·카피 재작성
-- README·랜딩·홈 컴포넌트 카피, docs/plan·api-spec·verification-spec, CLAUDE.md·CONTRIBUTING.md 재작성. pivot-plan.md의 DID/VC·앵커링을 v18 기준으로 재정합/폐기. dev-log는 새 항목 append
+- README·랜딩·홈 컴포넌트 카피, docs/plan·api-spec·verification-spec, CLAUDE.md·CONTRIBUTING.md 재작성. 옛 DID/VC 핸드오프 문서의 앵커링 전제를 v18 기준으로 폐기. dev-log는 새 항목 append
 - **검증**: 문서 내 STO 용어(청약·에스크로·트랜치·배당·토큰·지갑·txHash) 전수 grep 0건(dev-log 과거 이력 제외), api-spec이 실제 코드와 정합
 
 ---

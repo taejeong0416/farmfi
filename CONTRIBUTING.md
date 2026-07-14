@@ -36,6 +36,6 @@ FarmFi 개발 가이드.
 ## 문서
 | 파일 | 내용 |
 |---|---|
-| [docs/피벗_실행계획_v15.md](docs/피벗_실행계획_v15.md) | 피벗(STO→운영 인프라) 실행계획 |
+| [docs/pivot-plan.md](docs/pivot-plan.md) | 피벗(STO→운영 인프라) 실행계획 |
 | [docs/api-spec.md](docs/api-spec.md) | API 명세 |
 | [docs/dev-log.md](docs/dev-log.md) | 진행상황·결정 기록 |
