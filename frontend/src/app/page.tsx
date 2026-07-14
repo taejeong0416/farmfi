@@ -3,8 +3,6 @@ import {
   Flow,
   GreenBand,
   Hero,
-  MarketProducts,
-  ProjectGrid,
   RoleCards,
   Section,
   Stats,
@@ -36,14 +34,8 @@ export default function HomePage() {
       <Section title="도시 유휴공간이 수익 농장으로 바뀌는 과정">
         <Flow />
       </Section>
-      <Section title="주목할 만한 프로젝트" aside={<Link className="link" href="/projects">모든 프로젝트 보기 →</Link>}>
-        <ProjectGrid limit={3} />
-      </Section>
       <Section title="플랫폼 현황">
         <Stats />
-      </Section>
-      <Section title="지금, 가까운 미니팜에서 신선함을 만나보세요" aside={<Link className="link" href="/market">마켓 더 보기 →</Link>}>
-        <MarketProducts />
       </Section>
       <GreenBand />
     </main>

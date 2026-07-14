@@ -8,16 +8,12 @@ export { Footer } from "./farmfi/layout/Footer";
 export { Hero } from "./farmfi/home/Hero";
 export { RoleCards } from "./farmfi/home/RoleCards";
 export { Flow } from "./farmfi/home/Flow";
-export { ProjectGrid } from "./farmfi/home/ProjectGrid";
 export { Stats } from "./farmfi/home/Stats";
-export { MarketProducts } from "./farmfi/home/MarketProducts";
 
 export { DashboardShell } from "./farmfi/dashboard/DashboardShell";
 export { Chart, Donut } from "./farmfi/dashboard/Chart";
 
 export { SpaceForm, Field } from "./farmfi/space/SpaceForm";
-export { DetailPage } from "./farmfi/project/DetailPage";
-export { TransparencyPage } from "./farmfi/transparency/TransparencyPage";
 
 export { Section } from "./farmfi/ui/Section";
 export { Metric } from "./farmfi/ui/Metric";
