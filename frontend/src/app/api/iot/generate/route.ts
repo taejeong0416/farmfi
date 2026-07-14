@@ -92,6 +92,18 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // 생육 이상 알림 발송 — 이상치면 Notification 적재 (운영자 조회용)
+    if (newPointAnomaly.isAnomaly) {
+      const sensors = newPointAnomaly.affectedSensors.join(", ") || "복합 패턴";
+      await prisma.notification.create({
+        data: {
+          projectId,
+          type: "anomaly_detected",
+          message: `생육 이상 감지 · ${sensors} (이상 스코어 ${newPointAnomaly.anomalyScore.toFixed(2)})`,
+        },
+      });
+    }
+
     return NextResponse.json(
       serialize({
         data: updated,
