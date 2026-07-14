@@ -56,9 +56,21 @@ export async function POST(request: NextRequest) {
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
-  const user = await prisma.user.create({
-    data: { name: name.trim(), email: normalizedEmail, passwordHash, role },
-  });
+  let user;
+  try {
+    user = await prisma.user.create({
+      data: { name: name.trim(), email: normalizedEmail, passwordHash, role },
+    });
+  } catch (e) {
+    // 선조회~생성 사이 동시 가입 레이스: unique(email) 위반은 중복 가입으로 응답.
+    if (e && typeof e === "object" && "code" in e && (e as { code?: string }).code === "P2002") {
+      return NextResponse.json(
+        { error: "이미 가입된 이메일입니다." },
+        { status: 409 }
+      );
+    }
+    throw e;
+  }
 
   const token = await signSession({ userId: user.id, role: user.role as Role });
 

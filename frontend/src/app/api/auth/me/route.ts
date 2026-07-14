@@ -7,24 +7,13 @@ import {
 } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
-function serializeBigInt<T>(obj: T): T {
-  return JSON.parse(
-    JSON.stringify(obj, (_, v) => (typeof v === "bigint" ? Number(v) : v))
-  );
-}
-
 // 마이페이지/온보딩 응답 shape. 항상 세션의 userId로만 조회 — 클라이언트가
 // 보낼 수 있는 어떤 id도 신뢰하지 않는다.
 async function loadUserPayload(userId: string) {
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) return null;
 
-  return serializeBigInt({
-    id: user.id,
-    name: user.name,
-    role: user.role,
-    email: user.email,
-  });
+  return { id: user.id, name: user.name, role: user.role, email: user.email };
 }
 
 export async function GET() {
@@ -69,10 +58,18 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: "Invalid role" }, { status: 400 });
   }
 
-  await prisma.user.update({
-    where: { id: session.userId },
-    data: { role },
-  });
+  try {
+    await prisma.user.update({
+      where: { id: session.userId },
+      data: { role },
+    });
+  } catch (e) {
+    // 세션은 살아있지만 유저 레코드가 삭제된 경우(P2025) → 404로 응답.
+    if (e && typeof e === "object" && "code" in e && (e as { code?: string }).code === "P2025") {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+    throw e;
+  }
 
   const user = await loadUserPayload(session.userId);
   if (!user) {
