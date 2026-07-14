@@ -43,8 +43,10 @@ function computeSuitabilityScore(input: {
 function parsePyeong(area: string): number {
   const nums = area.match(/\d+/g)?.map(Number) ?? [];
   if (nums.length === 0) return 30; // default assumption
-  if (nums.length === 1) return nums[0];
-  return Math.round((nums[0] + nums[1]) / 2);
+  const raw = nums.length === 1 ? nums[0] : Math.round((nums[0] + nums[1]) / 2);
+  // area는 자유 문자열 — 비정상적으로 큰 수가 estimatedRent(Int, int4)를
+  // 오버플로하지 않도록 상한 클램프 (100,000평 × 30,000원 = 3.0e9 < int4 최대 아님 → 70,000으로 제한)
+  return Math.min(raw, 70000);
 }
 
 /**

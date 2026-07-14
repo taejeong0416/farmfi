@@ -8,7 +8,8 @@ export async function GET(req: NextRequest) {
   if (!projectId) {
     return NextResponse.json({ error: "projectId is required" }, { status: 400 });
   }
-  const days = Number(req.nextUrl.searchParams.get("days") ?? 14);
+  const daysRaw = Number(req.nextUrl.searchParams.get("days") ?? 14);
+  const days = Number.isFinite(daysRaw) && daysRaw > 0 ? daysRaw : 14;
   const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
 
   const grouped = await prisma.salesRecord.groupBy({

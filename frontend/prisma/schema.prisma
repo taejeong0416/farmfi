@@ -83,6 +83,8 @@ model IotData {
   anomalyScore   Float    @default(0)
   isAnomaly      Boolean  @default(false)
   recordedAt     DateTime @default(now())
+
+  @@index([projectId, recordedAt])
 }
 
 // ─── 알림 (생육 이상 알림) ───
@@ -146,6 +148,8 @@ model HarvestRecord {
   product     Product  @relation(fields: [productId], references: [id])
   quantity    Int      // 수확량 (봉)
   harvestedAt DateTime @default(now())
+
+  @@index([projectId, harvestedAt])
 }
 
 // ─── 판매 실적 (운영자 수기입력 — 판매-재배 연동 원천) ───
@@ -158,4 +162,6 @@ model SalesRecord {
   quantity  Int      // 판매 수량 (봉)
   amount    Int      // 매출 (원)
   soldAt    DateTime @default(now())
+
+  @@index([projectId, soldAt])
 }

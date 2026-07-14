@@ -8,7 +8,8 @@ export async function GET(req: NextRequest) {
   if (!institutionId) {
     return NextResponse.json({ error: "institutionId is required" }, { status: 400 });
   }
-  const days = Number(req.nextUrl.searchParams.get("days") ?? 30);
+  const daysRaw = Number(req.nextUrl.searchParams.get("days") ?? 30);
+  const days = Number.isFinite(daysRaw) && daysRaw > 0 ? daysRaw : 30;
   const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
 
   const institution = await prisma.institution.findUnique({

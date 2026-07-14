@@ -46,8 +46,9 @@ export async function POST(request: NextRequest) {
       orderBy: { recordedAt: "desc" },
     });
 
+    // 시드(iot-seed.ts)와 동일하게 100%에 캡
     const growthRate = latest
-      ? latest.growthRate + 0.1 + Math.random() * 0.2
+      ? Math.min(100, latest.growthRate + 0.1 + Math.random() * 0.2)
       : 0.1 + Math.random() * 0.2;
 
     // Create the data point (anomaly fields will be updated after detection)
@@ -80,8 +81,10 @@ export async function POST(request: NextRequest) {
 
     const anomalyResults = detectAnomalies(readings);
 
-    // The new data point is the first in the list (most recent)
-    const newPointAnomaly = anomalyResults[0];
+    // 방금 만든 레코드의 판정을 id로 찾는다 — 동시 요청이 사이에 끼어도
+    // "첫 건 = 내 레코드" 가정이 깨지지 않도록.
+    const newIdx = recentData.findIndex((d) => d.id === newData.id);
+    const newPointAnomaly = anomalyResults[Math.max(newIdx, 0)];
 
     // Update the record with anomaly info
     const updated = await prisma.iotData.update({
