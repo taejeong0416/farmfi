@@ -3,15 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useAccount } from "wagmi";
 import { useAuth } from "@/lib/useAuth";
-import { WalletConnectPanel } from "./WalletConnectPanel";
 
 export function LoginForm() {
   const router = useRouter();
   const { login } = useAuth();
-  const { isConnected } = useAccount();
 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,7 +18,7 @@ export function LoginForm() {
     setError(null);
     setSubmitting(true);
     try {
-      await login();
+      await login(email, password);
       router.push("/mypage");
     } catch (err) {
       setError(err instanceof Error ? err.message : "로그인에 실패했어요. 다시 시도해주세요.");
@@ -33,13 +32,35 @@ export function LoginForm() {
       <span className="eyebrow">로그인</span>
       <h1 style={{ fontSize: 36 }}>다시 만나서 반가워요</h1>
       <p className="lead" style={{ marginTop: 14 }}>
-        지갑을 연결하고 서명하면 로그인이 완료돼요.
+        이메일과 비밀번호로 로그인해요.
       </p>
 
       <article className="card form-panel" style={{ marginTop: 24 }}>
         <div className="field-stack">
-          <label>지갑 연결</label>
-          <WalletConnectPanel />
+          <label htmlFor="login-email">이메일</label>
+          <input
+            id="login-email"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+          />
+        </div>
+
+        <div className="field-stack" style={{ marginTop: 18 }}>
+          <label htmlFor="login-password">비밀번호</label>
+          <input
+            id="login-password"
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleLogin();
+            }}
+            placeholder="비밀번호"
+          />
         </div>
 
         {error && (
@@ -50,10 +71,10 @@ export function LoginForm() {
           className="btn"
           type="button"
           style={{ width: "100%", marginTop: 24, opacity: submitting ? 0.7 : 1 }}
-          disabled={!isConnected || submitting}
+          disabled={!email || !password || submitting}
           onClick={handleLogin}
         >
-          {submitting ? "로그인 중..." : "서명하고 로그인하기 →"}
+          {submitting ? "로그인 중..." : "로그인하기 →"}
         </button>
 
         <p className="muted" style={{ marginTop: 14, textAlign: "center" }}>

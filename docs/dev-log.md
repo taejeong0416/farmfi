@@ -5,6 +5,19 @@
 
 ---
 
+## 2026-07-14 — 박태정
+
+### 피벗 Phase 0 — 인증 SIWE(지갑) → 이메일+비밀번호 교체
+v15 피벗(STO→공실전환 창업 지원 인프라)의 첫 코드 단계. `docs/피벗_실행계획_v15.md` §6 Phase 0 수행.
+- **세션 재사용**: `lib/auth.ts` jose JWT 레이어 유지, `SessionPayload.walletAddress`를 옵셔널(레거시)로 강등 — 세션 식별자는 userId+role. 유지 대상 라우트의 세션 발급 경로 보존.
+- **신규 엔드포인트**: `api/auth/signup`(이메일 중복확인→bcryptjs 해시→세션 발급), `api/auth/login`(이메일 조회→bcrypt 비교→세션). `bcryptjs` 도입(네이티브 빌드 회피). `User.passwordHash` + `email @unique` 추가(나머지 STO 모델 정리는 Phase 3).
+- **클라이언트**: `useAuth` login(email,password)/signup() 도입·wagmi/siwe 제거, `providers`에서 Wagmi/RainbowKit 제거하고 **QueryClientProvider 보존**, LoginForm/SignupForm 이메일·비번 폼, RoleSelect·auth/me에서 investor 자가배정 제거(가입 역할=운영자·공간제공자), Header 지갑버튼 제거, 고아가 된 WalletConnectPanel 삭제. 클라이언트 재생성으로 리셋 후 남아있던 피벗 클라이언트 desync 해소.
+- **검증**(DB 미변경 — 라이브 로그인은 스키마 정리 후로): `tsc --noEmit` 0에러. `next dev`로 `/`·`/login`·`/signup` 200, `api/auth/me` 200, login·signup POST 라우트 405(GET 차단=컴파일 정상), 로그인 페이지 이메일·비번 폼 렌더 확인. src에 라이브 wagmi/rainbowkit 훅 0건(남은 "지갑 연결"은 Footer·투자자 페이지 정적 카피 → Phase 2/6).
+- **환경 이슈(기존, 피벗 무관)**: `next build`(webpack production)가 경로 한글(`해커톤`)+Node 22/Next 14.2 `readlink` EISDIR로 실패 — 클린 HEAD에서도 동일 재현. dev·tsc는 정상. 후속 조치 필요(경로 이전 또는 Node/Next 조정).
+- **후속(Phase 2 이후)**: siwe 라우트, 투자자 UI(MyPageClient 투자필드·IdentityBadge·TokenHoldingsPanel), "지갑 연결" 카피 제거. JWT_SECRET 필수(.env.example 문서화, .env는 로컬만).
+
+---
+
 ## 2026-07-04 — 박태정
 
 ### 병합 코드 리뷰 → 결함 수정 2건 커밋

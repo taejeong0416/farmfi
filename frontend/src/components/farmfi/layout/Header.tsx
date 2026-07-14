@@ -3,9 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAuth } from "@/lib/useAuth";
-import { shortenHash } from "@/lib/format";
 
 const nav = [
   ["서비스 소개", "/"],
@@ -35,10 +33,7 @@ export function Header() {
     }
   };
 
-  // 세션 상태 기반 계정 메뉴 라벨 (이름 우선, 없으면 지갑 주소 축약).
-  const accountLabel =
-    user?.name ??
-    (user?.walletAddress ? shortenHash(user.walletAddress) : "내 정보");
+  const accountLabel = user?.name ?? "내 정보";
 
   // 로그인/회원가입 vs 내 정보/로그아웃 — 데스크톱·모바일 공통 렌더.
   const renderAuthNav = (onNavigate?: () => void) => {
@@ -102,61 +97,6 @@ export function Header() {
               </span>
             )}
             {renderAuthNav()}
-            <ConnectButton.Custom>
-              {({
-                account,
-                chain,
-                openConnectModal,
-                openAccountModal,
-                openChainModal,
-                mounted,
-              }) => {
-                const ready = mounted;
-                const connected = ready && account && chain;
-
-                if (!ready) {
-                  return (
-                    <button className="btn" type="button" disabled aria-hidden>
-                      지갑 연결
-                    </button>
-                  );
-                }
-
-                if (!connected) {
-                  return (
-                    <button
-                      className="btn"
-                      type="button"
-                      onClick={openConnectModal}
-                    >
-                      지갑 연결
-                    </button>
-                  );
-                }
-
-                if (chain.unsupported) {
-                  return (
-                    <button
-                      className="ghost"
-                      type="button"
-                      onClick={openChainModal}
-                    >
-                      네트워크 전환
-                    </button>
-                  );
-                }
-
-                return (
-                  <button
-                    className="ghost"
-                    type="button"
-                    onClick={openAccountModal}
-                  >
-                    {shortenHash(account.address)}
-                  </button>
-                );
-              }}
-            </ConnectButton.Custom>
           </div>
 
           {/* Hamburger — visible only below 980px via CSS */}
@@ -188,62 +128,6 @@ export function Header() {
                 </span>
               )}
               {renderAuthNav(closeMobile)}
-              <ConnectButton.Custom>
-                {({
-                  account,
-                  chain,
-                  openConnectModal,
-                  openAccountModal,
-                  openChainModal,
-                  mounted,
-                }) => {
-                  if (!mounted) return null;
-                  const connected = account && chain;
-
-                  if (!connected) {
-                    return (
-                      <button
-                        className="btn"
-                        type="button"
-                        onClick={() => {
-                          openConnectModal();
-                          closeMobile();
-                        }}
-                      >
-                        지갑 연결
-                      </button>
-                    );
-                  }
-
-                  if (chain.unsupported) {
-                    return (
-                      <button
-                        className="ghost"
-                        type="button"
-                        onClick={() => {
-                          openChainModal();
-                          closeMobile();
-                        }}
-                      >
-                        네트워크 전환
-                      </button>
-                    );
-                  }
-
-                  return (
-                    <button
-                      className="ghost"
-                      type="button"
-                      onClick={() => {
-                        openAccountModal();
-                        closeMobile();
-                      }}
-                    >
-                      {shortenHash(account.address)}
-                    </button>
-                  );
-                }}
-              </ConnectButton.Custom>
             </div>
           </nav>
         )}

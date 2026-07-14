@@ -12,7 +12,8 @@ model User {
   id            String         @id @default(cuid())
   name          String
   role          String         // investor, landlord, operator
-  email         String?
+  email         String?        @unique
+  passwordHash  String?        // 이메일+비밀번호 로그인 (bcrypt 해시)
   walletAddress String?        @unique
   nonce         String?        // SIWE 로그인 챌린지 nonce
   balance       BigInt         @default(0) // 원화 잔액 (모의)

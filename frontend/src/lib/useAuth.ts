@@ -2,13 +2,11 @@
 
 import { useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useAccount, useSignMessage } from "wagmi";
-import { polygonAmoy } from "wagmi/chains";
-import { SiweMessage } from "siwe";
 
-// 서버가 회원가입에서 직접 선택 가능한 역할. "admin"은 자가배정 불가(시드 전용).
-export type AssignableRole = "investor" | "landlord" | "operator";
-export type AuthUserRole = AssignableRole | "admin";
+// 회원가입에서 자가배정 가능한 역할. "admin"은 자가배정 불가(시드 전용),
+// "investor"는 레거시 데이터 호환용으로 타입에만 남긴다(신규 배정 불가).
+export type AssignableRole = "landlord" | "operator";
+export type AuthUserRole = AssignableRole | "admin" | "investor";
 
 export type TokenHoldingSummary = {
   projectId: string;
@@ -31,6 +29,13 @@ export type AuthUser = {
   investorAnnualLimit: number | null;
   businessRegNo: string | null;
   tokenHoldings: TokenHoldingSummary[];
+};
+
+export type SignupInput = {
+  name: string;
+  email: string;
+  password: string;
+  role: AssignableRole;
 };
 
 const AUTH_ME_QUERY_KEY = ["auth", "me"] as const;
@@ -61,16 +66,31 @@ async function patchRole(role: AssignableRole): Promise<AuthUser> {
   return data.user;
 }
 
+async function postAuth(
+  path: "/api/auth/login" | "/api/auth/signup",
+  body: Record<string, unknown>,
+): Promise<void> {
+  const res = await fetch(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const data = (await res.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(data?.error ?? "요청에 실패했습니다.");
+  }
+}
+
 /**
- * SIWE(Sign-In with Ethereum) 로그인 플로우 + 세션 상태를 감싸는 클라이언트 훅.
+ * 이메일+비밀번호 로그인/회원가입 + 세션 상태를 감싸는 클라이언트 훅.
  *
- * login(): nonce 발급 → SIWE 메시지 서명 → 서버 검증
+ * login(email, password): 서버 검증 → 세션 발급
+ * signup({...}): 계정 생성 + 역할 확정 → 세션 발급
  * logout(): 서버 세션 종료
  * user/isLoading: GET /api/auth/me 기반 세션 상태 (react-query)
  */
 export function useAuth() {
-  const { address } = useAccount();
-  const { signMessageAsync } = useSignMessage();
   const queryClient = useQueryClient();
 
   const {
@@ -83,45 +103,21 @@ export function useAuth() {
     retry: false,
   });
 
-  const login = useCallback(async () => {
-    if (!address) {
-      throw new Error("지갑을 먼저 연결해주세요.");
-    }
+  const login = useCallback(
+    async (email: string, password: string) => {
+      await postAuth("/api/auth/login", { email, password });
+      await queryClient.invalidateQueries({ queryKey: AUTH_ME_QUERY_KEY });
+    },
+    [queryClient],
+  );
 
-    const nonceRes = await fetch("/api/auth/siwe/nonce", {
-      credentials: "include",
-    });
-    if (!nonceRes.ok) {
-      throw new Error("로그인 nonce 발급에 실패했습니다.");
-    }
-    const { nonce } = (await nonceRes.json()) as { nonce: string };
-
-    const siweMessage = new SiweMessage({
-      domain: window.location.host,
-      address,
-      statement: "FarmFi에 로그인합니다.",
-      uri: window.location.origin,
-      version: "1",
-      chainId: polygonAmoy.id,
-      nonce,
-      // 서명 만료(10분) — 무기한 유효 서명 재사용 방지. 서버 verify가 time으로 검증.
-      expirationTime: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
-    });
-    const message = siweMessage.prepareMessage();
-    const signature = await signMessageAsync({ message });
-
-    const verifyRes = await fetch("/api/auth/siwe/verify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ message, signature }),
-    });
-    if (!verifyRes.ok) {
-      throw new Error("로그인 검증에 실패했습니다.");
-    }
-
-    await queryClient.invalidateQueries({ queryKey: AUTH_ME_QUERY_KEY });
-  }, [address, signMessageAsync, queryClient]);
+  const signup = useCallback(
+    async (input: SignupInput) => {
+      await postAuth("/api/auth/signup", input);
+      await queryClient.invalidateQueries({ queryKey: AUTH_ME_QUERY_KEY });
+    },
+    [queryClient],
+  );
 
   const logout = useCallback(async () => {
     await fetch("/api/auth/logout", {
@@ -132,8 +128,8 @@ export function useAuth() {
     await queryClient.invalidateQueries({ queryKey: AUTH_ME_QUERY_KEY });
   }, [queryClient]);
 
-  // 회원가입 온보딩에서 역할을 확정할 때 사용. 서버가 세션(JWT)의 소유자
-  // 기준으로만 갱신하므로 role은 항상 "내 계정"에만 적용된다.
+  // 마이페이지에서 역할을 바꿀 때 사용. 서버가 세션(JWT) 소유자 기준으로만
+  // 갱신하므로 role은 항상 "내 계정"에만 적용된다.
   const updateRole = useCallback(
     async (role: AssignableRole) => {
       const updated = await patchRole(role);
@@ -148,6 +144,7 @@ export function useAuth() {
     isAuthenticated: Boolean(user),
     isLoading: isLoading || isFetching,
     login,
+    signup,
     logout,
     updateRole,
   };

@@ -5,8 +5,9 @@ export type Role = "investor" | "operator" | "landlord" | "admin";
 
 export interface SessionPayload {
   userId: string;
-  walletAddress: string;
   role: Role;
+  // 레거시(SIWE) 세션 호환용. 이메일+비밀번호 세션에는 없다.
+  walletAddress?: string;
 }
 
 const SESSION_COOKIE = "session";
@@ -27,8 +28,8 @@ function getSecret(): Uint8Array {
  */
 export async function signSession(payload: SessionPayload): Promise<string> {
   return new SignJWT({
-    walletAddress: payload.walletAddress,
     role: payload.role,
+    ...(payload.walletAddress ? { walletAddress: payload.walletAddress } : {}),
   })
     .setProtectedHeader({ alg: "HS256" })
     .setSubject(payload.userId)
@@ -66,15 +67,15 @@ export async function getServerSession(): Promise<SessionPayload | null> {
     const walletAddress = payload.walletAddress;
     const role = payload.role;
 
-    if (
-      typeof userId !== "string" ||
-      typeof walletAddress !== "string" ||
-      typeof role !== "string"
-    ) {
+    if (typeof userId !== "string" || typeof role !== "string") {
       return null;
     }
 
-    return { userId, walletAddress, role: role as Role };
+    return {
+      userId,
+      role: role as Role,
+      ...(typeof walletAddress === "string" ? { walletAddress } : {}),
+    };
   } catch {
     // Invalid/expired/tampered token → treat as unauthenticated. No error leak.
     return null;

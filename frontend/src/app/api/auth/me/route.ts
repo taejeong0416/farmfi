@@ -59,7 +59,7 @@ export async function GET() {
   return NextResponse.json({ user });
 }
 
-const ASSIGNABLE_ROLES = ["investor", "landlord", "operator"] as const;
+const ASSIGNABLE_ROLES = ["landlord", "operator"] as const;
 
 /**
  * 회원가입 온보딩에서 역할을 확정한다. "admin"은 여기서 자가배정 불가(시드/운영 전용).

@@ -4,19 +4,14 @@ import type { AssignableRole } from "@/lib/useAuth";
 
 const ROLE_OPTIONS: { value: AssignableRole; label: string; desc: string }[] = [
   {
-    value: "investor",
-    label: "투자자",
-    desc: "도심 스마트팜 프로젝트에 투자하고 수익을 받아요.",
+    value: "operator",
+    label: "운영자",
+    desc: "배정받은 공간에서 스마트팜 매장을 직접 운영해요.",
   },
   {
     value: "landlord",
-    label: "건물주",
-    desc: "유휴공간을 등록하고 안정적인 임대 수익을 받아요.",
-  },
-  {
-    value: "operator",
-    label: "운영자",
-    desc: "스마트팜을 직접 운영하고 지속가능한 농업을 실현해요.",
+    label: "공간 제공자",
+    desc: "보유한 유휴공간을 등록하고 스마트팜 매장으로 전환해요.",
   },
 ];
 
