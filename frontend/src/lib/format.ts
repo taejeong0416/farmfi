@@ -1,7 +1,3 @@
-export function formatKRW(amount: number | bigint): string {
-  return `${Number(amount).toLocaleString("ko-KR")}원`;
-}
-
 export function formatPercent(value: number): string {
   return `${value}%`;
 }
@@ -30,9 +26,4 @@ export function timeAgo(date: Date | string): string {
 
   const days = Math.floor(hours / 24);
   return `${days}일 전`;
-}
-
-export function shortenHash(hash: string): string {
-  if (hash.length <= 10) return hash;
-  return `${hash.slice(0, 6)}...${hash.slice(-4)}`;
 }

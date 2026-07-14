@@ -20,4 +20,3 @@ export { Metric } from "./farmfi/ui/Metric";
 export { Panel } from "./farmfi/ui/Panel";
 export { GreenBand } from "./farmfi/ui/GreenBand";
 export { Icon } from "./farmfi/ui/Icon";
-export { FilterBar } from "./farmfi/ui/FilterBar";
