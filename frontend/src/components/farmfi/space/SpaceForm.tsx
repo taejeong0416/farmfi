@@ -50,6 +50,10 @@ async function uploadPhoto(file: File): Promise<string> {
   formData.append("file", file);
 
   const res = await fetch("/api/upload", { method: "POST", body: formData });
+  if (res.status === 401) {
+    // 업로드 API는 세션 필수 — 비로그인 사용자에게 원인을 정확히 안내한다.
+    throw new Error("사진 업로드는 로그인 후 이용할 수 있어요.");
+  }
   if (!res.ok) {
     throw new Error("사진 업로드에 실패했어요. 다시 시도해주세요.");
   }

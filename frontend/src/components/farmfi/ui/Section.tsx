@@ -5,14 +5,16 @@ export function Section({
   desc,
   children,
   aside,
+  id,
 }: {
   title: string;
   desc?: string;
   children: ReactNode;
   aside?: ReactNode;
+  id?: string;
 }) {
   return (
-    <section className="section" id="next">
+    <section className="section" id={id}>
       <div className="shell">
         <div className="section-head">
           <div>

@@ -5,5 +5,9 @@ export default function DashboardPage({
 }: {
   searchParams: { projectId?: string };
 }) {
-  return <DashboardShell projectId={searchParams.projectId} />;
+  return (
+    <main>
+      <DashboardShell projectId={searchParams.projectId} />
+    </main>
+  );
 }

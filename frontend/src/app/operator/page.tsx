@@ -11,7 +11,7 @@ export default function OperatorPage() {
         lead="FarmFi는 공간·설비·운영 시스템을 연결해, 초기자금 부담 없이 스마트팜 매장을 시작하고 지속하도록 돕습니다."
         actions={
           <>
-            <Link className="btn" href="#apply">
+            <Link className="btn" href="/operator/apply">
               운영자 지원하기 →
             </Link>
             <Link className="ghost" href="/dashboard">
@@ -29,17 +29,16 @@ export default function OperatorPage() {
           <Metric label="커뮤니티 지원" value="네트워크" />
         </div>
       </Section>
-      <Section title="운영자 지원 신청">
-        <div className="grid-2" id="apply">
+      <Section title="운영자 지원 신청" id="apply">
+        <div className="grid-2">
           <Panel title="지원서 제출">
-            {["이름 / 팀명", "희망 지역", "재배 경험", "운영 가능 시간", "전문 분야"].map((item) => (
-              <div className="fake-control" style={{ marginTop: 12 }} key={item}>
-                {item}
-              </div>
-            ))}
-            <button className="btn" style={{ width: "100%", marginTop: 18 }}>
-              지원서 제출하기
-            </button>
+            <p className="muted">
+              희망 지역·재배 경험·운영 가능 시간을 적어 지원하면, 검토 후 공간
+              매칭 절차를 안내드립니다.
+            </p>
+            <Link className="btn" href="/operator/apply" style={{ display: "block", textAlign: "center", marginTop: 18 }}>
+              지원서 작성하러 가기 →
+            </Link>
           </Panel>
           <Panel title="운영 파트너 합류 절차">
             {["지원서 제출", "서류/인터뷰", "운영 교육", "공간 매칭", "운영 시작"].map((item, i) => (

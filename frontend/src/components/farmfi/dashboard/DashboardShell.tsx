@@ -109,7 +109,8 @@ export function DashboardShell({
     .map((r) => ({ name: formatTime(r.recordedAt), value: r.temperature }));
 
   return (
-    <main className="page">
+    // 페이지가 자체 <main>에 임베드할 수 있도록 div — <main> 중첩 방지.
+    <div className="page">
       <div className="shell dashboard">
         <aside className="side">
           {MENU.map((item) => (
@@ -184,6 +185,6 @@ export function DashboardShell({
           </div>
         </section>
       </div>
-    </main>
+    </div>
   );
 }
