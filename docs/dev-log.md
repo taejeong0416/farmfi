@@ -5,6 +5,15 @@
 
 ---
 
+## 2026-07-15 — 박태정
+
+### 피벗 전 범위 멀티에이전트 코드리뷰 → 27건 수정
+울트라코드 워크플로우(5차원 탐색 33에이전트 → 발견 건별 적대적 검증)로 피벗 변경분 리뷰. 28건 발견·27건 확정, 전부 수정(수정 자체는 순차 직접). 5커밋: `4e0004c7`(운영 API 견고화+**판매→재고 차감 연동** — sales 검증 404/400, trend·reports days 폴백, iot/generate 동시성·growthRate 캡, spaces 오버플로 클램프, 핫쿼리 인덱스 3개+db push), `f2ae4f09`(auth — signup P2002→409, me PATCH P2025→404, logout 쿠키옵션 중앙화, serializeBigInt 제거), `e830b494`(잔재 — constants/FilterBar/formatKRW·shortenHash/seed-dashboard-demo/.env.example 온체인·AI 키 삭제), `cdcaa013`(프론트 — operator 가짜폼→/operator/apply 실링크, 업로드 401 안내, main 중첩 해소, Section id prop·RoleCards 실링크), `d1779bb3`(docs — api-spec 실동작 정합·docs/README 표·README/CONTRIBUTING env 정정).
+- **검증**: tsc 0에러 + dev 서버 curl — 판매 3봉 입력(201) → 재고 4→1 차감 → '오늘 할 일'에 "현재 1봉 보충" 실반영, 잘못된 입력 404/400, days=abc 폴백 200.
+- 리뷰가 걸러낸 것 1건(기각): 의도된 결정(MVP 무인증)과 중복 지적.
+
+---
+
 ## 2026-07-14 — 박태정
 
 ### 피벗 Phase 3~6 — 스키마 정리 · 대시보드 · 핵심 3기능 · 문서
