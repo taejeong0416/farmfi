@@ -7,6 +7,15 @@
 
 ## 2026-07-14 — 박태정
 
+### 피벗 Phase 3~6 — 스키마 정리 · 대시보드 · 핵심 3기능 · 문서
+STO 제거(Phase 1~2) 이후 v18 운영 인프라 완성. 기준: `docs/FarmFi_전체서비스_기획안_v18.md`(내용은 v15와 앱 기능 동일, 사업레이어만 상이). 백엔드 중심 결정: 화면은 프론트 담당, "필요한 만큼만" API+시드.
+- **Phase 3 스키마(`a2c5c8cd`)**: STO 11모델 제거(Escrow·Milestone·Transaction·TokenHolding·Dividend·DividendClaim·IdentityVerification·ProjectPartner·NavSnapshot·AiCache·DemoCache) + User/Project STO 필드·역관계 제거. auth/me·useAuth·MyPageClient·detect-anomaly·dashboard 소비처 정합. tsconfig가 prisma/ exclude라 시드는 tsc 대상 아님. prisma generate·tsc 통과.
+- **Phase 4 대시보드(`32b9727b`)**: DashboardShell STO 패널(에스크로·NAV·마일스톤·거래·배당) 제거, IoT·이상·ESG + 온도추이 유지, 지점해결 projectId prop 전용. iot-health uptimeRate(마일스톤 게이트) 순화. next dev로 /dashboard 200 렌더 검증.
+- **Phase 5 핵심3기능(`39cedb95`~`4dd8b2bf`)**: 신규 모델(Institution·Product·Inventory·HarvestRecord·SalesRecord) + **실 DB force-reset db push(사용자 동의, 세션 pooler 5432) + v18 시드**(지점2·품목3·재고·수확·판매·IoT5760). `GET /api/tasks/today`(오늘 할 일)·`POST /api/sales`+`GET /api/sales/trend`(판매-재배)·`GET /api/reports/institution`(기관 리포트)·이상알림(iot/generate→Notification·`GET /api/notifications`). 각 API 시드+curl로 데이터 e2e 검증. IoT 정상범위·생성기 새싹삼→수직농장 상추 문헌값 보정(온18-26·습55-75·CO2 800-1400·pH5.5-6.5), seed idempotent(deleteMany)화. Kaggle 노지 데이터는 도메인 불일치로 미채택.
+- **Phase 6 문서·카피(`c9c75447`~`bcaa88ce`)**: 프론트 STO 카피·깨진 링크 정리(랜딩·홈·operator·admin — admin은 마일스톤 검증 UI→기관 성과 안내로 교체·MilestoneVerifyPanel 삭제), README·CLAUDE·CONTRIBUTING·api-spec v18 재작성, plan/verification-spec 대체 포인터, pivot-plan(DID/VC) 삭제. src STO 잔재 0.
+- **검증 방식**: 로컬 `next build`는 EISDIR라 tsc + `next dev` + API curl(시드 데이터 e2e). 전 과정 순차 직접(에이전트·워크플로우 미사용).
+- **미결**: MyPageClient `investor` 역할 라벨(레거시 enum, 무해) 잔존. DRB 지정과제 트랙 정합성(README에서 DRB 프레이밍 제거) — 팀 확인 필요. 화면 구현은 프론트 담당(백엔드는 API 계약+시드까지).
+
 ### 피벗 Phase 1 — STO·온체인 레이어 전면 제거
 `docs/피벗_실행계획_v15.md`(내용 v18 정합)의 STO 제거분. 문서상 Phase 1(lib·contracts 먼저)→2(라우트·컴포넌트 나중) 순서는 **route가 lib을 import**하는 구조라 lib만 먼저 지우면 tsc가 깨진다 → **소비처(라우트·페이지·컴포넌트) 먼저 제거해 lib을 고아화한 뒤 삭제**하도록 순서를 뒤집어 2커밋으로 진행.
 - **커밋1 `26171207`** (STO 소비처 제거, 66파일 −5,666): API `auth/siwe`·`identity`·`subscribe`·`dividends`·`milestones`·`portfolio`·`projects`·`ai/verify-*`·`admin/notify`·`demo` 삭제(유지: `ai/detect-anomaly`·`auth/{login,signup,me,logout}`·`iot`·`spaces`·`operator-applications`·`upload`). 페이지 `market`·`transparency`·`projects`·`portfolio`·`demo`·`verify-identity` 삭제. 컴포넌트 `project`·`portfolio`·`transparency`·`demo`·`identity` + `home/{ProjectGrid,MarketProducts}` 삭제. 유지 정합: `FarmFi` 배럴 재수출·랜딩 `page.tsx` STO 섹션 제거.
