@@ -156,9 +156,9 @@ export interface DonutSlice {
 }
 
 const FALLBACK_DONUT: DonutSlice[] = [
-  { name: "에스크로", value: 45 },
-  { name: "자산가치", value: 27 },
-  { name: "현금흐름", value: 14 },
+  { name: "생산", value: 45 },
+  { name: "판매", value: 27 },
+  { name: "재고", value: 14 },
   { name: "기타", value: 14 },
 ];
 

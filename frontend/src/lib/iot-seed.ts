@@ -1,5 +1,4 @@
-// IoT 60일치 + NAV 스냅샷 시드 데이터 생성기.
-// prisma/seed-iot.ts와 /api/demo/reset이 공용으로 사용한다.
+// IoT 60일치 시드 데이터 생성기. prisma/seed.ts가 사용한다.
 
 export interface IotSeedRecord {
   projectId: string;
@@ -11,15 +10,6 @@ export interface IotSeedRecord {
   growthRate: number;
   anomalyScore: number;
   isAnomaly: boolean;
-  recordedAt: Date;
-}
-
-export interface NavSeedRecord {
-  projectId: string;
-  nav: number;
-  escrowBalance: bigint;
-  assetValue: bigint;
-  cumulativeCashFlow: bigint;
   recordedAt: Date;
 }
 
@@ -71,39 +61,4 @@ export function buildIotRecords(projectId: string, now: Date): IotSeedRecord[] {
   }
 
   return records;
-}
-
-// NAV 스냅샷 60일치 — 점진 우상향 + 마일스톤 점프 (day 10, 25, 40)
-export function buildNavSnapshots(
-  projectId: string,
-  tokenPrice: number,
-  now: Date
-): NavSeedRecord[] {
-  const navRecords: NavSeedRecord[] = [];
-  let runningNav = tokenPrice; // 시작 NAV = 토큰 가격
-
-  for (let dayIndex = 0; dayIndex < 60; dayIndex++) {
-    const recordedAt = new Date(
-      now.getTime() - (60 - dayIndex) * 24 * 60 * 60 * 1000
-    );
-
-    // Gradual upward trend with milestone jumps
-    const dailyGrowth = 0.001 + Math.random() * 0.002;
-    runningNav = runningNav * (1 + dailyGrowth);
-
-    if (dayIndex === 10) runningNav *= 1.08;
-    if (dayIndex === 25) runningNav *= 1.05;
-    if (dayIndex === 40) runningNav *= 1.03;
-
-    navRecords.push({
-      projectId,
-      nav: Math.round(runningNav * 100) / 100,
-      escrowBalance: BigInt(Math.round(17_500_000 * (1 - dayIndex * 0.01))),
-      assetValue: BigInt(dayIndex > 10 ? 10_500_000 : 0),
-      cumulativeCashFlow: BigInt(Math.round(dayIndex * 15_000)),
-      recordedAt,
-    });
-  }
-
-  return navRecords;
 }
