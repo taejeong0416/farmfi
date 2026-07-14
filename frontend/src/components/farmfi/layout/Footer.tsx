@@ -16,13 +16,13 @@ export function Footer() {
             />
           </Link>
           <p>
-            도심 유휴공간을 가치로, 투자로, 미래로. 지속가능한 농업
-            생태계를 만드는 스마트팜 플랫폼입니다.
+            도심 유휴공간을 24시간 신선매장으로 전환하고 운영을 지원하는
+            공실전환 창업 지원 인프라입니다.
           </p>
-          <p>© 2024 FarmFi. All rights reserved.</p>
+          <p>© 2026 FarmFi. All rights reserved.</p>
         </div>
-        <FooterCol title="서비스" items={["서비스 소개", "프로젝트", "공간 등록", "마켓"]} />
-        <FooterCol title="지원" items={["운영자 지원", "투자자 지원", "지갑 연결 가이드", "FAQ"]} />
+        <FooterCol title="서비스" items={["서비스 소개", "공간 등록", "운영자 지원", "대시보드"]} />
+        <FooterCol title="지원" items={["운영자 지원", "기관 문의", "이용 가이드", "FAQ"]} />
         <FooterCol title="회사" items={["회사 소개", "파트너십", "블로그", "채용"]} />
         <FooterCol
           title="문의"

@@ -12,21 +12,21 @@ export default function HomePage() {
   return (
     <main className="page">
       <Hero
-        eyebrow="공간 · 운영 · 투자 · 소비를 연결"
-        title="도심 유휴공간을 함께 키우는"
-        green="스마트팜 플랫폼"
-        lead="건물주는 공간을 제공하고, 운영자는 농장을 운영합니다. 투자자는 프로젝트를 지원하고, 소비자는 신선한 농산물을 만납니다."
+        eyebrow="공실 진단 · 운영자 배정 · 생육-판매 연동"
+        title="도심 유휴공간을 24시간 신선매장으로"
+        green="공실전환 창업 지원 인프라"
+        lead="기관의 유휴공간을 스마트팜 매장으로 전환하고, 운영자를 모집·배정하며, 생육 모니터링과 성과관리를 제공합니다."
         actions={
           <>
-            <Link className="btn" href="/projects">
-              프로젝트 보기 →
+            <Link className="btn" href="/operator">
+              운영자 지원하기 →
             </Link>
             <Link className="ghost" href="/space">
               공간 등록하기 →
             </Link>
           </>
         }
-        chips={["투명한 운영과 안전한 기록", "부산광역시", "BIFC", "Chainlink"]}
+        chips={["부산광역시", "공실전환", "생육-판매 연동"]}
       />
       <Section title="FarmFi는 이렇게 연결됩니다">
         <RoleCards />

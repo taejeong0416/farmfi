@@ -14,7 +14,7 @@ const CROP_EXPERIENCE = ["없음", "1년 미만", "1~3년", "3년 이상"] as co
 const AVAILABLE_HOURS = ["주 10시간 미만", "주 10~20시간", "주 20~30시간", "주 30시간 이상"] as const;
 
 const ERROR_MESSAGES: Record<string, string> = {
-  Unauthorized: "로그인이 필요합니다. 상단의 지갑 연결 후 다시 시도해주세요.",
+  Unauthorized: "로그인이 필요합니다. 로그인 후 다시 시도해주세요.",
   "Invalid request body": "입력값을 다시 확인해주세요.",
 };
 
@@ -70,7 +70,7 @@ export function ApplicationForm({ isAuthenticated }: { isAuthenticated: boolean 
       )}
       {!isAuthenticated && (
         <p className="muted" style={{ fontSize: 12, marginTop: 12 }}>
-          상단의 지갑 연결 후 로그인하면 지원서를 제출할 수 있어요.
+          로그인하면 지원서를 제출할 수 있어요.
         </p>
       )}
 

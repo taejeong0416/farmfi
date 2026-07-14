@@ -6,7 +6,7 @@ import { Providers } from "./providers";
 export const metadata: Metadata = {
   title: "FarmFi | 도심 유휴공간 스마트팜 플랫폼",
   description:
-    "도심 유휴공간, 운영 파트너, 투자자, 소비자를 연결하는 스마트팜 플랫폼 FarmFi.",
+    "도심 유휴공간을 스마트팜 24시간 신선매장으로 전환하고, 운영자 모집·생육 모니터링·성과관리를 제공하는 공실전환 창업 지원 인프라 FarmFi.",
 };
 
 export default function RootLayout({

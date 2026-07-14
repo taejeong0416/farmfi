@@ -47,7 +47,7 @@ export default function LandlordPage() {
         <div className="shell">
           {!isAuthenticated && !authLoading ? (
             <p className="muted">
-              상단의 지갑 연결 후 로그인하면 내가 등록한 공간을 확인할 수 있어요.
+              로그인하면 내가 등록한 공간을 확인할 수 있어요.
             </p>
           ) : isLoading ? (
             <p className="muted">불러오는 중...</p>

@@ -58,18 +58,12 @@ export function Hero({
 }
 
 function TrustStrip({ items }: { items: string[] }) {
-  const labelMap: Record<string, string> = {
-    "투명한 운영과 안전한 기록": "투명한 운영과 안전한 블록체인 기록",
-    부산광역시: "부산광역시",
-    BIFC: "BIFC 부산국제금융센터",
-    Chainlink: "Chainlink",
-  };
   return (
     <div className="trust-row">
       {items.map((item) => (
         <span className="trust-chip" key={item}>
-          <Icon name={item === "BIFC" ? "shield" : "check"} />
-          {labelMap[item] ?? item}
+          <Icon name="check" />
+          {item}
         </span>
       ))}
     </div>
