@@ -12,6 +12,9 @@
 - **검증**: tsc 0에러 + dev 서버 curl — 판매 3봉 입력(201) → 재고 4→1 차감 → '오늘 할 일'에 "현재 1봉 보충" 실반영, 잘못된 입력 404/400, days=abc 폴백 200.
 - 리뷰가 걸러낸 것 1건(기각): 의도된 결정(MVP 무인증)과 중복 지적.
 
+### docs 정리 (push 전)
+미추적이던 실질 문서 `FarmFi_전체서비스_기획안_v18.md`·`피벗_실행계획_v15.md`를 레포에 추가(README·CLAUDE·CONTRIBUTING·docs/README가 참조). Phase 6에서 만든 리다이렉트 스텁 `plan.md`(18줄)·`verification-spec.md`(8줄)는 내용이 없어 제거하고 docs/README 표에서 삭제.
+
 ---
 
 ## 2026-07-14 — 박태정
