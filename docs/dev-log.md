@@ -7,6 +7,13 @@
 
 ## 2026-07-14 — 박태정
 
+### 피벗 Phase 1 — STO·온체인 레이어 전면 제거
+`docs/피벗_실행계획_v15.md`(내용 v18 정합)의 STO 제거분. 문서상 Phase 1(lib·contracts 먼저)→2(라우트·컴포넌트 나중) 순서는 **route가 lib을 import**하는 구조라 lib만 먼저 지우면 tsc가 깨진다 → **소비처(라우트·페이지·컴포넌트) 먼저 제거해 lib을 고아화한 뒤 삭제**하도록 순서를 뒤집어 2커밋으로 진행.
+- **커밋1 `26171207`** (STO 소비처 제거, 66파일 −5,666): API `auth/siwe`·`identity`·`subscribe`·`dividends`·`milestones`·`portfolio`·`projects`·`ai/verify-*`·`admin/notify`·`demo` 삭제(유지: `ai/detect-anomaly`·`auth/{login,signup,me,logout}`·`iot`·`spaces`·`operator-applications`·`upload`). 페이지 `market`·`transparency`·`projects`·`portfolio`·`demo`·`verify-identity` 삭제. 컴포넌트 `project`·`portfolio`·`transparency`·`demo`·`identity` + `home/{ProjectGrid,MarketProducts}` 삭제. 유지 정합: `FarmFi` 배럴 재수출·랜딩 `page.tsx` STO 섹션 제거.
+- **커밋2 `8bfaaf4c`** (고아 정리, 36파일 −10,720): `contracts/` 전체(FarmToken·Escrow·Dividend + 테스트·배포·broadcast) 삭제. lib `onchain`·`contracts`·`wagmi-config`·`subscription`·`waterfall`·`demo-mode`·`ai-cache`·`ai-vision`·`nav-calculator`·`identity/`·`abi/` 삭제. npm `wagmi`·`viem`·`@rainbow-me/rainbowkit`·`siwe` 제거(`jose`·`bcryptjs` 유지). `dashboard/[projectId]` 라우트에서 `nav-calculator` 참조만 선제거(나머지 STO 집계 개조는 Phase 4).
+- **검증**: 각 커밋 `npx tsc --noEmit` 0에러. DB 미변경.
+- **의도적 잔여(런타임만 깨짐, tsc 무해 → 각 개조 phase 처리)**: `operator`·`AdminDashboard`·`DashboardShell`·`Stats`의 `/api/projects` fetch, 랜딩·`GreenBand`·`TokenHoldingsPanel`의 `/projects` 링크(Phase 6 카피), `MyPageClient`의 투자자 필드·`IdentityBadge`·`TokenHoldingsPanel`(Phase 3 스키마), `admin/MilestoneVerifyPanel`(admin 개조).
+
 ### 피벗 Phase 0 — 인증 SIWE(지갑) → 이메일+비밀번호 교체
 v15 피벗(STO→공실전환 창업 지원 인프라)의 첫 코드 단계. `docs/피벗_실행계획_v15.md` §6 Phase 0 수행.
 - **세션 재사용**: `lib/auth.ts` jose JWT 레이어 유지, `SessionPayload.walletAddress`를 옵셔널(레거시)로 강등 — 세션 식별자는 userId+role. 유지 대상 라우트의 세션 발급 경로 보존.
