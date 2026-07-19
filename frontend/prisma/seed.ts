@@ -79,12 +79,12 @@ async function main() {
       buildingType: "상가 1층",
       areaSqm: 83, // 25평 ≈ 82.6㎡ (표7)
       tokenSymbol: "MF01",
-      tokenPrice: BigInt(10_000), // 1구좌 1만원 (표2·표4)
-      totalTokens: 1750,
+      tokenPrice: BigInt(10_000), // 1구좌 1만원
+      totalTokens: 4400,
       soldTokens: 0,
-      targetAmount: BigInt(17_500_000), // 모집 목표 = CAPEX (표7)
+      targetAmount: BigInt(44_000_000), // 모집 목표 = 설비 CAPEX 4,000만 + 온보딩피 400만 (v16 §2·§3, 성과연동)
       currentAmount: BigInt(0),
-      totalCapex: BigInt(17_500_000), // 70만/평 × 25평 (표7)
+      totalCapex: BigInt(40_000_000), // 설비·시설·셋업 중립치 — 자체 인용자료 3,000~5,000만 구간 (v16 §3)
       status: "funding",
       fundingStart: new Date(),
       fundingEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
@@ -111,15 +111,15 @@ async function main() {
         projectId: project.id,
         seq: 1,
         name: "공간 준비",
-        description: "임대차 계약 체결, 설비 구매, 공간 셋업 완료",
+        description: "공간사용 협약 체결, 설비 구매, 공간 셋업 완료",
         releasePct: 3500,
-        releaseAmount: BigInt(6_125_000),
+        releaseAmount: BigInt(15_400_000),
         status: "in_progress",
-        conditionText: "임대차 계약서, 설비 구매 영수증, 현장 사진 제출",
+        conditionText: "공간사용 협약서(기관↔운영자), 설비 구매 영수증, 현장 사진 제출",
         requiredSignals: ["contract", "receipt", "photo"],
         iotMinDays: 0,
         crossCheck: "receipt↔photo",
-        assetValue: BigInt(10_500_000),
+        assetValue: BigInt(26_400_000),
       },
       {
         projectId: project.id,
@@ -127,7 +127,7 @@ async function main() {
         name: "시운전 + 안정성",
         description: "설비 가동 테스트 및 14일간 안정성 검증",
         releasePct: 3000,
-        releaseAmount: BigInt(5_250_000),
+        releaseAmount: BigInt(13_200_000),
         status: "pending",
         conditionText: "IoT 14일 가동률 90% 이상 (온도·습도·조도 정상 범위)",
         requiredSignals: ["iot"],
@@ -141,7 +141,7 @@ async function main() {
         name: "첫 수확 + 판매",
         description: "첫 작물 수확 및 판매 실적 확인",
         releasePct: 2000,
-        releaseAmount: BigInt(3_500_000),
+        releaseAmount: BigInt(8_800_000),
         status: "pending",
         conditionText: "수확 사진, 판매 영수증",
         requiredSignals: ["photo", "receipt"],
@@ -155,7 +155,7 @@ async function main() {
         name: "지속 운영",
         description: "60일간 지속 운영 검증 및 BEP 접근 확인",
         releasePct: 1500,
-        releaseAmount: BigInt(2_625_000),
+        releaseAmount: BigInt(6_600_000),
         status: "pending",
         conditionText: "IoT 60일 가동률 90% 이상, 복수 판매 영수증",
         requiredSignals: ["iot", "receipt"],
@@ -166,7 +166,7 @@ async function main() {
     ],
   });
 
-  // ─── 프로젝트 파트너 (건물주: 월 고정 임대료 50만원, 회수 필드 미사용) ───
+  // ─── 프로젝트 파트너 (건물주: 저가 유상 임대 월 25만원 — v16 중립 시나리오, 회수 필드 미사용) ───
   await prisma.projectPartner.create({
     data: {
       projectId: project.id,
@@ -174,7 +174,7 @@ async function main() {
       name: "최영호",
       totalContribution: BigInt(0),
       recoveredAmount: BigInt(0),
-      monthlyRecoveryAmount: BigInt(500_000),
+      monthlyRecoveryAmount: BigInt(250_000),
       recoveryComplete: false,
     },
   });
