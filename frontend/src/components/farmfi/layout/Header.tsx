@@ -8,9 +8,9 @@ import { useAuth } from "@/lib/useAuth";
 
 const nav = [
   ["홈", "/"],
+  ["서비스 소개", "/about"],
   ["투자하기", "/projects"],
   ["운영자 모집", "/operator"],
-  ["공간 제공", "/space"],
   ["문의하기", "#contact"],
 ];
 

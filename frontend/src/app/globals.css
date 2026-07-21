@@ -82,6 +82,140 @@ img {
   margin: 0 auto;
 }
 
+/* ── 홈: 역할 선택 중심 ── */
+.home-hero {
+  padding: 72px 0 96px;
+  text-align: center;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(7, 82, 47, 0.07), transparent 45%),
+    linear-gradient(180deg, var(--green-50), #fff);
+  border-bottom: 1px solid var(--line);
+}
+
+.home-hero h1 {
+  max-width: none;
+  margin: 22px auto 0;
+  font-size: clamp(40px, 4.4vw, 60px);
+  line-height: 1.14;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+.home-hero .lead {
+  margin: 22px auto 0;
+  text-align: center;
+}
+
+.home-about-link {
+  display: inline-block;
+  margin-top: 26px;
+  color: var(--green-700);
+  font-size: 15px;
+  font-weight: 700;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 2px;
+}
+
+.role-select {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin-top: -60px;
+  position: relative;
+  z-index: 2;
+}
+
+.role-select-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 28px 26px 26px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 22px 50px rgba(7, 82, 47, 0.12);
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.role-select-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(26, 127, 60, 0.35);
+  box-shadow: 0 30px 64px rgba(7, 82, 47, 0.18);
+}
+
+.role-select-icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: var(--green-100);
+  color: var(--green-800);
+  font-size: 22px;
+}
+
+.role-select-tag {
+  margin-top: 18px;
+  color: var(--green-700);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.role-select-card strong {
+  margin-top: 4px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.role-select-card p {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.role-select-cta {
+  margin-top: 20px;
+  color: var(--green-800);
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.home-highlights {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.home-highlight {
+  display: block;
+  padding: 22px 20px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  transition: border-color 180ms ease, background 180ms ease;
+}
+
+.home-highlight:hover {
+  border-color: rgba(26, 127, 60, 0.35);
+  background: var(--green-50);
+}
+
+.home-highlight b {
+  display: block;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.home-highlight span {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
 .nav {
   position: sticky;
   top: 0;
@@ -558,111 +692,6 @@ h2 strong {
   box-shadow: 0 18px 40px rgba(20, 50, 27, 0.1);
 }
 
-.role-card {
-  min-height: 208px;
-  padding: 26px 24px 24px;
-  background: #fff;
-  text-align: left;
-}
-
-.icon {
-  display: inline-grid;
-  width: 42px;
-  height: 42px;
-  flex: 0 0 auto;
-  place-items: center;
-  border-radius: 10px;
-  border: 1px solid #c8dfcf;
-  background: #f7fbf7;
-  color: var(--green-800);
-  font-size: 19px;
-  font-weight: 700;
-}
-
-/* ── 두 축 퍼널 카드 (투자자 / 운영자) ── */
-.funnels {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 22px;
-}
-
-.funnel-card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 30px 28px;
-}
-
-.funnel-tag {
-  display: inline-flex;
-  align-items: center;
-  border-radius: 6px;
-  padding: 5px 11px;
-  background: var(--green-100);
-  color: var(--green-800);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-}
-
-.funnel-card h3 {
-  margin-top: 16px;
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-}
-
-.funnel-card > .muted {
-  margin-top: 12px;
-}
-
-.funnel-points {
-  margin: 20px 0 26px;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 10px;
-}
-
-.funnel-points li {
-  position: relative;
-  padding-left: 24px;
-  color: #3f4b44;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.funnel-points li::before {
-  content: "✓";
-  position: absolute;
-  left: 0;
-  top: -1px;
-  display: grid;
-  place-items: center;
-  width: 17px;
-  height: 17px;
-  border-radius: 50%;
-  background: var(--green-700);
-  color: #fff;
-  font-size: 10px;
-  font-weight: 900;
-}
-
-.funnel-card .btn {
-  margin-top: auto;
-}
-
-.role-head {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.role-head h3 {
-  margin: 0;
-}
-
-.role-card h3,
 .card h3 {
   margin-top: 18px;
   font-size: 19px;
@@ -1178,9 +1207,14 @@ h2 strong {
   .grid-3,
   .market-grid,
   .flow,
-  .funnels,
+  .role-select,
+  .home-highlights,
   .footer-grid {
     grid-template-columns: 1fr;
+  }
+
+  .role-select {
+    margin-top: -40px;
   }
 
   .filterbar {

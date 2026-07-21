@@ -6,9 +6,8 @@ export { Header } from "./farmfi/layout/Header";
 export { Footer } from "./farmfi/layout/Footer";
 
 export { Hero } from "./farmfi/home/Hero";
+export { RoleSelect } from "./farmfi/home/RoleSelect";
 export { PilotRound } from "./farmfi/home/PilotRound";
-export { Funnels } from "./farmfi/home/Funnels";
-export { SpaceProviders } from "./farmfi/home/SpaceProviders";
 export { Flow } from "./farmfi/home/Flow";
 export { Stats } from "./farmfi/home/Stats";
 
