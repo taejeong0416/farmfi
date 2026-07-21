@@ -746,25 +746,29 @@ export function annealJointSchedule(opts: {
   };
 }
 
-// ── ⑧ 작물 믹스 탐색: 가우시안 톰슨 샘플링 (멀티암드 밴딧) ─────────────────
-// v18의 "고부가 작물 전환" 결정을 광고 추천 시스템의 탐색/활용 문제로 푼다:
-// 트레이를 어느 작물에 배정해야 마진이 최대인가 — 확실한 작물만 심으면
-// 더 나은 작물을 영영 모르고(탐색 부족), 실험만 하면 마진을 잃는다(활용 부족).
-// 각 작물의 트레이당 마진을 정규분포 사후로 추정해 샘플링 배분한다.
-// 지금은 시뮬레이션 파라미터 — 실측 판매·원가 데이터가 쌓이면 그대로 실데이터로 동작.
-export interface CropArm {
+// ── ⑧ 가우시안 톰슨 샘플링 (멀티암드 밴딧) ────────────────────────────────
+// "확실한 선택만 하면 더 나은 걸 영영 모르고(탐색 부족), 실험만 하면 손해(활용
+// 부족)"의 균형 문제를 광고 추천 시스템의 표준 기법으로 푼다. 각 선택지의 보상을
+// 정규분포 사후로 추정해 샘플링 배분한다. 품목이 고정이어도 아래 두 결정이 살아있어
+// 밴딧이 필요하다 (미시: 품종/레시피 선택 · 중간: 사이트 간 품목 배분).
+// 파라미터는 시뮬레이션 — 실측 수율·마진이 쌓이면 그대로 실데이터로 동작.
+export interface BanditArm {
   name: string;
-  trueMeanMargin: number; // 시뮬레이션용 실제 평균 마진(원/트레이) — 실전에선 미지
+  trueMeanMargin: number; // 시뮬레이션용 실제 평균 보상 — 실전에선 미지(관측으로 추정)
   trueStd: number;
 }
 
-export interface CropAllocation {
+export interface BanditAllocation {
   rounds: number;
   allocation: { name: string; trays: number; share: number; posteriorMean: number }[];
   banditTotalMargin: number;
   uniformTotalMargin: number; // 균등 배분 대비
   uplift: number;
 }
+
+// 호환 별칭 (구 API)
+export type CropArm = BanditArm;
+export type CropAllocation = BanditAllocation;
 
 // ── ⑩ 거시: 재무 환산 운영 리포트 ─────────────────────────────────────────
 // 최적화 산출을 전부 원/CO2/신뢰도로 환산해 하나의 리포트로 묶는다. 이 숫자가
@@ -816,11 +820,11 @@ export function operationsSavingsReport(opts: {
   };
 }
 
-export function thompsonCropAllocation(opts: {
-  arms: CropArm[];
-  rounds?: number; // 배정 트레이 수 (라운드당 1트레이)
+export function thompsonAllocation(opts: {
+  arms: BanditArm[];
+  rounds?: number; // 배정 단위 수 (라운드당 1개)
   seed?: number;
-}): CropAllocation {
+}): BanditAllocation {
   const rand = mulberry32(opts.seed ?? 7);
   const rounds = opts.rounds ?? 200;
   // 표준정규 샘플 (Box-Muller)
@@ -930,4 +934,38 @@ export function peakStagger(loads: LoadSpec[]): PeakPlan {
       Math.max(0, naivePeakKw - optimizedPeakKw) * DEMAND_CHARGE_PER_KW
     ),
   };
+}
+
+// ── 밴딧 용도 ①(미시): 품종/재배 레시피 선택 ──────────────────────────────
+// 품목이 엽채류로 고정돼도 "어느 품종·어느 재배 레시피가 우리 환경에서 수율·마진이
+// 최대인가"는 심어봐야 아는 탐색/활용 문제다. 상추 MPC 논문(arXiv 2507.21669)이
+// 다루는 레시피 최적화를 밴딧으로 경량화. arm = 품종 또는 (광량·온도·EC) 레시피.
+export function recipeOptimization(opts?: {
+  arms?: BanditArm[];
+  rounds?: number;
+  seed?: number;
+}): BanditAllocation {
+  const arms = opts?.arms ?? [
+    { name: "청상추", trueMeanMargin: 6500, trueStd: 1500 },
+    { name: "적상추", trueMeanMargin: 7200, trueStd: 1800 },
+    { name: "버터헤드", trueMeanMargin: 8800, trueStd: 3000 },
+  ];
+  return thompsonAllocation({ arms, rounds: opts?.rounds ?? 200, seed: opts?.seed ?? 11 });
+}
+
+// ── 밴딧 용도 ②(중간): 사이트 간 품목 배분 (포트폴리오) ─────────────────────
+// 다지점 운영자의 결정: 각 사이트를 엽채류 vs 바질 vs 방울토마토 중 무엇으로
+// 배정해야 네트워크 전체 마진이 최대인가. 사이트 스펙(층고)·상권 수요가 달라
+// 어느 배합이 최적인지 미지 → 사이트를 조금씩 다르게 배정하며 학습(탐색/활용).
+export function cropPortfolioAllocation(opts?: {
+  arms?: BanditArm[];
+  sites?: number;
+  seed?: number;
+}): BanditAllocation {
+  const arms = opts?.arms ?? [
+    { name: "엽채류(상추)", trueMeanMargin: 7000, trueStd: 1800 },
+    { name: "바질(허브)", trueMeanMargin: 11000, trueStd: 3500 },
+    { name: "방울토마토", trueMeanMargin: 14000, trueStd: 6000 },
+  ];
+  return thompsonAllocation({ arms, rounds: opts?.sites ?? 30, seed: opts?.seed ?? 13 });
 }

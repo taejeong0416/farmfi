@@ -12,7 +12,8 @@ import {
   supplementalTrigger,
   peakStagger,
   annealJointSchedule,
-  thompsonCropAllocation,
+  recipeOptimization,
+  cropPortfolioAllocation,
   operationsSavingsReport,
   TARIFF_TOU_GENERAL,
   TARIFF_FLAT_AGRI,
@@ -108,15 +109,10 @@ export async function GET(
     const seeding = seedingPlan({ monthlySalesForecast });
     const nutrient = nutrientAdvice(readings[readings.length - 1], cropKey);
 
-    // 미시 ⑤ 작물 믹스 밴딧 (엽채류 주력 기준 재구성)
-    const cropMix = thompsonCropAllocation({
-      arms: [
-        { name: "상추(엽채류)", trueMeanMargin: 7000, trueStd: 1800 },
-        { name: "바질(허브)", trueMeanMargin: 11000, trueStd: 3500 },
-        { name: "마이크로그린", trueMeanMargin: 15000, trueStd: 6000 },
-      ],
-      rounds: 200,
-    });
+    // 미시 ⑤ 밴딧-레시피: 고정 품목 안에서 최적 품종/재배 레시피 탐색
+    const recipeMix = recipeOptimization();
+    // 중간: 밴딧-포트폴리오: 사이트 간 품목 배분(엽채류/바질/방울토마토)
+    const cropPortfolio = cropPortfolioAllocation();
 
     // 중간: 보광 트리거(실내 vs 온실 하이브리드)
     const hourlyInsolation = iot.slice(-24).map(() => 0); // IotData에 외부일사량 미저장 → 실내 가정
@@ -146,8 +142,8 @@ export async function GET(
         salesRecords: sales.length,
         fleet: fleetBaseline.meta,
       },
-      micro: { dli, feedback, peak, joint, forecast, seeding, cropMix, nutrient },
-      meso: { rawCusum, weatherCusum, supplemental, maintenance },
+      micro: { dli, feedback, peak, joint, forecast, seeding, recipeMix, nutrient },
+      meso: { rawCusum, weatherCusum, supplemental, cropPortfolio, maintenance },
       macro: { savings },
     });
   } catch (error) {

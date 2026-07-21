@@ -10,7 +10,8 @@ import {
   weatherCompensatedCusum,
   peakStagger,
   annealJointSchedule,
-  thompsonCropAllocation,
+  recipeOptimization,
+  cropPortfolioAllocation,
   operationsSavingsReport,
   TARIFF_TOU_GENERAL,
 } from "@/lib/optimization";
@@ -85,14 +86,8 @@ export default async function OptimizationPage({
   const forecast = holtWintersForecast(sales.map((s) => s.units));
   const seed = seedingPlan({ monthlySalesForecast: forecast.monthlyTotal });
   const nutrient = readings.length > 0 ? nutrientAdvice(readings[readings.length - 1], cropKey) : null;
-  const cropMix = thompsonCropAllocation({
-    arms: [
-      { name: "상추(엽채류)", trueMeanMargin: 7000, trueStd: 1800 },
-      { name: "바질(허브)", trueMeanMargin: 11000, trueStd: 3500 },
-      { name: "마이크로그린", trueMeanMargin: 15000, trueStd: 6000 },
-    ],
-    rounds: 200,
-  });
+  const recipeMix = recipeOptimization(); // 미시: 품종/레시피 선택
+  const cropPortfolio = cropPortfolioAllocation(); // 중간: 사이트 간 품목 배분
   const savings = operationsSavingsReport({
     dliSavingPerMonth: dli.savingPerMonth,
     peakSavingPerMonth: peak.demandChargeSavingPerMonth,
@@ -163,8 +158,8 @@ export default async function OptimizationPage({
           <div className="font-medium text-violet-800">④ 수요예측(Holt-Winters) → ⑤ 작물믹스(톰슨샘플링)</div>
           <p className="mt-1 text-violet-700">
             판매 {sales.length}일 학습 → 30일 {fmt(forecast.monthlyTotal)}포기 예측 → {seed.note}.
-            작물믹스: {cropMix.allocation.map((a) => `${a.name} ${Math.round(a.share * 100)}%`).join(" · ")}
-            (균등 대비 마진 +{((cropMix.uplift / cropMix.uniformTotalMargin) * 100).toFixed(1)}%).
+            품종/레시피 밴딧: {recipeMix.allocation.map((a) => `${a.name} ${Math.round(a.share * 100)}%`).join(" · ")}
+            (균등 대비 +{((recipeMix.uplift / recipeMix.uniformTotalMargin) * 100).toFixed(1)}%).
             {nutrient && ` ${nutrient.message}`}
           </p>
         </div>
@@ -188,6 +183,14 @@ export default async function OptimizationPage({
             플릿 {fleetBaseline.meta.farms}농가 {fmt(fleetBaseline.meta.rows)}건 베이스라인을 신규 사이트
             CUSUM 사전분포로 사용 → 이력 없는 1호점도 첫날부터 판정 (teacher-student 콜드스타트).
             예지보전 리스크 {maint?.riskScore ?? "—"}σ.
+          </p>
+        </div>
+        <div className="rounded bg-teal-50 p-3 text-sm">
+          <div className="font-medium text-teal-800">사이트 간 품목 배분 밴딧 (포트폴리오)</div>
+          <p className="mt-1 text-teal-700">
+            {cropPortfolio.rounds}개 사이트를 {cropPortfolio.allocation.map((a) => `${a.name} ${Math.round(a.share * 100)}%`).join(" · ")}로 배분
+            (균등 대비 +{((cropPortfolio.uplift / cropPortfolio.uniformTotalMargin) * 100).toFixed(1)}%).
+            사이트 스펙·상권 수요가 달라 최적 배합을 탐색/활용으로 학습.
           </p>
         </div>
       </section>
