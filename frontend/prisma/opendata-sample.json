@@ -1,0 +1,770 @@
+[
+ {
+  "measDt": "2026-07-17T15:00:00.000Z",
+  "innerTemp": 19.06,
+  "innerHum": 84.3,
+  "co2": 663,
+  "lightIntensity": 30,
+  "ph": 6.031
+ },
+ {
+  "measDt": "2026-07-17T15:30:00.000Z",
+  "innerTemp": 19.07,
+  "innerHum": 84.9,
+  "co2": 620,
+  "lightIntensity": 21,
+  "ph": 5.968
+ },
+ {
+  "measDt": "2026-07-17T16:00:00.000Z",
+  "innerTemp": 19.46,
+  "innerHum": 83.9,
+  "co2": 669,
+  "lightIntensity": 11,
+  "ph": 6.029
+ },
+ {
+  "measDt": "2026-07-17T16:30:00.000Z",
+  "innerTemp": 19.74,
+  "innerHum": 84.7,
+  "co2": 671,
+  "lightIntensity": 8,
+  "ph": 5.982
+ },
+ {
+  "measDt": "2026-07-17T17:00:00.000Z",
+  "innerTemp": 19.54,
+  "innerHum": 84.2,
+  "co2": 645,
+  "lightIntensity": 4,
+  "ph": 6.018
+ },
+ {
+  "measDt": "2026-07-17T17:30:00.000Z",
+  "innerTemp": 19.84,
+  "innerHum": 83.3,
+  "co2": 620,
+  "lightIntensity": 6,
+  "ph": 5.969
+ },
+ {
+  "measDt": "2026-07-17T18:00:00.000Z",
+  "innerTemp": 19.72,
+  "innerHum": 82.5,
+  "co2": 671,
+  "lightIntensity": 30,
+  "ph": 6.02
+ },
+ {
+  "measDt": "2026-07-17T18:30:00.000Z",
+  "innerTemp": 20.4,
+  "innerHum": 82.7,
+  "co2": 667,
+  "lightIntensity": 8,
+  "ph": 5.983
+ },
+ {
+  "measDt": "2026-07-17T19:00:00.000Z",
+  "innerTemp": 20.63,
+  "innerHum": 82.5,
+  "co2": 663,
+  "lightIntensity": 6,
+  "ph": 5.98
+ },
+ {
+  "measDt": "2026-07-17T19:30:00.000Z",
+  "innerTemp": 20.45,
+  "innerHum": 82.4,
+  "co2": 667,
+  "lightIntensity": 12,
+  "ph": 5.997
+ },
+ {
+  "measDt": "2026-07-17T20:00:00.000Z",
+  "innerTemp": 20.85,
+  "innerHum": 80.4,
+  "co2": 661,
+  "lightIntensity": 13,
+  "ph": 6.016
+ },
+ {
+  "measDt": "2026-07-17T20:30:00.000Z",
+  "innerTemp": 20.95,
+  "innerHum": 80,
+  "co2": 628,
+  "lightIntensity": 15,
+  "ph": 5.973
+ },
+ {
+  "measDt": "2026-07-17T21:00:00.000Z",
+  "innerTemp": 21.34,
+  "innerHum": 80.3,
+  "co2": 628,
+  "lightIntensity": 27,
+  "ph": 5.964
+ },
+ {
+  "measDt": "2026-07-17T21:30:00.000Z",
+  "innerTemp": 21.92,
+  "innerHum": 79.9,
+  "co2": 622,
+  "lightIntensity": 26,
+  "ph": 5.978
+ },
+ {
+  "measDt": "2026-07-17T22:00:00.000Z",
+  "innerTemp": 22.24,
+  "innerHum": 78.7,
+  "co2": 622,
+  "lightIntensity": 10,
+  "ph": 5.987
+ },
+ {
+  "measDt": "2026-07-17T22:30:00.000Z",
+  "innerTemp": 22.5,
+  "innerHum": 77.9,
+  "co2": 619,
+  "lightIntensity": 7,
+  "ph": 5.965
+ },
+ {
+  "measDt": "2026-07-17T23:00:00.000Z",
+  "innerTemp": 22.39,
+  "innerHum": 77.5,
+  "co2": 908,
+  "lightIntensity": 11206,
+  "ph": 6.034
+ },
+ {
+  "measDt": "2026-07-17T23:30:00.000Z",
+  "innerTemp": 22.77,
+  "innerHum": 78.4,
+  "co2": 861,
+  "lightIntensity": 11756,
+  "ph": 5.961
+ },
+ {
+  "measDt": "2026-07-18T00:00:00.000Z",
+  "innerTemp": 23.32,
+  "innerHum": 77.1,
+  "co2": 884,
+  "lightIntensity": 11852,
+  "ph": 5.963
+ },
+ {
+  "measDt": "2026-07-18T00:30:00.000Z",
+  "innerTemp": 23.26,
+  "innerHum": 77.1,
+  "co2": 897,
+  "lightIntensity": 11938,
+  "ph": 6.028
+ },
+ {
+  "measDt": "2026-07-18T01:00:00.000Z",
+  "innerTemp": 23.25,
+  "innerHum": 75.9,
+  "co2": 877,
+  "lightIntensity": 10976,
+  "ph": 6.018
+ },
+ {
+  "measDt": "2026-07-18T01:30:00.000Z",
+  "innerTemp": 23.32,
+  "innerHum": 76.9,
+  "co2": 866,
+  "lightIntensity": 11835,
+  "ph": 6.026
+ },
+ {
+  "measDt": "2026-07-18T02:00:00.000Z",
+  "innerTemp": 23.79,
+  "innerHum": 75.3,
+  "co2": 873,
+  "lightIntensity": 11412,
+  "ph": 6.017
+ },
+ {
+  "measDt": "2026-07-18T02:30:00.000Z",
+  "innerTemp": 23.8,
+  "innerHum": 75.8,
+  "co2": 861,
+  "lightIntensity": 11898,
+  "ph": 6.037
+ },
+ {
+  "measDt": "2026-07-18T03:00:00.000Z",
+  "innerTemp": 23.76,
+  "innerHum": 75.2,
+  "co2": 874,
+  "lightIntensity": 11989,
+  "ph": 6.018
+ },
+ {
+  "measDt": "2026-07-18T03:30:00.000Z",
+  "innerTemp": 23.93,
+  "innerHum": 77,
+  "co2": 892,
+  "lightIntensity": 11431,
+  "ph": 5.994
+ },
+ {
+  "measDt": "2026-07-18T04:00:00.000Z",
+  "innerTemp": 23.82,
+  "innerHum": 75.4,
+  "co2": 897,
+  "lightIntensity": 11087,
+  "ph": 5.975
+ },
+ {
+  "measDt": "2026-07-18T04:30:00.000Z",
+  "innerTemp": 23.45,
+  "innerHum": 76.4,
+  "co2": 863,
+  "lightIntensity": 11804,
+  "ph": 6.009
+ },
+ {
+  "measDt": "2026-07-18T05:00:00.000Z",
+  "innerTemp": 23.14,
+  "innerHum": 75.6,
+  "co2": 870,
+  "lightIntensity": 10915,
+  "ph": 6.023
+ },
+ {
+  "measDt": "2026-07-18T05:30:00.000Z",
+  "innerTemp": 23.43,
+  "innerHum": 77.8,
+  "co2": 865,
+  "lightIntensity": 10953,
+  "ph": 6.033
+ },
+ {
+  "measDt": "2026-07-18T06:00:00.000Z",
+  "innerTemp": 23.12,
+  "innerHum": 76.4,
+  "co2": 872,
+  "lightIntensity": 11221,
+  "ph": 6.011
+ },
+ {
+  "measDt": "2026-07-18T06:30:00.000Z",
+  "innerTemp": 23.1,
+  "innerHum": 77.3,
+  "co2": 857,
+  "lightIntensity": 11718,
+  "ph": 6.017
+ },
+ {
+  "measDt": "2026-07-18T07:00:00.000Z",
+  "innerTemp": 22.66,
+  "innerHum": 78.2,
+  "co2": 878,
+  "lightIntensity": 11683,
+  "ph": 5.988
+ },
+ {
+  "measDt": "2026-07-18T07:30:00.000Z",
+  "innerTemp": 22.27,
+  "innerHum": 79.3,
+  "co2": 895,
+  "lightIntensity": 12096,
+  "ph": 6.034
+ },
+ {
+  "measDt": "2026-07-18T08:00:00.000Z",
+  "innerTemp": 21.81,
+  "innerHum": 79,
+  "co2": 890,
+  "lightIntensity": 11334,
+  "ph": 6.028
+ },
+ {
+  "measDt": "2026-07-18T08:30:00.000Z",
+  "innerTemp": 22,
+  "innerHum": 79.6,
+  "co2": 871,
+  "lightIntensity": 11994,
+  "ph": 5.996
+ },
+ {
+  "measDt": "2026-07-18T09:00:00.000Z",
+  "innerTemp": 21.21,
+  "innerHum": 80.9,
+  "co2": 910,
+  "lightIntensity": 11267,
+  "ph": 6.035
+ },
+ {
+  "measDt": "2026-07-18T09:30:00.000Z",
+  "innerTemp": 21.4,
+  "innerHum": 81.1,
+  "co2": 877,
+  "lightIntensity": 11093,
+  "ph": 6.022
+ },
+ {
+  "measDt": "2026-07-18T10:00:00.000Z",
+  "innerTemp": 20.74,
+  "innerHum": 81.2,
+  "co2": 867,
+  "lightIntensity": 11029,
+  "ph": 5.975
+ },
+ {
+  "measDt": "2026-07-18T10:30:00.000Z",
+  "innerTemp": 20.82,
+  "innerHum": 81.6,
+  "co2": 865,
+  "lightIntensity": 11717,
+  "ph": 6.002
+ },
+ {
+  "measDt": "2026-07-18T11:00:00.000Z",
+  "innerTemp": 20.64,
+  "innerHum": 82.3,
+  "co2": 908,
+  "lightIntensity": 11835,
+  "ph": 5.973
+ },
+ {
+  "measDt": "2026-07-18T11:30:00.000Z",
+  "innerTemp": 20.26,
+  "innerHum": 81.8,
+  "co2": 884,
+  "lightIntensity": 11181,
+  "ph": 6.034
+ },
+ {
+  "measDt": "2026-07-18T12:00:00.000Z",
+  "innerTemp": 19.89,
+  "innerHum": 83.4,
+  "co2": 885,
+  "lightIntensity": 11909,
+  "ph": 5.998
+ },
+ {
+  "measDt": "2026-07-18T12:30:00.000Z",
+  "innerTemp": 19.73,
+  "innerHum": 82.9,
+  "co2": 852,
+  "lightIntensity": 11870,
+  "ph": 5.961
+ },
+ {
+  "measDt": "2026-07-18T13:00:00.000Z",
+  "innerTemp": 19.47,
+  "innerHum": 84.4,
+  "co2": 658,
+  "lightIntensity": 2,
+  "ph": 6.021
+ },
+ {
+  "measDt": "2026-07-18T13:30:00.000Z",
+  "innerTemp": 19.54,
+  "innerHum": 83.8,
+  "co2": 620,
+  "lightIntensity": 29,
+  "ph": 5.978
+ },
+ {
+  "measDt": "2026-07-18T14:00:00.000Z",
+  "innerTemp": 19.25,
+  "innerHum": 84.8,
+  "co2": 627,
+  "lightIntensity": 21,
+  "ph": 5.984
+ },
+ {
+  "measDt": "2026-07-18T14:30:00.000Z",
+  "innerTemp": 19.47,
+  "innerHum": 84.5,
+  "co2": 662,
+  "lightIntensity": 7,
+  "ph": 5.999
+ },
+ {
+  "measDt": "2026-07-18T15:00:00.000Z",
+  "innerTemp": 19.33,
+  "innerHum": 84.2,
+  "co2": 666,
+  "lightIntensity": 26,
+  "ph": 5.961
+ },
+ {
+  "measDt": "2026-07-18T15:30:00.000Z",
+  "innerTemp": 19.3,
+  "innerHum": 84.3,
+  "co2": 630,
+  "lightIntensity": 28,
+  "ph": 6.003
+ },
+ {
+  "measDt": "2026-07-18T16:00:00.000Z",
+  "innerTemp": 19.6,
+  "innerHum": 84.8,
+  "co2": 629,
+  "lightIntensity": 7,
+  "ph": 5.992
+ },
+ {
+  "measDt": "2026-07-18T16:30:00.000Z",
+  "innerTemp": 19.32,
+  "innerHum": 83.7,
+  "co2": 626,
+  "lightIntensity": 15,
+  "ph": 5.981
+ },
+ {
+  "measDt": "2026-07-18T17:00:00.000Z",
+  "innerTemp": 19.37,
+  "innerHum": 82.8,
+  "co2": 655,
+  "lightIntensity": 28,
+  "ph": 5.989
+ },
+ {
+  "measDt": "2026-07-18T17:30:00.000Z",
+  "innerTemp": 20.02,
+  "innerHum": 84.1,
+  "co2": 656,
+  "lightIntensity": 20,
+  "ph": 5.986
+ },
+ {
+  "measDt": "2026-07-18T18:00:00.000Z",
+  "innerTemp": 19.89,
+  "innerHum": 82.1,
+  "co2": 661,
+  "lightIntensity": 7,
+  "ph": 6.013
+ },
+ {
+  "measDt": "2026-07-18T18:30:00.000Z",
+  "innerTemp": 20.29,
+  "innerHum": 82.7,
+  "co2": 633,
+  "lightIntensity": 14,
+  "ph": 6.032
+ },
+ {
+  "measDt": "2026-07-18T19:00:00.000Z",
+  "innerTemp": 20.68,
+  "innerHum": 82.3,
+  "co2": 631,
+  "lightIntensity": 20,
+  "ph": 6.021
+ },
+ {
+  "measDt": "2026-07-18T19:30:00.000Z",
+  "innerTemp": 20.9,
+  "innerHum": 80.6,
+  "co2": 658,
+  "lightIntensity": 10,
+  "ph": 6.036
+ },
+ {
+  "measDt": "2026-07-18T20:00:00.000Z",
+  "innerTemp": 20.81,
+  "innerHum": 80.9,
+  "co2": 652,
+  "lightIntensity": 9,
+  "ph": 5.966
+ },
+ {
+  "measDt": "2026-07-18T20:30:00.000Z",
+  "innerTemp": 21.18,
+  "innerHum": 80.4,
+  "co2": 675,
+  "lightIntensity": 26,
+  "ph": 6.016
+ },
+ {
+  "measDt": "2026-07-18T21:00:00.000Z",
+  "innerTemp": 21.25,
+  "innerHum": 79.9,
+  "co2": 620,
+  "lightIntensity": 10,
+  "ph": 6.026
+ },
+ {
+  "measDt": "2026-07-18T21:30:00.000Z",
+  "innerTemp": 21.7,
+  "innerHum": 80,
+  "co2": 664,
+  "lightIntensity": 17,
+  "ph": 5.984
+ },
+ {
+  "measDt": "2026-07-18T22:00:00.000Z",
+  "innerTemp": 21.83,
+  "innerHum": 78.4,
+  "co2": 654,
+  "lightIntensity": 13,
+  "ph": 5.972
+ },
+ {
+  "measDt": "2026-07-18T22:30:00.000Z",
+  "innerTemp": 22.53,
+  "innerHum": 78.8,
+  "co2": 654,
+  "lightIntensity": 18,
+  "ph": 6.006
+ },
+ {
+  "measDt": "2026-07-18T23:00:00.000Z",
+  "innerTemp": 22.41,
+  "innerHum": 78.3,
+  "co2": 881,
+  "lightIntensity": 12079,
+  "ph": 5.972
+ },
+ {
+  "measDt": "2026-07-18T23:30:00.000Z",
+  "innerTemp": 22.69,
+  "innerHum": 78.1,
+  "co2": 871,
+  "lightIntensity": 11193,
+  "ph": 5.987
+ },
+ {
+  "measDt": "2026-07-19T00:00:00.000Z",
+  "innerTemp": 23.06,
+  "innerHum": 77.2,
+  "co2": 859,
+  "lightIntensity": 10907,
+  "ph": 5.924
+ },
+ {
+  "measDt": "2026-07-19T00:30:00.000Z",
+  "innerTemp": 23.52,
+  "innerHum": 76,
+  "co2": 882,
+  "lightIntensity": 11512,
+  "ph": 5.921
+ },
+ {
+  "measDt": "2026-07-19T01:00:00.000Z",
+  "innerTemp": 23.46,
+  "innerHum": 77,
+  "co2": 876,
+  "lightIntensity": 11933,
+  "ph": 5.914
+ },
+ {
+  "measDt": "2026-07-19T01:30:00.000Z",
+  "innerTemp": 23.49,
+  "innerHum": 76.3,
+  "co2": 873,
+  "lightIntensity": 11095,
+  "ph": 5.924
+ },
+ {
+  "measDt": "2026-07-19T02:00:00.000Z",
+  "innerTemp": 23.79,
+  "innerHum": 76.9,
+  "co2": 907,
+  "lightIntensity": 11031,
+  "ph": 5.883
+ },
+ {
+  "measDt": "2026-07-19T02:30:00.000Z",
+  "innerTemp": 23.48,
+  "innerHum": 76.4,
+  "co2": 862,
+  "lightIntensity": 11854,
+  "ph": 5.945
+ },
+ {
+  "measDt": "2026-07-19T03:00:00.000Z",
+  "innerTemp": 23.75,
+  "innerHum": 75.7,
+  "co2": 857,
+  "lightIntensity": 10916,
+  "ph": 5.899
+ },
+ {
+  "measDt": "2026-07-19T03:30:00.000Z",
+  "innerTemp": 23.73,
+  "innerHum": 76.3,
+  "co2": 878,
+  "lightIntensity": 11577,
+  "ph": 5.893
+ },
+ {
+  "measDt": "2026-07-19T04:00:00.000Z",
+  "innerTemp": 23.55,
+  "innerHum": 76,
+  "co2": 852,
+  "lightIntensity": 11427,
+  "ph": 5.922
+ },
+ {
+  "measDt": "2026-07-19T04:30:00.000Z",
+  "innerTemp": 23.77,
+  "innerHum": 75.3,
+  "co2": 869,
+  "lightIntensity": 11813,
+  "ph": 5.846
+ },
+ {
+  "measDt": "2026-07-19T05:00:00.000Z",
+  "innerTemp": 23.44,
+  "innerHum": 75.9,
+  "co2": 894,
+  "lightIntensity": 11221,
+  "ph": 5.846
+ },
+ {
+  "measDt": "2026-07-19T05:30:00.000Z",
+  "innerTemp": 23.53,
+  "innerHum": 76.2,
+  "co2": 881,
+  "lightIntensity": 10918,
+  "ph": 5.832
+ },
+ {
+  "measDt": "2026-07-19T06:00:00.000Z",
+  "innerTemp": 23.26,
+  "innerHum": 77.7,
+  "co2": 863,
+  "lightIntensity": 11996,
+  "ph": 5.885
+ },
+ {
+  "measDt": "2026-07-19T06:30:00.000Z",
+  "innerTemp": 23.07,
+  "innerHum": 77.8,
+  "co2": 895,
+  "lightIntensity": 10924,
+  "ph": 5.82
+ },
+ {
+  "measDt": "2026-07-19T07:00:00.000Z",
+  "innerTemp": 22.69,
+  "innerHum": 78.7,
+  "co2": 888,
+  "lightIntensity": 11008,
+  "ph": 5.815
+ },
+ {
+  "measDt": "2026-07-19T07:30:00.000Z",
+  "innerTemp": 22.48,
+  "innerHum": 77.9,
+  "co2": 877,
+  "lightIntensity": 11595,
+  "ph": 5.795
+ },
+ {
+  "measDt": "2026-07-19T08:00:00.000Z",
+  "innerTemp": 21.81,
+  "innerHum": 79.3,
+  "co2": 896,
+  "lightIntensity": 11440,
+  "ph": 5.788
+ },
+ {
+  "measDt": "2026-07-19T08:30:00.000Z",
+  "innerTemp": 22.06,
+  "innerHum": 79.2,
+  "co2": 861,
+  "lightIntensity": 11345,
+  "ph": 5.802
+ },
+ {
+  "measDt": "2026-07-19T09:00:00.000Z",
+  "innerTemp": 21.51,
+  "innerHum": 80.1,
+  "co2": 862,
+  "lightIntensity": 12069,
+  "ph": 5.807
+ },
+ {
+  "measDt": "2026-07-19T09:30:00.000Z",
+  "innerTemp": 20.99,
+  "innerHum": 80.8,
+  "co2": 863,
+  "lightIntensity": 12026,
+  "ph": 5.811
+ },
+ {
+  "measDt": "2026-07-19T10:00:00.000Z",
+  "innerTemp": 20.95,
+  "innerHum": 80.3,
+  "co2": 892,
+  "lightIntensity": 11129,
+  "ph": 5.805
+ },
+ {
+  "measDt": "2026-07-19T10:30:00.000Z",
+  "innerTemp": 20.58,
+  "innerHum": 82.5,
+  "co2": 863,
+  "lightIntensity": 11122,
+  "ph": 5.787
+ },
+ {
+  "measDt": "2026-07-19T11:00:00.000Z",
+  "innerTemp": 20.34,
+  "innerHum": 81.8,
+  "co2": 894,
+  "lightIntensity": 11717,
+  "ph": 5.767
+ },
+ {
+  "measDt": "2026-07-19T11:30:00.000Z",
+  "innerTemp": 20.4,
+  "innerHum": 83,
+  "co2": 858,
+  "lightIntensity": 11058,
+  "ph": 5.778
+ },
+ {
+  "measDt": "2026-07-19T12:00:00.000Z",
+  "innerTemp": 19.95,
+  "innerHum": 82.4,
+  "co2": 902,
+  "lightIntensity": 11432,
+  "ph": 5.781
+ },
+ {
+  "measDt": "2026-07-19T12:30:00.000Z",
+  "innerTemp": 19.98,
+  "innerHum": 82.2,
+  "co2": 894,
+  "lightIntensity": 11294,
+  "ph": 5.718
+ },
+ {
+  "measDt": "2026-07-19T13:00:00.000Z",
+  "innerTemp": 19.73,
+  "innerHum": 84.1,
+  "co2": 651,
+  "lightIntensity": 9,
+  "ph": 5.753
+ },
+ {
+  "measDt": "2026-07-19T13:30:00.000Z",
+  "innerTemp": 19.24,
+  "innerHum": 83.5,
+  "co2": 648,
+  "lightIntensity": 29,
+  "ph": 5.748
+ },
+ {
+  "measDt": "2026-07-19T14:00:00.000Z",
+  "innerTemp": 19.59,
+  "innerHum": 84.5,
+  "co2": 626,
+  "lightIntensity": 27,
+  "ph": 5.741
+ },
+ {
+  "measDt": "2026-07-19T14:30:00.000Z",
+  "innerTemp": 19.25,
+  "innerHum": 84.3,
+  "co2": 630,
+  "lightIntensity": 29,
+  "ph": 5.682
+ }
+]
