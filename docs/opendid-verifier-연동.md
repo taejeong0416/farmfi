@@ -1,164 +1,91 @@
-# OpenDID Verifier 연동 가이드 (오라클 배포 + 서비스 연결)
+# OpenDID 신원인증 연동 가이드 (오라클 자체호스팅, 실연동 완료)
 
-> 2026-07-21 SSH로 실측 확인. 오라클에 OmniOne OpenDID 2.0.0 풀스택이 떠 있고,
-> Verifier(8092)를 외부에 개방해 우리 서비스가 실연동할 수 있는 상태로 만들었다.
+> 2026-07-21 완성. 오라클에 OmniOne OpenDID 2.0.0 전체 네트워크를 구축하고,
+> 발급·검증 정책까지 등록해 **우리 앱이 실제 Verifier에서 검증 QR을 받는 것까지 실연동**했다.
+> DID 신원인증(KYC)은 이메일+비밀번호 로그인과 **별개**다 — 로그인이 아니라 실명·성인 확인용.
 
 ---
 
 ## 1. 한 줄 요약
 
-오라클 서버(`168.138.36.235`)에 **OmniOne OpenDID 2.0.0 전체 스택**이 `did-orchestrator-server`로 가동 중이다. 신원인증에 쓸 **Verifier는 8092 포트**, 외부 개방 완료(방화벽+클라우드 보안리스트). 우리 Next.js는 `http://168.138.36.235:8092/verifier/api/v1/...`로 붙는다. 남은 건 **Verifier Admin에 검증정책(VP Policy) 1개 등록** + 레포의 `OmniOneVerifier` 구현.
+오라클(`168.138.36.235`)에 OpenDID 풀스택(TAS·Issuer·Verifier·CAS·Wallet)이 **전부 체인 등록·ACTIVATE** 상태로 가동 중. VP 검증 정책까지 등록해서, 앱이 `request-offer-qr`를 호출하면 **실제 VerifyOffer(QR)**가 나온다. 유일한 미완은 QR을 스캔할 **최종 사용자 지갑앱**(OpenDID는 앱을 배포 안 하고 SDK만 줌 → 별도 안드로이드 빌드 필요).
 
 ---
 
-## 2. 배포 현황 (2026-07-21 실측)
+## 2. 접속·서버
 
-- **서버**: Oracle Cloud ARM, `168.138.36.235` (리전 ap-osaka-1), 유저 `opc`, OS Oracle Linux 9.7
-- **접속**: `ssh -i ~/.ssh/oracle-farmfi.key opc@168.138.36.235`
-- **구성**: `~/did-orchestrator-server/source/did-orchestrator-server/` 에서 orchestrator가 8개 엔티티 jar를 기동. Postgres는 도커 컨테이너 `postgre-opendid`(호스트 5430).
+- **서버**: Oracle Cloud ARM, `168.138.36.235` (ap-osaka-1), 유저 `opc`, Oracle Linux 9.7, 1 OCPU/6GB
+- **SSH**: `ssh -i ~/.ssh/oracle-farmfi.key opc@168.138.36.235`
+- **구성**: `~/did-orchestrator-server/source/did-orchestrator-server/`에서 orchestrator가 엔티티 jar 기동. Postgres = 도커 `postgre-opendid`(호스트 5430). 로컬 Besu 체인 = 도커 `opendid-besu-node`(chainId 1337).
+- **관리자 콘솔 로그인**(TAS/Issuer/Verifier 공통): `admin@opendid.omnione.net` / `Farmfi2026!`
 
-### 포트 맵 (전부 가동 확인 `status: UP`)
+### 포트 맵
 
-| 포트 | 서비스 | jar | 외부개방 |
-|---|---|---|---|
-| **8092** | **Verifier** ← 신원인증 연동 대상 | `did-verifier-server-2.0.0.jar` | ✅ 개방 |
-| 8090 | TA (Trust Agent) | `did-ta-server` | ✗ |
-| 8091 | Issuer (VC 발급) | `did-issuer-server` | ✗ |
-| 8093 | API server | `did-api-server` | ✗ |
-| 8094 | CA (인증앱) | `did-ca-server` | ✗ |
-| 8095 | Wallet | `did-wallet-server` | ✗ |
-| 8099 | Demo | `did-demo-server` | ✗ |
-| 9001 | Orchestrator (기동/관리 대시보드) | `did-orchestrator-server` | ✗ (SSH 터널로만) |
-| 5430 | Postgres | 도커 `postgre-opendid` | ✗ |
+| 포트 | 서비스 | 외부개방(데모용) |
+|---|---|---|
+| **8092** | **Verifier** ← 앱이 붙는 곳 | ✅ 유지 |
+| **8099** | **Demo 서버** ← 라이브 발급/검증 QR 시연 | ✅ 유지 |
+| 8090 | TAS (Trust Agent) | ✗ 데모 후 닫음 |
+| 8091 | Issuer | ✗ 데모 후 닫음 |
+| 8094 | CAS / 8095 Wallet / 8093 API / 8099 Demo(내부) | ✗ |
+| 9001 | Orchestrator 대시보드 | SSH 터널로만 |
 
-> **체인**: 별도로 운영측 호스팅 체인(`stage-chain.omnione.net`, chainId 201210)이 있고 이건 이미 공개. 오라클의 OpenDID 스택은 개발 샌드박스.
+> ⚠️ 데모 종료 후 8092·8099도 닫거나 소스 CIDR 제한 권장. OCI 콘솔 보안리스트 + `firewall-cmd`(둘 다).
+> 재기동: `sudo kill <pid>` → `sudo bash -c "setsid java -jar <jar> --server.port=<p> --spring.config.additional-location=file:<dir>/application.yml </dev/null >log 2>&1 &"` (부팅 ~75s). Besu/postgres는 `--restart unless-stopped` 걸어둠.
 
 ---
 
-## 3. Verifier 연결 정보 (핵심)
+## 3. Verifier 연결 (앱이 쓰는 것)
 
-- **Base URL**: `http://168.138.36.235:8092`
-- **API prefix**: `/verifier/api/v1/`
-- **관리 콘솔(웹)**: `http://168.138.36.235:8092/` — React SPA "OpenDID Verifier Admin"
+- **Base**: `http://168.138.36.235:8092`, API prefix `/verifier/api/v1/`
+- **VP 정책 ID**: `9c4a780e-af30-4f85-a49b-b188e8e10456`
+- **핵심 엔드포인트**: `POST /verifier/api/v1/request-offer-qr` body `{"policyId":"9c4a780e-..."}` → `{txId, payload:{offerId,type:VerifyOffer,mode,device,service,endpoints,validUntil}}`
+- 나머지: `request-verify`(지갑 VP 제출), `confirm-verify`(검증 확정·클레임)
 
-### 프로토콜 엔드포인트
+### 앱 배선 (`frontend/src/lib/identity/verifier.ts`)
 
-| 메서드·경로 | 역할 |
+- `OmniOneVerifier.createOffer` = request-offer-qr 실호출 → QR/deeplink 반환 (구현 완료)
+- `.env`: `IDENTITY_PROVIDER=opendid` / `IDENTITY_VERIFIER_URL=http://168.138.36.235:8092` / `IDENTITY_VERIFIER_POLICY_ID=9c4a780e-...`
+- 미설정(`stub`)이면 3초 자동인증 목업 → 데모 항상 됨.
+- getStatus/getClaims는 로컬 `IdentityVerification` 행 기준(지갑이 confirm-verify 제출 전엔 pending).
+
+---
+
+## 4. 오늘 바닥부터 구축한 크리덴셜 체인
+
+```
+① 네트워크 온보딩: TAS 등록(did:omn:tas) → Issuer/CAS/Wallet/Verifier 전부 COMPLETED·ACTIVATE
+② 발급: 네임스페이스(org.farmfi.v1.identity, 클레임 user_name/birth_date)
+        → VC스키마(FarmFi Identity, name=farmfi-id) → Issue Profile/VC Plan(farmfi-identity-plan)
+③ 검증: filter(allowedIssuer did:omn:issuer) → process(Direct/Secp256r1/AES-256-CBC/PKCS5)
+        → profile → service/payload(FarmFiVerify) → policy(9c4a780e-...)
+```
+
+전부 등록됨. `request-offer-qr` 실동작으로 검증 쪽 end-to-end 확인.
+
+---
+
+## 5. 라이브 데모로 보여줄 수 있는 것 (지갑앱 없이)
+
+| 시연 | URL/방법 |
 |---|---|
-| `POST /verifier/api/v1/request-offer-qr` | 인증 세션·QR 발급 (지갑앱이 스캔) |
-| `POST /verifier/api/v1/request-verify` | 지갑의 VP 제출 접수 |
-| `POST /verifier/api/v1/confirm-verify` | 검증 확정·클레임 반환 |
-| `POST /verifier/api/v1/request-profile` | 검증 프로필 조회 |
+| **우리 앱 → 실제 검증 QR** | 앱 신원인증 화면(OmniOneVerifier가 실 Verifier 호출) |
+| **발급 QR 라이브 생성** | `http://168.138.36.235:8099/` → VC Issuance → "Farmfi 신분증 발급" |
+| **검증 QR 라이브 생성** | 데모서버 VP Submission |
+| **request-offer-qr 실호출** | `curl -X POST .../verifier/api/v1/request-offer-qr -d '{"policyId":"9c4a780e-..."}'` |
 
-### `request-offer-qr` 요청 계약 (실측)
-
-```http
-POST /verifier/api/v1/request-offer-qr
-Content-Type: application/json
-
-{ "policyId": "<Verifier Admin에 등록된 VP 정책 ID>" }
-```
-
-- 빈 바디 → `{"code":"9999","description":"policy id cannot be null"}`
-- `{"policyId":"x"}` (없는 ID) → `{"code":"SSRVVRF00201","description":"VP_POLICY is not found."}`
-- ⇒ **필드명은 `policyId`가 맞고, 유효한 정책 ID만 있으면 동작한다.**
+**유일한 미완**: QR 스캔→VC 수령/제출하는 **홀더(지갑앱)**. OpenDID는 앱 미배포, `did-client-sdk-aos`(안드로이드 전용, 헤드리스 불가)로 직접 빌드해야 함 = 별도 안드로이드 개발.
 
 ---
 
-## 4. 우리 서비스(이 레포)에서 연결하는 법
+## 6. 삽질 로그 (재현/재구축 시 참고)
 
-### 4-1. 코드 위치
+- **admin 활성화**: 초기 admin은 미등록(비번=sha256("password"), require_password_reset=t). GUI가 비번을 **sha256 해시로 전송**하므로 DB `login_password`에 `sha256("Farmfi2026!")` 저장 + reset 플래그 off.
+- **지갑 연결 오류("Failed to connect to wallet")**: 각 서버 `jars/<E>/application.yml`의 `wallet:` 아래 `password: omnione123!` 누락. 추가+재시작으로 해결.
+- **TA Registration secret**: TA 마법사 Step1 비번 = `ta.auth.registration-password`(번들 application-auth.yml) = **`VoOyEuOyal`**.
+- **Besu OOM**: 6GB 박스라 8 Java + Besu 동시엔 메모리 빠듯. `opendid-besu-node`가 OOM으로 죽어 있던 걸 복구 + `--restart unless-stopped`.
+- **admin API 인증 off**(`auth.token.enable: false`) → curl로 CRUD 자동화 가능. namespace/vc-schema는 POST, verifier 쪽(filter/process/profile/policy/payload)은 GUI가 안전(PUT/{id} 매핑 불규칙).
+- **VC스키마 이중 URL**: vcSchemaId를 전체 URL로 넣으면 `?name=...?name=...`로 이중화 → demo 폼로드 실패. **vc_schema_id를 `farmfi-id`(순수 name)로** 하면 @id·해석 정상.
+- **demo가 plan 안 보임**: demo는 `/vcplan/list/issuer`(WHERE initiate=?)를 조회 → plan을 `issuer_init`로 해야 목록에 뜸(user_init은 안 뜸).
 
-- 추상화: `frontend/src/lib/identity/verifier.ts`
-  - 현재 기본은 `StubVerifier`(3초 자동인증 목업).
-  - 실연동 클래스 `OmniOneVerifier`는 **아직 껍데기**(호출 시 `not implemented`).
-  - 팩토리 `getVerifier()`가 `IDENTITY_PROVIDER === "opendid"`일 때만 `OmniOneVerifier` 사용.
-- API 라우트: `frontend/src/app/api/identity/offer/route.ts`, `.../status/route.ts` (내용 변경 불필요 — 추상화 뒤만 바꾸면 됨).
-
-### 4-2. 환경변수 (`frontend/.env`)
-
-```env
-IDENTITY_PROVIDER=opendid
-IDENTITY_VERIFIER_URL=http://168.138.36.235:8092
-IDENTITY_VERIFIER_POLICY_ID=<Admin에서 등록한 정책 ID>
-```
-
-> `.env`는 gitignore됨. 배포처(Vercel)에도 같은 3개를 환경변수로 넣어야 서버사이드 호출이 된다.
-
-### 4-3. `OmniOneVerifier` 구현 골자
-
-```ts
-async createOffer(policy) {
-  const res = await fetch(`${this.baseUrl}/verifier/api/v1/request-offer-qr`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ policyId: process.env.IDENTITY_VERIFIER_POLICY_ID }),
-  });
-  const data = await res.json();      // offer payload + txId
-  return { txId: data.txId, qrData: JSON.stringify(data), deeplink: /* 지갑 스킴 */ };
-}
-// getStatus/getClaims → request-verify / confirm-verify 응답 스키마에 맞춰 매핑
-```
-
-### 4-4. 남은 선행 작업 (이게 없으면 offer가 실패)
-
-**Verifier Admin에 VP 검증정책을 등록해야 유효한 `policyId`가 생긴다.**
-1. 브라우저로 `http://168.138.36.235:8092/` 접속 (관리 콘솔)
-2. 로그인 후 Policy / Proof Request 프로필 생성 (요청 클레임: 실명·생년월일·성인여부)
-3. 생성된 정책 ID를 `IDENTITY_VERIFIER_POLICY_ID`에 넣기
-
-> 콘솔 로그인/월렛 관련 비밀번호: `omnione123!` (오라클 배포 시 설정값).
-
----
-
-## 5. 팀원이 연결하는 법
-
-### A. 모바일/프론트에서 Verifier API 직접 호출 (가장 흔함)
-
-- Base: `http://168.138.36.235:8092/verifier/api/v1/`
-- `request-offer-qr`에 `policyId` 실어 호출 → 받은 offer로 QR/딥링크 구성 → OmniOne 지갑앱이 스캔 → `confirm-verify`로 결과 확인.
-- CORS 주의: 브라우저에서 직접 호출 시 막힐 수 있으니 **자기 서버(API 라우트) 경유** 권장.
-
-### B. Verifier Admin 콘솔 접속 (정책 등록·상태 확인)
-
-- `http://168.138.36.235:8092/` 브라우저 접속. 정책 만들고 검증 이력 확인.
-
-### C. 서버 SSH 접속 (운영·디버깅)
-
-1. 키 파일 `oracle-farmfi.key`를 받아 `~/.ssh/`에 두고 `chmod 600`
-2. `ssh -i ~/.ssh/oracle-farmfi.key opc@168.138.36.235`
-3. 9001 오케스트레이터 대시보드는 터널로: `ssh -i ~/.ssh/oracle-farmfi.key -L 9001:localhost:9001 opc@168.138.36.235` → 브라우저 `http://localhost:9001`
-
-### D. 서버 재부팅 시 재기동 (자동시작 없음)
-
-```bash
-cd ~/did-orchestrator-server/source/did-orchestrator-server
-sudo nohup java -jar did-orchestrator-server-2.0.0.jar > ~/orchestrator.log 2>&1 &
-# 그다음 오케스트레이터 API로 startup/postgre → startup/besu → startup/all 순서 호출
-```
-
-부팅에 5분+ 걸림(1 OCPU). 8092가 `UP` 될 때까지 대기.
-
----
-
-## 6. 방화벽·보안 (중요)
-
-- **개방한 것**: 8092/tcp — OS `firewalld`(`firewall-cmd --add-port=8092/tcp`) + **OCI 콘솔 보안리스트 인그레스**(0.0.0.0/0). 둘 다 열려야 외부 접근됨(실측 확인).
-- ⚠️ **8092는 Verifier Admin 콘솔까지 인터넷에 노출**된다. 데모용으로만. 끝나면:
-  - OCI 보안리스트에서 8092 인그레스 삭제, 또는 소스 CIDR 제한
-  - `sudo firewall-cmd --permanent --remove-port=8092/tcp && sudo firewall-cmd --reload`
-- IP는 ephemeral이라 **인스턴스 재생성 시 바뀐다** — URL 하드코딩 대신 env로.
-
----
-
-## 7. 오늘 검증한 것 (2026-07-21)
-
-- ✅ SSH 접속, 8개 엔티티 `UP` 확인
-- ✅ 포트→서비스 매핑 확정(jar 경로로)
-- ✅ Verifier API prefix `/verifier/api/v1/` 확인
-- ✅ `request-offer-qr` 필드명 `policyId` 확정, 정책 미등록 상태 확인
-- ✅ 8092 외부 개방(방화벽+보안리스트) → 내 PC에서 루트 `200`(0.1s) 도달
-- ⬜ VP 정책 등록 (Admin) — 미완
-- ⬜ `OmniOneVerifier` 구현 + Vercel 환경변수 — 미완
-
-관련 메모: 서버 상세는 `~/.claude/.../project_farmfi_oracle_server.md`.
+관련 메모: `~/.claude/.../project_farmfi_oracle_server.md`
