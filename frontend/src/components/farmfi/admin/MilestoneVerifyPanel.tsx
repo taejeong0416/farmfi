@@ -36,6 +36,14 @@ const DEMO_IMAGES: Record<Signal, { label: string; url: string }[]> = {
   ],
 };
 
+// verify-photo/receipt 라우트가 요구하는 milestoneType 키 (마일스톤 seq 기준)
+const MILESTONE_TYPE: Record<number, string> = {
+  1: "construction",
+  2: "trial_run",
+  3: "harvest",
+  4: "operation",
+};
+
 function won(n: number): string {
   return n.toLocaleString("ko-KR") + "원";
 }
@@ -127,7 +135,7 @@ export function MilestoneVerifyPanel() {
           contractImage: images.contract,
           receiptImage: images.receipt,
           photoImage: images.photo,
-          milestoneType: milestone.name,
+          milestoneType: MILESTONE_TYPE[milestone.seq] ?? "construction",
         }),
       });
       const data = await res.json();
