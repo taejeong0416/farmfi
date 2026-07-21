@@ -7,6 +7,16 @@
 
 ## 2026-07-21 — 박태정
 
+### 데모 오케스트레이션 복원 — demo/reset·demo/step (3호점 완결 흐름)
+STO 재융합 후 미결이던 데모 자동 재생 흐름 복원. 지금까진 admin 콘솔로 단계별 수동 리허설만 됐음.
+- **seedScenario 추출(`26a60ce7`)**: `prisma/seed.ts`의 시드 로직을 `src/lib/seed-scenario.ts`의 `seedScenario(prisma)` 공유 함수로 추출 → seed.ts(CLI)와 demo/reset(런타임)이 같은 로직 재사용(드리프트 방지). 청약 데모용 본인인증 투자자 이서연·박준혁 2명 추가(김투자 포함 3명).
+- **데모 라우트 복원(`60c05224`)**: `demo/reset`(seedScenario 호출, DemoCache는 보존해 cached 재생 유지) + `demo/step`(8스텝). main STO 버전을 **내 2프로젝트 시드에 정합**해 재작성 — main은 `findProjectFirst()` 단일 프로젝트 가정이나, 내 시드는 청약대상(3호점 funding)과 마일스톤대상이 나뉨. **3호점이 funding+escrow+마일스톤4를 모두 보유**해 전 스텝을 3호점 하나로 완결: 청약 920구좌(300·200·420) 완납 → escrow 4M→13.2M 충전 → 마일스톤 seq1~4 순차 집행(잔여 정확히 0).
+- **인증 정합(핵심)**: 7/21 코드리뷰에서 verify/complete/distribute에 `requireRole` 게이트를 건 탓에, 옛 demo/step의 **무인증 self-fetch가 401/403로 깨짐**. → demo/step이 시드 admin으로 `signSession` 토큰을 발급해 내부 fetch에 `Authorization: Bearer` 첨부(7/21 추가한 getServerSession Bearer 경로 재사용). subscribe는 fetch 없이 `executeSubscription` 직접 호출이라 무관. demo/reset·demo/step 자체도 `requireRole("admin")` 게이트(호출하는 프론트 페이지 없음 — 스크립트/콘솔 구동).
+- **문서**: api-spec에 STO(subscribe·milestones verify/complete·dividends/distribute)·데모(reset·step) 섹션 + 데모 실행 런북(admin 로그인 토큰→Bearer) 추가, 시드 기준값을 융합 시드(투자자3·지점3·STO)로 갱신.
+- **검증**: `tsc --noEmit` 0에러. **라이브 e2e(실 Gemini+온체인)는 별도 리허설 필요** — DB 변형·AI 비용·서버 구동이 걸려 이번엔 미실행. 단 demo/step이 wiring하는 verify/complete/distribute는 7/21 admin 콘솔 리허설에서 실 Gemini로 이미 통과 확인됨(이번 변경은 오케스트레이션 배선·프로젝트 타겟·시드 수량뿐).
+- **병합 시점 미결(크로스트랙)**: 우민성이 `main`에 실제 `RoundGate.sol`을 배포·구현함이 확인됨 → 내 이전 결정 "RoundGate 컨트랙트 없음, 기획안 §8 표현 현실화"는 **뒤집힘**. §8 정합은 단독 결정 금지, 두 트랙(내 STO 재융합 ↔ 우민성 최적화/대시보드) 병합 시 RoundGate에 맞춰 조율. 그 외 병합 충돌 예상: `contracts/`(양쪽 수정+RoundGate 신규)·`seed.ts`/`schema.prisma`/`package.json`.
+- **여전히 미결(외부 대기)**: OpenDID KYC(라온시큐어 Oracle 엔드포인트 = 외부 발급 서버URL+키 수령 후 — 코드베이스에 없음), 앱 프론트(외부 수령).
+
 ### STO 재융합 (feat/sto-operation-fusion) — 백엔드 복원 · 웹 UI · 앱 기반
 피벗으로 제거했던 STO/블록체인을 운영 인프라와 **재융합**. 기준 문서 `FarmFi_STO_기획안_v18.md`(STO 에스크로 + AI검증 + 스마트팜 운영). 베이스 = `feat/pivot-operation-infra`, STO 원본은 `main`에 보존돼 있어 거기서 복원.
 
