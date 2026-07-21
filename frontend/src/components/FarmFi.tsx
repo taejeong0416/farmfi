@@ -15,6 +15,9 @@ export { Chart, Donut } from "./farmfi/dashboard/Chart";
 
 export { SpaceForm, Field } from "./farmfi/space/SpaceForm";
 
+export { ProjectsGrid } from "./farmfi/projects/ProjectsGrid";
+export { ProjectDetail } from "./farmfi/projects/ProjectDetail";
+
 export { Section } from "./farmfi/ui/Section";
 export { Metric } from "./farmfi/ui/Metric";
 export { Panel } from "./farmfi/ui/Panel";
