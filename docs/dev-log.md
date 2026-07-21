@@ -5,6 +5,22 @@
 
 ---
 
+## 2026-07-21 — 박태정
+
+### STO 재융합 (feat/sto-operation-fusion) — 백엔드 복원 · 웹 UI · 앱 기반
+피벗으로 제거했던 STO/블록체인을 운영 인프라와 **재융합**. 기준 문서 `FarmFi_STO_기획안_v18.md`(STO 에스크로 + AI검증 + 스마트팜 운영). 베이스 = `feat/pivot-operation-infra`, STO 원본은 `main`에 보존돼 있어 거기서 복원.
+
+- **스키마·백엔드 복원**: STO 11모델 복원 + 운영 5모델 유지 통합. Project STO 금융필드 **nullable**(운영전용 지점 표현), Notification `milestoneId`·`projectId` 둘 다 optional. 온체인(Foundry 컨트랙트 + viem 서버 실행기)·STO 도메인 lib(subscription·waterfall·nav·ai-vision·ai-cache)·STO 코어 라우트 11개 복원. 인증은 기존 auth.ts(getServerSession·requireRole)가 SIWE 호환이라 무수정. 병합 스키마 **db push(세션pooler 5432, additive)** + 시드에 STO 통합(1호점 funded·2호점 운영·3호점 모집중).
+- **코드리뷰 10건 반영**(워크플로우 high): 복원 라우트 4개(milestones complete/verify·dividends/distribute·admin/notify)가 **무인증**이던 것 requireRole 게이트, complete에 `release≤remaining` 가드, 실패알림 projectId, 시드 solvency, ai-cache 실패 미저장, subscribe 정수검증, verify baseUrl=request origin, bigint 직렬화 헬퍼 공용화(`lib/serialize.ts`).
+- **작업 모델(2트랙 병렬)**: 앱 프론트는 **외부 수령 예정** → 앱은 인증기반까지만. **웹 UI는 기존 테마(globals.css 커스텀 클래스) 맞춰 직접 개발.** 앱 트랙 백엔드는 백그라운드 에이전트로 병행.
+  - 앱: Expo RN 스캐폴딩(SDK57) + **JWT bearer**(login/signup token in body + getServerSession Authorization 헤더 → web/app 통합) + API클라이언트·로그인·세션(SecureStore) + 지갑연결 백엔드(POST /api/auth/wallet·/nonce, viem verifyMessage).
+  - 웹 STO 5화면: `/projects`·`/projects/[id]`(펀딩·에스크로·마일스톤 타임라인)·마이페이지 포트폴리오·랜딩 STO 정합·`/admin/verify`(검증 콘솔). 전부 기존 CSS 클래스(.project-card·.progress·.timeline…) 재사용.
+- **데모 리허설(실 AI·온체인)**: 투자자 청약 3호점 10구좌 → 200. admin 검증 콘솔 — 실 Gemini로 contract·receipt·photo·crossCheck **전부 통과** → 마일스톤 completed → 에스크로 트랜치 **6,125,000원(35%) 집행** 확인. **버그 수정**: verify-photo/receipt의 `milestoneType`은 `construction|trial_run|harvest|operation` 키여야 하는데 마일스톤 한글이름을 보내 실패하던 것 seq→type 매핑으로 수정.
+- **RoundGate 결정 = 문서 현실화**: 기획안 §8은 RoundGate를 배포 컨트랙트로 서술하나 실제 Amoy 배포는 Escrow·Dividend·FarmToken 3종뿐(**RoundGate 없음**). 별도 컨트랙트 구현은 이번 범위 밖 → 순차 게이팅 의도는 Escrow 마일스톤 트랜치로 실현하고, 라운드 간 사이트 시퀀싱은 백엔드/운영 통제로 남긴다. **기획안 §8의 RoundGate 표현은 실배포와 불일치 → 기획안 수정 필요.**
+- **미결(외부/후속)**: OpenDID KYC(라온시큐어 OmniOne, Oracle 엔드포인트 수령 후), 앱 프론트(외부 수령), demo/reset·demo/step 오케스트레이션 복원, 지갑 실서명 런타임 검증, contracts/ Foundry `forge build` 전 `git submodule update --init`.
+
+---
+
 ## 2026-07-15 — 박태정
 
 ### 피벗 전 범위 멀티에이전트 코드리뷰 → 27건 수정
