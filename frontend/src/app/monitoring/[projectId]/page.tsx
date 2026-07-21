@@ -140,8 +140,8 @@ export default function MonitoringPage() {
             <span>/</span>
             <strong>생육 모니터링</strong>
           </div>
-          <Link className={styles.back} href="/dashboard">
-            ← 관제실로
+          <Link className={styles.back} href={`/projects/${data.project.id}`}>
+            ← 프로젝트로
           </Link>
         </div>
 

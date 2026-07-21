@@ -108,6 +108,14 @@ export function ProjectDetail({ id }: { id: string }) {
         </p>
       ) : null}
 
+      <Link
+        className="link"
+        href={`/monitoring/${id}`}
+        style={{ marginTop: 14, display: "inline-block" }}
+      >
+        📈 이 지점 실시간 생육 환경 보기 →
+      </Link>
+
       {isFundable ? (
         <div className="grid-2" style={{ marginTop: 24 }}>
           {/* 펀딩 현황 */}
