@@ -5,8 +5,6 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ServiceNav } from "@/components/farmfi/operations/FarmOperationsScreens";
-import { MobileGrowthScreen } from "@/components/farmfi/operations/MobileFarmApp";
 import styles from "./GrowthDashboard.module.css";
 
 interface ProjectDTO {
@@ -463,9 +461,7 @@ export function DashboardShell({
   };
 
   return (
-    <>
-    <MobileGrowthScreen selectedRack={selectedRack} onSelectRack={selectRack} />
-    <main className={`${styles.page} ${styles.desktopOnly}`}>
+    <main className={styles.page}>
       <div className={styles.skyGlow} aria-hidden="true" />
       <div className={styles.dashboardShell}>
         <aside className={styles.sidebar} aria-label="생장 모니터링 메뉴">
@@ -554,8 +550,6 @@ export function DashboardShell({
               </div>
             </div>
           </header>
-
-          <ServiceNav active="growth" />
 
           {notice && (
             <div className={styles.notice} role="status">
@@ -1021,7 +1015,6 @@ export function DashboardShell({
         </section>
       </div>
     </main>
-    </>
   );
 }
 

@@ -26,8 +26,6 @@
   word-break: keep-all;
 }
 
-.desktopOnly { display: none; }
-
 .page * {
   box-sizing: border-box;
 }
@@ -7032,7 +7030,6 @@
 }
 
 @media (max-width: 680px) {
-  .desktopOnly { display: none; }
   .sectionBlock .sensorGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
