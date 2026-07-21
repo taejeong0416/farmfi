@@ -88,10 +88,10 @@ async function main() {
   const p1 = await prisma.project.create({
     data: {
       name: "온천장 스마트팜 1호점", location: "부산 동래구", buildingType: "vacant_store", areaSqm: 83,
-      status: "funding", institutionId: institution.id,
-      // STO 펀딩 라운드 (표2·표7: 1구좌 1만원, CAPEX 1,750만)
-      tokenSymbol: "MF01", tokenPrice: BigInt(10_000), totalTokens: 1750, soldTokens: 50,
-      targetAmount: BigInt(17_500_000), currentAmount: BigInt(500_000), totalCapex: BigInt(17_500_000),
+      status: "funded", institutionId: institution.id,
+      // STO 라운드 완료 (표2·표7: 1구좌 1만원, CAPEX 1,750만) — 마일스톤 집행 단계
+      tokenSymbol: "MF01", tokenPrice: BigInt(10_000), totalTokens: 1750, soldTokens: 1750,
+      targetAmount: BigInt(17_500_000), currentAmount: BigInt(17_500_000), totalCapex: BigInt(17_500_000),
       fundingStart: now, fundingEnd: new Date(now.getTime() + 30 * DAY),
       contractAddress: process.env.NEXT_PUBLIC_ESCROW_ADDRESS || "0xa855f6398fb71ad197ec055853007007d3f7d452",
     },
@@ -134,7 +134,7 @@ async function main() {
   await prisma.escrow.create({
     data: {
       projectId: p1.id,
-      totalLocked: BigInt(500_000), totalReleased: BigInt(0), remaining: BigInt(500_000),
+      totalLocked: BigInt(17_500_000), totalReleased: BigInt(0), remaining: BigInt(17_500_000),
       status: "active",
       contractAddress: process.env.NEXT_PUBLIC_ESCROW_ADDRESS || "0xa855f6398fb71ad197ec055853007007d3f7d452",
     },

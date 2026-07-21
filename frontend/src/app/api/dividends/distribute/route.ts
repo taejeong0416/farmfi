@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { requireRole } from "@/lib/auth";
 import { calculateWaterfall } from "@/lib/waterfall";
 
 function serialize(obj: any): any {
@@ -9,6 +10,12 @@ function serialize(obj: any): any {
 }
 
 export async function POST(request: NextRequest) {
+  try {
+    await requireRole("admin");
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
   try {
     const { projectId, totalRevenue } = await request.json();
 

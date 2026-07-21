@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { requireRole } from "@/lib/auth";
 import { verifyMilestoneOnChain } from "@/lib/onchain";
 
 function serialize(obj: any): any {
@@ -7,9 +8,6 @@ function serialize(obj: any): any {
     JSON.stringify(obj, (_, v) => (typeof v === "bigint" ? Number(v) : v))
   );
 }
-
-const baseUrl =
-  process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
 // 교차검증(receipt↔photo): 영수증 구매 항목과 사진 검출 객체가
 // 같은 설비 카테고리를 하나 이상 공유하는지 확인
@@ -38,7 +36,15 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    await requireRole("operator");
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
+  try {
     const { id } = await params;
+    const baseUrl =
+      process.env.NEXT_PUBLIC_BASE_URL || new URL(request.url).origin;
     const body = await request.json();
     const { contractImage, receiptImage, photoImage, milestoneType } = body;
 
@@ -182,6 +188,7 @@ export async function POST(
     await prisma.notification.create({
       data: {
         milestoneId: id,
+        projectId: milestone.projectId,
         type: newRetryCount >= 2 ? "manual_review" : "verification_failed",
         message:
           newRetryCount >= 2

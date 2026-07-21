@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { requireRole } from "@/lib/auth";
 import { releaseTrancheOnChain } from "@/lib/onchain";
 
 function serialize(obj: any): any {
@@ -12,6 +13,12 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  try {
+    await requireRole("operator");
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
   try {
     const { id } = await params;
 
@@ -57,6 +64,14 @@ export async function POST(
     }
 
     const releaseAmount = milestone.releaseAmount;
+
+    // 에스크로 잔액을 초과하는 릴리즈 차단 (잔액 음수·NAV 왜곡 방지)
+    if (releaseAmount > escrow.remaining) {
+      return NextResponse.json(
+        { error: "Insufficient escrow balance for tranche release" },
+        { status: 400 }
+      );
+    }
 
     // Update milestone, escrow, create transaction, and advance next milestone
     const updatedMilestone = await prisma.$transaction(async (tx) => {
