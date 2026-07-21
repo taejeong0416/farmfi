@@ -1,6 +1,6 @@
 # 융합 실행계획 (STO + 운영 인프라)
 
-기준 문서: `FarmFi_STO_기획안_v18.md` (STO 에스크로 + AI 검증 + 스마트팜 운영 융합).
+기준 문서: `service-plan.md` (전체 서비스 기획안 v18 — STO 에스크로 + AI 검증 + 스마트팜 운영 융합).
 브랜치: `feat/sto-operation-fusion` (베이스 = `feat/pivot-operation-infra`).
 
 ## 확정 아키텍처

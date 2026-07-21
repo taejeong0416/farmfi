@@ -16,6 +16,8 @@
 | 파일 | 내용 | 종류 |
 |---|---|---|
 | `service-plan.md` | 서비스 기획안 (유일 정답 문서) | 레퍼런스 |
-| `pivot-plan.md` | 피벗 실행계획 (STO→v18 운영 인프라, 내용은 v18 정합) | 레퍼런스 |
+| `fusion-plan.md` | 융합 실행계획 (STO + 운영 인프라, Expo RN 앱) | 레퍼런스 |
 | `api-spec.md` | API 요청/응답 명세 | 레퍼런스 |
+| `verification-spec.md` | 마일스톤 검증 레이어 명세 | 레퍼런스 |
 | `dev-log.md` | 진행상황·결정 기록 | 기록 |
+| `dev-assessment.md` | 개발 자기평가 보고서 | 기록 |
