@@ -29,13 +29,17 @@ function won(n: number): string {
   return n.toLocaleString("ko-KR") + "원";
 }
 
-function ProjectCard({ p }: { p: Project }) {
+// 지점 사진 — 실사 에셋을 인덱스로 순환 배정.
+const THUMBS = ["roof", "indoor", "market"];
+
+function ProjectCard({ p, i }: { p: Project; i: number }) {
   const target = p.targetAmount ?? 0;
   const pct =
     target > 0 ? Math.min(100, Math.round((p.currentAmount / target) * 100)) : 0;
 
   return (
     <article className="card project-card">
+      <div className={`thumb ${THUMBS[i % THUMBS.length]}`} aria-hidden="true" />
       <div className="project-body">
         <div
           className="section-head"
@@ -135,8 +139,8 @@ export function ProjectsGrid() {
 
   return (
     <div className="grid-3">
-      {projects.map((p) => (
-        <ProjectCard key={p.id} p={p} />
+      {projects.map((p, i) => (
+        <ProjectCard key={p.id} p={p} i={i} />
       ))}
     </div>
   );

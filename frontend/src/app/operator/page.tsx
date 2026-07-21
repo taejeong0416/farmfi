@@ -49,7 +49,7 @@ export default function OperatorPage() {
               희망 지역·재배 경험·운영 가능 시간을 적어 지원하면, 검토 후 공간
               매칭 절차를 안내드립니다.
             </p>
-            <Link className="btn" href="/operator/apply" style={{ display: "block", textAlign: "center", marginTop: 18 }}>
+            <Link className="btn" href="/operator/apply" style={{ marginTop: 18, width: "100%" }}>
               지원서 작성하러 가기 →
             </Link>
           </Panel>
