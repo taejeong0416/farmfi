@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-
-function serializeBigInt(obj: any): any {
-  return JSON.parse(
-    JSON.stringify(obj, (_, v) => (typeof v === "bigint" ? Number(v) : v))
-  );
-}
+import { serializeBigInt } from "@/lib/serialize";
 
 export async function GET(
   request: NextRequest,

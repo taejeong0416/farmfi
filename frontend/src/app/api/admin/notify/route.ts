@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { serializeBigInt as serialize } from "@/lib/serialize";
 import { requireRole } from "@/lib/auth";
-
-function serialize(obj: any): any {
-  return JSON.parse(
-    JSON.stringify(obj, (_, v) => (typeof v === "bigint" ? Number(v) : v))
-  );
-}
 
 export async function POST(request: NextRequest) {
   try {

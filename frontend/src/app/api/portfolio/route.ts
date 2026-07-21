@@ -1,13 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { serializeBigInt as serialize } from "@/lib/serialize";
 import { getServerSession } from "@/lib/auth";
 import { calculateNAV } from "@/lib/nav-calculator";
-
-function serialize(obj: any): any {
-  return JSON.parse(
-    JSON.stringify(obj, (_, v) => (typeof v === "bigint" ? Number(v) : v))
-  );
-}
 
 // GET /api/portfolio — 로그인한 유저의 포트폴리오 집계 (보유 토큰 · 배당 · 거래내역).
 // userId는 반드시 세션(JWT)에서만 읽는다 — 클라이언트가 보내는 값은 절대 신뢰하지 않음 (IDOR 방지).

@@ -1,13 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { serializeBigInt as serialize } from "@/lib/serialize";
 import { requireRole } from "@/lib/auth";
 import { verifyMilestoneOnChain } from "@/lib/onchain";
-
-function serialize(obj: any): any {
-  return JSON.parse(
-    JSON.stringify(obj, (_, v) => (typeof v === "bigint" ? Number(v) : v))
-  );
-}
 
 // 교차검증(receipt↔photo): 영수증 구매 항목과 사진 검출 객체가
 // 같은 설비 카테고리를 하나 이상 공유하는지 확인

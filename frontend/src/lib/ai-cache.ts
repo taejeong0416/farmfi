@@ -43,7 +43,10 @@ export async function withAICache<T>(
       ),
     ]);
 
-    await cacheAIResult(milestoneId, signalType, result);
+    // 실패(passed:false)는 캐시하지 않는다 — 올바른 재제출이 옛 실패에 막히지 않게
+    if ((result as { passed?: boolean })?.passed !== false) {
+      await cacheAIResult(milestoneId, signalType, result);
+    }
     return result as T & { fromCache?: boolean };
   } catch (error) {
     const fallback = await getCachedAIResult(milestoneId, signalType);
