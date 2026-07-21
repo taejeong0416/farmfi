@@ -1,10 +1,11 @@
 import Link from "next/link";
 import {
   Flow,
+  Funnels,
   GreenBand,
   Hero,
-  RoleCards,
   Section,
+  SpaceProviders,
   Stats,
 } from "@/components/FarmFi";
 
@@ -28,6 +29,12 @@ export default function HomePage() {
         }
         chips={["부산광역시", "STO 조각투자", "검증 기반 집행"]}
       />
+      <Section
+        title="두 갈래로 시작합니다"
+        desc="투자자로 참여하거나, 운영자로 창업하세요. FarmFi는 이 두 축을 연결하는 인프라입니다."
+      >
+        <Funnels />
+      </Section>
       <Section
         title="확장 자금은 STO로, 집행은 코드로"
         desc="투자자는 개별 농장이 아니라 확장 라운드에 투자하고, 검증 결과에 따라 스마트컨트랙트가 자금을 단계 집행합니다. 배당은 개설된 사이트들의 플랫폼 수수료 풀에서 나옵니다."
@@ -61,11 +68,14 @@ export default function HomePage() {
           </Link>
         </div>
       </Section>
-      <Section title="FarmFi는 이렇게 연결됩니다">
-        <RoleCards />
-      </Section>
       <Section title="도시 유휴공간이 수익 농장으로 바뀌는 과정">
         <Flow />
+      </Section>
+      <Section
+        title="공간을 제공하시나요?"
+        desc="유휴공간을 가진 기관·지자체와 건물주를 위한 진입점입니다."
+      >
+        <SpaceProviders />
       </Section>
       <Section title="플랫폼 현황">
         <Stats />

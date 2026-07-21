@@ -466,6 +466,79 @@ h2 strong {
   font-weight: 700;
 }
 
+/* ── 두 축 퍼널 카드 (투자자 / 운영자) ── */
+.funnels {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.funnel-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 30px 28px;
+}
+
+.funnel-tag {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 6px;
+  padding: 5px 11px;
+  background: var(--green-100);
+  color: var(--green-800);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.funnel-card h3 {
+  margin-top: 16px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.funnel-card > .muted {
+  margin-top: 12px;
+}
+
+.funnel-points {
+  margin: 20px 0 26px;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.funnel-points li {
+  position: relative;
+  padding-left: 24px;
+  color: #3f4b44;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.funnel-points li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  top: -1px;
+  display: grid;
+  place-items: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: var(--green-700);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.funnel-card .btn {
+  margin-top: auto;
+}
+
 .role-head {
   display: flex;
   align-items: center;
@@ -992,6 +1065,7 @@ h2 strong {
   .grid-3,
   .market-grid,
   .flow,
+  .funnels,
   .footer-grid {
     grid-template-columns: 1fr;
   }
