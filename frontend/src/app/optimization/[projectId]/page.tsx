@@ -15,7 +15,8 @@ import {
   operationsSavingsReport,
   TARIFF_TOU_GENERAL,
 } from "@/lib/optimization";
-import { fetchSalesData } from "@/lib/opendata";
+import { optimalStack } from "@/lib/optimization-advanced";
+import { fetchSalesData, fetchOpenData } from "@/lib/opendata";
 import { getCrop } from "@/lib/crop-profiles";
 import { IoTReading } from "@/lib/iot-health";
 import { notFound } from "next/navigation";
@@ -96,6 +97,11 @@ export default async function OptimizationPage({
     dliCo2PerMonth: dli.co2SavedKgPerMonth,
     confidence: "projected",
   });
+
+  // 고도화 스택 (5개 돌파의 최적 조합) — 외부온도 실데이터 사용
+  const envRecs = await fetchOpenData();
+  const ext24 = envRecs.slice(-24).map((r) => r.extTemp ?? 15);
+  const adv = optimalStack({ cropKey, ledPowerKw, sites: 20, hourlyExtTemp: ext24 });
 
   const fmt = (n: number) => Math.round(n).toLocaleString("ko-KR");
 
@@ -191,6 +197,57 @@ export default async function OptimizationPage({
             {cropPortfolio.rounds}개 사이트를 {cropPortfolio.allocation.map((a) => `${a.name} ${Math.round(a.share * 100)}%`).join(" · ")}로 배분
             (균등 대비 +{((cropPortfolio.uplift / cropPortfolio.uniformTotalMargin) * 100).toFixed(1)}%).
             사이트 스펙·상권 수요가 달라 최적 배합을 탐색/활용으로 학습.
+          </p>
+        </div>
+      </section>
+
+      {/* 고도화: 5개 돌파 통합 스택 */}
+      <section className="rounded-lg border-2 border-indigo-200 bg-indigo-50 p-5 space-y-3">
+        <h2 className="font-semibold text-indigo-900">고도화 · 5개 돌파 최적 조합</h2>
+        <p className="text-xs text-indigo-700">{adv.summary.headline}</p>
+
+        <div className="grid gap-2 sm:grid-cols-2 text-sm">
+          <div className="rounded bg-white p-3">
+            <div className="font-medium">① 광주기 안전 (농학 하드제약)</div>
+            <p className="mt-1 text-gray-600">
+              명기 {adv.photoperiod.requiredHours}h(PPFD {adv.photoperiod.ppfdUsed}) + 연속 암기{" "}
+              {adv.photoperiod.darkContinuousH}h → 추대·생체리듬 안전 {adv.photoperiod.safe ? "✓" : "✗"}.
+              빛을 아무 때나 흩뿌리지 않아 작물을 지킨다.
+            </p>
+          </div>
+          <div className="rounded bg-white p-3">
+            <div className="font-medium">② 빛-열-CO₂ 통합</div>
+            <p className="mt-1 text-gray-600">
+              {adv.thermal.season} · LED 폐열 순비용 {fmt(adv.thermal.netThermalCostPerDay)}원/일
+              ({adv.thermal.netThermalCostPerDay < 0 ? "난방 상쇄 크레딧" : "냉방 부하 가산"}).
+              계절 따라 최적 배치가 뒤집힌다.
+            </p>
+          </div>
+          <div className="rounded bg-white p-3">
+            <div className="font-medium">③ 확률적 강건 (SMP)</div>
+            <p className="mt-1 text-gray-600">
+              {adv.robust.scenarios}시나리오: 기대 {fmt(adv.robust.expectedCostPerDay)}원,
+              최악5%(CVaR) {fmt(adv.robust.cvar95)}원 방어. 실시간요금제 선대응.
+            </p>
+          </div>
+          <div className="rounded bg-white p-3">
+            <div className="font-medium">④ 수율-이익 (Economic MPC)</div>
+            <p className="mt-1 text-gray-600">
+              비용최소가 아니라 이익최대: DLI {adv.profit.costMinDli}→{adv.profit.profitMaxDli},
+              일 +{fmt(adv.profit.upliftPerDay)}원. 채소값 비싸면 광량↑가 이득.
+            </p>
+          </div>
+        </div>
+
+        <div className="rounded bg-indigo-900 p-4 text-white">
+          <div className="text-sm text-indigo-200">⑤ 플릿 가상발전소(VPP) — 절감이 아니라 새 수익</div>
+          <div className="mt-1 text-lg font-bold">
+            {fmt(adv.vpp.fleetFlexibilityKw)}kW 가상발전소 · 수요반응 연 {fmt(adv.vpp.annualDrRevenue / 10000)}만원 매출
+          </div>
+          <p className="mt-1 text-sm text-indigo-100">
+            사이트들의 광주기 유연성을 묶어 전력망에 판다 → 배당 풀에 연{" "}
+            <b>{fmt(adv.vpp.dividendContributionPerYear / 10000)}만원</b> 기여.
+            AI 최적화가 비용을 깎는 데서 멈추지 않고 투자자 배당 재원을 창출한다.
           </p>
         </div>
       </section>

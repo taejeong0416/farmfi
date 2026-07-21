@@ -18,6 +18,7 @@ import {
   TARIFF_TOU_GENERAL,
   TARIFF_FLAT_AGRI,
 } from "@/lib/optimization";
+import { optimalStack } from "@/lib/optimization-advanced";
 import { fetchSalesData } from "@/lib/opendata";
 import { getCrop } from "@/lib/crop-profiles";
 import { IoTReading } from "@/lib/iot-health";
@@ -118,6 +119,10 @@ export async function GET(
     const hourlyInsolation = iot.slice(-24).map(() => 0); // IotData에 외부일사량 미저장 → 실내 가정
     const supplemental = supplementalTrigger({ cropKey, hourlyInsolation, indoor });
 
+    // 고도화: 5개 돌파 통합 스택 (외부온도 실데이터)
+    const ext24 = iot.slice(-24).map((d) => d.temperature - fleetBaseline.tempDiff.median);
+    const advanced = optimalStack({ cropKey, ledPowerKw, sites: 20, hourlyExtTemp: ext24 });
+
     // 거시: 재무 환산 리포트
     const savings = operationsSavingsReport({
       dliSavingPerMonth: dli.savingPerMonth,
@@ -145,6 +150,7 @@ export async function GET(
       micro: { dli, feedback, peak, joint, forecast, seeding, recipeMix, nutrient },
       meso: { rawCusum, weatherCusum, supplemental, cropPortfolio, maintenance },
       macro: { savings },
+      advanced,
     });
   } catch (error) {
     console.error("Optimization API error:", error);
