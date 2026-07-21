@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/useAuth";
 
 const nav = [
-  ["서비스 소개", "/"],
+  ["홈", "/"],
   ["투자하기", "/projects"],
   ["운영자 모집", "/operator"],
   ["공간 제공", "/space"],

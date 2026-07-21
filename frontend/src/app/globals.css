@@ -373,11 +373,124 @@ h2 strong {
   letter-spacing: -0.015em;
 }
 
+.section-no {
+  display: block;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--green-700);
+  width: fit-content;
+  color: var(--green-700);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+
 .section-desc {
   margin-top: 10px;
   color: var(--muted);
   font-size: 15px;
   line-height: 1.7;
+}
+
+/* ── 파일럿 라운드 + 마일스톤 트랜치 표 (에디토리얼) ── */
+.pilot {
+  display: grid;
+  gap: 26px;
+}
+
+.pilot-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px 56px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--line);
+}
+
+.pilot-facts b {
+  display: block;
+  color: var(--green-800);
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.pilot-facts span {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.tranche-row {
+  display: grid;
+  grid-template-columns: 48px 1.1fr 76px 2.3fr;
+  align-items: center;
+  gap: 18px;
+  padding: 17px 4px;
+  border-top: 1px solid var(--line);
+}
+
+.tranche-row:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.tranche-head {
+  padding: 0 4px 11px;
+  border-top: 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.tranche-no {
+  color: var(--green-700);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.tranche-name {
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.tranche-pct {
+  color: var(--green-800);
+  font-size: 20px;
+  font-weight: 800;
+  text-align: right;
+}
+
+.tranche-head .tranche-pct {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.tranche-sig {
+  font-size: 14px;
+}
+
+.pilot-note {
+  max-width: 720px;
+}
+
+@media (max-width: 640px) {
+  .tranche-head {
+    display: none;
+  }
+  .tranche-row {
+    grid-template-columns: 34px 1fr auto;
+    row-gap: 4px;
+  }
+  .tranche-sig {
+    grid-column: 2 / -1;
+  }
+  .pilot-facts b {
+    font-size: 32px;
+  }
 }
 
 .grid-4,

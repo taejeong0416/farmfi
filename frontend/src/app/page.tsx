@@ -4,6 +4,7 @@ import {
   Funnels,
   GreenBand,
   Hero,
+  PilotRound,
   Section,
   SpaceProviders,
   Stats,
@@ -13,10 +14,10 @@ export default function HomePage() {
   return (
     <main className="page">
       <Hero
-        eyebrow="검증을 통과해야 자금이 집행되는 조각투자"
-        title="유휴 상가를 스마트팜 매장으로,"
-        green="확장 자금은 STO로 조달"
-        lead="청년 창업자가 도심 공실을 스마트팜 매장으로 전환하고, 그 확장 자금을 STO로 조달합니다. 투자금은 한 번에 지급되지 않습니다 — 공간 준비부터 지속 운영까지, 단계별 검증을 통과할 때만 집행됩니다."
+        eyebrow="도심 유휴공간 스마트팜 · STO 조각투자"
+        title="검증되지 않으면"
+        green="집행되지 않는다"
+        lead="도심 유휴 상가를 청년 창업자의 스마트팜 매장으로 바꾸고, 확장 자금은 STO로 조달합니다. 투자금은 4단계 마일스톤 검증을 통과할 때만 스마트컨트랙트가 단계 집행합니다."
         actions={
           <>
             <Link className="btn" href="/projects">
@@ -27,16 +28,20 @@ export default function HomePage() {
             </Link>
           </>
         }
-        chips={["부산광역시", "STO 조각투자", "검증 기반 집행"]}
+        chips={["부산광역시", "파일럿 5개 사이트", "검증 기반 집행"]}
       />
+
       <Section
-        title="두 갈래로 시작합니다"
-        desc="투자자로 참여하거나, 운영자로 창업하세요. FarmFi는 이 두 축을 연결하는 인프라입니다."
+        no="01"
+        title="파일럿 라운드"
+        desc="1호점을 단독 실증하고 실측 지표를 공개한 뒤에만 나머지 사이트를 순차 모집합니다."
       >
-        <Funnels />
+        <PilotRound />
       </Section>
+
       <Section
-        title="확장 자금은 STO로, 집행은 코드로"
+        no="02"
+        title="검증이 자금을 집행합니다"
         desc="투자자는 개별 농장이 아니라 확장 라운드에 투자하고, 검증 결과에 따라 스마트컨트랙트가 자금을 단계 집행합니다. 배당은 개설된 사이트들의 플랫폼 수수료 풀에서 나옵니다."
       >
         <div className="grid-3">
@@ -62,24 +67,31 @@ export default function HomePage() {
             </p>
           </article>
         </div>
-        <div style={{ marginTop: 24 }}>
-          <Link className="btn" href="/projects">
-            투자 프로젝트 보기 →
-          </Link>
-        </div>
       </Section>
+
+      <Section
+        no="03"
+        title="두 갈래로 시작합니다"
+        desc="투자자로 참여하거나, 운영자로 창업하세요. FarmFi는 이 두 축을 연결하는 인프라입니다."
+      >
+        <Funnels />
+      </Section>
+
       <Section title="도시 유휴공간이 수익 농장으로 바뀌는 과정">
         <Flow />
       </Section>
+
       <Section
         title="공간을 제공하시나요?"
         desc="유휴공간을 가진 기관·지자체와 건물주를 위한 진입점입니다."
       >
         <SpaceProviders />
       </Section>
+
       <Section title="플랫폼 현황">
         <Stats />
       </Section>
+
       <GreenBand />
     </main>
   );
