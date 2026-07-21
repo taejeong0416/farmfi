@@ -1,0 +1,2690 @@
+[
+ {
+  "measDt": "2022-11-17T01:00:00+09:00",
+  "co2": 847,
+  "innerHum": 85.8,
+  "innerTemp": 10.9,
+  "lightIntensity": 2295.9,
+  "ph": 7.2
+ },
+ {
+  "measDt": "2022-11-17T02:00:00+09:00",
+  "co2": 866.2,
+  "innerHum": 85.8,
+  "innerTemp": 11.1,
+  "lightIntensity": 2296.8,
+  "ph": 7.2
+ },
+ {
+  "measDt": "2022-11-17T03:00:00+09:00",
+  "co2": 885.2,
+  "innerHum": 86.1,
+  "innerTemp": 11.9,
+  "lightIntensity": 2297.6,
+  "ph": 7.3
+ },
+ {
+  "measDt": "2022-11-17T04:00:00+09:00",
+  "co2": 902.7,
+  "innerHum": 86.3,
+  "innerTemp": 10.9,
+  "lightIntensity": 2297.5,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-17T05:00:00+09:00",
+  "co2": 916,
+  "innerHum": 85.8,
+  "innerTemp": 11.4,
+  "lightIntensity": 2298,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-17T06:00:00+09:00",
+  "co2": 923.5,
+  "innerHum": 85.2,
+  "innerTemp": 11.3,
+  "lightIntensity": 2315.4,
+  "ph": 7
+ },
+ {
+  "measDt": "2022-11-17T07:00:00+09:00",
+  "co2": 927,
+  "innerHum": 86.5,
+  "innerTemp": 11.4,
+  "lightIntensity": 3219.4,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-17T08:00:00+09:00",
+  "co2": 805.8,
+  "innerHum": 86,
+  "innerTemp": 15.3,
+  "lightIntensity": 12456.2,
+  "ph": 7.2
+ },
+ {
+  "measDt": "2022-11-17T09:00:00+09:00",
+  "co2": 551.3,
+  "innerHum": 67.9,
+  "innerTemp": 22.6,
+  "lightIntensity": 20348.7,
+  "ph": 7
+ },
+ {
+  "measDt": "2022-11-17T10:00:00+09:00",
+  "co2": 478.7,
+  "innerHum": 60.4,
+  "innerTemp": 27.9,
+  "lightIntensity": 52357.2,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-17T11:00:00+09:00",
+  "co2": 486,
+  "innerHum": 51.5,
+  "innerTemp": 31,
+  "lightIntensity": 54165.5,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-17T12:00:00+09:00",
+  "co2": 484.7,
+  "innerHum": 48.2,
+  "innerTemp": 29.7,
+  "lightIntensity": 59592.7,
+  "ph": 6.3
+ },
+ {
+  "measDt": "2022-11-17T13:00:00+09:00",
+  "co2": 494.7,
+  "innerHum": 43.5,
+  "innerTemp": 27.4,
+  "lightIntensity": 47077.8,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-17T14:00:00+09:00",
+  "co2": 503.3,
+  "innerHum": 46,
+  "innerTemp": 24.4,
+  "lightIntensity": 33665.3,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-17T15:00:00+09:00",
+  "co2": 519.5,
+  "innerHum": 45,
+  "innerTemp": 20.9,
+  "lightIntensity": 15343.2,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-17T16:00:00+09:00",
+  "co2": 527.3,
+  "innerHum": 66.9,
+  "innerTemp": 17.9,
+  "lightIntensity": 5060.7,
+  "ph": 7.2
+ },
+ {
+  "measDt": "2022-11-17T17:00:00+09:00",
+  "co2": 556.8,
+  "innerHum": 78.4,
+  "innerTemp": 16.5,
+  "lightIntensity": 1281.7,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-17T18:00:00+09:00",
+  "co2": 620.5,
+  "innerHum": 81.4,
+  "innerTemp": 14.3,
+  "lightIntensity": 2298.6,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-17T19:00:00+09:00",
+  "co2": 670,
+  "innerHum": 82.8,
+  "innerTemp": 13.3,
+  "lightIntensity": 2290.7,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-17T20:00:00+09:00",
+  "co2": 707.3,
+  "innerHum": 83.6,
+  "innerTemp": 12.6,
+  "lightIntensity": 2295.4,
+  "ph": 7
+ },
+ {
+  "measDt": "2022-11-17T21:00:00+09:00",
+  "co2": 736.3,
+  "innerHum": 83.6,
+  "innerTemp": 12,
+  "lightIntensity": 2295.8,
+  "ph": 7.2
+ },
+ {
+  "measDt": "2022-11-17T22:00:00+09:00",
+  "co2": 766.5,
+  "innerHum": 83.9,
+  "innerTemp": 11.7,
+  "lightIntensity": 2296.6,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-17T23:00:00+09:00",
+  "co2": 791.8,
+  "innerHum": 82.5,
+  "innerTemp": 12.2,
+  "lightIntensity": 2296.3,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-18T00:00:00+09:00",
+  "co2": 814.7,
+  "innerHum": 83.2,
+  "innerTemp": 11.3,
+  "lightIntensity": 2300.7,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-18T01:00:00+09:00",
+  "co2": 808,
+  "innerHum": 83.5,
+  "innerTemp": 11.3,
+  "lightIntensity": 2300,
+  "ph": 7
+ },
+ {
+  "measDt": "2022-11-18T02:00:00+09:00",
+  "co2": 822.5,
+  "innerHum": 82.2,
+  "innerTemp": 11.5,
+  "lightIntensity": 2299.2,
+  "ph": 6.3
+ },
+ {
+  "measDt": "2022-11-18T03:00:00+09:00",
+  "co2": 848.2,
+  "innerHum": 82.8,
+  "innerTemp": 11.5,
+  "lightIntensity": 2302.3,
+  "ph": 7
+ },
+ {
+  "measDt": "2022-11-18T04:00:00+09:00",
+  "co2": 860,
+  "innerHum": 82.9,
+  "innerTemp": 11.6,
+  "lightIntensity": 2304.4,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-18T05:00:00+09:00",
+  "co2": 846.2,
+  "innerHum": 83,
+  "innerTemp": 11.8,
+  "lightIntensity": 2302.5,
+  "ph": 7
+ },
+ {
+  "measDt": "2022-11-18T06:00:00+09:00",
+  "co2": 902.2,
+  "innerHum": 82.5,
+  "innerTemp": 11.2,
+  "lightIntensity": 2319,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-18T07:00:00+09:00",
+  "co2": 903.5,
+  "innerHum": 83.2,
+  "innerTemp": 11,
+  "lightIntensity": 3215.1,
+  "ph": 7.2
+ },
+ {
+  "measDt": "2022-11-18T08:00:00+09:00",
+  "co2": 796.7,
+  "innerHum": 82.8,
+  "innerTemp": 14,
+  "lightIntensity": 10014.2,
+  "ph": 7.3
+ },
+ {
+  "measDt": "2022-11-18T09:00:00+09:00",
+  "co2": 538.8,
+  "innerHum": 68.5,
+  "innerTemp": 23.4,
+  "lightIntensity": 18505.9,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-18T10:00:00+09:00",
+  "co2": 530.3,
+  "innerHum": 57.8,
+  "innerTemp": 25.9,
+  "lightIntensity": 40296.1,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-18T11:00:00+09:00",
+  "co2": 517,
+  "innerHum": 43,
+  "innerTemp": 27.7,
+  "lightIntensity": 54032.6,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-18T12:00:00+09:00",
+  "co2": 500.8,
+  "innerHum": 37,
+  "innerTemp": 27.9,
+  "lightIntensity": 57833.3,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-18T13:00:00+09:00",
+  "co2": 494.5,
+  "innerHum": 33.6,
+  "innerTemp": 28.1,
+  "lightIntensity": 47285,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-18T14:00:00+09:00",
+  "co2": 497.2,
+  "innerHum": 33.8,
+  "innerTemp": 26.2,
+  "lightIntensity": 32987.4,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-18T15:00:00+09:00",
+  "co2": 491.2,
+  "innerHum": 49.6,
+  "innerTemp": 23.3,
+  "lightIntensity": 15306.8,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-18T16:00:00+09:00",
+  "co2": 522.8,
+  "innerHum": 60.5,
+  "innerTemp": 19,
+  "lightIntensity": 5420.1,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-18T17:00:00+09:00",
+  "co2": 563.3,
+  "innerHum": 74,
+  "innerTemp": 15.9,
+  "lightIntensity": 1696.2,
+  "ph": 7.1
+ },
+ {
+  "measDt": "2022-11-18T18:00:00+09:00",
+  "co2": 617.2,
+  "innerHum": 78.2,
+  "innerTemp": 14,
+  "lightIntensity": 2294.8,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-18T19:00:00+09:00",
+  "co2": 662,
+  "innerHum": 78.7,
+  "innerTemp": 13.1,
+  "lightIntensity": 2285.4,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-18T20:00:00+09:00",
+  "co2": 698,
+  "innerHum": 79.2,
+  "innerTemp": 12.9,
+  "lightIntensity": 2286.6,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-18T21:00:00+09:00",
+  "co2": 725.7,
+  "innerHum": 79.6,
+  "innerTemp": 12.4,
+  "lightIntensity": 2290,
+  "ph": 6.3
+ },
+ {
+  "measDt": "2022-11-18T22:00:00+09:00",
+  "co2": 744.8,
+  "innerHum": 79.7,
+  "innerTemp": 11.9,
+  "lightIntensity": 2292.1,
+  "ph": 7
+ },
+ {
+  "measDt": "2022-11-18T23:00:00+09:00",
+  "co2": 765.8,
+  "innerHum": 79.6,
+  "innerTemp": 11.5,
+  "lightIntensity": 2294.2,
+  "ph": 7.3
+ },
+ {
+  "measDt": "2022-11-19T00:00:00+09:00",
+  "co2": 784.5,
+  "innerHum": 79.9,
+  "innerTemp": 11.4,
+  "lightIntensity": 2297.2,
+  "ph": 5.9
+ },
+ {
+  "measDt": "2022-11-19T01:00:00+09:00",
+  "co2": 690.8,
+  "innerHum": 69.1,
+  "innerTemp": 17.8,
+  "lightIntensity": 19834.1,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-19T02:00:00+09:00",
+  "co2": 698.7,
+  "innerHum": 69.9,
+  "innerTemp": 18.2,
+  "lightIntensity": 17918.2,
+  "ph": 7.4
+ },
+ {
+  "measDt": "2022-11-19T03:00:00+09:00",
+  "co2": 686.5,
+  "innerHum": 69.4,
+  "innerTemp": 18.7,
+  "lightIntensity": 19776.9,
+  "ph": 7.2
+ },
+ {
+  "measDt": "2022-11-19T04:00:00+09:00",
+  "co2": 689.5,
+  "innerHum": 71.3,
+  "innerTemp": 18.9,
+  "lightIntensity": 20252.5,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-19T05:00:00+09:00",
+  "co2": 796.5,
+  "innerHum": 81.8,
+  "innerTemp": 12.4,
+  "lightIntensity": 2287.5,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-19T06:00:00+09:00",
+  "co2": 807.3,
+  "innerHum": 81.6,
+  "innerTemp": 12.4,
+  "lightIntensity": 2292.7,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-19T07:00:00+09:00",
+  "co2": 806.2,
+  "innerHum": 81.5,
+  "innerTemp": 12.6,
+  "lightIntensity": 2459.8,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-19T08:00:00+09:00",
+  "co2": 718.8,
+  "innerHum": 79.9,
+  "innerTemp": 16.2,
+  "lightIntensity": 9174.8,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-19T09:00:00+09:00",
+  "co2": 513.7,
+  "innerHum": 60.2,
+  "innerTemp": 24.4,
+  "lightIntensity": 25225.3,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-19T10:00:00+09:00",
+  "co2": 481.3,
+  "innerHum": 54,
+  "innerTemp": 27.2,
+  "lightIntensity": 50512.4,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-19T11:00:00+09:00",
+  "co2": 488.8,
+  "innerHum": 41.6,
+  "innerTemp": 30.2,
+  "lightIntensity": 50909.8,
+  "ph": 7.1
+ },
+ {
+  "measDt": "2022-11-19T12:00:00+09:00",
+  "co2": 483,
+  "innerHum": 38.4,
+  "innerTemp": 29.6,
+  "lightIntensity": 56526.8,
+  "ph": 7.2
+ },
+ {
+  "measDt": "2022-11-19T13:00:00+09:00",
+  "co2": 482.8,
+  "innerHum": 35.4,
+  "innerTemp": 28.2,
+  "lightIntensity": 46873,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-19T14:00:00+09:00",
+  "co2": 483.2,
+  "innerHum": 38.8,
+  "innerTemp": 26.4,
+  "lightIntensity": 29174.2,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-19T15:00:00+09:00",
+  "co2": 496.8,
+  "innerHum": 45.3,
+  "innerTemp": 23.6,
+  "lightIntensity": 14152.4,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-19T16:00:00+09:00",
+  "co2": 520,
+  "innerHum": 50,
+  "innerTemp": 19.5,
+  "lightIntensity": 4514.2,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-19T17:00:00+09:00",
+  "co2": 572.7,
+  "innerHum": 74.9,
+  "innerTemp": 16.4,
+  "lightIntensity": 1531.8,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-19T18:00:00+09:00",
+  "co2": 632.3,
+  "innerHum": 81.1,
+  "innerTemp": 15,
+  "lightIntensity": 2286,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-19T19:00:00+09:00",
+  "co2": 694.2,
+  "innerHum": 83.2,
+  "innerTemp": 14.3,
+  "lightIntensity": 2282.7,
+  "ph": 7
+ },
+ {
+  "measDt": "2022-11-19T20:00:00+09:00",
+  "co2": 743.8,
+  "innerHum": 83.9,
+  "innerTemp": 14.5,
+  "lightIntensity": 2271.7,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-19T21:00:00+09:00",
+  "co2": 788.5,
+  "innerHum": 84.6,
+  "innerTemp": 14.3,
+  "lightIntensity": 2273.9,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-19T22:00:00+09:00",
+  "co2": 816.3,
+  "innerHum": 84.8,
+  "innerTemp": 14,
+  "lightIntensity": 2277.4,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-19T23:00:00+09:00",
+  "co2": 844.7,
+  "innerHum": 84.8,
+  "innerTemp": 13.3,
+  "lightIntensity": 2280.8,
+  "ph": 7.1
+ },
+ {
+  "measDt": "2022-11-20T00:00:00+09:00",
+  "co2": 869,
+  "innerHum": 85.4,
+  "innerTemp": 13.6,
+  "lightIntensity": 2275.4,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-20T01:00:00+09:00",
+  "co2": 898.8,
+  "innerHum": 85.5,
+  "innerTemp": 13.9,
+  "lightIntensity": 2272.3,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-20T02:00:00+09:00",
+  "co2": 925.2,
+  "innerHum": 85,
+  "innerTemp": 14,
+  "lightIntensity": 2272.1,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-20T03:00:00+09:00",
+  "co2": 942.7,
+  "innerHum": 84.7,
+  "innerTemp": 14,
+  "lightIntensity": 2272,
+  "ph": 6.1
+ },
+ {
+  "measDt": "2022-11-20T04:00:00+09:00",
+  "co2": 966.2,
+  "innerHum": 83.7,
+  "innerTemp": 14.1,
+  "lightIntensity": 2272.6,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-20T05:00:00+09:00",
+  "co2": 987.7,
+  "innerHum": 83.4,
+  "innerTemp": 14.2,
+  "lightIntensity": 2269.4,
+  "ph": 7
+ },
+ {
+  "measDt": "2022-11-20T06:00:00+09:00",
+  "co2": 1010.3,
+  "innerHum": 83.8,
+  "innerTemp": 14.2,
+  "lightIntensity": 2275.3,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-20T07:00:00+09:00",
+  "co2": 1016.3,
+  "innerHum": 84.3,
+  "innerTemp": 14.2,
+  "lightIntensity": 1554.3,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-20T08:00:00+09:00",
+  "co2": 955.2,
+  "innerHum": 84.8,
+  "innerTemp": 15.6,
+  "lightIntensity": 5866.1,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-20T09:00:00+09:00",
+  "co2": 695.5,
+  "innerHum": 79.7,
+  "innerTemp": 19.1,
+  "lightIntensity": 15530,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-20T10:00:00+09:00",
+  "co2": 493.7,
+  "innerHum": 69.3,
+  "innerTemp": 24.6,
+  "lightIntensity": 39991.1,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-20T11:00:00+09:00",
+  "co2": 603.5,
+  "innerHum": 61.2,
+  "innerTemp": 24.6,
+  "lightIntensity": 35142.3,
+  "ph": 7
+ },
+ {
+  "measDt": "2022-11-20T12:00:00+09:00",
+  "co2": 612.3,
+  "innerHum": 56.8,
+  "innerTemp": 23,
+  "lightIntensity": 31545.3,
+  "ph": 7
+ },
+ {
+  "measDt": "2022-11-20T13:00:00+09:00",
+  "co2": 616,
+  "innerHum": 59.9,
+  "innerTemp": 20.8,
+  "lightIntensity": 18692.8,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-20T14:00:00+09:00",
+  "co2": 557.5,
+  "innerHum": 53.3,
+  "innerTemp": 22.5,
+  "lightIntensity": 23987.6,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-20T15:00:00+09:00",
+  "co2": 506.2,
+  "innerHum": 51.4,
+  "innerTemp": 22.1,
+  "lightIntensity": 17186.1,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-20T16:00:00+09:00",
+  "co2": 529.3,
+  "innerHum": 51.4,
+  "innerTemp": 18.8,
+  "lightIntensity": 4435.3,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-20T17:00:00+09:00",
+  "co2": 566.2,
+  "innerHum": 70.2,
+  "innerTemp": 15,
+  "lightIntensity": 529.7,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-20T18:00:00+09:00",
+  "co2": 628,
+  "innerHum": 81,
+  "innerTemp": 13.4,
+  "lightIntensity": 48.1,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-20T19:00:00+09:00",
+  "co2": 679.7,
+  "innerHum": 82.7,
+  "innerTemp": 12.6,
+  "lightIntensity": 47.1,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-20T20:00:00+09:00",
+  "co2": 720,
+  "innerHum": 83.6,
+  "innerTemp": 12.1,
+  "lightIntensity": 47.1,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-20T21:00:00+09:00",
+  "co2": 756,
+  "innerHum": 84.1,
+  "innerTemp": 11.7,
+  "lightIntensity": 47.1,
+  "ph": 7.1
+ },
+ {
+  "measDt": "2022-11-20T22:00:00+09:00",
+  "co2": 787,
+  "innerHum": 84.5,
+  "innerTemp": 11.5,
+  "lightIntensity": 47.1,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-20T23:00:00+09:00",
+  "co2": 816.5,
+  "innerHum": 84.7,
+  "innerTemp": 11.1,
+  "lightIntensity": 47.1,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-21T00:00:00+09:00",
+  "co2": 843,
+  "innerHum": 84.8,
+  "innerTemp": 10.9,
+  "lightIntensity": 47.1,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-21T01:00:00+09:00",
+  "co2": 861.2,
+  "innerHum": 85,
+  "innerTemp": 11.8,
+  "lightIntensity": 47.1,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-21T02:00:00+09:00",
+  "co2": 882.5,
+  "innerHum": 85.2,
+  "innerTemp": 11.7,
+  "lightIntensity": 47.1,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-21T03:00:00+09:00",
+  "co2": 899.8,
+  "innerHum": 85.1,
+  "innerTemp": 11.4,
+  "lightIntensity": 47.1,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-21T04:00:00+09:00",
+  "co2": 915.5,
+  "innerHum": 84.9,
+  "innerTemp": 11.2,
+  "lightIntensity": 47.1,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-21T05:00:00+09:00",
+  "co2": 930.7,
+  "innerHum": 85,
+  "innerTemp": 10.9,
+  "lightIntensity": 47.1,
+  "ph": 6.3
+ },
+ {
+  "measDt": "2022-11-21T06:00:00+09:00",
+  "co2": 944.2,
+  "innerHum": 85.1,
+  "innerTemp": 10.7,
+  "lightIntensity": 60.5,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-21T07:00:00+09:00",
+  "co2": 947,
+  "innerHum": 86.1,
+  "innerTemp": 10.8,
+  "lightIntensity": 1931.2,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-21T08:00:00+09:00",
+  "co2": 859.5,
+  "innerHum": 87.1,
+  "innerTemp": 13.4,
+  "lightIntensity": 9455.3,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-21T09:00:00+09:00",
+  "co2": 631.2,
+  "innerHum": 74.9,
+  "innerTemp": 20.7,
+  "lightIntensity": 18376.1,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-21T10:00:00+09:00",
+  "co2": 444.2,
+  "innerHum": 65.7,
+  "innerTemp": 25.9,
+  "lightIntensity": 32472.5,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-21T11:00:00+09:00",
+  "co2": 485,
+  "innerHum": 59.9,
+  "innerTemp": 26.5,
+  "lightIntensity": 43171.3,
+  "ph": 6.1
+ },
+ {
+  "measDt": "2022-11-21T12:00:00+09:00",
+  "co2": 501.7,
+  "innerHum": 49.2,
+  "innerTemp": 28.9,
+  "lightIntensity": 57176.8,
+  "ph": 6.2
+ },
+ {
+  "measDt": "2022-11-21T13:00:00+09:00",
+  "co2": 496,
+  "innerHum": 42,
+  "innerTemp": 26.8,
+  "lightIntensity": 46991.9,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-21T14:00:00+09:00",
+  "co2": 504.5,
+  "innerHum": 39.4,
+  "innerTemp": 25.1,
+  "lightIntensity": 27669.2,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-21T15:00:00+09:00",
+  "co2": 512.7,
+  "innerHum": 43.4,
+  "innerTemp": 22.5,
+  "lightIntensity": 15794.9,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-21T16:00:00+09:00",
+  "co2": 528.3,
+  "innerHum": 50.1,
+  "innerTemp": 20.7,
+  "lightIntensity": 13688.8,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-21T17:00:00+09:00",
+  "co2": 578.7,
+  "innerHum": 73.6,
+  "innerTemp": 15.3,
+  "lightIntensity": 692.6,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-21T18:00:00+09:00",
+  "co2": 638.8,
+  "innerHum": 81,
+  "innerTemp": 13.6,
+  "lightIntensity": 47.1,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-21T19:00:00+09:00",
+  "co2": 686.5,
+  "innerHum": 82.4,
+  "innerTemp": 12.6,
+  "lightIntensity": 47.1,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-21T20:00:00+09:00",
+  "co2": 727.5,
+  "innerHum": 83.6,
+  "innerTemp": 12.1,
+  "lightIntensity": 47.1,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-21T21:00:00+09:00",
+  "co2": 764.2,
+  "innerHum": 84,
+  "innerTemp": 11.8,
+  "lightIntensity": 47.1,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-21T22:00:00+09:00",
+  "co2": 795.2,
+  "innerHum": 84.5,
+  "innerTemp": 11.5,
+  "lightIntensity": 47.1,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-21T23:00:00+09:00",
+  "co2": 823.8,
+  "innerHum": 85,
+  "innerTemp": 11.5,
+  "lightIntensity": 47.1,
+  "ph": 7
+ },
+ {
+  "measDt": "2022-11-22T00:00:00+09:00",
+  "co2": 845.7,
+  "innerHum": 84.9,
+  "innerTemp": 11.3,
+  "lightIntensity": 47.1,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-22T01:00:00+09:00",
+  "co2": 869.7,
+  "innerHum": 85.6,
+  "innerTemp": 11.3,
+  "lightIntensity": 47.1,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-22T02:00:00+09:00",
+  "co2": 898,
+  "innerHum": 86.1,
+  "innerTemp": 11.7,
+  "lightIntensity": 47.1,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-22T03:00:00+09:00",
+  "co2": 919.5,
+  "innerHum": 85.9,
+  "innerTemp": 11.9,
+  "lightIntensity": 47.1,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-22T04:00:00+09:00",
+  "co2": 936.3,
+  "innerHum": 85.8,
+  "innerTemp": 11.8,
+  "lightIntensity": 47.1,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-22T05:00:00+09:00",
+  "co2": 954,
+  "innerHum": 86.1,
+  "innerTemp": 11.7,
+  "lightIntensity": 47.1,
+  "ph": 6.2
+ },
+ {
+  "measDt": "2022-11-22T06:00:00+09:00",
+  "co2": 973.3,
+  "innerHum": 86.6,
+  "innerTemp": 11.9,
+  "lightIntensity": 50.2,
+  "ph": 7.1
+ },
+ {
+  "measDt": "2022-11-22T07:00:00+09:00",
+  "co2": 983.7,
+  "innerHum": 86.8,
+  "innerTemp": 12.2,
+  "lightIntensity": 1210.9,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-22T08:00:00+09:00",
+  "co2": 936.8,
+  "innerHum": 87.6,
+  "innerTemp": 14,
+  "lightIntensity": 6596.1,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-22T09:00:00+09:00",
+  "co2": 761.8,
+  "innerHum": 84.4,
+  "innerTemp": 16.6,
+  "lightIntensity": 10286.9,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-22T10:00:00+09:00",
+  "co2": 552.2,
+  "innerHum": 81.6,
+  "innerTemp": 20,
+  "lightIntensity": 18910.7,
+  "ph": 7.3
+ },
+ {
+  "measDt": "2022-11-22T11:00:00+09:00",
+  "co2": 511.5,
+  "innerHum": 66.4,
+  "innerTemp": 20.9,
+  "lightIntensity": 21650.2,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-22T12:00:00+09:00",
+  "co2": 538.5,
+  "innerHum": 65.3,
+  "innerTemp": 19.3,
+  "lightIntensity": 12277,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-22T13:00:00+09:00",
+  "co2": 539.2,
+  "innerHum": 68,
+  "innerTemp": 17.9,
+  "lightIntensity": 11863.9,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-22T14:00:00+09:00",
+  "co2": 529.7,
+  "innerHum": 70.1,
+  "innerTemp": 18.1,
+  "lightIntensity": 10229.3,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-22T15:00:00+09:00",
+  "co2": 557.7,
+  "innerHum": 73.3,
+  "innerTemp": 17,
+  "lightIntensity": 4936.7,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-22T16:00:00+09:00",
+  "co2": 564.8,
+  "innerHum": 82,
+  "innerTemp": 16,
+  "lightIntensity": 3059.1,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-22T17:00:00+09:00",
+  "co2": 600.2,
+  "innerHum": 84.1,
+  "innerTemp": 15,
+  "lightIntensity": 350.8,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-22T18:00:00+09:00",
+  "co2": 657.7,
+  "innerHum": 85.3,
+  "innerTemp": 14.3,
+  "lightIntensity": 47.1,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-22T19:00:00+09:00",
+  "co2": 709.7,
+  "innerHum": 86.1,
+  "innerTemp": 13.9,
+  "lightIntensity": 47.1,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-22T20:00:00+09:00",
+  "co2": 754.8,
+  "innerHum": 86.3,
+  "innerTemp": 13.6,
+  "lightIntensity": 47.1,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-22T21:00:00+09:00",
+  "co2": 797.7,
+  "innerHum": 86.9,
+  "innerTemp": 13.6,
+  "lightIntensity": 47.1,
+  "ph": 7.3
+ },
+ {
+  "measDt": "2022-11-22T22:00:00+09:00",
+  "co2": 832.2,
+  "innerHum": 86.8,
+  "innerTemp": 13.6,
+  "lightIntensity": 47.1,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-22T23:00:00+09:00",
+  "co2": 866,
+  "innerHum": 87.2,
+  "innerTemp": 13.6,
+  "lightIntensity": 47.1,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-23T00:00:00+09:00",
+  "co2": 898,
+  "innerHum": 87.3,
+  "innerTemp": 13.7,
+  "lightIntensity": 47.1,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-23T01:00:00+09:00",
+  "co2": 924,
+  "innerHum": 87.2,
+  "innerTemp": 13.6,
+  "lightIntensity": 47.1,
+  "ph": 7.1
+ },
+ {
+  "measDt": "2022-11-23T02:00:00+09:00",
+  "co2": 951.8,
+  "innerHum": 87.2,
+  "innerTemp": 13.5,
+  "lightIntensity": 47.1,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-23T03:00:00+09:00",
+  "co2": 973,
+  "innerHum": 87,
+  "innerTemp": 13.3,
+  "lightIntensity": 47.1,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-23T04:00:00+09:00",
+  "co2": 983.2,
+  "innerHum": 86.5,
+  "innerTemp": 12.6,
+  "lightIntensity": 47.1,
+  "ph": 7.2
+ },
+ {
+  "measDt": "2022-11-23T05:00:00+09:00",
+  "co2": 992.2,
+  "innerHum": 86.4,
+  "innerTemp": 11.8,
+  "lightIntensity": 47.1,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-23T06:00:00+09:00",
+  "co2": 1003.5,
+  "innerHum": 86.5,
+  "innerTemp": 11.3,
+  "lightIntensity": 51,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-23T07:00:00+09:00",
+  "co2": 1011,
+  "innerHum": 87,
+  "innerTemp": 11.4,
+  "lightIntensity": 1490.4,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-23T08:00:00+09:00",
+  "co2": 752.8,
+  "innerHum": 77.2,
+  "innerTemp": 19.9,
+  "lightIntensity": 21707.3,
+  "ph": 7.1
+ },
+ {
+  "measDt": "2022-11-23T09:00:00+09:00",
+  "co2": 629,
+  "innerHum": 75.1,
+  "innerTemp": 22.5,
+  "lightIntensity": 25629.9,
+  "ph": 7
+ },
+ {
+  "measDt": "2022-11-23T10:00:00+09:00",
+  "co2": 497.5,
+  "innerHum": 61.1,
+  "innerTemp": 27.7,
+  "lightIntensity": 44102.9,
+  "ph": 7.1
+ },
+ {
+  "measDt": "2022-11-23T11:00:00+09:00",
+  "co2": 504.2,
+  "innerHum": 53.2,
+  "innerTemp": 27.8,
+  "lightIntensity": 47342.3,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-23T12:00:00+09:00",
+  "co2": 513.5,
+  "innerHum": 48.1,
+  "innerTemp": 24.5,
+  "lightIntensity": 51857.7,
+  "ph": 7.3
+ },
+ {
+  "measDt": "2022-11-23T13:00:00+09:00",
+  "co2": 507.5,
+  "innerHum": 44,
+  "innerTemp": 24.3,
+  "lightIntensity": 42071.8,
+  "ph": 6.2
+ },
+ {
+  "measDt": "2022-11-23T14:00:00+09:00",
+  "co2": 510,
+  "innerHum": 45.1,
+  "innerTemp": 22.6,
+  "lightIntensity": 29473.1,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-23T15:00:00+09:00",
+  "co2": 505.8,
+  "innerHum": 53.5,
+  "innerTemp": 23.4,
+  "lightIntensity": 20411.1,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-23T16:00:00+09:00",
+  "co2": 484,
+  "innerHum": 72.8,
+  "innerTemp": 19.2,
+  "lightIntensity": 5244,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-23T17:00:00+09:00",
+  "co2": 519.2,
+  "innerHum": 79.2,
+  "innerTemp": 15.7,
+  "lightIntensity": 498.3,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-23T18:00:00+09:00",
+  "co2": 677,
+  "innerHum": 82.9,
+  "innerTemp": 13.4,
+  "lightIntensity": 57.2,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-23T19:00:00+09:00",
+  "co2": 708.2,
+  "innerHum": 83.6,
+  "innerTemp": 11.9,
+  "lightIntensity": 49.5,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-23T20:00:00+09:00",
+  "co2": 742.7,
+  "innerHum": 83.5,
+  "innerTemp": 11.1,
+  "lightIntensity": 48.1,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-23T21:00:00+09:00",
+  "co2": 768.5,
+  "innerHum": 83.5,
+  "innerTemp": 11.7,
+  "lightIntensity": 46.9,
+  "ph": 7.2
+ },
+ {
+  "measDt": "2022-11-23T22:00:00+09:00",
+  "co2": 789.3,
+  "innerHum": 83.4,
+  "innerTemp": 11.3,
+  "lightIntensity": 46.9,
+  "ph": 6.2
+ },
+ {
+  "measDt": "2022-11-23T23:00:00+09:00",
+  "co2": 808,
+  "innerHum": 83,
+  "innerTemp": 11,
+  "lightIntensity": 45.6,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-24T00:00:00+09:00",
+  "co2": 825.8,
+  "innerHum": 83.4,
+  "innerTemp": 10.7,
+  "lightIntensity": 46.5,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-24T01:00:00+09:00",
+  "co2": 844,
+  "innerHum": 84,
+  "innerTemp": 10.8,
+  "lightIntensity": 46.5,
+  "ph": 7.3
+ },
+ {
+  "measDt": "2022-11-24T02:00:00+09:00",
+  "co2": 861.2,
+  "innerHum": 84.4,
+  "innerTemp": 10.8,
+  "lightIntensity": 46.5,
+  "ph": 7.1
+ },
+ {
+  "measDt": "2022-11-24T03:00:00+09:00",
+  "co2": 875.7,
+  "innerHum": 84.8,
+  "innerTemp": 10.9,
+  "lightIntensity": 46.5,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-24T04:00:00+09:00",
+  "co2": 886.3,
+  "innerHum": 85.1,
+  "innerTemp": 10.9,
+  "lightIntensity": 46.5,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-24T05:00:00+09:00",
+  "co2": 899,
+  "innerHum": 85.3,
+  "innerTemp": 11,
+  "lightIntensity": 46.5,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-24T06:00:00+09:00",
+  "co2": 911.3,
+  "innerHum": 85.2,
+  "innerTemp": 10.9,
+  "lightIntensity": 50.5,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-24T07:00:00+09:00",
+  "co2": 911.5,
+  "innerHum": 85.5,
+  "innerTemp": 11,
+  "lightIntensity": 1389.7,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-24T08:00:00+09:00",
+  "co2": 857.2,
+  "innerHum": 86.7,
+  "innerTemp": 12.3,
+  "lightIntensity": 7802.3,
+  "ph": 7.1
+ },
+ {
+  "measDt": "2022-11-24T09:00:00+09:00",
+  "co2": 681,
+  "innerHum": 83.9,
+  "innerTemp": 15.4,
+  "lightIntensity": 12612.1,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-24T10:00:00+09:00",
+  "co2": 506.8,
+  "innerHum": 81.1,
+  "innerTemp": 21,
+  "lightIntensity": 25773.4,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-24T11:00:00+09:00",
+  "co2": 769,
+  "innerHum": 83.9,
+  "innerTemp": 13.6,
+  "lightIntensity": 4218.4,
+  "ph": 7.1
+ },
+ {
+  "measDt": "2022-11-24T12:00:00+09:00",
+  "co2": 857.5,
+  "innerHum": 85.6,
+  "innerTemp": 11.6,
+  "lightIntensity": 47.6,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-24T13:00:00+09:00",
+  "co2": 866.8,
+  "innerHum": 86.1,
+  "innerTemp": 11.9,
+  "lightIntensity": 47.7,
+  "ph": 7.2
+ },
+ {
+  "measDt": "2022-11-24T14:00:00+09:00",
+  "co2": 879,
+  "innerHum": 86.5,
+  "innerTemp": 11.7,
+  "lightIntensity": 47.7,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-24T15:00:00+09:00",
+  "co2": 893.2,
+  "innerHum": 86.8,
+  "innerTemp": 11.9,
+  "lightIntensity": 47.8,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-24T16:00:00+09:00",
+  "co2": 901.8,
+  "innerHum": 86.6,
+  "innerTemp": 12.3,
+  "lightIntensity": 47.7,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-24T17:00:00+09:00",
+  "co2": 916.8,
+  "innerHum": 86.4,
+  "innerTemp": 12.1,
+  "lightIntensity": 47.6,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-24T18:00:00+09:00",
+  "co2": 925.7,
+  "innerHum": 86.3,
+  "innerTemp": 12.4,
+  "lightIntensity": 47.6,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-24T19:00:00+09:00",
+  "co2": 935,
+  "innerHum": 86.4,
+  "innerTemp": 12.1,
+  "lightIntensity": 47.5,
+  "ph": 6.3
+ },
+ {
+  "measDt": "2022-11-24T20:00:00+09:00",
+  "co2": 944,
+  "innerHum": 86.3,
+  "innerTemp": 12.5,
+  "lightIntensity": 47.6,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-24T21:00:00+09:00",
+  "co2": 951,
+  "innerHum": 86.2,
+  "innerTemp": 12.1,
+  "lightIntensity": 47.6,
+  "ph": 7.2
+ },
+ {
+  "measDt": "2022-11-24T22:00:00+09:00",
+  "co2": 959.5,
+  "innerHum": 86.3,
+  "innerTemp": 12.5,
+  "lightIntensity": 47.7,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-24T23:00:00+09:00",
+  "co2": 850.8,
+  "innerHum": 87.3,
+  "innerTemp": 13.7,
+  "lightIntensity": 47.6,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-25T00:00:00+09:00",
+  "co2": 868.2,
+  "innerHum": 86.3,
+  "innerTemp": 12.4,
+  "lightIntensity": 47.7,
+  "ph": 7
+ },
+ {
+  "measDt": "2022-11-25T01:00:00+09:00",
+  "co2": 699.8,
+  "innerHum": 86.6,
+  "innerTemp": 14.2,
+  "lightIntensity": 47.4,
+  "ph": 7.2
+ },
+ {
+  "measDt": "2022-11-25T02:00:00+09:00",
+  "co2": 722.2,
+  "innerHum": 86.8,
+  "innerTemp": 14.2,
+  "lightIntensity": 47.9,
+  "ph": 7.3
+ },
+ {
+  "measDt": "2022-11-25T03:00:00+09:00",
+  "co2": 745.3,
+  "innerHum": 86.5,
+  "innerTemp": 14.2,
+  "lightIntensity": 47.4,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-25T04:00:00+09:00",
+  "co2": 772.2,
+  "innerHum": 87.2,
+  "innerTemp": 14.3,
+  "lightIntensity": 47.6,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-25T05:00:00+09:00",
+  "co2": 791,
+  "innerHum": 87.5,
+  "innerTemp": 13.9,
+  "lightIntensity": 47.5,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-25T06:00:00+09:00",
+  "co2": 805.2,
+  "innerHum": 87.3,
+  "innerTemp": 14.3,
+  "lightIntensity": 47.6,
+  "ph": 7.1
+ },
+ {
+  "measDt": "2022-11-25T07:00:00+09:00",
+  "co2": 828.5,
+  "innerHum": 87.4,
+  "innerTemp": 13.8,
+  "lightIntensity": 47.7,
+  "ph": 6.1
+ },
+ {
+  "measDt": "2022-11-25T08:00:00+09:00",
+  "co2": 847.8,
+  "innerHum": 87.3,
+  "innerTemp": 14.4,
+  "lightIntensity": 47.8,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-25T09:00:00+09:00",
+  "co2": 865.2,
+  "innerHum": 87.5,
+  "innerTemp": 14,
+  "lightIntensity": 47.7,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-25T10:00:00+09:00",
+  "co2": 876.2,
+  "innerHum": 87.7,
+  "innerTemp": 14.2,
+  "lightIntensity": 47.8,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-25T11:00:00+09:00",
+  "co2": 894.5,
+  "innerHum": 87.6,
+  "innerTemp": 14,
+  "lightIntensity": 47.6,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-25T12:00:00+09:00",
+  "co2": 910.3,
+  "innerHum": 87.6,
+  "innerTemp": 14.3,
+  "lightIntensity": 47.5,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-25T13:00:00+09:00",
+  "co2": 921.7,
+  "innerHum": 87.9,
+  "innerTemp": 13.8,
+  "lightIntensity": 47.8,
+  "ph": 7.1
+ },
+ {
+  "measDt": "2022-11-25T14:00:00+09:00",
+  "co2": 933.8,
+  "innerHum": 87.8,
+  "innerTemp": 14.2,
+  "lightIntensity": 47.7,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-25T15:00:00+09:00",
+  "co2": 943.2,
+  "innerHum": 87.8,
+  "innerTemp": 14.1,
+  "lightIntensity": 47.6,
+  "ph": 7
+ },
+ {
+  "measDt": "2022-11-25T16:00:00+09:00",
+  "co2": 959.3,
+  "innerHum": 87.6,
+  "innerTemp": 14.2,
+  "lightIntensity": 47.8,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-25T17:00:00+09:00",
+  "co2": 970.8,
+  "innerHum": 87.4,
+  "innerTemp": 13.5,
+  "lightIntensity": 47.5,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-25T18:00:00+09:00",
+  "co2": 976.7,
+  "innerHum": 87.3,
+  "innerTemp": 13.8,
+  "lightIntensity": 47.7,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-25T19:00:00+09:00",
+  "co2": 982,
+  "innerHum": 87.2,
+  "innerTemp": 13,
+  "lightIntensity": 47.7,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-25T20:00:00+09:00",
+  "co2": 984.5,
+  "innerHum": 87,
+  "innerTemp": 13,
+  "lightIntensity": 47.8,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-25T21:00:00+09:00",
+  "co2": 990.5,
+  "innerHum": 87,
+  "innerTemp": 12.3,
+  "lightIntensity": 47.5,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-25T22:00:00+09:00",
+  "co2": 994.7,
+  "innerHum": 87,
+  "innerTemp": 12.2,
+  "lightIntensity": 47.6,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-25T23:00:00+09:00",
+  "co2": 830.2,
+  "innerHum": 84.8,
+  "innerTemp": 12.2,
+  "lightIntensity": 46.6,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-26T00:00:00+09:00",
+  "co2": 883.5,
+  "innerHum": 86.7,
+  "innerTemp": 12.7,
+  "lightIntensity": 47.4,
+  "ph": 7
+ },
+ {
+  "measDt": "2022-11-26T01:00:00+09:00",
+  "co2": 701.8,
+  "innerHum": 84.1,
+  "innerTemp": 12.6,
+  "lightIntensity": 50.6,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-26T02:00:00+09:00",
+  "co2": 721.7,
+  "innerHum": 83.9,
+  "innerTemp": 12,
+  "lightIntensity": 49.5,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-26T03:00:00+09:00",
+  "co2": 733.3,
+  "innerHum": 84.1,
+  "innerTemp": 11.5,
+  "lightIntensity": 48.8,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-26T04:00:00+09:00",
+  "co2": 748,
+  "innerHum": 83.8,
+  "innerTemp": 11.4,
+  "lightIntensity": 48.2,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-26T05:00:00+09:00",
+  "co2": 765,
+  "innerHum": 84.1,
+  "innerTemp": 11.3,
+  "lightIntensity": 47.5,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-26T06:00:00+09:00",
+  "co2": 778.5,
+  "innerHum": 84,
+  "innerTemp": 11.2,
+  "lightIntensity": 47.4,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-26T07:00:00+09:00",
+  "co2": 786.3,
+  "innerHum": 84,
+  "innerTemp": 11.7,
+  "lightIntensity": 47.3,
+  "ph": 6.3
+ },
+ {
+  "measDt": "2022-11-26T08:00:00+09:00",
+  "co2": 797.8,
+  "innerHum": 83.8,
+  "innerTemp": 11.2,
+  "lightIntensity": 46.9,
+  "ph": 7.1
+ },
+ {
+  "measDt": "2022-11-26T09:00:00+09:00",
+  "co2": 807.7,
+  "innerHum": 83.4,
+  "innerTemp": 11.5,
+  "lightIntensity": 46.5,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-26T10:00:00+09:00",
+  "co2": 815,
+  "innerHum": 83.4,
+  "innerTemp": 11.1,
+  "lightIntensity": 46.4,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-26T11:00:00+09:00",
+  "co2": 824.3,
+  "innerHum": 83.7,
+  "innerTemp": 11.2,
+  "lightIntensity": 47,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-26T12:00:00+09:00",
+  "co2": 829.5,
+  "innerHum": 84.2,
+  "innerTemp": 11.3,
+  "lightIntensity": 47,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-26T13:00:00+09:00",
+  "co2": 842.2,
+  "innerHum": 84.3,
+  "innerTemp": 11.1,
+  "lightIntensity": 47,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-26T14:00:00+09:00",
+  "co2": 849.5,
+  "innerHum": 84.9,
+  "innerTemp": 11.1,
+  "lightIntensity": 46.9,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-26T15:00:00+09:00",
+  "co2": 859.7,
+  "innerHum": 85.2,
+  "innerTemp": 11.1,
+  "lightIntensity": 47,
+  "ph": 7.2
+ },
+ {
+  "measDt": "2022-11-26T16:00:00+09:00",
+  "co2": 866.5,
+  "innerHum": 84.9,
+  "innerTemp": 11,
+  "lightIntensity": 47,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-26T17:00:00+09:00",
+  "co2": 872.7,
+  "innerHum": 85.2,
+  "innerTemp": 11.4,
+  "lightIntensity": 46.9,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-26T18:00:00+09:00",
+  "co2": 879.7,
+  "innerHum": 85.1,
+  "innerTemp": 11.1,
+  "lightIntensity": 46.9,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-26T19:00:00+09:00",
+  "co2": 884.8,
+  "innerHum": 85.6,
+  "innerTemp": 11.7,
+  "lightIntensity": 47,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-26T20:00:00+09:00",
+  "co2": 891.2,
+  "innerHum": 85.6,
+  "innerTemp": 11.3,
+  "lightIntensity": 46.8,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-26T21:00:00+09:00",
+  "co2": 898.3,
+  "innerHum": 85.7,
+  "innerTemp": 11.1,
+  "lightIntensity": 46.8,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-26T22:00:00+09:00",
+  "co2": 904.8,
+  "innerHum": 85.7,
+  "innerTemp": 11.4,
+  "lightIntensity": 47.1,
+  "ph": 7
+ },
+ {
+  "measDt": "2022-11-26T23:00:00+09:00",
+  "co2": 834,
+  "innerHum": 86.2,
+  "innerTemp": 13.3,
+  "lightIntensity": 47.4,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-27T00:00:00+09:00",
+  "co2": 837.8,
+  "innerHum": 84.2,
+  "innerTemp": 11.2,
+  "lightIntensity": 47.2,
+  "ph": 7.2
+ },
+ {
+  "measDt": "2022-11-27T01:00:00+09:00",
+  "co2": 933.7,
+  "innerHum": 87,
+  "innerTemp": 12.4,
+  "lightIntensity": 48,
+  "ph": 7.5
+ },
+ {
+  "measDt": "2022-11-27T02:00:00+09:00",
+  "co2": 939.2,
+  "innerHum": 86.9,
+  "innerTemp": 12.9,
+  "lightIntensity": 48.1,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-27T03:00:00+09:00",
+  "co2": 941.2,
+  "innerHum": 86.8,
+  "innerTemp": 12.6,
+  "lightIntensity": 48.3,
+  "ph": 7.2
+ },
+ {
+  "measDt": "2022-11-27T04:00:00+09:00",
+  "co2": 943.7,
+  "innerHum": 86.6,
+  "innerTemp": 13,
+  "lightIntensity": 48.2,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-27T05:00:00+09:00",
+  "co2": 948.5,
+  "innerHum": 86.7,
+  "innerTemp": 12.6,
+  "lightIntensity": 47.9,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-27T06:00:00+09:00",
+  "co2": 954.8,
+  "innerHum": 86.7,
+  "innerTemp": 12.7,
+  "lightIntensity": 48,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-27T07:00:00+09:00",
+  "co2": 957.5,
+  "innerHum": 86.6,
+  "innerTemp": 12.8,
+  "lightIntensity": 48.3,
+  "ph": 7.2
+ },
+ {
+  "measDt": "2022-11-27T08:00:00+09:00",
+  "co2": 907.8,
+  "innerHum": 87.4,
+  "innerTemp": 14.2,
+  "lightIntensity": 48.2,
+  "ph": 7.1
+ },
+ {
+  "measDt": "2022-11-27T09:00:00+09:00",
+  "co2": 873.2,
+  "innerHum": 87.5,
+  "innerTemp": 14.2,
+  "lightIntensity": 48.1,
+  "ph": 7
+ },
+ {
+  "measDt": "2022-11-27T10:00:00+09:00",
+  "co2": 856,
+  "innerHum": 87,
+  "innerTemp": 13.1,
+  "lightIntensity": 48.3,
+  "ph": 7.2
+ },
+ {
+  "measDt": "2022-11-27T11:00:00+09:00",
+  "co2": 871.5,
+  "innerHum": 86.8,
+  "innerTemp": 13.5,
+  "lightIntensity": 48.3,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-27T12:00:00+09:00",
+  "co2": 811.2,
+  "innerHum": 86.8,
+  "innerTemp": 13.9,
+  "lightIntensity": 48.1,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-27T13:00:00+09:00",
+  "co2": 741.8,
+  "innerHum": 87.1,
+  "innerTemp": 13.8,
+  "lightIntensity": 48.1,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-27T14:00:00+09:00",
+  "co2": 705.5,
+  "innerHum": 87.3,
+  "innerTemp": 14.5,
+  "lightIntensity": 48.3,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-27T15:00:00+09:00",
+  "co2": 719.7,
+  "innerHum": 87.2,
+  "innerTemp": 14.4,
+  "lightIntensity": 48.4,
+  "ph": 7.4
+ },
+ {
+  "measDt": "2022-11-27T16:00:00+09:00",
+  "co2": 731.5,
+  "innerHum": 87.3,
+  "innerTemp": 14.5,
+  "lightIntensity": 48.2,
+  "ph": 6.3
+ },
+ {
+  "measDt": "2022-11-27T17:00:00+09:00",
+  "co2": 742.8,
+  "innerHum": 87.1,
+  "innerTemp": 14.7,
+  "lightIntensity": 48.1,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-27T18:00:00+09:00",
+  "co2": 751.2,
+  "innerHum": 86.8,
+  "innerTemp": 14.6,
+  "lightIntensity": 47.9,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-27T19:00:00+09:00",
+  "co2": 760.8,
+  "innerHum": 87.6,
+  "innerTemp": 14.7,
+  "lightIntensity": 48,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-27T20:00:00+09:00",
+  "co2": 782.2,
+  "innerHum": 87.8,
+  "innerTemp": 14.7,
+  "lightIntensity": 48.1,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-27T21:00:00+09:00",
+  "co2": 787.2,
+  "innerHum": 88.3,
+  "innerTemp": 14.6,
+  "lightIntensity": 48.2,
+  "ph": 7.1
+ },
+ {
+  "measDt": "2022-11-27T22:00:00+09:00",
+  "co2": 795.2,
+  "innerHum": 87.8,
+  "innerTemp": 14.5,
+  "lightIntensity": 48.1,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-27T23:00:00+09:00",
+  "co2": 847.7,
+  "innerHum": 86.7,
+  "innerTemp": 12.9,
+  "lightIntensity": 47.4,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-28T00:00:00+09:00",
+  "co2": 884.5,
+  "innerHum": 87.7,
+  "innerTemp": 13.7,
+  "lightIntensity": 48.3,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-28T01:00:00+09:00",
+  "co2": 980.7,
+  "innerHum": 87.7,
+  "innerTemp": 13.8,
+  "lightIntensity": 48.2,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-28T02:00:00+09:00",
+  "co2": 982.3,
+  "innerHum": 87.5,
+  "innerTemp": 13.4,
+  "lightIntensity": 48.3,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-28T03:00:00+09:00",
+  "co2": 984.2,
+  "innerHum": 87.4,
+  "innerTemp": 13.5,
+  "lightIntensity": 48,
+  "ph": 7
+ },
+ {
+  "measDt": "2022-11-28T04:00:00+09:00",
+  "co2": 987,
+  "innerHum": 87.3,
+  "innerTemp": 13.4,
+  "lightIntensity": 48.4,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-28T05:00:00+09:00",
+  "co2": 990.2,
+  "innerHum": 87.6,
+  "innerTemp": 12.9,
+  "lightIntensity": 48,
+  "ph": 7.3
+ },
+ {
+  "measDt": "2022-11-28T06:00:00+09:00",
+  "co2": 993,
+  "innerHum": 87.6,
+  "innerTemp": 12.6,
+  "lightIntensity": 48.2,
+  "ph": 7
+ },
+ {
+  "measDt": "2022-11-28T07:00:00+09:00",
+  "co2": 993.5,
+  "innerHum": 87.5,
+  "innerTemp": 12.7,
+  "lightIntensity": 48.1,
+  "ph": 6.2
+ },
+ {
+  "measDt": "2022-11-28T08:00:00+09:00",
+  "co2": 932.2,
+  "innerHum": 86.6,
+  "innerTemp": 12.9,
+  "lightIntensity": 47.6,
+  "ph": 7
+ },
+ {
+  "measDt": "2022-11-28T09:00:00+09:00",
+  "co2": 884.5,
+  "innerHum": 85.9,
+  "innerTemp": 12.3,
+  "lightIntensity": 47.4,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-28T10:00:00+09:00",
+  "co2": 810.7,
+  "innerHum": 85.9,
+  "innerTemp": 14,
+  "lightIntensity": 747,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-28T11:00:00+09:00",
+  "co2": 594.2,
+  "innerHum": 80.3,
+  "innerTemp": 15.1,
+  "lightIntensity": 4395.4,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-28T12:00:00+09:00",
+  "co2": 584.2,
+  "innerHum": 82.8,
+  "innerTemp": 14.5,
+  "lightIntensity": 2970.2,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-28T13:00:00+09:00",
+  "co2": 563.2,
+  "innerHum": 84.3,
+  "innerTemp": 15.2,
+  "lightIntensity": 8151.4,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-28T14:00:00+09:00",
+  "co2": 501.5,
+  "innerHum": 82.6,
+  "innerTemp": 16.8,
+  "lightIntensity": 9214.2,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-28T15:00:00+09:00",
+  "co2": 463.5,
+  "innerHum": 82.2,
+  "innerTemp": 19.5,
+  "lightIntensity": 13471,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-28T16:00:00+09:00",
+  "co2": 599.2,
+  "innerHum": 78.3,
+  "innerTemp": 17.7,
+  "lightIntensity": 1921.9,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-28T17:00:00+09:00",
+  "co2": 655.3,
+  "innerHum": 83.6,
+  "innerTemp": 15.5,
+  "lightIntensity": 147.7,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-28T18:00:00+09:00",
+  "co2": 706.8,
+  "innerHum": 85.7,
+  "innerTemp": 14.4,
+  "lightIntensity": 40.8,
+  "ph": 7.1
+ },
+ {
+  "measDt": "2022-11-28T19:00:00+09:00",
+  "co2": 758.7,
+  "innerHum": 87,
+  "innerTemp": 14.1,
+  "lightIntensity": 40.8,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-28T20:00:00+09:00",
+  "co2": 804.7,
+  "innerHum": 87.1,
+  "innerTemp": 14.1,
+  "lightIntensity": 41.4,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-28T21:00:00+09:00",
+  "co2": 843.5,
+  "innerHum": 87.4,
+  "innerTemp": 14.1,
+  "lightIntensity": 41.4,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-28T22:00:00+09:00",
+  "co2": 879.5,
+  "innerHum": 87.4,
+  "innerTemp": 14.3,
+  "lightIntensity": 41.4,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-28T23:00:00+09:00",
+  "co2": 911.2,
+  "innerHum": 87.5,
+  "innerTemp": 14.4,
+  "lightIntensity": 41.4,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-29T00:00:00+09:00",
+  "co2": 930.7,
+  "innerHum": 87.4,
+  "innerTemp": 14.6,
+  "lightIntensity": 41.4,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-29T01:00:00+09:00",
+  "co2": 964.5,
+  "innerHum": 87.3,
+  "innerTemp": 14.7,
+  "lightIntensity": 41.4,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-29T02:00:00+09:00",
+  "co2": 1003.7,
+  "innerHum": 87.4,
+  "innerTemp": 14.6,
+  "lightIntensity": 41.4,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-29T03:00:00+09:00",
+  "co2": 1037,
+  "innerHum": 87.5,
+  "innerTemp": 14.6,
+  "lightIntensity": 41.4,
+  "ph": 7
+ },
+ {
+  "measDt": "2022-11-29T04:00:00+09:00",
+  "co2": 1065.7,
+  "innerHum": 87.6,
+  "innerTemp": 14.6,
+  "lightIntensity": 41.4,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-29T05:00:00+09:00",
+  "co2": 1084.3,
+  "innerHum": 87.6,
+  "innerTemp": 14.6,
+  "lightIntensity": 41.4,
+  "ph": 7.2
+ },
+ {
+  "measDt": "2022-11-29T06:00:00+09:00",
+  "co2": 1105.8,
+  "innerHum": 87.6,
+  "innerTemp": 14.5,
+  "lightIntensity": 116,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-29T07:00:00+09:00",
+  "co2": 1133.2,
+  "innerHum": 87.9,
+  "innerTemp": 14.3,
+  "lightIntensity": 1156.2,
+  "ph": 5.9
+ },
+ {
+  "measDt": "2022-11-29T08:00:00+09:00",
+  "co2": 1110.5,
+  "innerHum": 89,
+  "innerTemp": 15.2,
+  "lightIntensity": 6588.6,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-29T09:00:00+09:00",
+  "co2": 792.3,
+  "innerHum": 82.4,
+  "innerTemp": 16.2,
+  "lightIntensity": 7237.1,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-29T10:00:00+09:00",
+  "co2": 580.7,
+  "innerHum": 82.5,
+  "innerTemp": 17.4,
+  "lightIntensity": 17260,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-29T11:00:00+09:00",
+  "co2": 559.8,
+  "innerHum": 75.8,
+  "innerTemp": 18,
+  "lightIntensity": 16228.9,
+  "ph": 7.4
+ },
+ {
+  "measDt": "2022-11-29T12:00:00+09:00",
+  "co2": 544.3,
+  "innerHum": 73.1,
+  "innerTemp": 19.2,
+  "lightIntensity": 20337.7,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-29T13:00:00+09:00",
+  "co2": 535.3,
+  "innerHum": 68.3,
+  "innerTemp": 19.6,
+  "lightIntensity": 23717,
+  "ph": 7.2
+ },
+ {
+  "measDt": "2022-11-29T14:00:00+09:00",
+  "co2": 536.2,
+  "innerHum": 66.4,
+  "innerTemp": 19.4,
+  "lightIntensity": 22942.1,
+  "ph": 6.3
+ },
+ {
+  "measDt": "2022-11-29T15:00:00+09:00",
+  "co2": 536.2,
+  "innerHum": 69.5,
+  "innerTemp": 17.6,
+  "lightIntensity": 11262.2,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-29T16:00:00+09:00",
+  "co2": 532.5,
+  "innerHum": 78.5,
+  "innerTemp": 15.5,
+  "lightIntensity": 2868.7,
+  "ph": 7
+ },
+ {
+  "measDt": "2022-11-29T17:00:00+09:00",
+  "co2": 573.7,
+  "innerHum": 83.6,
+  "innerTemp": 13.7,
+  "lightIntensity": 1715.8,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-29T18:00:00+09:00",
+  "co2": 635.2,
+  "innerHum": 85.2,
+  "innerTemp": 12.8,
+  "lightIntensity": 2762,
+  "ph": 7.5
+ },
+ {
+  "measDt": "2022-11-29T19:00:00+09:00",
+  "co2": 681.8,
+  "innerHum": 86.4,
+  "innerTemp": 12.2,
+  "lightIntensity": 2741.9,
+  "ph": 7.4
+ },
+ {
+  "measDt": "2022-11-29T20:00:00+09:00",
+  "co2": 723.7,
+  "innerHum": 86.7,
+  "innerTemp": 12.1,
+  "lightIntensity": 2742.5,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-29T21:00:00+09:00",
+  "co2": 760.3,
+  "innerHum": 86.4,
+  "innerTemp": 11.7,
+  "lightIntensity": 2744.5,
+  "ph": 7.2
+ },
+ {
+  "measDt": "2022-11-29T22:00:00+09:00",
+  "co2": 797.8,
+  "innerHum": 86.9,
+  "innerTemp": 11.8,
+  "lightIntensity": 2744.6,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-29T23:00:00+09:00",
+  "co2": 826,
+  "innerHum": 86.5,
+  "innerTemp": 11.6,
+  "lightIntensity": 2743.3,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-30T00:00:00+09:00",
+  "co2": 850.8,
+  "innerHum": 86.5,
+  "innerTemp": 11.3,
+  "lightIntensity": 2745.5,
+  "ph": 7.1
+ },
+ {
+  "measDt": "2022-11-30T01:00:00+09:00",
+  "co2": 871.7,
+  "innerHum": 86.5,
+  "innerTemp": 11,
+  "lightIntensity": 2747.3,
+  "ph": 7.1
+ },
+ {
+  "measDt": "2022-11-30T02:00:00+09:00",
+  "co2": 890.2,
+  "innerHum": 86.2,
+  "innerTemp": 11.7,
+  "lightIntensity": 2748.5,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-30T03:00:00+09:00",
+  "co2": 899.8,
+  "innerHum": 85.7,
+  "innerTemp": 11.3,
+  "lightIntensity": 2754.8,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-30T04:00:00+09:00",
+  "co2": 908,
+  "innerHum": 85.3,
+  "innerTemp": 10.5,
+  "lightIntensity": 2752.9,
+  "ph": 7.3
+ },
+ {
+  "measDt": "2022-11-30T05:00:00+09:00",
+  "co2": 917.7,
+  "innerHum": 85.5,
+  "innerTemp": 10.2,
+  "lightIntensity": 2754.8,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-30T06:00:00+09:00",
+  "co2": 923.3,
+  "innerHum": 85.4,
+  "innerTemp": 10,
+  "lightIntensity": 2628.8,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-30T07:00:00+09:00",
+  "co2": 925.8,
+  "innerHum": 85.7,
+  "innerTemp": 9.8,
+  "lightIntensity": 1823.6,
+  "ph": 6.9
+ },
+ {
+  "measDt": "2022-11-30T08:00:00+09:00",
+  "co2": 876.8,
+  "innerHum": 86.7,
+  "innerTemp": 11,
+  "lightIntensity": 8610,
+  "ph": 6.3
+ },
+ {
+  "measDt": "2022-11-30T09:00:00+09:00",
+  "co2": 683.2,
+  "innerHum": 81.2,
+  "innerTemp": 15.4,
+  "lightIntensity": 21908.9,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-30T10:00:00+09:00",
+  "co2": 483.8,
+  "innerHum": 70.4,
+  "innerTemp": 24.9,
+  "lightIntensity": 47553.9,
+  "ph": 7.2
+ },
+ {
+  "measDt": "2022-11-30T11:00:00+09:00",
+  "co2": 442.2,
+  "innerHum": 62.8,
+  "innerTemp": 30.9,
+  "lightIntensity": 65941.6,
+  "ph": 6.8
+ },
+ {
+  "measDt": "2022-11-30T12:00:00+09:00",
+  "co2": 507.2,
+  "innerHum": 49.1,
+  "innerTemp": 29.6,
+  "lightIntensity": 59670.6,
+  "ph": 7
+ },
+ {
+  "measDt": "2022-11-30T13:00:00+09:00",
+  "co2": 524.5,
+  "innerHum": 54.3,
+  "innerTemp": 24.3,
+  "lightIntensity": 45877.4,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-30T14:00:00+09:00",
+  "co2": 449.8,
+  "innerHum": 62.7,
+  "innerTemp": 21.3,
+  "lightIntensity": 26075.3,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-30T15:00:00+09:00",
+  "co2": 813,
+  "innerHum": 65.3,
+  "innerTemp": 19.4,
+  "lightIntensity": 14616.5,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-30T16:00:00+09:00",
+  "co2": 848.8,
+  "innerHum": 75.4,
+  "innerTemp": 14.9,
+  "lightIntensity": 4654.6,
+  "ph": 6.6
+ },
+ {
+  "measDt": "2022-11-30T17:00:00+09:00",
+  "co2": 839.3,
+  "innerHum": 79.7,
+  "innerTemp": 12,
+  "lightIntensity": 1843.2,
+  "ph": 6.3
+ },
+ {
+  "measDt": "2022-11-30T18:00:00+09:00",
+  "co2": 904.8,
+  "innerHum": 81.6,
+  "innerTemp": 10.5,
+  "lightIntensity": 2657.3,
+  "ph": 7.1
+ },
+ {
+  "measDt": "2022-11-30T19:00:00+09:00",
+  "co2": 942.3,
+  "innerHum": 83.2,
+  "innerTemp": 10.1,
+  "lightIntensity": 2636.3,
+  "ph": 6.4
+ },
+ {
+  "measDt": "2022-11-30T20:00:00+09:00",
+  "co2": 958,
+  "innerHum": 83.3,
+  "innerTemp": 9.8,
+  "lightIntensity": 2636.7,
+  "ph": 6.7
+ },
+ {
+  "measDt": "2022-11-30T21:00:00+09:00",
+  "co2": 971.3,
+  "innerHum": 83.1,
+  "innerTemp": 9.5,
+  "lightIntensity": 2638,
+  "ph": 7.3
+ },
+ {
+  "measDt": "2022-11-30T22:00:00+09:00",
+  "co2": 990.2,
+  "innerHum": 83.3,
+  "innerTemp": 9.2,
+  "lightIntensity": 2637,
+  "ph": 6.5
+ },
+ {
+  "measDt": "2022-11-30T23:00:00+09:00",
+  "co2": 1010.2,
+  "innerHum": 84,
+  "innerTemp": 9.2,
+  "lightIntensity": 2636.2,
+  "ph": 7.1
+ },
+ {
+  "measDt": "2022-12-01T00:00:00+09:00",
+  "co2": 824,
+  "innerHum": 85.3,
+  "innerTemp": 12.6,
+  "lightIntensity": 47,
+  "ph": 6.8
+ }
+]

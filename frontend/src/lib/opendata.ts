@@ -33,11 +33,24 @@ export function mapRecordToReading(r: OpenEnvRecord): IoTReading {
   };
 }
 
-// 실 API 전환 지점 — 현재는 번들 샘플 로드.
-// 전환 예: const res = await fetch(`${BASE}?serviceKey=${process.env.SMARTFARM_API_KEY}&...`)
+// 데이터 소스 우선순위: ① 실데이터(opendata-real.json — 스마트팜코리아 정형
+// 데이터셋 "골든플래닛" 딸기 온실 농가 NSG098_01의 실측 환경 시계열을 long→wide
+// 피벗 변환한 것) → ② 스키마 샘플(폴백).
+// 실데이터 갱신 절차: smartfarmkorea.net 정형 데이터셋에서 zip 다운로드(로그인
+// 불요 — GET /structuredDataset/fileDownload.do?type=ent&fileName=...) →
+// 장비코드(FG-EI-TI 내부온도/FG-EI-HI 내부습도/FG-EI-CI CO2/FG-EI-IS 일사량/
+// FG-EL-PL 토양pH) 기준 피벗 → 이 파일 교체.
+// 주의: 실데이터는 딸기 온실(일사량 W/m², 토양 pH)이라 새싹삼 수경 도메인과
+// 품목이 다르다 — 알고리즘 데모용 실측 시계열이며, 품목별 정상범위(HEALTHY_RANGES)는
+// 운영 품목에 맞춰 교체하는 지점.
 export async function fetchOpenData(): Promise<OpenEnvRecord[]> {
-  const sample = await import("../../prisma/opendata-sample.json");
-  return (sample.default ?? sample) as OpenEnvRecord[];
+  try {
+    const real = await import("../../prisma/opendata-real.json");
+    return (real.default ?? real) as OpenEnvRecord[];
+  } catch {
+    const sample = await import("../../prisma/opendata-sample.json");
+    return (sample.default ?? sample) as OpenEnvRecord[];
+  }
 }
 
 // 일별 판매 시계열 (수요 예측 입력) — 운영 시 무인매장 POS 정산 데이터로 교체.
