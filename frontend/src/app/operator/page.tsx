@@ -1,5 +1,12 @@
 import Link from "next/link";
-import { GreenBand, Hero, Metric, Panel, Section } from "@/components/FarmFi";
+import { GreenBand, Hero, Panel, Section } from "@/components/FarmFi";
+
+const BENEFITS: [string, string][] = [
+  ["초기 설비 자본 없음", "설비 자금은 STO로 조달됩니다. 운영자는 매장을 운영하고 매출을 100% 소유합니다."],
+  ["공간·설비 매칭", "입지 진단부터 모듈형 스마트팜 설비 셋업까지 FarmFi가 연결합니다."],
+  ["전문 운영 교육", "재배 매뉴얼과 실무 교육으로 무경험자도 매장 운영을 시작할 수 있습니다."],
+  ["생육·판매 연동 앱", "오늘 할 일·재고·수확·판매를 앱 하나로 관리합니다."],
+];
 
 export default function OperatorPage() {
   return (
@@ -21,15 +28,21 @@ export default function OperatorPage() {
         }
         chips={["초기자금 부담 없음", "저노동 부업형", "든든한 운영 지원"]}
       />
-      <Section title="운영 파트너 혜택">
+      <Section
+        no="01"
+        title="운영 파트너 혜택"
+        desc="초기 자본 부담 없이 시작하고, 도심 근로자 수준의 소득을 목표로 합니다."
+      >
         <div className="grid-4">
-          <Metric label="공간 매칭 지원" value="입지 분석" />
-          <Metric label="전문 교육 제공" value="운영 매뉴얼" />
-          <Metric label="생육-판매 연동" value="오늘 할 일" />
-          <Metric label="커뮤니티 지원" value="네트워크" />
+          {BENEFITS.map(([title, desc]) => (
+            <article className="card" style={{ padding: 22 }} key={title}>
+              <h3 style={{ marginTop: 0 }}>{title}</h3>
+              <p className="muted">{desc}</p>
+            </article>
+          ))}
         </div>
       </Section>
-      <Section title="운영자 지원 신청" id="apply">
+      <Section no="02" title="운영자 지원 신청" id="apply">
         <div className="grid-2">
           <Panel title="지원서 제출">
             <p className="muted">
