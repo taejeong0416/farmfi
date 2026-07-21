@@ -45,6 +45,8 @@ export async function POST(request: NextRequest) {
   const token = await signSession({ userId: user.id, role: user.role as Role });
 
   const response = NextResponse.json({
+    // token: 웹은 쿠키를 쓰지만, 모바일 앱(RN)은 이 값을 저장해 Bearer로 보낸다.
+    token,
     user: { id: user.id, name: user.name, email: user.email, role: user.role },
   });
   response.cookies.set({ ...sessionCookieOptions(), value: token });

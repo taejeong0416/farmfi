@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { SignJWT, jwtVerify } from "jose";
 
 export type Role = "investor" | "operator" | "landlord" | "admin";
@@ -59,7 +59,14 @@ export const SESSION_COOKIE_NAME = SESSION_COOKIE;
 export async function getServerSession(): Promise<SessionPayload | null> {
   try {
     const cookieStore = await cookies();
-    const token = cookieStore.get(SESSION_COOKIE)?.value;
+    let token = cookieStore.get(SESSION_COOKIE)?.value;
+    // 쿠키가 없으면 Authorization: Bearer 헤더에서 읽는다 (모바일 앱 경로).
+    if (!token) {
+      const authHeader = (await headers()).get("authorization");
+      if (authHeader?.startsWith("Bearer ")) {
+        token = authHeader.slice(7);
+      }
+    }
     if (!token) return null;
 
     const { payload } = await jwtVerify(token, getSecret());

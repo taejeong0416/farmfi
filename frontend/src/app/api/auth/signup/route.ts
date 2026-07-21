@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 import { signSession, sessionCookieOptions, type Role } from "@/lib/auth";
 
 // 회원가입에서 자가배정 가능한 역할. admin은 시드/운영 전용이라 여기서 못 고른다.
-const SIGNUP_ROLES = ["landlord", "operator"] as const;
+const SIGNUP_ROLES = ["landlord", "operator", "investor"] as const;
 
 /**
  * 이메일+비밀번호 회원가입. 이메일 중복 확인 → bcrypt 해시 저장 → 세션(JWT) 발급.
@@ -75,6 +75,8 @@ export async function POST(request: NextRequest) {
   const token = await signSession({ userId: user.id, role: user.role as Role });
 
   const response = NextResponse.json({
+    // token: 모바일 앱(RN)이 저장해 Bearer로 보내기 위한 값 (웹은 쿠키 사용).
+    token,
     user: { id: user.id, name: user.name, email: user.email, role: user.role },
   });
   response.cookies.set({ ...sessionCookieOptions(), value: token });
