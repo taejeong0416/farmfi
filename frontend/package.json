@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "seed": "tsx prisma/seed.ts",
+    "seed:opendata": "tsx prisma/seed-opendata.ts",
     "prisma:push": "npx prisma db push",
     "prisma:generate": "npx prisma generate"
   },

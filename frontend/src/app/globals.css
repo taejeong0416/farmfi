@@ -35,6 +35,12 @@ body {
   word-break: keep-all;
 }
 
+/* The growth monitor is an immersive operations surface, not a marketing page. */
+body.farmfi-growth-dashboard .nav,
+body.farmfi-growth-dashboard .footer {
+  display: none;
+}
+
 a {
   color: inherit;
   text-decoration: none;

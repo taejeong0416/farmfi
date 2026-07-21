@@ -14,6 +14,7 @@ contract Dividend is ReentrancyGuard, AccessControl {
         uint256 totalAmount;
         uint256 perToken;   // wei per token
         uint256 timestamp;
+        uint256 snapshotBlock; // 배당 기준 블록 — 이후 취득분은 이 회차 청구 불가
     }
 
     mapping(uint256 => DividendRound) public rounds;
@@ -38,7 +39,8 @@ contract Dividend is ReentrancyGuard, AccessControl {
         rounds[currentRound] = DividendRound({
             totalAmount: msg.value,
             perToken: perToken,
-            timestamp: block.timestamp
+            timestamp: block.timestamp,
+            snapshotBlock: block.number
         });
 
         emit DividendDistributed(currentRound, msg.value, perToken);
@@ -48,7 +50,8 @@ contract Dividend is ReentrancyGuard, AccessControl {
         require(round >= 1 && round <= currentRound, "Invalid round");
         require(!claimed[round][msg.sender], "Already claimed");
 
-        uint256 balance = farmToken.balanceOf(msg.sender);
+        // 스냅샷 잔고 기준 — 배당 발표 후 매수자가 청구하는 취약점 차단.
+        uint256 balance = farmToken.balanceOfAt(msg.sender, rounds[round].snapshotBlock);
         require(balance > 0, "No tokens held");
 
         uint256 amount = balance * rounds[round].perToken;
