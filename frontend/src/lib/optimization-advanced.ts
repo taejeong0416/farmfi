@@ -370,62 +370,62 @@ export function profitOptimization(opts: {
 // 이 매출이 FarmFi 수수료 풀에 합류해 투자자 배당 재원이 된다.
 export interface VppPlan {
   sites: number;
-  perSiteShiftableKw: number; // 사이트당 이동 가능 부하
-  fleetFlexibilityKw: number; // 플릿 총 유연성
-  drEventsPerMonth: number;
-  drEventHours: number;
-  capacityRevenuePerMonth: number; // 용량 정산 (₩/kW/월)
-  energyRevenuePerMonth: number; // 에너지 정산 (이벤트 감축량)
-  totalDrRevenuePerMonth: number;
+  contractedKw: number; // 계약감축량 (플릿 총 유연성)
+  reductionHoursPerYear: number;
+  basicSettlementPerYear: number; // 기본정산금 (대기 대가)
+  performanceSettlementPerYear: number; // 실적정산금 (실제 감축)
   annualDrRevenue: number;
   dividendContributionPerYear: number; // 배당 풀 기여 (60%)
   note: string;
 }
 
+// 한국 수요반응(DR/전력중개) 실제 정산 공식:
+//  ① 기본정산금 = 계약감축량(kW) × 43,994원/kW·년 (전력거래소 공시 단가, 2017 기준)
+//  ② 실적정산금 = 계약감축량(kW) × 100원/kWh × 총감축시간(hr/년)
+// 수익의 대부분은 기본정산금(대기 대가) — 이벤트가 드물어도 대기만으로 지급된다.
 export function fleetVPP(opts: {
   sites: number;
   ledPowerKw?: number;
-  photoperiodFlexHours?: number; // 광주기 안전 내 이동 가능 시간
-  capacityPricePerKwMonth?: number; // DR 용량요금
-  energyPricePerKwh?: number; // DR 이벤트 감축 정산
+  photoperiodFlexHours?: number;
+  basicPricePerKwYear?: number; // 기본정산 단가 ₩/kW·년
+  performancePricePerKwh?: number; // 실적정산 단가 ₩/kWh
   drEventsPerMonth?: number;
   drEventHours?: number;
   dividendShare?: number;
 }): VppPlan {
   const ledKw = opts.ledPowerKw ?? 4;
-  const flexH = opts.photoperiodFlexHours ?? 3; // 광주기 안전 내 미룰 수 있는 시간
-  // 이벤트 시 사이트가 줄일 수 있는 부하 = LED 전량(잠깐 끄고 나중에 보광)
-  const perSiteShiftableKw = ledKw;
-  const fleetFlex = perSiteShiftableKw * opts.sites;
+  const flexH = opts.photoperiodFlexHours ?? 3;
+  // 계약감축량 = 사이트당 LED 전량 (이벤트 시 끄고 광주기 안전범위 내 보광)
+  const contractedKw = ledKw * opts.sites;
 
-  const capPrice = opts.capacityPricePerKwMonth ?? 3000; // 국민DR 용량정산 근사 ₩/kW/월
-  const enPrice = opts.energyPricePerKwh ?? 1200; // 감축 정산 ₩/kWh (SMP+α 근사)
+  const basicPrice = opts.basicPricePerKwYear ?? 43994; // 전력거래소 공시(2017)
+  const perfPrice = opts.performancePricePerKwh ?? 100; // 실적정산 근사 ₩/kWh
   const events = opts.drEventsPerMonth ?? 4;
   const eventH = opts.drEventHours ?? 2;
+  const reductionHoursPerYear = events * eventH * 12;
 
-  const capacityRevenue = fleetFlex * capPrice;
-  const energyRevenue = fleetFlex * events * eventH * enPrice;
-  const total = capacityRevenue + energyRevenue;
+  const basic = contractedKw * basicPrice;
+  const performance = contractedKw * perfPrice * reductionHoursPerYear;
+  const total = basic + performance;
   const share = opts.dividendShare ?? 0.6;
 
   return {
     sites: opts.sites,
-    perSiteShiftableKw: Math.round(perSiteShiftableKw * 10) / 10,
-    fleetFlexibilityKw: Math.round(fleetFlex),
-    drEventsPerMonth: events,
-    drEventHours: eventH,
-    capacityRevenuePerMonth: Math.round(capacityRevenue),
-    energyRevenuePerMonth: Math.round(energyRevenue),
-    totalDrRevenuePerMonth: Math.round(total),
-    annualDrRevenue: Math.round(total * 12),
-    dividendContributionPerYear: Math.round(total * 12 * share),
+    contractedKw: Math.round(contractedKw),
+    reductionHoursPerYear,
+    basicSettlementPerYear: Math.round(basic),
+    performanceSettlementPerYear: Math.round(performance),
+    annualDrRevenue: Math.round(total),
+    dividendContributionPerYear: Math.round(total * share),
     note: `${opts.sites}개 사이트 = ${Math.round(
-      fleetFlex
-    )}kW 가상발전소. 광주기 유연성 ${flexH}h를 DR로 판매 → 연 ${Math.round(
-      (total * 12) / 10000
-    )}만원 매출, 배당 풀에 연 ${Math.round(
-      (total * 12 * share) / 10000
-    )}만원 기여. 절감이 아니라 새 수익원.`,
+      contractedKw
+    )}kW 계약감축. 기본정산 ${Math.round(basic / 10000)}만(대기 대가) + 실적정산 ${Math.round(
+      performance / 10000
+    )}만(연 ${reductionHoursPerYear}h 감축) = 연 ${Math.round(
+      total / 10000
+    )}만원 매출 → 배당 풀에 연 ${Math.round(
+      (total * share) / 10000
+    )}만원 기여. 광주기 유연성 ${flexH}h를 판매. 절감이 아니라 새 수익원.`,
   };
 }
 

@@ -242,7 +242,7 @@ export default async function OptimizationPage({
         <div className="rounded bg-indigo-900 p-4 text-white">
           <div className="text-sm text-indigo-200">⑤ 플릿 가상발전소(VPP) — 절감이 아니라 새 수익</div>
           <div className="mt-1 text-lg font-bold">
-            {fmt(adv.vpp.fleetFlexibilityKw)}kW 가상발전소 · 수요반응 연 {fmt(adv.vpp.annualDrRevenue / 10000)}만원 매출
+            {fmt(adv.vpp.contractedKw)}kW 가상발전소 · 수요반응 연 {fmt(adv.vpp.annualDrRevenue / 10000)}만원 매출
           </div>
           <p className="mt-1 text-sm text-indigo-100">
             사이트들의 광주기 유연성을 묶어 전력망에 판다 → 배당 풀에 연{" "}
