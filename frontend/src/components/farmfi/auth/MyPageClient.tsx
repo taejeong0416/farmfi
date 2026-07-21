@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Panel } from "@/components/FarmFi";
+import { Panel, PortfolioPanel } from "@/components/FarmFi";
 import { useAuth, type AuthUserRole } from "@/lib/useAuth";
 
 const ROLE_LABEL: Record<AuthUserRole, string> = {
@@ -61,6 +61,12 @@ export function MyPageClient() {
           </div>
         </Panel>
       </div>
+
+      {user.role === "investor" && (
+        <div style={{ marginTop: 20 }}>
+          <PortfolioPanel />
+        </div>
+      )}
 
       <button className="ghost" type="button" style={{ marginTop: 28 }} onClick={handleLogout}>
         로그아웃
