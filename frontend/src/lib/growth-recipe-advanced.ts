@@ -10,7 +10,7 @@
 // GB는 깊이2 트리(2단 분할)로 상호작용 포착 — SHAP이 주효과 이상을 반영.
 
 import { getCrop } from "./crop-profiles";
-import { GrowthObservation } from "./growth-recipe";
+import { GrowthObservation, analyzeGrowthRecipe } from "./growth-recipe";
 
 const FEATURES: (keyof Omit<GrowthObservation, "yield">)[] = [
   "temp", "humidity", "co2", "ec", "ph", "dli",
@@ -295,29 +295,43 @@ export interface HybridSetpoint {
   sigPost: number;    // 사후 표준편차 (능동학습 획득함수용)
 }
 
+// 유효 사전 표본수: 농학 지식의 등가 표본 수 (사전 정보가 약 20개 관측치에 해당)
+// dataWeight = n / (n + N_EFF_PRIOR) → n 증가에 따라 단조 증가 보장
+const N_EFF_PRIOR = 20;
+
 export function agronomyInformedRecipe(obs: GrowthObservation[], cropKey?: string): {
   setpoints: HybridSetpoint[];
   note: string;
 } {
+  const n = obs.length;
   const prior = agronomicPrior(cropKey);
   const X = obs.map((o) => FEATURES.map((f) => o[f]));
-  const y = obs.map((o) => o.yield);
+
+  // 다변량 반응표면 결합 최적점 (coordinateAscent 결과) — 1D 투영 정점 대신 사용
+  // 상호작용 있는 실데이터에서도 1D 정점이 없어 tauLik=0에 고착되는 비단조 문제 해결
+  const { recipe } = analyzeGrowthRecipe(obs, { cropKey });
+  const mvOptimum = new Map(recipe.map((r) => [r.feature, r.optimum]));
 
   const setpoints: HybridSetpoint[] = FEATURES.map((f, fi) => {
     const xf = X.map((x) => x[fi]);
     const lo = Math.min(...xf), hi = Math.max(...xf);
     const p = prior[f];
 
-    const { vertex: dataOpt, se: seTheta } = quadraticVertexWithSE(xf, y, lo, hi);
+    // 데이터 최적점 = 다변량 결합 최적 (항상 non-null)
+    const dataOpt = mvOptimum.get(f) ?? null;
+    // SE 표본수 기반 근사: n↑ → SE↓ → tauLik↑ → dataWeight 단조 증가
+    // seTheta = p.sd * sqrt(N_EFF_PRIOR/n)  →  tauLik = n/(N_EFF_PRIOR * p.sd²)
+    const seTheta = (dataOpt !== null && n >= 4)
+      ? p.sd * Math.sqrt(N_EFF_PRIOR / n)
+      : Infinity;
 
     // 정규-정규 켤레 업데이트
     const tau0 = 1 / (p.sd * p.sd);                              // 사전 정밀도
-    const tauLik = (seTheta < 1e6 && dataOpt !== null)
-      ? 1 / (seTheta * seTheta) : 0;                             // 데이터 정밀도
+    const tauLik = seTheta < 1e6 ? 1 / (seTheta * seTheta) : 0; // 데이터 정밀도
     const tauPost = tau0 + tauLik;
     const muPost = (tau0 * p.mu + tauLik * (dataOpt ?? p.mu)) / tauPost;
     const sigPost = 1 / Math.sqrt(tauPost);
-    const dataWeight = tauLik / tauPost;
+    const dataWeight = tauLik / tauPost;                          // = n/(n+N_EFF_PRIOR)
 
     const spanned = p.mu >= lo - p.sd && p.mu <= hi + p.sd;
 
@@ -325,7 +339,7 @@ export function agronomyInformedRecipe(obs: GrowthObservation[], cropKey?: strin
       feature: f,
       label: FEATURE_LABEL[f],
       unit: UNIT[f],
-      dataOptimum: dataOpt == null ? null : Math.round(dataOpt * 100) / 100,
+      dataOptimum: dataOpt === null ? null : Math.round(dataOpt * 100) / 100,
       priorOptimum: Math.round(p.mu * 100) / 100,
       hybridOptimum: Math.round(muPost * 100) / 100,
       dataWeight: Math.round(dataWeight * 100) / 100,
@@ -355,22 +369,29 @@ export function activeLearningSuggest(obs: GrowthObservation[], cropKey?: string
   suggestions: ExperimentSuggestion[];
   note: string;
 } {
+  const n = obs.length;
   const prior = agronomicPrior(cropKey);
   const X = obs.map((o) => FEATURES.map((f) => o[f]));
-  const y = obs.map((o) => o.yield);
   const suggestions: ExperimentSuggestion[] = [];
   const kappa = 1.0; // UCB 탐색-활용 트레이드오프
+
+  // 다변량 결합 최적점 — agronomyInformedRecipe와 동일한 데이터 추정값 사용
+  const { recipe } = analyzeGrowthRecipe(obs, { cropKey });
+  const mvOptimum = new Map(recipe.map((r) => [r.feature, r.optimum]));
 
   FEATURES.forEach((f, fi) => {
     const xf = X.map((x) => x[fi]);
     const lo = Math.min(...xf), hi = Math.max(...xf);
     const p = prior[f];
 
-    const { vertex: dataOpt, se: seTheta } = quadraticVertexWithSE(xf, y, lo, hi);
+    const dataOpt = mvOptimum.get(f) ?? null;
+    const seTheta = (dataOpt !== null && n >= 4)
+      ? p.sd * Math.sqrt(N_EFF_PRIOR / n)
+      : Infinity;
 
     // 사후 베이지안 업데이트
     const tau0 = 1 / (p.sd * p.sd);
-    const tauLik = (seTheta < 1e6 && dataOpt !== null) ? 1 / (seTheta * seTheta) : 0;
+    const tauLik = seTheta < 1e6 ? 1 / (seTheta * seTheta) : 0;
     const tauPost = tau0 + tauLik;
     const muPost = (tau0 * p.mu + tauLik * (dataOpt ?? p.mu)) / tauPost;
     const sigPost = 1 / Math.sqrt(tauPost);

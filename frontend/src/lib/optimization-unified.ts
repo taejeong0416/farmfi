@@ -3,7 +3,7 @@
 // 강건이 검사. 상류 결정이 하류를 일방적으로 묶어, 하류의 기회(VPP·수율)가 상류
 // 결정을 되돌리지 못했다. 통합 최적화는 하나의 목적함수로 전부 동시에 저울질한다.
 //
-// 결정변수: (광량 DLI 레벨, 광 블록 시작시각) — 두 변수를 SA로 함께 탐색.
+// 결정변수: (광량 DLI 레벨, 광 블록 시작시각) — 두 변수를 전수열거로 함께 탐색.
 // 목적(일 순가치 최대화):
 //   + 수율매출(DLI↑ → 수율↑, 포화)      [Economic MPC]
 //   − 전력량요금(가격 시나리오 기대값)    [TOU + 강건]
@@ -74,7 +74,8 @@ export function unifiedCoOptimize(opts: {
   const avgExt = opts.hourlyExtTemp.reduce((a, b) => a + b, 0) / 24;
   const season = avgExt < 12 ? "winter" : avgExt > 24 ? "summer" : "mild";
   const weights: UnifiedWeights = {
-    thermal: season === "mild" ? 0.4 : 1.0, // 혹서·혹한기에 열 항 강조
+    // 혹서·혹한기: 3.0으로 강화해 비례 열비용이 블록 배치를 실제로 뒤집게 함
+    thermal: season === "mild" ? 0.4 : 3.0,
     vpp: drWindows.length > 0 ? 1.0 : 0.3,
     co2: 0.6,
     robust: vol > 0.3 ? 0.6 : 0.2,
@@ -132,10 +133,15 @@ export function unifiedCoOptimize(opts: {
     const peakKw = Math.max(...hourProfile);
     const demand = peakKw * 8320 / 30; // 일 환산
 
-    // 순열비용: 시간대 외부온도 연동
+    // 순열비용: 시간별 외부온도 비례 연동
+    // 이진 방식(t<20 ? -fixed : +fixed)은 겨울에 모든 시간이 동일값 → 블록 배치 구분 불가.
+    // 비례 방식: 더 추울수록 LED 발열 이득↑(음수 증가), 더 더울수록 냉방 부하↑(양수 증가).
     const thermal = litHours.reduce((s, h) => {
       const t = opts.hourlyExtTemp[h];
-      return s + opts.ledPowerKw * (t < TARGET_TEMP ? -heatCoef * 0.95 : coolCoef * 0.95);
+      const delta = t - TARGET_TEMP;
+      return s + opts.ledPowerKw * (delta < 0
+        ? delta * heatCoef * 0.05   // 겨울: 더 추운 시간대 = 더 큰 난방상쇄 이득 (음수)
+        : delta * coolCoef * 0.05); // 여름: 더 더운 시간대 = 더 큰 냉방 부하 (양수)
     }, 0);
 
     // CO2 비용 (시간대 탄소집약도, 탄소가격 근사 30원/kg)

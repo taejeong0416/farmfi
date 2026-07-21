@@ -12,6 +12,8 @@
 // crop-profiles의 하드코딩 목표(DLI·정상범위)를 데이터가 대체하고, 그 학습된
 // 목표를 최적화 스택이 효율적으로 달성한다 — 두 시스템이 맞물린다.
 
+import { getCrop, CropProfile } from "./crop-profiles";
+
 export interface GrowthObservation {
   temp: number; // ℃
   humidity: number; // %
@@ -229,6 +231,7 @@ function cvR2(X: number[][], y: number[], nFolds = 5): number {
 export function analyzeGrowthRecipe(obs: GrowthObservation[], opts?: {
   rounds?: number;
   learningRate?: number;
+  cropKey?: string; // 농학 정상범위와 관측범위 교집합으로 외삽 방지
 }): GrowthRecipe {
   const n = obs.length;
   const X = obs.map((o) => FEATURES.map((f) => o[f]));
@@ -257,13 +260,30 @@ export function analyzeGrowthRecipe(obs: GrowthObservation[], opts?: {
   // 5-fold CV R²
   const r2 = cvR2(X, y);
 
-  // 각 변수의 관측 범위 (좌표 상승 탐색 범위)
-  const bounds: [number, number][] = FEATURES.map((_, fi) => {
+  // 좌표 상승 탐색 범위: 관측범위와 농학 정상범위(healthyRanges)의 교집합으로 클램프
+  // 교집합만 허용 → 다항식 외삽(temp 14.8℃, CO2 324ppm 등 비현실값) 방지
+  const agroCrop: CropProfile | null = opts?.cropKey ? getCrop(opts.cropKey) : null;
+  const featureAgroBound = (f: string): [number, number] => {
+    if (!agroCrop) return [-Infinity, Infinity];
+    switch (f) {
+      case "temp":     return agroCrop.healthyRanges.temperature as [number, number];
+      case "humidity": return agroCrop.healthyRanges.humidity as [number, number];
+      case "co2":      return agroCrop.healthyRanges.co2Level as [number, number];
+      case "ec":       return agroCrop.ecTarget as [number, number];
+      case "ph":       return agroCrop.healthyRanges.phLevel as [number, number];
+      case "dli":      return [Math.max(0, agroCrop.dliTarget - 10), agroCrop.dliTarget + 10];
+      default:         return [-Infinity, Infinity];
+    }
+  };
+  const bounds: [number, number][] = FEATURES.map((f, fi) => {
     const vals = X.map((x) => x[fi]);
-    const lo = Math.min(...vals);
-    const hi = Math.max(...vals);
-    const slack = (hi - lo) * 0.1 || 1;
-    return [lo - slack, hi + slack] as [number, number];
+    const obsLo = Math.min(...vals);
+    const obsHi = Math.max(...vals);
+    const [agLo, agHi] = featureAgroBound(f);
+    const cLo = Math.max(obsLo, agLo);
+    const cHi = Math.min(obsHi, agHi);
+    // 교집합이 유효하면 사용, 아니면 관측범위(외삽 없이) fallback
+    return (cLo < cHi ? [cLo, cHi] : [obsLo, obsHi]) as [number, number];
   });
 
   // 6D 결합 최적점 (좌표 상승 — 독립 1D 최적 ≠ 결합 최적)

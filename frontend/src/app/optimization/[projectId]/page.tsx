@@ -269,7 +269,7 @@ export default async function OptimizationPage({
         <h2 className="font-semibold">캡스톤 · 통합 공동최적화 (6개 목적을 하나로)</h2>
         <p className="text-sm text-slate-300">
           순차 파이프라인(각 알고리즘이 바통 넘김)이 아니라, <b>단일 목적함수로 전부 동시에 저울질</b>한다.
-          결정변수(광량 DLI·광블록 시작)를 시뮬레이티드 어닐링으로 함께 탐색하며 수율매출·전력량·기본요금·
+          결정변수(광량 DLI·광블록 시작)를 전수열거(264개 후보 전역탐색)로 함께 탐색하며 수율매출·전력량·기본요금·
           열·CO₂·VPP 유연성을 한 번에 최적화. 광주기 안전은 하드제약, 가격은 강건.
         </p>
         <div className="flex flex-wrap items-baseline gap-3">

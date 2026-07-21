@@ -51,6 +51,10 @@ export function classifyTask(
 ): TaskClassification {
   const s = issue.toLowerCase();
 
+  // 고장 체크는 액추에이터 키워드보다 반드시 먼저: "히터 고장"은 auto가 아닌 manual/critical
+  if (s.includes("고장") || s.includes("fault") || s.includes("broken") || s.includes("repair")) {
+    return { domain: "actuator-fault", controlType: "manual", description: "액추에이터 고장 — 현장 점검 필요", urgency: "critical" };
+  }
   if (s.includes("temperature") || s.includes("온도") || s.includes("히터") || s.includes("냉방")) {
     const v = current?.temperature;
     return {
@@ -71,9 +75,6 @@ export function classifyTask(
   }
   if (s.includes("light") || s.includes("광") || s.includes("led")) {
     return { domain: "light", controlType: "auto", description: "LED 인버터 광량 자동 조절", urgency: "routine" };
-  }
-  if (s.includes("고장") || s.includes("fault") || s.includes("broken") || s.includes("repair")) {
-    return { domain: "actuator-fault", controlType: "manual", description: "액추에이터 고장 — 현장 점검 필요", urgency: "critical" };
   }
   if (s.includes("수확") || s.includes("harvest")) {
     return { domain: "harvest", controlType: "manual", description: "수확·출하 — 사람 작업", urgency: "routine" };
