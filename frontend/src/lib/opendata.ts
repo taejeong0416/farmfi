@@ -39,3 +39,14 @@ export async function fetchOpenData(): Promise<OpenEnvRecord[]> {
   const sample = await import("../../prisma/opendata-sample.json");
   return (sample.default ?? sample) as OpenEnvRecord[];
 }
+
+// 일별 판매 시계열 (수요 예측 입력) — 운영 시 무인매장 POS 정산 데이터로 교체.
+export interface SalesRecord {
+  salesDt: string; // YYYY-MM-DD
+  units: number; // 판매 포기 수
+}
+
+export async function fetchSalesData(): Promise<SalesRecord[]> {
+  const sample = await import("../../prisma/sales-sample.json");
+  return (sample.default ?? sample) as SalesRecord[];
+}
