@@ -13,10 +13,12 @@ export function RoleCards() {
     <div className="grid-4">
       {roles.map(([title, desc, icon, link, href]) => (
         <article className="card role-card soft-card" key={title}>
-          <span className="icon">
-            <Icon name={icon} />
-          </span>
-          <h3>{title}</h3>
+          <div className="role-head">
+            <span className="icon">
+              <Icon name={icon} />
+            </span>
+            <h3>{title}</h3>
+          </div>
           <p>{desc}</p>
           <Link className="link" href={href}>
             {link} →

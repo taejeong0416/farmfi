@@ -106,9 +106,32 @@ export function ProjectsGrid() {
   }, []);
 
   if (error) return <p className="muted">{error}</p>;
-  if (!projects) return <p className="muted">불러오는 중…</p>;
+  if (!projects)
+    return (
+      <div className="grid-3" aria-busy="true" aria-label="프로젝트 불러오는 중">
+        {[0, 1, 2].map((i) => (
+          <div className="card skeleton-card" key={i}>
+            <div className="skeleton-line" style={{ width: "55%" }} />
+            <div className="skeleton-line" style={{ width: "35%" }} />
+            <div className="skeleton-line" style={{ marginTop: 28 }} />
+            <div className="skeleton-line" style={{ width: "70%" }} />
+          </div>
+        ))}
+      </div>
+    );
   if (projects.length === 0)
-    return <p className="muted">모집 중인 프로젝트가 없습니다.</p>;
+    return (
+      <div className="card" style={{ padding: 32, textAlign: "center" }}>
+        <p style={{ fontWeight: 700 }}>지금은 모집 중인 라운드가 없습니다.</p>
+        <p className="muted">
+          새 지점 라운드가 열리면 이곳에 표시됩니다. 운영 중인 지점 현황은
+          대시보드에서 볼 수 있어요.
+        </p>
+        <Link className="outline" href="/dashboard" style={{ marginTop: 18 }}>
+          운영 현황 보기 →
+        </Link>
+      </div>
+    );
 
   return (
     <div className="grid-3">

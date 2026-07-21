@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/useAuth";
 
 const nav = [
@@ -15,6 +16,7 @@ const nav = [
 ];
 
 export function Header() {
+  const pathname = usePathname();
   const { user, isAuthenticated, isLoading, logout } = useAuth();
   const [authError, setAuthError] = useState<string | null>(null);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -83,11 +85,19 @@ export function Header() {
             />
           </Link>
           <nav className="nav-links" aria-label="주요 메뉴">
-            {nav.map(([label, href]) => (
-              <Link href={href} key={label}>
-                {label}
-              </Link>
-            ))}
+            {nav.map(([label, href]) => {
+              const active =
+                href === "/" ? pathname === "/" : pathname.startsWith(href);
+              return (
+                <Link
+                  href={href}
+                  key={label}
+                  aria-current={active ? "page" : undefined}
+                >
+                  {label}
+                </Link>
+              );
+            })}
           </nav>
           <div className="nav-actions">
             {authError && (

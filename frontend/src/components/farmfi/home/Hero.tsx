@@ -37,20 +37,7 @@ export function Hero({
           {chips ? <TrustStrip items={chips} /> : null}
         </div>
         <div className={`hero-art ${art}`} aria-hidden="true">
-          <div className="farm-visual-card">
-            <div className="farm-visual-skyline" />
-            <div className="farm-visual-house">
-              <span />
-              <span />
-              <span />
-              <span />
-            </div>
-            <div className="farm-visual-crops">
-              {Array.from({ length: 18 }, (_, i) => (
-                <i key={i} />
-              ))}
-            </div>
-          </div>
+          <div className="farm-visual-card" />
         </div>
       </div>
     </section>
