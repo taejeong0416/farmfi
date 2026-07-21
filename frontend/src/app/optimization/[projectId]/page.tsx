@@ -11,11 +11,11 @@ import {
   peakStagger,
   annealJointSchedule,
   recipeOptimization,
-  cropPortfolioAllocation,
   operationsSavingsReport,
   TARIFF_TOU_GENERAL,
 } from "@/lib/optimization";
 import { optimalStack } from "@/lib/optimization-advanced";
+import { cropMeanVariance, remainingUsefulLife } from "@/lib/optimization-frontier";
 import { fetchSalesData, fetchOpenData } from "@/lib/opendata";
 import { getCrop } from "@/lib/crop-profiles";
 import { IoTReading } from "@/lib/iot-health";
@@ -88,7 +88,17 @@ export default async function OptimizationPage({
   const seed = seedingPlan({ monthlySalesForecast: forecast.monthlyTotal });
   const nutrient = readings.length > 0 ? nutrientAdvice(readings[readings.length - 1], cropKey) : null;
   const recipeMix = recipeOptimization(); // 미시: 품종/레시피 선택
-  const cropPortfolio = cropPortfolioAllocation(); // 중간: 사이트 간 품목 배분
+  // 중간: 사이트 간 품목 배분 — 마코위츠 평균-분산(리스크-수익 프론티어)
+  const portfolio = cropMeanVariance({
+    assets: [
+      { name: "엽채류(상추)", expectedMargin: 7000, volatility: 1800 },
+      { name: "바질(허브)", expectedMargin: 11000, volatility: 3500 },
+      { name: "방울토마토", expectedMargin: 14000, volatility: 6000 },
+    ],
+  });
+  // 예지보전 → 잔여수명(베이불): CUSUM 최대 통계량을 열화지표로 환산
+  const degIndex = maint ? Math.min(0.95, maint.riskScore / 6) : 0;
+  const rul = remainingUsefulLife({ degradationIndex: degIndex });
   const savings = operationsSavingsReport({
     dliSavingPerMonth: dli.savingPerMonth,
     peakSavingPerMonth: peak.demandChargeSavingPerMonth,
@@ -188,15 +198,20 @@ export default async function OptimizationPage({
           <p className="mt-1 text-xs text-amber-600">
             플릿 {fleetBaseline.meta.farms}농가 {fmt(fleetBaseline.meta.rows)}건 베이스라인을 신규 사이트
             CUSUM 사전분포로 사용 → 이력 없는 1호점도 첫날부터 판정 (teacher-student 콜드스타트).
-            예지보전 리스크 {maint?.riskScore ?? "—"}σ.
+            예지보전 리스크 {maint?.riskScore ?? "—"}σ →{" "}
+            <b className={rul.action === "urgent" ? "text-red-700" : rul.action === "schedule" ? "text-amber-800" : "text-emerald-700"}>
+              잔여수명 ~{rul.estimatedRulDays}일 ({rul.action})
+            </b>{" "}
+            — 베이불 생존분석으로 "이상함"을 실행가능한 잔여수명(RUL)으로 격상.
           </p>
         </div>
         <div className="rounded bg-teal-50 p-3 text-sm">
-          <div className="font-medium text-teal-800">사이트 간 품목 배분 밴딧 (포트폴리오)</div>
+          <div className="font-medium text-teal-800">사이트 간 품목 배분 — 마코위츠 평균-분산 (금융 포트폴리오)</div>
           <p className="mt-1 text-teal-700">
-            {cropPortfolio.rounds}개 사이트를 {cropPortfolio.allocation.map((a) => `${a.name} ${Math.round(a.share * 100)}%`).join(" · ")}로 배분
-            (균등 대비 +{((cropPortfolio.uplift / cropPortfolio.uniformTotalMargin) * 100).toFixed(1)}%).
-            사이트 스펙·상권 수요가 달라 최적 배합을 탐색/활용으로 학습.
+            리스크 대비 최고수익: {portfolio.maxSharpe.weights.map((w, i) => `${portfolio.assets[i]} ${Math.round(w * 100)}%`).join(" · ")}
+            (샤프 {portfolio.maxSharpe.sharpe.toFixed(2)}) · 최소리스크:{" "}
+            {portfolio.minVariance.weights.map((w, i) => `${portfolio.assets[i]} ${Math.round(w * 100)}%`).join(" · ")}.
+            작물 가격·수율 변동성과 상관을 넣어 효율적 프론티어를 그린다 — 작물도 투자 포트폴리오처럼 분산.
           </p>
         </div>
       </section>
