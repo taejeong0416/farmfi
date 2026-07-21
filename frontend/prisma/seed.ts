@@ -157,12 +157,45 @@ async function main() {
     data: { projectId: p1.id, userId: investor1.id, type: "subscription", amount: BigInt(500_000), tokenAmount: 50, memo: "청약 (시드)" },
   });
 
+  // ─── STO: 3호점 모집중(funding) — 청약 데모 대상 (에스크로·마일스톤 pending) ───
+  const p3 = await prisma.project.create({
+    data: {
+      name: "명륜동 스마트팜 3호점",
+      description: "부산 동래구 명륜동 공실 상가 전환 라운드 (모집 중).",
+      location: "부산 동래구 명륜동", buildingType: "vacant_store", areaSqm: 76,
+      status: "funding", institutionId: institution.id,
+      tokenSymbol: "MF03", tokenPrice: BigInt(10_000), totalTokens: 1320, soldTokens: 400,
+      targetAmount: BigInt(13_200_000), currentAmount: BigInt(4_000_000), totalCapex: BigInt(13_200_000),
+      fundingStart: now, fundingEnd: new Date(now.getTime() + 30 * DAY),
+      contractAddress: process.env.NEXT_PUBLIC_ESCROW_ADDRESS || "0xa855f6398fb71ad197ec055853007007d3f7d452",
+    },
+  });
+  await prisma.escrow.create({
+    data: {
+      projectId: p3.id,
+      totalLocked: BigInt(4_000_000), totalReleased: BigInt(0), remaining: BigInt(4_000_000),
+      status: "active",
+      contractAddress: process.env.NEXT_PUBLIC_ESCROW_ADDRESS || "0xa855f6398fb71ad197ec055853007007d3f7d452",
+    },
+  });
+  await prisma.milestone.createMany({
+    data: [
+      { projectId: p3.id, seq: 1, name: "공간 준비", description: "임대차 계약·설비 구매·공간 셋업", releasePct: 3500, releaseAmount: BigInt(4_620_000), status: "pending", conditionText: "임대차 계약서·설비 영수증·현장 사진", requiredSignals: ["contract", "receipt", "photo"], iotMinDays: 0, crossCheck: "receipt↔photo", assetValue: BigInt(0) },
+      { projectId: p3.id, seq: 2, name: "시운전 + 안정성", description: "설비 가동 14일 안정성", releasePct: 3000, releaseAmount: BigInt(3_960_000), status: "pending", conditionText: "IoT 14일 가동률 90%+", requiredSignals: ["iot"], iotMinDays: 14, assetValue: BigInt(0) },
+      { projectId: p3.id, seq: 3, name: "첫 수확 + 판매", description: "첫 수확·판매 실적", releasePct: 2000, releaseAmount: BigInt(2_640_000), status: "pending", conditionText: "수확 사진·판매 영수증", requiredSignals: ["photo", "receipt"], iotMinDays: 0, assetValue: BigInt(0) },
+      { projectId: p3.id, seq: 4, name: "지속 운영", description: "60일 지속 운영", releasePct: 1500, releaseAmount: BigInt(1_980_000), status: "pending", conditionText: "IoT 60일·복수 판매", requiredSignals: ["iot", "receipt"], iotMinDays: 60, assetValue: BigInt(0) },
+    ],
+  });
+  await prisma.projectPartner.create({
+    data: { projectId: p3.id, role: "landlord", name: "박건물", monthlyRecoveryAmount: BigInt(450_000) },
+  });
+
   // ─── 생육 이상 알림 ───
   await prisma.notification.create({
     data: { projectId: p1.id, type: "anomaly_detected", message: "온도 이상 감지 · 현재 31.2℃ (정상범위 18~28℃)" },
   });
 
-  console.log(`융합 seed done — 지점 ${projects.length}(1호점 펀딩), 품목 ${products.length}, 운영자 ${operator.name}, 투자자 ${investor1.name}`);
+  console.log(`융합 seed done — 지점 ${projects.length + 1}(1호점 funded·2호점 운영·3호점 모집중), 품목 ${products.length}, 운영자 ${operator.name}, 투자자 ${investor1.name}`);
 }
 
 main()
