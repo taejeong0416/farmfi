@@ -18,6 +18,7 @@ export { SpaceForm, Field } from "./farmfi/space/SpaceForm";
 export { ProjectsGrid } from "./farmfi/projects/ProjectsGrid";
 export { ProjectDetail } from "./farmfi/projects/ProjectDetail";
 export { PortfolioPanel } from "./farmfi/projects/PortfolioPanel";
+export { MilestoneVerifyPanel } from "./farmfi/admin/MilestoneVerifyPanel";
 
 export { Section } from "./farmfi/ui/Section";
 export { Metric } from "./farmfi/ui/Metric";

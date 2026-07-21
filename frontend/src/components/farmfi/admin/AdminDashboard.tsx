@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Section, Panel } from "@/components/FarmFi";
 
 // 관리자 · 기관 성과 뷰. 집계는 GET /api/reports/institution 로 제공하며,
@@ -17,6 +18,11 @@ export function AdminDashboard() {
             제공됩니다. 상세 리포트 화면은 준비 중입니다.
           </p>
         </Panel>
+        <div style={{ marginTop: 20 }}>
+          <Link className="btn" href="/admin/verify">
+            마일스톤 검증 콘솔 →
+          </Link>
+        </div>
       </Section>
     </main>
   );
