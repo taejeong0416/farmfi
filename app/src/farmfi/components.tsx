@@ -85,7 +85,7 @@ export function CropPixel({ kind, size = "medium" }: { kind: CropKind; size?: ke
 }
 
 // ─── 재배 베드 식물 (sway 애니메이션) ───
-function RackPlant({ kind, index, maturity }: { kind: CropKind; index: number; maturity: number }) {
+function RackPlant({ kind, index, maturity, scaleMul = 1 }: { kind: CropKind; index: number; maturity: number; scaleMul?: number }) {
   const isTomato = kind === "tomato";
   const slots = isTomato ? TOMATO_SLOTS : LEAFY_SLOTS;
   const slot = slots[index];
@@ -113,7 +113,7 @@ function RackPlant({ kind, index, maturity }: { kind: CropKind; index: number; m
   }, [isTomato, rot]);
 
   const aStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: transY }, { scale: plantScale }, { rotateZ: `${rot.value}deg` }],
+    transform: [{ translateY: transY }, { scale: plantScale * scaleMul }, { rotateZ: `${rot.value}deg` }],
   }));
 
   return (
@@ -129,7 +129,7 @@ function RackPlant({ kind, index, maturity }: { kind: CropKind; index: number; m
       }}
       pointerEvents="none"
     >
-      <Animated.View style={[{ width: "100%", height: "100%" }, aStyle]}>
+      <Animated.View style={[{ width: "100%", height: "100%", transformOrigin: "50% 100%" }, aStyle]}>
         <Image source={asset.src} style={{ width: "100%", height: "100%" }} contentFit="contain" contentPosition="bottom" />
       </Animated.View>
     </View>
@@ -140,20 +140,15 @@ export function GrowthRackScene({ rackId, compact = false }: { rackId: RackId; c
   const rack = RACK_DATA[rackId];
   const isTomato = rack.kind === "tomato";
   const slots = isTomato ? TOMATO_SLOTS : LEAFY_SLOTS;
-  const scale = compact ? (isTomato ? 0.5 : 0.48) : 1;
+  // compact(썸네일)은 슬롯 위치는 유지하고 각 식물만 개별 축소 (원본 CSS와 동일).
+  const scaleMul = compact ? (isTomato ? 0.5 : 0.48) : 1;
   return (
     <View style={styles.rackScene}>
       <Image source={isTomato ? RACK_BASE.tomato : RACK_BASE.leafy} style={styles.rackBase} contentFit="cover" />
       <View style={StyleSheet.absoluteFill} pointerEvents="none">
-        {compact ? (
-          <View style={[StyleSheet.absoluteFill, { transform: [{ scale }] }]}>
-            {slots.map((_, i) => (
-              <RackPlant kind={rack.kind} index={i} maturity={rack.maturity} key={`${rackId}-${i}`} />
-            ))}
-          </View>
-        ) : (
-          slots.map((_, i) => <RackPlant kind={rack.kind} index={i} maturity={rack.maturity} key={`${rackId}-${i}`} />)
-        )}
+        {slots.map((_, i) => (
+          <RackPlant kind={rack.kind} index={i} maturity={rack.maturity} scaleMul={scaleMul} key={`${rackId}-${i}`} />
+        ))}
       </View>
     </View>
   );
