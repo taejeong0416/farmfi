@@ -17,6 +17,7 @@ import {
 import { optimalStack } from "@/lib/optimization-advanced";
 import { cropMeanVariance, remainingUsefulLife } from "@/lib/optimization-frontier";
 import { unifiedCoOptimize } from "@/lib/optimization-unified";
+import { growthRecipeDemo } from "@/lib/growth-recipe-advanced";
 import { fetchSalesData, fetchOpenData } from "@/lib/opendata";
 import { getCrop } from "@/lib/crop-profiles";
 import { IoTReading } from "@/lib/iot-health";
@@ -115,6 +116,8 @@ export default async function OptimizationPage({
   const adv = optimalStack({ cropKey, ledPowerKw, sites: 20, hourlyExtTemp: ext24 });
   // 캡스톤: 통합 공동최적화 (6개 목적을 하나의 목적함수로 동시 최적화)
   const unified = unifiedCoOptimize({ cropKey, ledPowerKw, sites: 20, hourlyExtTemp: ext24 });
+  // 생육레시피 분석 — 환경↔수율 학습으로 최적 목표(레시피)를 도출 (최적화의 입력)
+  const recipe = growthRecipeDemo(cropKey);
 
   const fmt = (n: number) => Math.round(n).toLocaleString("ko-KR");
 
@@ -217,6 +220,45 @@ export default async function OptimizationPage({
             작물 가격·수율 변동성과 상관을 넣어 효율적 프론티어를 그린다 — 작물도 투자 포트폴리오처럼 분산.
           </p>
         </div>
+      </section>
+
+      {/* 생육레시피 분석 — 최적화의 "목표"를 데이터에서 학습 */}
+      <section className="rounded-lg border-2 border-lime-300 bg-lime-50 p-5 space-y-3">
+        <h2 className="font-semibold text-lime-900">AI 생육레시피 분석 — 최적 목표를 데이터에서 학습</h2>
+        <p className="text-xs text-lime-800">
+          스케줄링이 "어떻게 싸게 달성할지"라면, 레시피 분석은 "무엇을 목표로 할지"를 정한다.
+          환경↔수율 {recipe.samples}개 사이클을 학습해 최적 생육조건을 도출 — 이 레시피가
+          최적화 스택의 목표(DLI·정상범위)가 되어 두 시스템이 맞물린다. 비전공 운영자도 따라할 수 있다.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2 text-sm">
+          <div className="rounded bg-white p-3">
+            <div className="font-medium">특성 중요도 (SHAP 섀플리 값)</div>
+            <p className="mt-1 text-gray-600">
+              {recipe.shap.slice(0, 4).map((s) => `${s.label} ${Math.round(s.meanAbsShap * 100)}`).join(" · ")}
+              — 협조게임이론의 공정 기여도로 "수율을 좌우하는 요인" 순위.
+            </p>
+          </div>
+          <div className="rounded bg-white p-3">
+            <div className="font-medium">도출된 최적 레시피 (농학정보 하이브리드)</div>
+            <p className="mt-1 text-gray-600">
+              {recipe.hybrid.map((s) => `${s.label} ${s.hybridOptimum}${s.unit}`).join(" · ")}
+            </p>
+            <p className="mt-1 text-xs text-gray-400">
+              데이터가 최적점을 담으면 데이터가(가중 {recipe.hybrid[0].dataWeight}), 부족하면 작물학
+              사전이 이끔 — 물리정보 신경망(AgriPINN) 방식으로 데이터 부족을 보완.
+            </p>
+          </div>
+        </div>
+        {recipe.suggestions.length > 0 && (
+          <div className="rounded bg-amber-100 p-3 text-sm text-amber-900">
+            능동학습 실험 제안: {recipe.suggestions.map((s) => `${s.label}→${s.suggestValue}${s.unit}`).join(" · ")}
+            <span className="text-xs"> — 데이터가 최적점을 못 담은 요인을 다음 사이클에 실험해 레시피 정밀도↑</span>
+          </div>
+        )}
+        <p className="text-xs text-lime-700">
+          근거: 실내 수직수경 바질 수율 ML(arXiv 2512.22151) · SHAP(2606.15273) · AgriPINN(2601.16045) ·
+          능동학습 배치 베이지안(2311.01195). 실 수율 라벨은 1호점 수확 기록에서 확정.
+        </p>
       </section>
 
       {/* 캡스톤: 통합 공동최적화 */}
