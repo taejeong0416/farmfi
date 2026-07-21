@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { Link } from "expo-router";
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 
 import { C } from "../theme";
@@ -61,6 +62,10 @@ export default function GrowthScreen() {
           <Text style={s.metricValue}>412<Text style={s.metricUnit}>/ 500</Text></Text>
         </View>
       </View>
+
+      <Link href="/farm/monitoring" style={s.monitorBtn}>
+        상세 센서 모니터링 →
+      </Link>
 
       <View style={s.bedSection}>
         <SectionTitle icon="sprout">실시간 성장 베드</SectionTitle>
@@ -139,6 +144,19 @@ const s = StyleSheet.create({
   metricLabel: { fontSize: 10, fontWeight: "600", color: "#333" },
   metricValue: { marginTop: 8, color: C.green, fontSize: 25, letterSpacing: -1, fontWeight: "700" },
   metricUnit: { color: "#151715", fontSize: 12, fontWeight: "500" },
+
+  monitorBtn: {
+    marginTop: 12,
+    height: 46,
+    lineHeight: 46,
+    textAlign: "center",
+    backgroundColor: C.green,
+    color: "#fff",
+    borderRadius: 10,
+    fontWeight: "700",
+    fontSize: 14,
+    overflow: "hidden",
+  },
 
   bedSection: { marginTop: 18 },
   bedTabs: { flexDirection: "row", marginTop: 10 },
