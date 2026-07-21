@@ -28,6 +28,9 @@ async function main() {
     };
   });
 
+  // 실데이터 재적재 시 중복 방지: 기존 IoT 삭제 후 삽입
+  await prisma.iotData.deleteMany({ where: { projectId: project.id } });
+
   await prisma.iotData.createMany({ data: rows });
   console.log(`✅ Open-data records imported: ${rows.length}`);
 }

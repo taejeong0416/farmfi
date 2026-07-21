@@ -1,0 +1,23 @@
+{
+  "innerTemp": {
+    "median": 9.6,
+    "mad": 5.09
+  },
+  "innerHum": {
+    "median": 39.1,
+    "mad": 10.04
+  },
+  "co2": {
+    "median": 389.83,
+    "mad": 107.59
+  },
+  "tempDiff": {
+    "median": 0.73,
+    "mad": 9.68
+  },
+  "meta": {
+    "farms": 10,
+    "rows": 54723,
+    "source": "스마트팜코리아 그린씨에스 dtaSn=13, 2023"
+  }
+}

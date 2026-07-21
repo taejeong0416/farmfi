@@ -19,8 +19,12 @@ export interface OpenEnvRecord {
   innerTemp: number; // 내부온도 ℃
   innerHum: number; // 내부습도 %
   co2: number; // ppm
-  lightIntensity: number; // lux (또는 일사량 환산)
-  ph: number; // 양액 pH
+  lightIntensity?: number; // lux (있는 데이터셋만)
+  ph?: number | null; // 양액 pH
+  ec?: number | null; // 양액 EC dS/m
+  extTemp?: number; // 외부온도 ℃ (계절 보정용)
+  extInsolation?: number; // 외부일사량 W/m² (보광 트리거용)
+  ledOn?: number | null; // 보광등 작동 0/1
 }
 
 export function mapRecordToReading(r: OpenEnvRecord): IoTReading {
@@ -28,8 +32,11 @@ export function mapRecordToReading(r: OpenEnvRecord): IoTReading {
     temperature: r.innerTemp,
     humidity: r.innerHum,
     co2Level: r.co2,
-    lightIntensity: r.lightIntensity,
-    phLevel: r.ph,
+    // 내부 조도(lux)가 없는 데이터셋은 외부일사량(W/m²)에서 근사(×120).
+    lightIntensity:
+      r.lightIntensity ??
+      (r.extInsolation != null ? Math.round(r.extInsolation * 120) : 0),
+    phLevel: r.ph ?? 6.0,
   };
 }
 

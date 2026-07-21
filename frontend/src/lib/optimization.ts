@@ -9,6 +9,21 @@
 // 넣으면 절감폭이 작아지는 것까지 정직하게 계산된다.
 
 import { IoTReading, HEALTHY_RANGES } from "./iot-health";
+import { getCrop } from "./crop-profiles";
+
+// 계통 전력 배출계수 (kg CO2/kWh) — 한국 2024 근사. 절감 kWh를 CO2로 환산해
+// ESG 리포트·투자자 대시보드에 올리는 데 쓴다(거시 재무 환산).
+export const GRID_EMISSION_FACTOR = 0.459;
+
+// 시간대별 계통 탄소집약도 배율 — 낮(태양광 다량)은 배출 낮고 저녁 피크는 높다.
+// TOU 요금과 같은 방향이라, LED를 저렴 시간대로 옮기면 원과 CO2가 함께 준다
+// (Economic MPC의 탄소 목적함수 차용, arXiv 2410.23793). 평균 1.0로 정규화.
+export const CARBON_INTENSITY_FACTOR: number[] = [
+  1.05, 1.05, 1.05, 1.05, 1.05, 1.05, 1.0, 1.0, 1.0, // 00~08
+  0.9, 0.9, 0.75, 0.7, 0.7, 0.75, // 09~14 태양광 피크
+  0.9, 1.0, 1.05, 1.25, 1.25, 1.25, // 15~20 저녁 피크
+  1.05, 1.0, 1.0, // 21~23
+];
 
 // ── ① 전력비: 시간대별 요금 스케줄링 ──────────────────────────────────────
 // 2026.4 한전 요금 개편(49년 만의 시간대 개편) 구조 반영:
@@ -124,6 +139,107 @@ export function optimizeLedSchedule(opts: {
   };
 }
 
+// ── ①-DLI: 일적산광량 기반 광주기 최적화 (농학적으로 옳은 제어) ───────────
+// "14시간 점등"이 아니라 "목표 DLI를 충족하는 최소 요금 배치"를 푼다.
+// DLI(mol/m²/day) = PPFD(μmol/m²/s) × 3600 × 광시간(h) / 1e6.
+// 목표 DLI를 채우는 데 필요한 최대광량 시간을 계산하고, 그 시간을 가장 싼
+// TOU 슬롯에 배치한다. 생육(DLI)은 하드 제약으로 보존되므로 "싸게 켜도 작물은
+// 똑같이 자란다"가 성립한다 — 전력 절감의 농학적 정당화(Economic MPC, arXiv 2410.23793).
+export interface DliPlan {
+  cropLabel: string;
+  dliTarget: number;
+  requiredHours: number; // 최대 PPFD에서 목표 DLI 충족에 필요한 광시간
+  achievedDli: number;
+  feasible: boolean; // 24h 내 충족 가능한가 (아니면 PPFD 상향 필요)
+  litHours: number[]; // 점등 시간대 (원형 24h)
+  costPerDay: number; // 원 — TOU 최적 배치
+  naiveCostPerDay: number; // 08시 연속 점등 관행
+  savingPerDay: number;
+  savingPerMonth: number;
+  co2SavedKgPerMonth: number;
+}
+
+export function dliSchedule(opts: {
+  cropKey?: string;
+  ledPowerKw: number;
+  tariff?: number[];
+  dliTarget?: number;
+  ppfd?: number;
+}): DliPlan {
+  const crop = getCrop(opts.cropKey);
+  const tariff = opts.tariff ?? TARIFF_TOU_GENERAL;
+  const dliTarget = opts.dliTarget ?? crop.dliTarget;
+  const ppfd = opts.ppfd ?? crop.ppfd;
+
+  // 필요 광시간 = DLI 목표 / (PPFD 시간당 기여). 반올림 올림(정수 시간 슬롯).
+  const dliPerHour = (ppfd * 3600) / 1e6;
+  const requiredHoursRaw = dliTarget / dliPerHour;
+  const requiredHours = Math.min(24, Math.ceil(requiredHoursRaw));
+  const feasible = requiredHoursRaw <= 24;
+  const achievedDli = Math.round(requiredHours * dliPerHour * 10) / 10;
+
+  // 최적 배치: 가장 싼 시간부터 requiredHours개 선택
+  const order = [...Array(24).keys()].sort((a, b) => tariff[a] - tariff[b]);
+  const litHours = order.slice(0, requiredHours).sort((a, b) => a - b);
+  const costPerDay = litHours.reduce((s, h) => s + opts.ledPowerKw * tariff[h], 0);
+
+  // 관행: 08시부터 연속 점등
+  const naive = Array.from({ length: requiredHours }, (_, i) => (8 + i) % 24);
+  const naiveCostPerDay = naive.reduce((s, h) => s + opts.ledPowerKw * tariff[h], 0);
+
+  const savingPerDay = naiveCostPerDay - costPerDay;
+  // CO2: kWh는 같지만(같은 시간 켬) 저탄소 시간대로 옮기면 배출이 준다.
+  // 시간대 배출 = kWh × 평균배출계수 × 시간대 배율.
+  const co2Of = (hours: number[]) =>
+    hours.reduce(
+      (s, h) => s + opts.ledPowerKw * GRID_EMISSION_FACTOR * CARBON_INTENSITY_FACTOR[h],
+      0
+    );
+  const co2SavedKgPerMonth =
+    Math.round((co2Of(naive) - co2Of(litHours)) * 30 * 10) / 10;
+  return {
+    cropLabel: crop.label,
+    dliTarget,
+    requiredHours,
+    achievedDli,
+    feasible,
+    litHours,
+    costPerDay: Math.round(costPerDay),
+    naiveCostPerDay: Math.round(naiveCostPerDay),
+    savingPerDay: Math.round(savingPerDay),
+    savingPerMonth: Math.round(savingPerDay * 30),
+    co2SavedKgPerMonth,
+  };
+}
+
+// ── ①-피드백: 닫힌 루프 DLI 보정 (arXiv 2512.01167의 피드백 원리) ──────────
+// 고정 스케줄이 아니라, 실측 조도로 계산한 실현 DLI가 목표에 미달/초과하면
+// 다음날 광시간을 비례 보정한다. Q-learning 없이 피드백 원리만 이식.
+export interface DliFeedback {
+  realizedDli: number; // 최근 관측 조도로 추정한 실현 DLI
+  targetDli: number;
+  gapPct: number;
+  action: string;
+}
+
+export function dliFeedback(opts: {
+  cropKey?: string;
+  recentLux: number[]; // 최근 24h 시간당 조도(lux)
+}): DliFeedback {
+  const crop = getCrop(opts.cropKey);
+  // lux → PPFD 근사(백색 LED ~0.015 μmol/m²/s per lux), 시간당 적산
+  const dliPerLuxHour = (0.015 * 3600) / 1e6;
+  const realizedDli =
+    Math.round(opts.recentLux.reduce((s, l) => s + l * dliPerLuxHour, 0) * 10) /
+    10;
+  const gapPct = Math.round(((realizedDli - crop.dliTarget) / crop.dliTarget) * 1000) / 10;
+  let action: string;
+  if (gapPct < -10) action = `목표 대비 ${gapPct}% 부족 — 익일 광시간/광량 상향`;
+  else if (gapPct > 10) action = `목표 대비 +${gapPct}% 초과 — 익일 광량 하향(전력 절감)`;
+  else action = `목표 근접(${gapPct}%) — 현 스케줄 유지`;
+  return { realizedDli, targetDli: crop.dliTarget, gapPct, action };
+}
+
 // ── ② 관리비: 예지보전 (드리프트 탐지) ────────────────────────────────────
 // iot-health의 Z-score는 "지금 튀었나"(스파이크)를 본다. 예지보전은 반대로
 // "서서히 밀리고 있나"(드리프트)를 본다 — 펌프 막힘·센서 열화·히터 성능 저하는
@@ -212,8 +328,8 @@ export interface NutrientAdvice {
   message: string;
 }
 
-export function nutrientAdvice(latest: IoTReading): NutrientAdvice {
-  const [lo, hi] = HEALTHY_RANGES.phLevel;
+export function nutrientAdvice(latest: IoTReading, cropKey?: string): NutrientAdvice {
+  const [lo, hi] = getCrop(cropKey).healthyRanges.phLevel;
   if (latest.phLevel < lo) {
     return {
       status: "adjust",
@@ -365,6 +481,124 @@ export function cusumDrift(
       maxStatistic: Math.round(maxStat * 10) / 10,
     };
   });
+}
+
+// ── ⑧ 외부기상 차분 CUSUM: 계절변화 상쇄, 설비열화만 탐지 ──────────────────
+// 온실 내부온도는 외부기온을 따라간다 — 원시 CUSUM은 계절 하강을 설비 드리프트로
+// 오탐한다(실데이터에서 실제로 관측됨). 내부-외부 온도차(differential)에 관리도를
+// 걸면 계절 성분이 상쇄되고, 히터·차광·단열 성능 저하만 차분의 이동으로 남는다.
+// (RL-Guided MPC의 외란 보상 원리, arXiv 2506.13278 — 여기선 통계적 차분으로 경량 구현.)
+export interface WeatherCompensatedResult {
+  detected: boolean;
+  detectedIndex: number | null;
+  maxStatistic: number;
+  baselineDiff: number; // 정상 가동 시 내외기 온도차 중앙값
+  note: string;
+}
+
+export function weatherCompensatedCusum(
+  internal: number[],
+  external: number[],
+  opts?: { fleetPrior?: { median: number; mad: number } }
+): WeatherCompensatedResult {
+  const n = Math.min(internal.length, external.length);
+  if (n < 12) {
+    return {
+      detected: false,
+      detectedIndex: null,
+      maxStatistic: 0,
+      baselineDiff: 0,
+      note: "데이터 부족",
+    };
+  }
+  const diff = Array.from({ length: n }, (_, i) => internal[i] - external[i]);
+  const sorted = [...diff].sort((a, b) => a - b);
+  const median = sorted[Math.floor(n / 2)];
+  const absDev = diff.map((d) => Math.abs(d - median)).sort((a, b) => a - b);
+  // 신규 사이트(자체 이력 부족)는 플릿 사전분포로 부트스트랩(teacher-student 콜드스타트).
+  const useFleet = n < 48 && opts?.fleetPrior;
+  const center = useFleet ? opts!.fleetPrior!.median : median;
+  const scale = useFleet
+    ? opts!.fleetPrior!.mad
+    : 1.4826 * absDev[Math.floor(n / 2)] || 1e-9;
+
+  const K = 0.5;
+  const H = 5;
+  const baseN = Math.max(8, Math.floor(n / 4));
+  let cPos = 0;
+  let cNeg = 0;
+  let maxStat = 0;
+  let detectedIndex: number | null = null;
+  for (let i = baseN; i < n; i++) {
+    const z = (diff[i] - center) / scale;
+    cPos = Math.max(0, cPos + z - K);
+    cNeg = Math.max(0, cNeg - z - K);
+    const stat = Math.max(cPos, cNeg);
+    if (stat > maxStat) maxStat = stat;
+    if (stat > H && detectedIndex === null) detectedIndex = i;
+  }
+  return {
+    detected: detectedIndex !== null,
+    detectedIndex,
+    maxStatistic: Math.round(maxStat * 10) / 10,
+    baselineDiff: Math.round(center * 10) / 10,
+    note: useFleet
+      ? "플릿 사전분포로 판정(자체 이력 축적 전 콜드스타트)"
+      : detectedIndex !== null
+        ? "내외기 차분 이동 감지 — 계절 아닌 설비 요인(단열/히터/차광) 점검"
+        : "차분 안정 — 설비 정상(계절 변화는 상쇄됨)",
+  };
+}
+
+// ── ⑨ 보광 트리거: 외부일사량 연동 (그린씨에스 LED 이력 실측 로직) ──────────
+// 온실 하이브리드: 자연광이 DLI에 미달하는 시간에만 LED를 보광한다. 실데이터에서
+// 딸기 온실은 보광등을 전체의 0.6%만 사용(햇빛 의존) — 반대로 실내 수직농장은
+// 자연광 0이라 DLI 전량을 LED로 채워야 하며, 이 트리거가 그 경계를 계산한다.
+export interface SupplementalPlan {
+  mode: "greenhouse-hybrid" | "indoor-full";
+  supplementHours: number[]; // 보광 필요 시간대
+  naturalDliShare: number; // 자연광이 채우는 DLI 비율 (0~1)
+  ledDliShare: number;
+}
+
+export function supplementalTrigger(opts: {
+  cropKey?: string;
+  hourlyInsolation: number[]; // 24h 외부일사량 W/m²
+  indoor?: boolean; // 실내 수직농장이면 자연광 0
+}): SupplementalPlan {
+  const crop = getCrop(opts.cropKey);
+  if (opts.indoor) {
+    return {
+      mode: "indoor-full",
+      supplementHours: [],
+      naturalDliShare: 0,
+      ledDliShare: 1,
+    };
+  }
+  // 외부일사량(W/m²) → 실내 도달 PAR DLI 근사. 투과율 0.5, W/m²→PPFD ~2.02.
+  const TRANSMISSION = 0.5;
+  const hourlyDli = opts.hourlyInsolation.map(
+    (w) => (w * TRANSMISSION * 2.02 * 3600) / 1e6
+  );
+  const naturalDli = hourlyDli.reduce((a, b) => a + b, 0);
+  const naturalShare = Math.min(1, naturalDli / crop.dliTarget);
+  // 자연광이 약한 시간(일사량 하위)에 보광
+  const shortfall = Math.max(0, crop.dliTarget - naturalDli);
+  const supplementHours =
+    shortfall > 0
+      ? opts.hourlyInsolation
+          .map((w, h) => ({ w, h }))
+          .sort((a, b) => a.w - b.w)
+          .slice(0, Math.ceil(shortfall / crop.dliTarget * 24))
+          .map((x) => x.h)
+          .sort((a, b) => a - b)
+      : [];
+  return {
+    mode: "greenhouse-hybrid",
+    supplementHours,
+    naturalDliShare: Math.round(naturalShare * 100) / 100,
+    ledDliShare: Math.round((1 - naturalShare) * 100) / 100,
+  };
 }
 
 // ── ⑦ 통합 스케줄 최적화: 시뮬레이티드 어닐링 (SA) ─────────────────────────
@@ -530,6 +764,56 @@ export interface CropAllocation {
   banditTotalMargin: number;
   uniformTotalMargin: number; // 균등 배분 대비
   uplift: number;
+}
+
+// ── ⑩ 거시: 재무 환산 운영 리포트 ─────────────────────────────────────────
+// 최적화 산출을 전부 원/CO2/신뢰도로 환산해 하나의 리포트로 묶는다. 이 숫자가
+// 투자자 대시보드·STO 청약자료·ESG 리포트에 그대로 올라간다 — 최적화를
+// "설정값 튜닝"이 아니라 "재무 성과"로 만드는 거시 계층(Economic MPC 프레이밍).
+export interface OperationsSavings {
+  monthlyWonSaved: number; // 사이트당 월 원 절감 합계 (비중복 레버만)
+  monthlyCo2SavedKg: number;
+  annualWonSaved: number;
+  breakdown: { lever: string; wonPerMonth: number }[];
+  saIntegratedValidation: number; // SA가 전역탐색으로 재현/검증한 통합 절감 (합산 아님)
+  confidence: "measured" | "projected"; // 실측 전이면 projected(상방)
+  note: string;
+}
+
+export function operationsSavingsReport(opts: {
+  dliSavingPerMonth: number; // 전력량요금 절감 (LED 시간 이동)
+  peakSavingPerMonth: number; // 기본요금 절감 (피크 분산) — 서로 다른 요금 축이라 비중복
+  saImprovementPerMonth: number; // SA 통합 최적화가 찾은 추가분
+  wasteReductionUnits: number;
+  unitPrice?: number; // 폐기 절감 1포기 가치(원)
+  dliCo2PerMonth: number;
+  confidence?: "measured" | "projected";
+}): OperationsSavings {
+  const unitPrice = opts.unitPrice ?? 3500;
+  const wasteWon = opts.wasteReductionUnits * unitPrice;
+  // 합산은 비중복 레버만: 전력량요금(DLI) + 기본요금(피크)은 요금 축이 달라 중복 없음.
+  // SA는 이 둘을 동시에 푸는 전역탐색이라 LED 이동분이 DLI와 겹친다 → 합산 제외,
+  // "통합 검증치"로만 표기(정직성).
+  const breakdown = [
+    { lever: "DLI 광주기(전력량요금)", wonPerMonth: opts.dliSavingPerMonth },
+    { lever: "피크 분산(기본요금)", wonPerMonth: opts.peakSavingPerMonth },
+    { lever: "수요연동 파종(폐기 절감)", wonPerMonth: wasteWon },
+  ];
+  const monthlyWonSaved = breakdown.reduce((s, b) => s + b.wonPerMonth, 0);
+  const confidence = opts.confidence ?? "projected";
+  return {
+    monthlyWonSaved,
+    monthlyCo2SavedKg: Math.round(opts.dliCo2PerMonth * 10) / 10,
+    annualWonSaved: monthlyWonSaved * 12,
+    breakdown,
+    saIntegratedValidation:
+      opts.dliSavingPerMonth + opts.peakSavingPerMonth + opts.saImprovementPerMonth,
+    confidence,
+    note:
+      confidence === "projected"
+        ? "1호점 실측 전 추정치(상방) — 실측 후 measured로 확정, 청약자료엔 measured만 게재"
+        : "1호점 실측 확정치 — 투자자 대시보드·ESG 리포트 반영",
+  };
 }
 
 export function thompsonCropAllocation(opts: {
