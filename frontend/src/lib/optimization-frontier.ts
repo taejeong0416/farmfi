@@ -1,4 +1,5 @@
 // ── AI 운영 최적화 — 프론티어 스택 (타 분야 최적화 이식) ─────────────────────
+import { mulberry32 } from "./prng";
 // 지금까지 안 푼 실제 문제에 다른 분야의 검증된 최적화를 매핑한다.
 //
 // [채택 — 데모 배선됨]
@@ -130,26 +131,29 @@ export interface MeanVariancePlan {
 
 export function cropMeanVariance(opts: {
   assets: CropAsset[];
-  correlation?: number; // 작물 간 평균 상관(기본 0.3 — 같은 지역 기상 리스크 공유)
+  correlationMatrix?: number[][]; // 작물쌍 차등 상관행렬 (기본: 상추-바질 0.6 / 상추-토마토 0.2 / 바질-토마토 0.3)
+  correlation?: number; // 단일 상관값 — correlationMatrix 없고 자산 수 ≠ 3일 때 fallback
   samples?: number;
   seed?: number;
 }): MeanVariancePlan {
   const n = opts.assets.length;
-  const corr = opts.correlation ?? 0.3;
+  // 기본 3×3 차등 상관행렬: 상추-바질은 같은 엽채 기상 리스크 공유(0.6),
+  // 바질-토마토는 중간(0.3), 상추-토마토는 성장 특성 달라 낮다(0.2).
+  // 단일 0.3 고정이면 분산투자 통찰이 사라지므로 차등 행렬을 기본으로.
+  const DEFAULT_CORR_3X3: number[][] = [
+    [1.0, 0.6, 0.2],
+    [0.6, 1.0, 0.3],
+    [0.2, 0.3, 1.0],
+  ];
+  const flatCorr = opts.correlation ?? 0.3;
+  const corrMatrix = opts.correlationMatrix ?? (n === 3 ? DEFAULT_CORR_3X3 : null);
   const N = opts.samples ?? 4000;
   // 공분산 행렬: cov[i][j] = corr(i,j) × σi × σj, 대각은 σ²
   const sig = opts.assets.map((a) => a.volatility);
   const cov = (i: number, j: number) =>
-    (i === j ? 1 : corr) * sig[i] * sig[j];
+    (i === j ? 1 : (corrMatrix ? corrMatrix[i][j] : flatCorr)) * sig[i] * sig[j];
 
-  // 시드 PRNG
-  let s = (opts.seed ?? 5) >>> 0;
-  const rand = () => {
-    s = (s + 0x6d2b79f5) | 0;
-    let t = Math.imul(s ^ (s >>> 15), 1 | s);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
+  const rand = mulberry32(opts.seed ?? 5);
 
   const points: PortfolioPoint[] = [];
   for (let k = 0; k < N; k++) {

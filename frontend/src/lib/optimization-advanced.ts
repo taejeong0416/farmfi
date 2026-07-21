@@ -6,21 +6,7 @@
 
 import { getCrop } from "./crop-profiles";
 import { TARIFF_TOU_GENERAL } from "./optimization";
-
-// 결정론적 PRNG (재현성 — 데모마다 동일)
-function mulberry32(seed: number) {
-  let a = seed >>> 0;
-  return () => {
-    a |= 0;
-    a = (a + 0x6d2b79f5) | 0;
-    let t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-function gaussFrom(rand: () => number) {
-  return () => Math.sqrt(-2 * Math.log(1 - rand())) * Math.cos(2 * Math.PI * rand());
-}
+import { mulberry32, gaussFrom } from "./prng";
 
 // ── 돌파 2: 광주기 안전 DLI (농학 하드 제약) ──────────────────────────────
 // 순진한 DLI 스케줄러는 총 광량만 맞추면 시간을 마음대로 흩뿌린다 — 그러나 상추는
@@ -67,10 +53,14 @@ export function photoperiodSafeDli(opts: {
 
   // 필요 명기 = DLI / 시간당기여. 최대광주기 초과 시 PPFD를 올려 시간을 압축.
   const hoursAt = (p: number) => Math.ceil(dliTarget / ((p * 3600) / 1e6));
+  const basePpfd = ppfd;
+  let ledPowerKw = opts.ledPowerKw;
   let requiredHours = hoursAt(ppfd);
   if (requiredHours > pc.maxPhotoperiodH) {
-    // maxPhotoperiodH 안에 담기도록 PPFD 상향
+    // maxPhotoperiodH 안에 담기도록 PPFD 상향 — PPFD↑ = 전력↑.
+    // 전제: LED가 정격 미만으로 디밍 중이므로 PPFD 비율만큼 전력 선형 스케일.
     ppfd = Math.ceil((dliTarget * 1e6) / (pc.maxPhotoperiodH * 3600));
+    ledPowerKw = opts.ledPowerKw * (ppfd / basePpfd);
     requiredHours = hoursAt(ppfd);
   }
   requiredHours = Math.min(requiredHours, pc.maxPhotoperiodH);
@@ -83,7 +73,7 @@ export function photoperiodSafeDli(opts: {
   let bestCost = Infinity;
   for (let s = 0; s < 24; s++) {
     let c = 0;
-    for (let i = 0; i < requiredHours; i++) c += opts.ledPowerKw * tariff[(s + i) % 24];
+    for (let i = 0; i < requiredHours; i++) c += ledPowerKw * tariff[(s + i) % 24];
     if (c < bestCost) {
       bestCost = c;
       bestStart = s;
@@ -95,7 +85,7 @@ export function photoperiodSafeDli(opts: {
   const order = [...Array(24).keys()].sort((a, b) => tariff[a] - tariff[b]);
   const scatterCost = order
     .slice(0, requiredHours)
-    .reduce((s, h) => s + opts.ledPowerKw * tariff[h], 0);
+    .reduce((s, h) => s + ledPowerKw * tariff[h], 0);
 
   return {
     cropLabel: crop.label,
@@ -321,6 +311,7 @@ export function profitOptimization(opts: {
   const yieldOf = (dli: number) => ymax * (1 - Math.exp(-k * dli));
   const costOf = (dli: number) => {
     const hours = dli / ((ppfd * 3600) / 1e6);
+    if (hours > 24) return Infinity; // 물리적 불가능 — 24h/일 상한 초과
     return opts.ledPowerKw * hours * avgTariff; // 원/일 (사이트 전체 LED)
   };
   // 이익 = 수율가치(원/일 환산) − 전기비. 수율은 사이클(cycleDays)에 걸쳐 실현 → 일 환산.
@@ -334,11 +325,13 @@ export function profitOptimization(opts: {
   let bestDli = crop.dliTarget;
   let bestProfit = -Infinity;
   for (let dli = 4; dli <= 30; dli += 1) {
+    const cost = costOf(dli);
+    if (!isFinite(cost)) continue; // DLI가 24h분을 초과하는 물리적 불가능 구간 제외
     const p = profitOf(dli);
     frontier.push({
       dli,
       yield: Math.round(yieldOf(dli) * 100) / 100,
-      cost: Math.round(costOf(dli)),
+      cost: Math.round(cost),
       profit: Math.round(p),
     });
     if (p > bestProfit) {
@@ -374,8 +367,10 @@ export interface VppPlan {
   reductionHoursPerYear: number;
   basicSettlementPerYear: number; // 기본정산금 (대기 대가)
   performanceSettlementPerYear: number; // 실적정산금 (실제 감축)
-  annualDrRevenue: number;
-  dividendContributionPerYear: number; // 배당 풀 기여 (60%)
+  annualDrRevenue: number; // 플릿 전체 연 매출
+  dividendContributionPerYear: number; // 플릿 전체 배당 풀 기여 (60%)
+  annualDrRevenuePerSite: number; // 사이트당 연 매출 (= annualDrRevenue / sites)
+  dividendPerSitePerYear: number; // 사이트당 배당 풀 기여 (= dividendContributionPerYear / sites)
   note: string;
 }
 
@@ -409,23 +404,25 @@ export function fleetVPP(opts: {
   const total = basic + performance;
   const share = opts.dividendShare ?? 0.6;
 
+  const totalRounded = Math.round(total);
+  const dividendRounded = Math.round(total * share);
   return {
     sites: opts.sites,
     contractedKw: Math.round(contractedKw),
     reductionHoursPerYear,
     basicSettlementPerYear: Math.round(basic),
     performanceSettlementPerYear: Math.round(performance),
-    annualDrRevenue: Math.round(total),
-    dividendContributionPerYear: Math.round(total * share),
-    note: `${opts.sites}개 사이트 = ${Math.round(
-      contractedKw
-    )}kW 계약감축. 기본정산 ${Math.round(basic / 10000)}만(대기 대가) + 실적정산 ${Math.round(
-      performance / 10000
-    )}만(연 ${reductionHoursPerYear}h 감축) = 연 ${Math.round(
+    annualDrRevenue: totalRounded,
+    dividendContributionPerYear: dividendRounded,
+    annualDrRevenuePerSite: Math.round(totalRounded / opts.sites),
+    dividendPerSitePerYear: Math.round(dividendRounded / opts.sites),
+    note: `플릿 ${opts.sites}개 사이트 총 ${Math.round(
       total / 10000
-    )}만원 매출 → 배당 풀에 연 ${Math.round(
+    )}만원/년 DR 매출(기본정산 ${Math.round(basic / 10000)}만 + 실적정산 ${Math.round(
+      performance / 10000
+    )}만, 연 ${reductionHoursPerYear}h 감축) → 배당 풀 플릿 총 ${Math.round(
       (total * share) / 10000
-    )}만원 기여. 광주기 유연성 ${flexH}h를 판매. 절감이 아니라 새 수익원.`,
+    )}만원/년 = 사이트당 ${Math.round((total * share) / opts.sites / 10000 * 10) / 10}만원/년. 규모에 비례 — ${opts.sites * 10}사이트면 ${Math.round((total * share) * 10 / 10000)}만원대. 광주기 유연성 ${flexH}h를 판매, 절감이 아니라 새 수익원.`,
   };
 }
 

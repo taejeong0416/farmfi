@@ -18,17 +18,7 @@
 import { getCrop } from "./crop-profiles";
 import { TARIFF_TOU_GENERAL, CARBON_INTENSITY_FACTOR, GRID_EMISSION_FACTOR } from "./optimization";
 import { CROP_PHOTOPERIOD } from "./optimization-advanced";
-
-function mulberry32(seed: number) {
-  let a = seed >>> 0;
-  return () => {
-    a |= 0;
-    a = (a + 0x6d2b79f5) | 0;
-    let t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
+import { mulberry32, gaussFrom } from "./prng";
 
 export interface UnifiedWeights {
   thermal: number; // 열 항 가중 (계절이 조절)
@@ -97,9 +87,9 @@ export function unifiedCoOptimize(opts: {
   const dailyYieldRevenue = (dli: number) =>
     (yieldOf(dli) * area * price) / crop.cycleDays;
 
-  // 가격 시나리오 (강건)
-  const S = 60;
-  const gauss = () => Math.sqrt(-2 * Math.log(1 - rand())) * Math.cos(2 * Math.PI * rand());
+  // 가격 시나리오 (강건) — S=400: top 5% = 20표본으로 CVaR95 통계적으로 유의
+  const S = 400;
+  const gauss = gaussFrom(rand);
   const scenarios: number[][] = [];
   for (let n = 0; n < S; n++)
     scenarios.push(tariff.map((p, h) => Math.max(30, p * (1 + gauss() * vol * (p > 180 ? 1.5 : 1)))));
@@ -130,8 +120,16 @@ export function unifiedCoOptimize(opts: {
     const expEnergy = costs.reduce((a, b) => a + b, 0) / S;
     const cvar = costs.slice(Math.floor(S * 0.95)).reduce((a, b, _, arr) => a + b / arr.length, 0);
 
-    // 기본요금(피크): LED+공조+펌프 동시가동 근사 (LED가 기저)
-    const peakKw = opts.ledPowerKw + 1.5 + 0.7; // 최악 동시
+    // 기본요금(피크): 시간별 부하 프로파일로 실제 피크 동적 계산 (peakStagger 방식)
+    // 공조(1.5kW)는 LED와 동기 가동(식물 환경 유지 필수), 펌프(0.7kW, 8h/일)는
+    // 유연 — 부하 가장 낮은 시간대에 배치해 피크 최소화.
+    const hourProfile = Array(24).fill(0);
+    for (const h of litHours) hourProfile[h] += opts.ledPowerKw + 1.5;
+    const pumpSlots = [...Array(24).keys()]
+      .sort((a, b) => hourProfile[a] - hourProfile[b])
+      .slice(0, 8);
+    for (const h of pumpSlots) hourProfile[h] += 0.7;
+    const peakKw = Math.max(...hourProfile);
     const demand = peakKw * 8320 / 30; // 일 환산
 
     // 순열비용: 시간대 외부온도 연동
@@ -167,30 +165,19 @@ export function unifiedCoOptimize(opts: {
     };
   };
 
-  // SA 탐색: dli ∈ [dliMin, 이익범위 상한], start ∈ [0,24)
+  // 전수열거: dli × start = (dliMax-dliMin+1) × 24 ≈ 264개.
+  // 탐색공간이 작아 SA보다 전수열거가 정직하고 완전하다(전역 최적 보장).
   const dliMin = Math.max(6, crop.dliTarget - 4);
   const dliMax = crop.dliTarget + 6;
-  let cur = { dli: crop.dliTarget, start: 0 };
-  let curEval = evalCandidate(cur.dli, cur.start)!;
-  let best = cur;
-  let bestEval = curEval;
-  for (let it = 0; it < 6000; it++) {
-    const temp = 500 * (1 - it / 6000) + 1;
-    const next = {
-      dli: Math.max(dliMin, Math.min(dliMax, cur.dli + Math.round((rand() - 0.5) * 6))),
-      start: Math.floor(rand() * 24),
-    };
-    const ev = evalCandidate(next.dli, next.start);
-    if (!ev) continue;
-    if (ev.net > curEval.net || rand() < Math.exp((ev.net - curEval.net) / temp)) {
-      cur = next;
-      curEval = ev;
-      if (ev.net > bestEval.net) {
-        best = next;
-        bestEval = ev;
-      }
+  let bestEvalOrNull: ReturnType<typeof evalCandidate> = null;
+  for (let dli = dliMin; dli <= dliMax; dli++) {
+    for (let start = 0; start < 24; start++) {
+      const ev = evalCandidate(dli, start);
+      if (!ev) continue;
+      if (!bestEvalOrNull || ev.net > bestEvalOrNull.net) bestEvalOrNull = ev;
     }
   }
+  const bestEval = bestEvalOrNull ?? evalCandidate(crop.dliTarget, 0)!;
 
   // 순차 파이프라인 기준: DLI=목표 고정, 전력만 최저 배치 (비교용)
   const seqEval = (() => {

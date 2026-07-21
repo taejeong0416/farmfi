@@ -230,6 +230,9 @@ export default async function OptimizationPage({
           환경↔수율 {recipe.samples}개 사이클을 학습해 최적 생육조건을 도출 — 이 레시피가
           최적화 스택의 목표(DLI·정상범위)가 되어 두 시스템이 맞물린다. 비전공 운영자도 따라할 수 있다.
         </p>
+        <p className="text-xs font-medium text-amber-700 bg-amber-50 rounded px-2 py-1">
+          ※ 합성 데이터 데모 (실 수율은 1호점 수확기록에서 확정) — 알고리즘 복원력 시험용 시뮬레이션
+        </p>
         <div className="grid gap-3 sm:grid-cols-2 text-sm">
           <div className="rounded bg-white p-3">
             <div className="font-medium">특성 중요도 (SHAP 섀플리 값)</div>
@@ -245,7 +248,7 @@ export default async function OptimizationPage({
             </p>
             <p className="mt-1 text-xs text-gray-400">
               데이터가 최적점을 담으면 데이터가(가중 {recipe.hybrid[0].dataWeight}), 부족하면 작물학
-              사전이 이끔 — 물리정보 신경망(AgriPINN) 방식으로 데이터 부족을 보완.
+              사전이 이끔 — 농학사전 정규화 하이브리드(신경망·미분방정식 없음)로 데이터 부족을 보완.
             </p>
           </div>
         </div>
@@ -256,8 +259,8 @@ export default async function OptimizationPage({
           </div>
         )}
         <p className="text-xs text-lime-700">
-          근거: 실내 수직수경 바질 수율 ML(arXiv 2512.22151) · SHAP(2606.15273) · AgriPINN(2601.16045) ·
-          능동학습 배치 베이지안(2311.01195). 실 수율 라벨은 1호점 수확 기록에서 확정.
+          근거: 실내 수직수경 바질 수율 ML(arXiv 2512.22151) · SHAP(2606.15273) · 하이브리드 농학사전(2601.16045 방법론 참고, 신경망·미분방정식 없음) ·
+          UCB 능동학습(2311.01195). 실 수율 라벨은 1호점 수확 기록에서 확정.
         </p>
       </section>
 
@@ -345,11 +348,19 @@ export default async function OptimizationPage({
         <div className="rounded bg-indigo-900 p-4 text-white">
           <div className="text-sm text-indigo-200">⑤ 플릿 가상발전소(VPP) — 절감이 아니라 새 수익</div>
           <div className="mt-1 text-lg font-bold">
-            {fmt(adv.vpp.contractedKw)}kW 가상발전소 · 수요반응 연 {fmt(adv.vpp.annualDrRevenue / 10000)}만원 매출
+            {fmt(adv.vpp.contractedKw)}kW 가상발전소 · 수요반응 연{" "}
+            <span title="플릿 전체 합산">{fmt(adv.vpp.annualDrRevenue / 10000)}만원</span> 매출
+            <span className="ml-2 text-sm font-normal text-indigo-300">
+              (플릿 {adv.vpp.sites}사이트 전체 / 사이트당{" "}
+              {Math.round(adv.vpp.annualDrRevenuePerSite / 1000) / 10}만원)
+            </span>
           </div>
           <p className="mt-1 text-sm text-indigo-100">
             사이트들의 광주기 유연성을 묶어 전력망에 판다 → 배당 풀에 연{" "}
-            <b>{fmt(adv.vpp.dividendContributionPerYear / 10000)}만원</b> 기여.
+            <b title="플릿 전체 합산">{fmt(adv.vpp.dividendContributionPerYear / 10000)}만원</b> 기여
+            <span className="text-indigo-300">
+              {" "}(사이트당 {Math.round(adv.vpp.dividendPerSitePerYear / 1000) / 10}만원 · 규모에 비례)
+            </span>.{" "}
             AI 최적화가 비용을 깎는 데서 멈추지 않고 투자자 배당 재원을 창출한다.
           </p>
         </div>

@@ -10,6 +10,7 @@
 
 import { IoTReading, HEALTHY_RANGES } from "./iot-health";
 import { getCrop } from "./crop-profiles";
+import { mulberry32, gaussFrom } from "./prng";
 
 // 계통 전력 배출계수 (kg CO2/kWh) — 한국 2024 근사. 절감 kWh를 CO2로 환산해
 // ESG 리포트·투자자 대시보드에 올리는 데 쓴다(거시 재무 환산).
@@ -605,17 +606,7 @@ export function supplementalTrigger(opts: {
 // ①(전력량요금)과 ⑥(기본요금)을 2단계로 따로 풀면 국소해에 갇힐 수 있다.
 // 반도체 배치·물류 라우팅에서 쓰는 메타휴리스틱(SA)으로 두 비용을 하나의
 // 목적함수(월 전력량요금 + 월 기본요금)로 합쳐 전역 탐색한다.
-// 재현성: 시드 고정 PRNG(mulberry32) — 데모마다 같은 결과.
-function mulberry32(seed: number) {
-  let a = seed >>> 0;
-  return () => {
-    a |= 0;
-    a = (a + 0x6d2b79f5) | 0;
-    let t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
+// 재현성: 시드 고정 PRNG(mulberry32) — 데모마다 같은 결과. mulberry32는 ./prng 공유 모듈.
 
 export interface JointSchedule {
   assignments: { name: string; hours: number[] }[];
@@ -770,6 +761,52 @@ export interface BanditAllocation {
 export type CropArm = BanditArm;
 export type CropAllocation = BanditAllocation;
 
+// ── 실데이터 밴딧: 관측 누적 상태 + 갱신 인터페이스 ──────────────────────────
+// thompsonAllocation은 trueMeanMargin(정답)을 요구 — 시뮬레이션 전용.
+// 실운영에서는 관측 보상이 쌓일수록 사후를 갱신해야 한다. 아래 인터페이스로
+// 실측 마진을 누적하면 동일한 톰슨 샘플링이 실데이터로 동작한다.
+export interface BanditState {
+  n: number[];     // 각 팔 관측 횟수
+  sum: number[];   // 관측 보상 합계 (사후평균 = sum/n)
+  sumSq: number[]; // 관측 보상 제곱합 (분산 계산용)
+}
+
+export function initBanditState(numArms: number): BanditState {
+  return {
+    n: Array(numArms).fill(0),
+    sum: Array(numArms).fill(0),
+    sumSq: Array(numArms).fill(0),
+  };
+}
+
+// 관측 한 건을 사후에 반영한 새 상태 반환 (불변 업데이트).
+export function thompsonUpdate(
+  state: BanditState,
+  obs: { arm: number; reward: number }
+): BanditState {
+  const n = [...state.n];
+  const sum = [...state.sum];
+  const sumSq = [...state.sumSq];
+  n[obs.arm] += 1;
+  sum[obs.arm] += obs.reward;
+  sumSq[obs.arm] += obs.reward * obs.reward;
+  return { n, sum, sumSq };
+}
+
+// 현재 상태에서 톰슨 샘플링으로 다음에 할당할 팔 인덱스 반환.
+// seed 없으면 Math.random 사용 (라이브 배정). seed 있으면 재현 가능.
+export function thompsonSample(state: BanditState, seed?: number): number {
+  const rand = seed != null ? mulberry32(seed) : Math.random.bind(Math);
+  const gauss = gaussFrom(rand);
+  const samples = state.n.map((ni, i) => {
+    if (ni < 2) return 1e9 - i; // 미탐색 팔 우선
+    const mean = state.sum[i] / ni;
+    const variance = Math.max(1, (state.sumSq[i] - (state.sum[i] ** 2) / ni) / (ni - 1));
+    return mean + gauss() * Math.sqrt(variance / ni);
+  });
+  return samples.indexOf(Math.max(...samples));
+}
+
 // ── ⑩ 거시: 재무 환산 운영 리포트 ─────────────────────────────────────────
 // 최적화 산출을 전부 원/CO2/신뢰도로 환산해 하나의 리포트로 묶는다. 이 숫자가
 // 투자자 대시보드·STO 청약자료·ESG 리포트에 그대로 올라간다 — 최적화를
@@ -779,7 +816,7 @@ export interface OperationsSavings {
   monthlyCo2SavedKg: number;
   annualWonSaved: number;
   breakdown: { lever: string; wonPerMonth: number }[];
-  saIntegratedValidation: number; // SA가 전역탐색으로 재현/검증한 통합 절감 (합산 아님)
+  sumOfIndependentLevers: number; // 독립 레버 단순 합산 (비중복 세 레버를 더한 수치 — SA 검증치 아님)
   confidence: "measured" | "projected"; // 실측 전이면 projected(상방)
   note: string;
 }
@@ -810,7 +847,7 @@ export function operationsSavingsReport(opts: {
     monthlyCo2SavedKg: Math.round(opts.dliCo2PerMonth * 10) / 10,
     annualWonSaved: monthlyWonSaved * 12,
     breakdown,
-    saIntegratedValidation:
+    sumOfIndependentLevers:
       opts.dliSavingPerMonth + opts.peakSavingPerMonth + opts.saImprovementPerMonth,
     confidence,
     note:
@@ -827,9 +864,7 @@ export function thompsonAllocation(opts: {
 }): BanditAllocation {
   const rand = mulberry32(opts.seed ?? 7);
   const rounds = opts.rounds ?? 200;
-  // 표준정규 샘플 (Box-Muller)
-  const gauss = () =>
-    Math.sqrt(-2 * Math.log(1 - rand())) * Math.cos(2 * Math.PI * rand());
+  const gauss = gaussFrom(rand);
 
   const stats = opts.arms.map(() => ({ n: 0, sum: 0, sumSq: 0 }));
   let banditTotal = 0;
