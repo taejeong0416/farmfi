@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { DashboardShell, GreenBand, Hero, Metric, Panel, Section } from "@/components/FarmFi";
+import { GreenBand, Hero, Metric, Panel, Section } from "@/components/FarmFi";
 
 export default function OperatorPage() {
   return (
@@ -14,8 +14,8 @@ export default function OperatorPage() {
             <Link className="btn" href="/operator/apply">
               운영자 지원하기 →
             </Link>
-            <Link className="ghost" href="/dashboard">
-              대시보드 보기
+            <Link className="ghost" href="#apply">
+              합류 절차 보기
             </Link>
           </>
         }
@@ -49,7 +49,6 @@ export default function OperatorPage() {
           </Panel>
         </div>
       </Section>
-      <DashboardShell operator />
       <GreenBand text="지금 바로 FarmFi 운영 파트너로 첫 걸음을 시작하세요" />
     </main>
   );

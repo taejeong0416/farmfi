@@ -124,11 +124,11 @@ export function ProjectsGrid() {
       <div className="card" style={{ padding: 32, textAlign: "center" }}>
         <p style={{ fontWeight: 700 }}>지금은 모집 중인 라운드가 없습니다.</p>
         <p className="muted">
-          새 지점 라운드가 열리면 이곳에 표시됩니다. 운영 중인 지점 현황은
-          대시보드에서 볼 수 있어요.
+          새 지점 라운드가 열리면 이곳에 표시됩니다. 관심 지역을 남겨두시면 모집
+          시작 시 안내드립니다.
         </p>
-        <Link className="outline" href="/dashboard" style={{ marginTop: 18 }}>
-          운영 현황 보기 →
+        <Link className="outline" href="#contact" style={{ marginTop: 18 }}>
+          모집 알림 문의 →
         </Link>
       </div>
     );

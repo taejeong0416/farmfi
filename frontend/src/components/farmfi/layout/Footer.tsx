@@ -21,7 +21,7 @@ export function Footer() {
           </p>
           <p>© 2026 FarmFi. All rights reserved.</p>
         </div>
-        <FooterCol title="서비스" items={["서비스 소개", "공간 등록", "운영자 지원", "대시보드"]} />
+        <FooterCol title="서비스" items={["서비스 소개", "투자하기", "운영자 모집", "공간 제공"]} />
         <FooterCol title="지원" items={["운영자 지원", "기관 문의", "이용 가이드", "FAQ"]} />
         <FooterCol title="회사" items={["회사 소개", "파트너십", "블로그", "채용"]} />
         <FooterCol

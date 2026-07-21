@@ -8,8 +8,8 @@ export function SpaceProviders() {
       "기관·지자체",
       "유휴공간을 24시간 신선매장으로 전환하고 공실전환 성과를 리포트로 확보하세요.",
       "building",
-      "운영 현황 보기",
-      "/dashboard",
+      "제휴 문의",
+      "#contact",
     ],
     [
       "건물주",
