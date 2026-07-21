@@ -27,3 +27,8 @@ export function timeAgo(date: Date | string): string {
   const days = Math.floor(hours / 24);
   return `${days}일 전`;
 }
+
+// 원화 표기 (예: 1000000 → "1,000,000원"). 신원인증 투자한도 표시용.
+export function formatKRW(value: number): string {
+  return new Intl.NumberFormat("ko-KR").format(value) + "원";
+}
