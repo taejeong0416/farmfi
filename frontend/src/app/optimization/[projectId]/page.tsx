@@ -16,6 +16,7 @@ import {
 } from "@/lib/optimization";
 import { optimalStack } from "@/lib/optimization-advanced";
 import { cropMeanVariance, remainingUsefulLife } from "@/lib/optimization-frontier";
+import { unifiedCoOptimize } from "@/lib/optimization-unified";
 import { fetchSalesData, fetchOpenData } from "@/lib/opendata";
 import { getCrop } from "@/lib/crop-profiles";
 import { IoTReading } from "@/lib/iot-health";
@@ -112,6 +113,8 @@ export default async function OptimizationPage({
   const envRecs = await fetchOpenData();
   const ext24 = envRecs.slice(-24).map((r) => r.extTemp ?? 15);
   const adv = optimalStack({ cropKey, ledPowerKw, sites: 20, hourlyExtTemp: ext24 });
+  // 캡스톤: 통합 공동최적화 (6개 목적을 하나의 목적함수로 동시 최적화)
+  const unified = unifiedCoOptimize({ cropKey, ledPowerKw, sites: 20, hourlyExtTemp: ext24 });
 
   const fmt = (n: number) => Math.round(n).toLocaleString("ko-KR");
 
@@ -216,9 +219,52 @@ export default async function OptimizationPage({
         </div>
       </section>
 
+      {/* 캡스톤: 통합 공동최적화 */}
+      <section className="rounded-lg border-2 border-slate-800 bg-slate-900 p-5 text-white space-y-3">
+        <h2 className="font-semibold">캡스톤 · 통합 공동최적화 (6개 목적을 하나로)</h2>
+        <p className="text-sm text-slate-300">
+          순차 파이프라인(각 알고리즘이 바통 넘김)이 아니라, <b>단일 목적함수로 전부 동시에 저울질</b>한다.
+          결정변수(광량 DLI·광블록 시작)를 시뮬레이티드 어닐링으로 함께 탐색하며 수율매출·전력량·기본요금·
+          열·CO₂·VPP 유연성을 한 번에 최적화. 광주기 안전은 하드제약, 가격은 강건.
+        </p>
+        <div className="flex flex-wrap items-baseline gap-3">
+          <span className="text-2xl font-bold text-emerald-400">
+            순가치 {fmt(unified.netDailyValue)}원/일
+          </span>
+          <span className="text-slate-300">
+            순차 파이프라인 대비 <b className="text-emerald-400">+{fmt(unified.vsSequentialNetValue)}원/일</b>
+          </span>
+        </div>
+        <div className="grid gap-2 sm:grid-cols-3 text-xs">
+          <div className="rounded bg-slate-800 p-2">
+            <div className="text-slate-400">수율매출</div>
+            <div className="font-bold text-emerald-400">+{fmt(unified.breakdown.yieldRevenue)}</div>
+          </div>
+          <div className="rounded bg-slate-800 p-2">
+            <div className="text-slate-400">전력+기본+열+CO₂</div>
+            <div className="font-bold text-red-300">
+              −{fmt(unified.breakdown.energyCost + unified.breakdown.demandCharge + unified.breakdown.thermalCost + unified.breakdown.co2Cost)}
+            </div>
+          </div>
+          <div className="rounded bg-slate-800 p-2">
+            <div className="text-slate-400">VPP 유연성 가치</div>
+            <div className="font-bold text-sky-300">+{fmt(unified.breakdown.vppValue)}</div>
+          </div>
+        </div>
+        <div className="text-xs text-slate-300">
+          <div className="mb-1">
+            문맥 적응 가중치: 열 {unified.contextWeights.thermal} · VPP {unified.contextWeights.vpp} · 강건 {unified.contextWeights.robust}
+            (계절·DR달력·가격변동성이 자동 조절)
+          </div>
+          {unified.tradeoffs.map((t, i) => (
+            <div key={i} className="text-slate-400">· {t}</div>
+          ))}
+        </div>
+      </section>
+
       {/* 고도화: 5개 돌파 통합 스택 */}
       <section className="rounded-lg border-2 border-indigo-200 bg-indigo-50 p-5 space-y-3">
-        <h2 className="font-semibold text-indigo-900">고도화 · 5개 돌파 최적 조합</h2>
+        <h2 className="font-semibold text-indigo-900">고도화 · 5개 돌파 (통합 최적화의 구성 요소)</h2>
         <p className="text-xs text-indigo-700">{adv.summary.headline}</p>
 
         <div className="grid gap-2 sm:grid-cols-2 text-sm">
