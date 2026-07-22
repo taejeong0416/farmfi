@@ -202,6 +202,10 @@ contract V16HardeningTest is Test {
         Escrow e = _newSite(token);
         Dividend dividend = new Dividend(address(token));
 
+        // 양도제한 게이트: 송·수신 지갑을 화이트리스트에 등록해야 P2P 이전이 열린다.
+        token.registerIdentity(investor1, keccak256("did:test:investor1"));
+        token.registerIdentity(investor2, keccak256("did:test:investor2"));
+
         vm.deal(investor1, 1 ether);
         vm.prank(investor1);
         e.subscribe{value: 0.1 ether}(); // investor1: 100 tokens
@@ -230,6 +234,10 @@ contract V16HardeningTest is Test {
         FarmToken token = new FarmToken("Farm", "FARM", 1000);
         Escrow e = _newSite(token);
         Dividend dividend = new Dividend(address(token));
+
+        // 양도제한 게이트: 송·수신 지갑을 화이트리스트에 등록해야 P2P 이전이 열린다.
+        token.registerIdentity(investor1, keccak256("did:test:investor1"));
+        token.registerIdentity(investor2, keccak256("did:test:investor2"));
 
         vm.deal(investor1, 1 ether);
         vm.prank(investor1);
