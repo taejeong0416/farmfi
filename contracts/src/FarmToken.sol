@@ -9,6 +9,8 @@ contract FarmToken is ERC20, AccessControl {
     using Checkpoints for Checkpoints.Trace208;
 
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+    // 신원 레지스트리에 지갑↔DID를 등록/폐기하는 권한 (KYC 통과 시 서버가 호출).
+    bytes32 public constant REGISTRAR_ROLE = keccak256("REGISTRAR_ROLE");
     uint256 public immutable maxSupply;
 
     // 블록 단위 잔고 체크포인트 — 배당 스냅샷용. 배당 발표 후 토큰을 산 사람이
@@ -16,7 +18,19 @@ contract FarmToken is ERC20, AccessControl {
     mapping(address => Checkpoints.Trace208) private _balanceCheckpoints;
     Checkpoints.Trace208 private _totalSupplyCheckpoints;
 
+    // 지갑 → DID 해시 온체인 바인딩. 0이 아니면 신원검증(KYC) 완료 = 화이트리스트.
+    // 익명 지갑을 증권 보유자(실명 신원)와 연결해 양도제한·식별을 성립시킨다.
+    // NOTE: 매핑이 public이라 "지갑↔DID해시" 연결이 온체인에 노출된다(해시라 원문은
+    //       아니지만 링크빌리티는 남음). 실서비스 전 프라이버시 검토 필요.
+    mapping(address => bytes32) public identity;
+
+    // DID 해시 → 지갑 역방향 매핑. 1신원=1지갑을 강제해 다중지갑으로 양도제한을
+    // 우회하는 것을 막는다.
+    mapping(bytes32 => address) public didToWallet;
+
     event TokenMinted(address indexed to, uint256 amount);
+    event IdentityRegistered(address indexed wallet, bytes32 indexed didHash);
+    event IdentityRevoked(address indexed wallet);
 
     constructor(
         string memory name_,
@@ -25,6 +39,32 @@ contract FarmToken is ERC20, AccessControl {
     ) ERC20(name_, symbol_) {
         maxSupply = totalSupply_;
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(REGISTRAR_ROLE, msg.sender);
+    }
+
+    /// @notice KYC 통과 지갑을 DID 해시와 함께 화이트리스트에 등록 (지갑↔DID 온체인 바인딩).
+    /// @dev 1지갑=1신원, 1신원=1지갑을 강제한다. 재등록·재바인딩은 먼저 revoke 후 등록.
+    function registerIdentity(address wallet, bytes32 didHash) external onlyRole(REGISTRAR_ROLE) {
+        require(wallet != address(0), "Zero wallet");
+        require(didHash != bytes32(0), "Zero DID");
+        require(identity[wallet] == bytes32(0), "Wallet already registered");
+        require(didToWallet[didHash] == address(0), "DID already registered");
+        identity[wallet] = didHash;
+        didToWallet[didHash] = wallet;
+        emit IdentityRegistered(wallet, didHash);
+    }
+
+    /// @notice 화이트리스트에서 지갑을 제거 (신원 폐기 시). 역방향 바인딩도 함께 해제.
+    function revokeIdentity(address wallet) external onlyRole(REGISTRAR_ROLE) {
+        bytes32 didHash = identity[wallet];
+        delete didToWallet[didHash];
+        delete identity[wallet];
+        emit IdentityRevoked(wallet);
+    }
+
+    /// @notice 지갑이 신원검증(화이트리스트)된 증권 보유 자격을 갖췄는가.
+    function isVerified(address wallet) public view returns (bool) {
+        return identity[wallet] != bytes32(0);
     }
 
     function mint(address to, uint256 amount) external onlyRole(MINTER_ROLE) {
@@ -40,6 +80,12 @@ contract FarmToken is ERC20, AccessControl {
     /// @dev 모든 mint/burn/transfer 후 잔고·총공급 체크포인트 기록.
     ///      maxSupply가 uint208 범위를 한참 밑돌아(데모 1,000) 캐스팅 안전.
     function _update(address from, address to, uint256 value) internal override {
+        // 양도제한: 2차 이전(P2P)은 송·수신 지갑이 모두 화이트리스트여야 한다.
+        // mint(from=0, 청약 발행)은 게이트 예외 — 발행은 신원 게이트 밖.
+        // to=0(소각) 예외도 방어적으로 둔다(현재 소각 함수는 노출돼 있지 않음).
+        if (from != address(0) && to != address(0)) {
+            require(isVerified(from) && isVerified(to), "FarmToken: holder not verified");
+        }
         super._update(from, to, value);
         uint48 key = uint48(block.number);
         if (from != address(0)) {

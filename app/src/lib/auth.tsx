@@ -43,15 +43,20 @@ function useProtectedRoute(user: User | null, loading: boolean) {
   const segments = useSegments();
   const router = useRouter();
 
+  // 데모 우회 플래그. EXPO_PUBLIC_DEMO_BYPASS=1 이면 미로그인도 /farm 미리보기 허용
+  // (진입은 모니터링으로). 프로덕션에선 이 값을 비워 원래 /login 가드로 동작한다.
+  const demoBypass = process.env.EXPO_PUBLIC_DEMO_BYPASS === "1";
+
   useEffect(() => {
     if (loading) return;
+    if (demoBypass && segments[0] === "farm") return;
     const inAuthScreen = segments[0] === "login";
     if (!user && !inAuthScreen) {
-      router.replace("/login");
+      router.replace(demoBypass ? "/farm/monitoring" : "/login");
     } else if (user && inAuthScreen) {
       router.replace("/");
     }
-  }, [user, loading, segments, router]);
+  }, [user, loading, segments, router, demoBypass]);
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
