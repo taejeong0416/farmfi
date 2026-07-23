@@ -5,6 +5,18 @@
 
 ---
 
+## 2026-07-23 — 박태정
+
+### 데모 라이브 e2e 통주행 리허설 — 숨은 통합버그 3건 수정
+07-21에 "라이브 e2e(실 Gemini+온체인)는 별도 리허설 필요"로 남겨둔 걸 실제로 끝까지 돌림. dev 서버 → admin 로그인 Bearer → `demo/reset` → `demo/step` 1~8 실행(실 Gemini·온체인 live 모드). tsc로만 통과했던 오케스트레이션이 e2e에서 **3건의 통합버그**를 드러냄:
+- **demo/step 대상 프로젝트 오식별**(`71efe5ec`): 스텝1~3 청약이 완납되면 3호점 status가 `funding→funded`로 바뀌는데(subscription.ts), 스텝4~8이 쓰는 `findFundingProject`가 `status="funding"`으로만 찾아 "No funding project found"로 중단. 시드상 1호점도 `funded`라 status 식별 자체가 불안정 → 안정적인 `tokenSymbol="MF03"`로 고정.
+- **IoT 가동률 게이트 미배선**(`866def5c`): verify가 IoT 마일스톤(iotMinDays>0)을 `(data.uptimeRate>=90)`으로 판정하나 detect-anomaly가 `uptimeRate`를 반환한 적이 없어 **모든 프로젝트에서 IoT 마일스톤(m2·m4) 항상 실패**. `isHealthy`(도메인 정상범위)로 가동률 계산해 반환. 겸해서 시드가 IoT를 1·2호점에만 넣고 데모 대상 3호점엔 안 넣어 `dataCount=0`이던 것도 3호점 IoT 60일치 추가로 해소(가동률 99% 확인).
+- **배당 분배 트랜잭션 타임아웃**(`0a262d79`): 보유자별 배당 쿼리 다수를 한 인터랙티브 트랜잭션에서 순차 실행 → pooler 지연으로 기본 5s 초과(관측 6.6s, P2028)해 콜드 콜에서 간헐 실패. `timeout 15s·maxWait 5s`로 확장.
+- **결과**: reset 후 8스텝 전부 통과 — 청약 920구좌(9.2M) 완납 → escrow 4M→13.2M 충전 → 마일스톤 seq1~4 순차 집행(트랜치 4,620,000+3,960,000+2,640,000+1,980,000 = **13,200,000 전액, remaining 0**) → 배당 분배(investorDividend 1,013,565·perToken 1,101) → 3호점 status `operating`.
+- 메모: **실 Gemini는 간헐적 추출 실패**가 있어 마일스톤 검증 스텝(4·6·8)이 1차 실패→재검증 통과하는 경우 발생(마일스톤 retryCount 게이트가 이걸 흡수). 발표 데모는 `DEMO_MODE=cached`로 성공 결과 재생이 안전. **온체인은 6월 배포분이 이미 release 소진 + Amoy RPC 불안정으로 txHash=null**(verify/release가 try/catch로 격리돼 DB 무중단 — 문서화된 앵커 동작).
+
+---
+
 ## 2026-07-21 — 박태정
 
 ### 데모 오케스트레이션 복원 — demo/reset·demo/step (3호점 완결 흐름)
