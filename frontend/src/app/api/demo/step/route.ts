@@ -12,10 +12,11 @@ function serialize(obj: any): any {
   );
 }
 
-// 청약 데모 대상 = 모집중(funding) 프로젝트. 시드상 3호점(에스크로·마일스톤 pending 보유).
-async function findFundingProject() {
-  const project = await prisma.project.findFirst({ where: { status: "funding" } });
-  if (!project) throw new Error("No funding project found");
+// 데모 대상 = 3호점(명륜동, MF03). 청약이 완납되면 status가 funding→funded로 바뀌므로
+// 가변 status가 아니라 안정적인 tokenSymbol로 식별한다 (스텝 전 구간 동일 프로젝트).
+async function findDemoProject() {
+  const project = await prisma.project.findFirst({ where: { tokenSymbol: "MF03" } });
+  if (!project) throw new Error("Demo project (MF03) not found");
   return project;
 }
 
@@ -38,7 +39,7 @@ async function getAdminBearer(): Promise<string> {
 // 세션·본인인증·한도 게이트는 사용자 경로(/api/subscribe)에만 적용된다.
 async function subscribe(userName: string, tokenAmount: number) {
   const user = await findUserByName(userName);
-  const project = await findFundingProject();
+  const project = await findDemoProject();
 
   const result = await executeSubscription({
     userId: user.id,
@@ -92,7 +93,7 @@ async function verifyAndCompleteMilestone(
   baseUrl: string,
   authHeader: string
 ) {
-  const project = await findFundingProject();
+  const project = await findDemoProject();
 
   const milestone = await prisma.milestone.findUnique({
     where: { projectId_seq: { projectId: project.id, seq } },
@@ -148,7 +149,7 @@ async function verifyAndCompleteMilestone(
 }
 
 async function distributeDividends(baseUrl: string, authHeader: string) {
-  const project = await findFundingProject();
+  const project = await findDemoProject();
 
   const res = await fetch(`${baseUrl}/api/dividends/distribute`, {
     method: "POST",
