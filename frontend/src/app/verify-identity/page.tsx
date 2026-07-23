@@ -1,9 +1,9 @@
 "use client";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useAuth } from "@/lib/useAuth";
-import { createIdentityOffer, fetchIdentityStatus, identityStatusQueryKey } from "@/components/farmfi/identity/api";
+import { confirmIdentity, createIdentityOffer, fetchIdentityStatus, identityStatusQueryKey } from "@/components/farmfi/identity/api";
 import { IdentityStepper, type IdentityFlowStage } from "@/components/farmfi/identity/IdentityStepper";
 import { QrCard } from "@/components/farmfi/identity/QrCard";
 import { VerificationResult } from "@/components/farmfi/identity/VerificationResult";
@@ -12,12 +12,23 @@ import type { IdentityOffer, IdentityStatusResponse } from "@/components/farmfi/
 const POLL_INTERVAL_MS = 2500;
 
 export default function VerifyIdentityPage() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+  const queryClient = useQueryClient();
   const [offer, setOffer] = useState<IdentityOffer | null>(null);
 
   const offerMutation = useMutation({
     mutationFn: createIdentityOffer,
     onSuccess: (data) => setOffer(data),
+  });
+
+  // 데모 전용 — 홀더 지갑앱이 없어 실 QR은 verified로 안 넘어간다. admin이 이 버튼으로
+  // 세션을 확정하면 폴링이 자격·한도까지 이어서 채운다.
+  const confirmMutation = useMutation({
+    mutationFn: () => confirmIdentity(offer!.txId),
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: identityStatusQueryKey(offer?.txId ?? null),
+      }),
   });
 
   const statusQuery = useQuery<IdentityStatusResponse>({
@@ -91,6 +102,17 @@ export default function VerifyIdentityPage() {
                 <p className="muted" role="status" style={{ marginTop: 14, textAlign: "center" }}>
                   지갑 앱에서 인증을 완료하면 자동으로 다음 단계로 넘어가요. (약 3초 소요)
                 </p>
+                {user?.role === "admin" ? (
+                  <button
+                    className="ghost"
+                    type="button"
+                    style={{ width: "100%", marginTop: 10 }}
+                    disabled={confirmMutation.isPending}
+                    onClick={() => confirmMutation.mutate()}
+                  >
+                    {confirmMutation.isPending ? "확정 중..." : "데모: 인증 완료 처리 (admin)"}
+                  </button>
+                ) : null}
               </>
             ) : null}
 
