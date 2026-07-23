@@ -190,6 +190,8 @@ export async function seedScenario(prisma: PrismaClient) {
   await prisma.projectPartner.create({
     data: { projectId: p3.id, role: "landlord", name: "박건물", monthlyRecoveryAmount: BigInt(450_000) },
   });
+  // IoT 60일치 — 시운전·지속운영 마일스톤(가동률 게이트) 검증용
+  await prisma.iotData.createMany({ data: buildIotRecords(p3.id, now) });
 
   // ─── 생육 이상 알림 ───
   await prisma.notification.create({

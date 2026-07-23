@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { detectAnomalies, IoTReading } from "@/lib/iot-health";
+import { detectAnomalies, isHealthy, IoTReading } from "@/lib/iot-health";
 import { prisma } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
         anomalyDetected: false,
         anomalyScore: 0,
         affectedSensors: [],
+        uptimeRate: 0,
         dataCount: 0,
       });
     }
@@ -45,10 +46,16 @@ export async function POST(req: NextRequest) {
       ...new Set(anomalyResults.flatMap((r) => r.affectedSensors)),
     ];
 
+    // 가동률(uptime): 모든 센서가 도메인 정상범위 안인 판독의 비율.
+    // 마일스톤 IoT 게이트(가동률 90%+ · verify 라우트)가 소비한다.
+    const healthyCount = readings.filter(isHealthy).length;
+    const uptimeRate = Math.round((healthyCount / readings.length) * 1000) / 10;
+
     return NextResponse.json({
       anomalyDetected: hasAnomaly,
       anomalyScore: Math.round(maxScore * 100) / 100,
       affectedSensors: allAffected,
+      uptimeRate,
       dataCount: iotRecords.length,
     });
   } catch (error) {
