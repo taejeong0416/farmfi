@@ -11,9 +11,6 @@ export { PilotRound } from "./farmfi/home/PilotRound";
 export { Flow } from "./farmfi/home/Flow";
 export { Stats } from "./farmfi/home/Stats";
 
-export { DashboardShell } from "./farmfi/dashboard/DashboardShell";
-export { Chart, Donut } from "./farmfi/dashboard/Chart";
-
 export { SpaceForm, Field } from "./farmfi/space/SpaceForm";
 
 export { ProjectsGrid } from "./farmfi/projects/ProjectsGrid";
