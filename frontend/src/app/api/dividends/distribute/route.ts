@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
       }
 
       return dividend;
-    });
+    }, { maxWait: 5000, timeout: 15000 }); // 보유자별 배당 쿼리 다수 — pooler 지연 대비 기본 5s 확장
 
     return NextResponse.json(
       serialize({
