@@ -698,6 +698,30 @@ h2 strong {
   font-weight: 800;
 }
 
+.role-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.role-head h3 {
+  margin: 0;
+}
+
+.role-card .icon {
+  display: inline-grid;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 10px;
+  border: 1px solid #c8dfcf;
+  background: #f7fbf7;
+  color: var(--green-800);
+  font-size: 19px;
+  font-weight: 700;
+}
+
 .role-card p,
 .muted {
   margin-top: 10px;
