@@ -108,4 +108,51 @@ contract FarmTokenTest is Test {
         vm.expectRevert("FarmToken: holder not verified");
         token.transfer(user2, 50);
     }
+
+    function test_revokeIdentity_withoutRole_reverts() public {
+        token.registerIdentity(user, keccak256("did:omn:user"));
+        vm.prank(user);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAccessControl.AccessControlUnauthorizedAccount.selector,
+                user,
+                REGISTRAR_ROLE
+            )
+        );
+        token.revokeIdentity(user);
+    }
+
+    function test_registerIdentity_zeroWallet_reverts() public {
+        vm.expectRevert("Zero wallet");
+        token.registerIdentity(address(0), keccak256("did:omn:user"));
+    }
+
+    function test_registerIdentity_zeroDid_reverts() public {
+        vm.expectRevert("Zero DID");
+        token.registerIdentity(user, bytes32(0));
+    }
+
+    function test_registerIdentity_duplicateWallet_reverts() public {
+        token.registerIdentity(user, keccak256("did:omn:user"));
+        // 같은 지갑에 다른 DID를 덮어쓰려는 시도 — 거부.
+        vm.expectRevert("Wallet already registered");
+        token.registerIdentity(user, keccak256("did:omn:other"));
+    }
+
+    function test_registerIdentity_duplicateDid_reverts() public {
+        token.registerIdentity(user, keccak256("did:omn:user"));
+        // 같은 DID를 다른 지갑에 바인딩(다중지갑 우회) — 거부.
+        vm.expectRevert("DID already registered");
+        token.registerIdentity(user2, keccak256("did:omn:user"));
+    }
+
+    function test_revoke_thenReregister_succeeds() public {
+        bytes32 did = keccak256("did:omn:user");
+        token.registerIdentity(user, did);
+        token.revokeIdentity(user);
+        // revoke가 역방향 매핑까지 해제하므로 동일 DID 재등록이 열려야 한다.
+        token.registerIdentity(user2, did);
+        assertEq(token.didToWallet(did), user2);
+        assertEq(token.identity(user2), did);
+    }
 }
