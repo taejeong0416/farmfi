@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Panel, PortfolioPanel } from "@/components/FarmFi";
+import { IdentityBadge } from "@/components/farmfi/auth/IdentityBadge";
 import { useAuth, type AuthUserRole } from "@/lib/useAuth";
 
 const ROLE_LABEL: Record<AuthUserRole, string> = {
@@ -63,9 +64,18 @@ export function MyPageClient() {
       </div>
 
       {user.role === "investor" && (
-        <div style={{ marginTop: 20 }}>
-          <PortfolioPanel />
-        </div>
+        <>
+          <div style={{ marginTop: 20 }}>
+            <Panel title="본인인증">
+              {/* 현재 세션 응답(/api/auth/me)에 identityVerified가 없어 투자자에게는
+                  항상 진입점을 노출한다. 인증 완료 여부·시각은 /verify-identity에서 확인. */}
+              <IdentityBadge identityVerified={false} verifiedAt={null} />
+            </Panel>
+          </div>
+          <div style={{ marginTop: 20 }}>
+            <PortfolioPanel />
+          </div>
+        </>
       )}
 
       <button className="ghost" type="button" style={{ marginTop: 28 }} onClick={handleLogout}>
