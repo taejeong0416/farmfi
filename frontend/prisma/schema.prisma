@@ -94,7 +94,8 @@ model Project {
   fundingStart    DateTime?
   fundingEnd      DateTime?
   contractAddress String?
-  status        String       @default("operating") // upcoming, funding, funded, operating, paused, completed
+  status        String       @default("operating") // upcoming, funding, funded, operating, paused, completed, failed
+  failedAt      DateTime?    // 마일스톤 기한 초과로 실패 전환된 시각 (status="failed"와 함께 기록)
   imageUrl      String?
   institutionId String?      // 도입 기관 (성과 리포트 집계 단위)
   institution   Institution? @relation(fields: [institutionId], references: [id])
@@ -120,7 +121,7 @@ model Escrow {
   totalLocked     BigInt  @default(0)
   totalReleased   BigInt  @default(0)
   remaining       BigInt  @default(0)
-  status          String  @default("active")
+  status          String  @default("active") // active → failed(기한 초과) → refunded(환불 완료)
   contractAddress String?
 }
 
@@ -144,6 +145,11 @@ model Milestone {
   evidenceUrl          String?
   aiVerificationResult Json?
   completedAt          DateTime?
+  // 이 마일스톤의 집행 기한. Escrow.sol의 milestoneDeadline(= 직전 트랜치 집행 +
+  // MILESTONE_TIMEOUT 180일)을 DB에 미러링한 값이다. 기한이 지나면 타임아웃 실패
+  // 전환(POST /api/milestones/[id]/timeout) 대상이 된다. 아직 시계가 시작되지 않은
+  // 단계는 null.
+  deadlineAt           DateTime?
   notifications        Notification[]
 
   @@unique([projectId, seq])
@@ -156,7 +162,7 @@ model Transaction {
   project     Project  @relation(fields: [projectId], references: [id])
   userId      String?  // null = 시스템 거래 (트랜치 해제 등)
   user        User?    @relation(fields: [userId], references: [id])
-  type        String   // subscription, tranche_release, dividend, revenue
+  type        String   // subscription, tranche_release, dividend, revenue, refund
   amount      BigInt
   tokenAmount Int?
   txHash      String?

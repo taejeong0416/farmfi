@@ -21,6 +21,7 @@ const TYPE_LABEL: Record<string, string> = {
   anomaly_detected: "생육 이상",
   verification_failed: "검증 실패",
   manual_review: "수동 검토",
+  milestone_timeout: "기한 초과",
 };
 
 async function fetchNotifications(): Promise<Notification[]> {

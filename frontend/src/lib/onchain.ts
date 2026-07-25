@@ -64,7 +64,33 @@ const ESCROW_ABI = [
     outputs: [],
     stateMutability: "nonpayable",
   },
+  {
+    type: "function",
+    name: "triggerTimeoutFailure",
+    inputs: [],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "milestoneDeadline",
+    inputs: [],
+    outputs: [{ name: "", type: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "projectFailed",
+    inputs: [],
+    outputs: [{ name: "", type: "bool" }],
+    stateMutability: "view",
+  },
 ] as const;
+
+// Escrow.sol의 `uint256 public constant MILESTONE_TIMEOUT = 180 days`를 미러링한다.
+// 마일스톤 deadlineAt(DB) 계산의 단일 출처 — 컨트랙트를 바꾸면 여기도 같이 바꿔야 한다.
+export const MILESTONE_TIMEOUT_DAYS = 180;
+export const MILESTONE_TIMEOUT_MS = MILESTONE_TIMEOUT_DAYS * 24 * 60 * 60 * 1000;
 
 function getClients() {
   const account = privateKeyToAccount(PRIVATE_KEY!);
@@ -116,6 +142,58 @@ export async function releaseTrancheOnChain(
   });
   await pub.waitForTransactionReceipt({ hash });
   return hash;
+}
+
+// 마감 경과 시 프로젝트를 실패로 전환 (permissionless — 컨트랙트가 누구의 호출이든 받는다).
+// 컨트랙트 가드가 `block.timestamp > milestoneDeadline`이라, 배포 후 180일이 지나기
+// 전에는 "Deadline not passed"로 반드시 revert한다. 시연 구간에서는 이 호출이 실패하는
+// 게 정상이고, DB 레벨 실패 전환(POST /api/milestones/[id]/timeout)이 상태를 진행시킨다.
+// 비활성(주소·키 미설정) 시 null.
+export async function triggerTimeoutFailureOnChain(): Promise<string | null> {
+  if (!isOnchainEnabled()) return null;
+  const { wallet, pub } = getClients();
+  const hash = await wallet.writeContract({
+    address: ESCROW_ADDRESS!,
+    abi: ESCROW_ABI,
+    functionName: "triggerTimeoutFailure",
+    args: [],
+    ...GAS_OPTS,
+  });
+  await pub.waitForTransactionReceipt({ hash });
+  return hash;
+}
+
+// Escrow.refund()에 대응하는 서버 헬퍼는 일부러 만들지 않았다. 컨트랙트 refund는
+// `investments[msg.sender]`(온체인 subscribe로 쌓인 잔고) 기준이라 호출자 본인에게만
+// 지급된다. 우리 앱의 청약은 DB(TokenHolding)에 기록되고 투자자가 온체인 subscribe를
+// 호출한 적이 없어 investments[투자자] == 0 → 온체인 refund는 우리 투자자에게 revert한다.
+// 따라서 환불은 POST /api/projects/[id]/refund가 DB 비례 계산으로 집행하고, 온체인
+// refund()는 지갑으로 직접 청약한 온체인 투자자용 경로로 컨트랙트에 남겨둔다.
+
+// 온체인 milestoneDeadline(unix seconds) 조회 → Date. 비활성 시 null.
+// DB deadlineAt과 대조해 "DB 기한 vs 컨트랙트 기한" 차이를 보여줄 때 쓴다.
+export async function readMilestoneDeadline(): Promise<Date | null> {
+  if (!isOnchainEnabled()) return null;
+  const { pub } = getClients();
+  const seconds = await pub.readContract({
+    address: ESCROW_ADDRESS!,
+    abi: ESCROW_ABI,
+    functionName: "milestoneDeadline",
+  });
+  // tsconfig target es2017이라 BigInt 리터럴(0n) 금지 — BigInt() 생성자만 쓴다.
+  if (seconds === BigInt(0)) return null;
+  return new Date(Number(seconds) * 1000);
+}
+
+// 온체인 projectFailed 플래그. 비활성 시 null.
+export async function readProjectFailed(): Promise<boolean | null> {
+  if (!isOnchainEnabled()) return null;
+  const { pub } = getClients();
+  return await pub.readContract({
+    address: ESCROW_ADDRESS!,
+    abi: ESCROW_ABI,
+    functionName: "projectFailed",
+  });
 }
 
 // ─── 블록 탐색기 링크 (온체인 증거 UI용) ───

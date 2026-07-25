@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { serializeBigInt as serialize } from "@/lib/serialize";
 import { requireRole } from "@/lib/auth";
-import { releaseTrancheOnChain } from "@/lib/onchain";
+import { releaseTrancheOnChain, MILESTONE_TIMEOUT_MS } from "@/lib/onchain";
 
 export async function POST(
   request: NextRequest,
@@ -118,9 +118,15 @@ export async function POST(
       });
 
       if (nextMilestone) {
+        // 다음 단계의 180일 시계를 지금 시작한다 —
+        // Escrow.releaseTranche가 `milestoneDeadline = block.timestamp + MILESTONE_TIMEOUT`
+        // 로 기한을 갱신하는 것과 같은 규칙(직전 완료 시각 + 180일).
         await tx.milestone.update({
           where: { id: nextMilestone.id },
-          data: { status: "in_progress" },
+          data: {
+            status: "in_progress",
+            deadlineAt: new Date(Date.now() + MILESTONE_TIMEOUT_MS),
+          },
         });
       }
 
