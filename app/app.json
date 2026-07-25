@@ -37,7 +37,8 @@
     ],
     "experiments": {
       "typedRoutes": true,
-      "reactCompiler": true
+      "reactCompiler": true,
+      "baseUrl": "/pnuai-b-01-b301"
     }
   }
 }
