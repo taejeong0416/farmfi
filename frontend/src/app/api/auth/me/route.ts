@@ -9,11 +9,26 @@ import { prisma } from "@/lib/db";
 
 // 마이페이지/온보딩 응답 shape. 항상 세션의 userId로만 조회 — 클라이언트가
 // 보낼 수 있는 어떤 id도 신뢰하지 않는다.
+//
+// 신원인증 필드(identityVerified/verifiedAt/realName/investorAnnualLimit)를 함께
+// 실어 마이페이지 배지가 DB 실상태를 그대로 반영하게 한다. 직렬화 주의:
+// verifiedAt은 Date, investorAnnualLimit은 BigInt라 JSON.stringify가 그대로는
+// throw하므로 여기서 ISO 문자열/number로 내린다.
 async function loadUserPayload(userId: string) {
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) return null;
 
-  return { id: user.id, name: user.name, role: user.role, email: user.email };
+  return {
+    id: user.id,
+    name: user.name,
+    role: user.role,
+    email: user.email,
+    identityVerified: user.identityVerified,
+    verifiedAt: user.verifiedAt ? user.verifiedAt.toISOString() : null,
+    realName: user.realName,
+    investorAnnualLimit:
+      user.investorAnnualLimit === null ? null : Number(user.investorAnnualLimit),
+  };
 }
 
 export async function GET() {

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { serializeBigInt as serialize } from "@/lib/serialize";
 import { requireRole } from "@/lib/auth";
-import { calculateWaterfall } from "@/lib/waterfall";
+import { calculateFeePool } from "@/lib/waterfall";
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,7 +12,8 @@ export async function POST(request: NextRequest) {
     throw err;
   }
   try {
-    const { projectId, totalRevenue } = await request.json();
+    const { projectId, totalRevenue, experienceRevenue, b2bIncrementalRevenue } =
+      await request.json();
 
     if (!projectId || totalRevenue == null) {
       return NextResponse.json(
@@ -21,7 +22,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const waterfall = await calculateWaterfall(projectId, totalRevenue);
+    // 배당 재원은 운영자 매출이 아니라 FarmFi 수수료 풀 (기획안 v18 §2 설계 원칙 2).
+    // totalRevenue는 차감 대상이 아니라 체험 수수료 추정 입력값으로만 쓰인다.
+    const feePool = await calculateFeePool(projectId, totalRevenue, {
+      experienceRevenue: experienceRevenue ?? undefined,
+      b2bIncrementalRevenue: b2bIncrementalRevenue ?? undefined,
+    });
 
     const project = await prisma.project.findUniqueOrThrow({
       where: { id: projectId },
@@ -35,7 +41,7 @@ export async function POST(request: NextRequest) {
 
     const perToken =
       totalTokensHeld > 0
-        ? Math.floor(waterfall.investorDividend / totalTokensHeld)
+        ? Math.floor(feePool.investorDividend / totalTokensHeld)
         : 0;
 
     const now = new Date();
@@ -46,7 +52,7 @@ export async function POST(request: NextRequest) {
         data: {
           projectId,
           totalRevenue: BigInt(Math.floor(totalRevenue)),
-          totalDividend: BigInt(Math.floor(waterfall.investorDividend)),
+          totalDividend: BigInt(Math.floor(feePool.investorDividend)),
           perToken: BigInt(perToken),
           period,
         },
@@ -88,7 +94,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       serialize({
-        waterfall,
+        feePool,
         dividend: result,
         txHash: null,
       })

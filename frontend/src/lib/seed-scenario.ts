@@ -90,9 +90,10 @@ export async function seedScenario(prisma: PrismaClient) {
     data: {
       name: "온천장 스마트팜 1호점", location: "부산 동래구", buildingType: "vacant_store", areaSqm: 83,
       status: "funded", institutionId: institution.id,
-      // STO 라운드 완료 (표2·표7: 1구좌 1만원, CAPEX 1,750만) — 마일스톤 집행 단계
-      tokenSymbol: "MF01", tokenPrice: BigInt(10_000), totalTokens: 1750, soldTokens: 1750,
-      targetAmount: BigInt(17_500_000), currentAmount: BigInt(17_500_000), totalCapex: BigInt(17_500_000),
+      // STO 라운드 완료 — 기획 v16 §3: 사이트당 4,400만(설비 4,000만 + 온보딩피 400만),
+      // 1구좌 1만원 → 4,400구좌. contracts/script/Deploy.s.sol의 FarmToken 총발행 4400과 동일.
+      tokenSymbol: "MF01", tokenPrice: BigInt(10_000), totalTokens: 4400, soldTokens: 4400,
+      targetAmount: BigInt(44_000_000), currentAmount: BigInt(44_000_000), totalCapex: BigInt(44_000_000),
       fundingStart: now, fundingEnd: new Date(now.getTime() + 30 * DAY),
       contractAddress: process.env.NEXT_PUBLIC_ESCROW_ADDRESS || "0xa855f6398fb71ad197ec055853007007d3f7d452",
     },
@@ -135,17 +136,21 @@ export async function seedScenario(prisma: PrismaClient) {
   await prisma.escrow.create({
     data: {
       projectId: p1.id,
-      totalLocked: BigInt(17_500_000), totalReleased: BigInt(0), remaining: BigInt(17_500_000),
+      // 완판 4,400만 전액 락업 · 마일스톤1이 아직 in_progress라 집행액 0 → 잔액 = 락업액.
+      totalLocked: BigInt(44_000_000), totalReleased: BigInt(0), remaining: BigInt(44_000_000),
       status: "active",
       contractAddress: process.env.NEXT_PUBLIC_ESCROW_ADDRESS || "0xa855f6398fb71ad197ec055853007007d3f7d452",
     },
   });
+  // 트랜치 = 목표조달 4,400만 × releasePct (35/30/20/15) → 1,540/1,320/880/660만, 합계 4,400만.
+  // M1 assetValue 2,640만은 집행 후 NAV = (4,400만 − 1,540만 + 2,640만) / 4,400좌 = 12,500원/좌
+  // (발행가 1만원 대비 +25%) — 검증 데모의 NAV 상승 연출을 유지한다.
   await prisma.milestone.createMany({
     data: [
-      { projectId: p1.id, seq: 1, name: "공간 준비", description: "임대차 계약·설비 구매·공간 셋업 완료", releasePct: 3500, releaseAmount: BigInt(6_125_000), status: "in_progress", conditionText: "임대차 계약서·설비 영수증·현장 사진 제출", requiredSignals: ["contract", "receipt", "photo"], iotMinDays: 0, crossCheck: "receipt↔photo", assetValue: BigInt(10_500_000) },
-      { projectId: p1.id, seq: 2, name: "시운전 + 안정성", description: "설비 가동 테스트 및 14일 안정성 검증", releasePct: 3000, releaseAmount: BigInt(5_250_000), status: "pending", conditionText: "IoT 14일 가동률 90% 이상", requiredSignals: ["iot"], iotMinDays: 14, assetValue: BigInt(0) },
-      { projectId: p1.id, seq: 3, name: "첫 수확 + 판매", description: "첫 작물 수확 및 판매 실적 확인", releasePct: 2000, releaseAmount: BigInt(3_500_000), status: "pending", conditionText: "수확 사진·판매 영수증", requiredSignals: ["photo", "receipt"], iotMinDays: 0, assetValue: BigInt(0) },
-      { projectId: p1.id, seq: 4, name: "지속 운영", description: "60일 지속 운영 검증", releasePct: 1500, releaseAmount: BigInt(2_625_000), status: "pending", conditionText: "IoT 60일 가동률 90% 이상·복수 판매 영수증", requiredSignals: ["iot", "receipt"], iotMinDays: 60, assetValue: BigInt(0) },
+      { projectId: p1.id, seq: 1, name: "공간 준비", description: "공간사용 협약·설비 구매·공간 셋업 완료", releasePct: 3500, releaseAmount: BigInt(15_400_000), status: "in_progress", conditionText: "공간사용 협약서·설비 영수증·현장 사진 제출", requiredSignals: ["contract", "receipt", "photo"], iotMinDays: 0, crossCheck: "receipt↔photo", assetValue: BigInt(26_400_000) },
+      { projectId: p1.id, seq: 2, name: "시운전 + 안정성", description: "설비 가동 테스트 및 14일 안정성 검증", releasePct: 3000, releaseAmount: BigInt(13_200_000), status: "pending", conditionText: "IoT 14일 가동률 90% 이상", requiredSignals: ["iot"], iotMinDays: 14, assetValue: BigInt(0) },
+      { projectId: p1.id, seq: 3, name: "첫 수확 + 판매", description: "첫 작물 수확 및 판매 실적 확인", releasePct: 2000, releaseAmount: BigInt(8_800_000), status: "pending", conditionText: "수확 사진·판매 영수증", requiredSignals: ["photo", "receipt"], iotMinDays: 0, assetValue: BigInt(0) },
+      { projectId: p1.id, seq: 4, name: "지속 운영", description: "60일 지속 운영 검증", releasePct: 1500, releaseAmount: BigInt(6_600_000), status: "pending", conditionText: "IoT 60일 가동률 90% 이상·복수 판매 영수증", requiredSignals: ["iot", "receipt"], iotMinDays: 60, assetValue: BigInt(0) },
     ],
   });
   await prisma.projectPartner.create({
@@ -165,8 +170,9 @@ export async function seedScenario(prisma: PrismaClient) {
       description: "부산 동래구 명륜동 공실 상가 전환 라운드 (모집 중).",
       location: "부산 동래구 명륜동", buildingType: "vacant_store", areaSqm: 76,
       status: "funding", institutionId: institution.id,
-      tokenSymbol: "MF03", tokenPrice: BigInt(10_000), totalTokens: 1320, soldTokens: 400,
-      targetAmount: BigInt(13_200_000), currentAmount: BigInt(4_000_000), totalCapex: BigInt(13_200_000),
+      // 1호점과 같은 표준 유닛 — 4,400구좌/4,400만. 모집 진행률 30%(1,320구좌 = 1,320만).
+      tokenSymbol: "MF03", tokenPrice: BigInt(10_000), totalTokens: 4400, soldTokens: 1320,
+      targetAmount: BigInt(44_000_000), currentAmount: BigInt(13_200_000), totalCapex: BigInt(44_000_000),
       fundingStart: now, fundingEnd: new Date(now.getTime() + 30 * DAY),
       contractAddress: process.env.NEXT_PUBLIC_ESCROW_ADDRESS || "0xa855f6398fb71ad197ec055853007007d3f7d452",
     },
@@ -174,17 +180,19 @@ export async function seedScenario(prisma: PrismaClient) {
   await prisma.escrow.create({
     data: {
       projectId: p3.id,
-      totalLocked: BigInt(4_000_000), totalReleased: BigInt(0), remaining: BigInt(4_000_000),
+      // 모집 중이므로 락업액 = 현재까지 청약된 1,320만(= currentAmount), 집행 0.
+      totalLocked: BigInt(13_200_000), totalReleased: BigInt(0), remaining: BigInt(13_200_000),
       status: "active",
       contractAddress: process.env.NEXT_PUBLIC_ESCROW_ADDRESS || "0xa855f6398fb71ad197ec055853007007d3f7d452",
     },
   });
+  // 1호점과 동일한 표준 트랜치 — 목표 4,400만 기준 1,540/1,320/880/660만(합계 4,400만).
   await prisma.milestone.createMany({
     data: [
-      { projectId: p3.id, seq: 1, name: "공간 준비", description: "임대차 계약·설비 구매·공간 셋업", releasePct: 3500, releaseAmount: BigInt(4_620_000), status: "pending", conditionText: "임대차 계약서·설비 영수증·현장 사진", requiredSignals: ["contract", "receipt", "photo"], iotMinDays: 0, crossCheck: "receipt↔photo", assetValue: BigInt(0) },
-      { projectId: p3.id, seq: 2, name: "시운전 + 안정성", description: "설비 가동 14일 안정성", releasePct: 3000, releaseAmount: BigInt(3_960_000), status: "pending", conditionText: "IoT 14일 가동률 90%+", requiredSignals: ["iot"], iotMinDays: 14, assetValue: BigInt(0) },
-      { projectId: p3.id, seq: 3, name: "첫 수확 + 판매", description: "첫 수확·판매 실적", releasePct: 2000, releaseAmount: BigInt(2_640_000), status: "pending", conditionText: "수확 사진·판매 영수증", requiredSignals: ["photo", "receipt"], iotMinDays: 0, assetValue: BigInt(0) },
-      { projectId: p3.id, seq: 4, name: "지속 운영", description: "60일 지속 운영", releasePct: 1500, releaseAmount: BigInt(1_980_000), status: "pending", conditionText: "IoT 60일·복수 판매", requiredSignals: ["iot", "receipt"], iotMinDays: 60, assetValue: BigInt(0) },
+      { projectId: p3.id, seq: 1, name: "공간 준비", description: "공간사용 협약·설비 구매·공간 셋업", releasePct: 3500, releaseAmount: BigInt(15_400_000), status: "pending", conditionText: "공간사용 협약서·설비 영수증·현장 사진", requiredSignals: ["contract", "receipt", "photo"], iotMinDays: 0, crossCheck: "receipt↔photo", assetValue: BigInt(0) },
+      { projectId: p3.id, seq: 2, name: "시운전 + 안정성", description: "설비 가동 14일 안정성", releasePct: 3000, releaseAmount: BigInt(13_200_000), status: "pending", conditionText: "IoT 14일 가동률 90%+", requiredSignals: ["iot"], iotMinDays: 14, assetValue: BigInt(0) },
+      { projectId: p3.id, seq: 3, name: "첫 수확 + 판매", description: "첫 수확·판매 실적", releasePct: 2000, releaseAmount: BigInt(8_800_000), status: "pending", conditionText: "수확 사진·판매 영수증", requiredSignals: ["photo", "receipt"], iotMinDays: 0, assetValue: BigInt(0) },
+      { projectId: p3.id, seq: 4, name: "지속 운영", description: "60일 지속 운영", releasePct: 1500, releaseAmount: BigInt(6_600_000), status: "pending", conditionText: "IoT 60일·복수 판매", requiredSignals: ["iot", "receipt"], iotMinDays: 60, assetValue: BigInt(0) },
     ],
   });
   await prisma.projectPartner.create({
