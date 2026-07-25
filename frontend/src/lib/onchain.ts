@@ -17,8 +17,12 @@ import { privateKeyToAccount } from "viem/accounts";
 // 이 모듈은 API 라우트(서버)에서만 쓰이므로 RPC URL의 비밀 토큰이 클라이언트로
 // 노출되지 않는다(ONCHAIN_RPC_URL은 NEXT_PUBLIC_ 접두사 없이 서버 전용).
 
-const ESCROW_ADDRESS = process.env.ESCROW_ADDRESS as `0x${string}` | undefined;
-const PRIVATE_KEY = process.env.PRIVATE_KEY as `0x${string}` | undefined;
+// 체인별 자격증명은 ONCHAIN_* 를 우선한다. 기존 ESCROW_ADDRESS/PRIVATE_KEY는
+// Amoy 배포분이라 지우지 않고 폴백으로 남겨둔다 — ONCHAIN_* 를 비우면 즉시 Amoy로 되돌아간다.
+const ESCROW_ADDRESS = (process.env.ONCHAIN_ESCROW_ADDRESS ||
+  process.env.ESCROW_ADDRESS) as `0x${string}` | undefined;
+const PRIVATE_KEY = (process.env.ONCHAIN_PRIVATE_KEY ||
+  process.env.PRIVATE_KEY) as `0x${string}` | undefined;
 
 const RPC_URL =
   process.env.ONCHAIN_RPC_URL ||
