@@ -170,9 +170,11 @@ export async function seedScenario(prisma: PrismaClient) {
       description: "부산 동래구 명륜동 공실 상가 전환 라운드 (모집 중).",
       location: "부산 동래구 명륜동", buildingType: "vacant_store", areaSqm: 76,
       status: "funding", institutionId: institution.id,
-      // 1호점과 같은 표준 유닛 — 4,400구좌/4,400만. 모집 진행률 30%(1,320구좌 = 1,320만).
-      tokenSymbol: "MF03", tokenPrice: BigInt(10_000), totalTokens: 4400, soldTokens: 1320,
-      targetAmount: BigInt(44_000_000), currentAmount: BigInt(13_200_000), totalCapex: BigInt(44_000_000),
+      // 1호점과 같은 표준 유닛 — 4,400구좌/4,400만. 모집 진행률 79%(3,480구좌 = 3,480만).
+      // 잔여 920구좌 = 데모 스텝 1~3(300+200+420)이 채우는 양 → 스텝 3에서 정확히 완납(funded)되고
+      // escrow가 4,400만이 되어 트랜치 4개(1,540+1,320+880+660만 = 4,400만)를 전부 집행할 수 있다.
+      tokenSymbol: "MF03", tokenPrice: BigInt(10_000), totalTokens: 4400, soldTokens: 3480,
+      targetAmount: BigInt(44_000_000), currentAmount: BigInt(34_800_000), totalCapex: BigInt(44_000_000),
       fundingStart: now, fundingEnd: new Date(now.getTime() + 30 * DAY),
       contractAddress: process.env.NEXT_PUBLIC_ESCROW_ADDRESS || "0xa855f6398fb71ad197ec055853007007d3f7d452",
     },
@@ -180,8 +182,8 @@ export async function seedScenario(prisma: PrismaClient) {
   await prisma.escrow.create({
     data: {
       projectId: p3.id,
-      // 모집 중이므로 락업액 = 현재까지 청약된 1,320만(= currentAmount), 집행 0.
-      totalLocked: BigInt(13_200_000), totalReleased: BigInt(0), remaining: BigInt(13_200_000),
+      // 모집 중이므로 락업액 = 현재까지 청약된 3,480만(= currentAmount), 집행 0.
+      totalLocked: BigInt(34_800_000), totalReleased: BigInt(0), remaining: BigInt(34_800_000),
       status: "active",
       contractAddress: process.env.NEXT_PUBLIC_ESCROW_ADDRESS || "0xa855f6398fb71ad197ec055853007007d3f7d452",
     },
@@ -197,6 +199,27 @@ export async function seedScenario(prisma: PrismaClient) {
   });
   await prisma.projectPartner.create({
     data: { projectId: p3.id, role: "landlord", name: "박건물", monthlyRecoveryAmount: BigInt(450_000) },
+  });
+  // 기청약 3,480구좌의 보유 내역 — soldTokens와 반드시 합이 같아야 한다.
+  // 배당(POST /api/dividends/distribute)의 perToken 분모가 soldTokens가 아니라 TokenHolding
+  // 합계라서, 이 행이 없으면 데모 청약분(920구좌)만 분모가 되어 1좌당 배당이 과대 계상된다.
+  // 데모 스텝 1~3이 같은 3명으로 추가 청약(300·200·420)해도 연간한도 2,000만을 넘지 않는다
+  // (김투자 1호점 50좌 포함 1,550만 · 이서연 1,280만 · 박준혁 1,620만).
+  const p3Seeded: [string, number][] = [
+    [investor1.id, 1200],
+    [investor2.id, 1080],
+    [investor3.id, 1200],
+  ];
+  await prisma.tokenHolding.createMany({
+    data: p3Seeded.map(([userId, amount]) => ({
+      userId, projectId: p3.id, amount, avgPrice: BigInt(10_000),
+    })),
+  });
+  await prisma.transaction.createMany({
+    data: p3Seeded.map(([userId, amount]) => ({
+      projectId: p3.id, userId, type: "subscription",
+      amount: BigInt(amount) * BigInt(10_000), tokenAmount: amount, memo: "청약 (시드)",
+    })),
   });
   // IoT 60일치 — 시운전·지속운영 마일스톤(가동률 게이트) 검증용
   await prisma.iotData.createMany({ data: buildIotRecords(p3.id, now) });

@@ -156,7 +156,10 @@ async function distributeDividends(baseUrl: string, authHeader: string) {
     headers: { "Content-Type": "application/json", Authorization: authHeader },
     body: JSON.stringify({
       projectId: project.id,
-      totalRevenue: 2_970_000,
+      // v18 §4 중립 시나리오의 사이트당 월 작물 매출. 배당 재원이 아니라 체험 매출
+      // 추정 입력값이다(calculateFeePool): 체험 60만 → 수수료 풀 38만 → 투자자 배당 22.8만.
+      // 4,400구좌 기준 1좌당 51원/월 = 연 612원 → 발행가 1만원 대비 6.1%(v18 공표 6.2%).
+      totalRevenue: 1_400_000,
     }),
   });
 
@@ -165,7 +168,8 @@ async function distributeDividends(baseUrl: string, authHeader: string) {
 
 type StepExecutor = () => Promise<any>;
 
-// 3호점(모집중) 완납 청약(920구좌) → escrow 13.2M 충전 → 마일스톤 seq1~4 순차 집행.
+// 3호점(모집중, 시드 3,480구좌) 잔여 920구좌 청약 → 4,400구좌 완납 · escrow 4,400만 →
+// 마일스톤 seq1~4 순차 집행(트랜치 합계 4,400만 = 잔여 정확히 0) + 스텝7 수수료 풀 배당.
 function buildStepExecutors(baseUrl: string, authHeader: string): Record<number, StepExecutor> {
   return {
     1: () => subscribe("김투자", 300),
