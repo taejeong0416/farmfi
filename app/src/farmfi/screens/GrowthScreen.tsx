@@ -5,26 +5,143 @@ import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from "
 
 import { C } from "../theme";
 import { AppIcon, PixelGlyph } from "../icons";
-import { RACK_DATA, type RackId } from "../data";
-import { AppShell, BranchSelect, GrowthRackScene, SectionTitle } from "../components";
+import {
+  cropKindOf,
+  rackIdAt,
+  stageLabel,
+  type InventoryResponse,
+  type MonitoringSummaryResponse,
+} from "../api";
+import {
+  AppShell,
+  BranchSelect,
+  GrowthRackScene,
+  SectionTitle,
+  StateNotice,
+} from "../components";
+import { useFarmProjects } from "../branch";
+import { useApiResource } from "../useApiResource";
 
 function Diamond() {
   return <View style={s.diamond} />;
 }
 
-const RACKS: RackId[] = ["A", "B", "C", "D"];
+const MONITOR_DAYS = 7;
 
 export default function GrowthScreen() {
-  const [rackId, setRackId] = useState<RackId>("A");
-  const rack = RACK_DATA[rackId];
+  const { projectId, loading: projectsLoading, error: projectsError, reload: reloadProjects } =
+    useFarmProjects();
+  const [bedIndex, setBedIndex] = useState(0);
+
+  // 센서 요약(가동률·상태·습도)과 재배 현황(베드·성숙도·수확량)은 출처가 다르다.
+  const monitoring = useApiResource<MonitoringSummaryResponse>(
+    projectId ? `/api/monitoring/${projectId}?days=${MONITOR_DAYS}` : null,
+    "센서 요약을 불러오지 못했습니다."
+  );
+  const inventory = useApiResource<InventoryResponse>(
+    projectId ? `/api/inventory?projectId=${projectId}` : null,
+    "재배 현황을 불러오지 못했습니다."
+  );
+
+  const beds = inventory.data?.projects[0]?.items ?? [];
+  const summary = inventory.data?.projects[0]?.summary ?? null;
+  const activeIndex = Math.min(bedIndex, Math.max(0, beds.length - 1));
+  const bed = beds[activeIndex] ?? null;
+
+  // 지점을 바꾸면 베드 선택을 처음으로 되돌린다 (품목 구성이 지점마다 다름).
+  useEffect(() => {
+    setBedIndex(0);
+  }, [projectId]);
 
   // 베드 전환 시 페이드 인 (원본 AnimatePresence 전환 대체)
   const op = useSharedValue(1);
   useEffect(() => {
     op.value = 0;
     op.value = withTiming(1, { duration: 220, easing: Easing.bezier(0.22, 1, 0.36, 1) });
-  }, [rackId, op]);
+  }, [activeIndex, op]);
   const cardStyle = useAnimatedStyle(() => ({ opacity: op.value }));
+
+  const latestPoint = monitoring.data?.points.at(-1) ?? null;
+  const metricsLoading = monitoring.loading || inventory.loading || projectsLoading;
+  const dash = metricsLoading ? "…" : "–";
+
+  const bedSection = () => {
+    if (projectsError) {
+      return <StateNotice tone="error" message={projectsError} onRetry={reloadProjects} />;
+    }
+    if (projectsLoading || inventory.loading) {
+      return <StateNotice message="재배 현황을 불러오는 중…" />;
+    }
+    if (inventory.error) {
+      return <StateNotice tone="error" message={inventory.error} onRetry={inventory.reload} />;
+    }
+    if (!bed) {
+      return (
+        <StateNotice
+          message="이 지점에 재배 중인 베드가 없습니다."
+          onRetry={inventory.reload}
+          retryLabel="새로고침"
+        />
+      );
+    }
+
+    const kind = cropKindOf(bed.productName, bed.category);
+    return (
+      <>
+        <View style={s.bedTabs}>
+          {beds.map((item, i) => {
+            const on = i === activeIndex;
+            return (
+              <Text
+                key={item.productId}
+                onPress={() => setBedIndex(i)}
+                style={[
+                  s.bedTab,
+                  i === 0 && s.bedTabFirst,
+                  i === beds.length - 1 && s.bedTabLast,
+                  i > 0 && s.bedTabNoLeft,
+                  on && s.bedTabActive,
+                ]}
+              >
+                베드 {rackIdAt(i)}
+              </Text>
+            );
+          })}
+        </View>
+        <Animated.View style={[s.rackCard, cardStyle]}>
+          <View style={s.rackImage}>
+            <GrowthRackScene kind={kind} maturity={bed.maturityPercent} />
+            <View style={s.stageBadge}>
+              <Text style={s.stageBadgeText}>
+                {bed.productName} · {stageLabel(bed.maturityPercent)} {bed.maturityPercent}%
+              </Text>
+            </View>
+          </View>
+          <View style={s.rackStatus}>
+            <View style={s.statusSide}>
+              <AppIcon name="check" size={30} color={C.green} />
+              <View>
+                <Text style={s.statusSmall}>생육 상태</Text>
+                <Text style={s.statusB}>
+                  {monitoring.data ? (monitoring.data.summary.latestHealthy ? "정상" : "주의") : dash}
+                </Text>
+              </View>
+            </View>
+            <View style={s.statusDivider} />
+            <View style={s.statusSide}>
+              <AppIcon name="drop" size={30} color={C.green} />
+              <View>
+                <Text style={s.statusSmall}>습도</Text>
+                <Text style={s.statusB}>
+                  {latestPoint ? `${latestPoint.humidity.toFixed(0)}%` : dash}
+                </Text>
+              </View>
+            </View>
+          </View>
+        </Animated.View>
+      </>
+    );
+  };
 
   return (
     <AppShell active="growth">
@@ -43,25 +160,38 @@ export default function GrowthScreen() {
         <View style={s.metric}>
           <View style={s.metricLabelRow}>
             <PixelGlyph name="sprout" size={18} />
-            <Text style={s.metricLabel}>농장 컨디션</Text>
+            <Text style={s.metricLabel}>센서 가동률</Text>
           </View>
-          <Text style={s.metricValue}>96<Text style={s.metricUnit}>%</Text></Text>
+          <Text style={s.metricValue}>
+            {monitoring.data ? monitoring.data.summary.uptimeRate : dash}
+            <Text style={s.metricUnit}>%</Text>
+          </Text>
         </View>
         <View style={s.metric}>
           <View style={s.metricLabelRow}>
             <PixelGlyph name="basket" size={18} />
             <Text style={s.metricLabel}>오늘 수확 가능</Text>
           </View>
-          <Text style={s.metricValue}>38<Text style={s.metricUnit}>포기</Text></Text>
+          <Text style={s.metricValue}>
+            {summary ? summary.harvestReadyTotal : dash}
+            <Text style={s.metricUnit}>봉</Text>
+          </Text>
         </View>
         <View style={s.metric}>
           <View style={s.metricLabelRow}>
             <PixelGlyph name="bars" size={18} />
-            <Text style={s.metricLabel}>7월 생산량</Text>
+            <Text style={s.metricLabel}>이번 달 수확량</Text>
           </View>
-          <Text style={s.metricValue}>412<Text style={s.metricUnit}>/ 500</Text></Text>
+          <Text style={s.metricValue}>
+            {summary ? summary.monthlyHarvest : dash}
+            <Text style={s.metricUnit}>봉</Text>
+          </Text>
         </View>
       </View>
+
+      {monitoring.error && !monitoring.loading && (
+        <StateNotice tone="error" message={monitoring.error} onRetry={monitoring.reload} />
+      )}
 
       <Link href="/farm/monitoring" style={s.monitorBtn}>
         상세 센서 모니터링 →
@@ -69,51 +199,7 @@ export default function GrowthScreen() {
 
       <View style={s.bedSection}>
         <SectionTitle icon="sprout">실시간 성장 베드</SectionTitle>
-        <View style={s.bedTabs}>
-          {RACKS.map((r, i) => {
-            const on = rackId === r;
-            return (
-              <Text
-                key={r}
-                onPress={() => setRackId(r)}
-                style={[
-                  s.bedTab,
-                  i === 0 && s.bedTabFirst,
-                  i === RACKS.length - 1 && s.bedTabLast,
-                  i > 0 && s.bedTabNoLeft,
-                  on && s.bedTabActive,
-                ]}
-              >
-                베드 {r}
-              </Text>
-            );
-          })}
-        </View>
-        <Animated.View style={[s.rackCard, cardStyle]}>
-          <View style={s.rackImage}>
-            <GrowthRackScene rackId={rackId} />
-            <View style={s.stageBadge}>
-              <Text style={s.stageBadgeText}>{rack.crop} · {rack.stage} {rack.maturity}%</Text>
-            </View>
-          </View>
-          <View style={s.rackStatus}>
-            <View style={s.statusSide}>
-              <AppIcon name="check" size={30} color={C.green} />
-              <View>
-                <Text style={s.statusSmall}>생육 상태</Text>
-                <Text style={s.statusB}>{rack.state}</Text>
-              </View>
-            </View>
-            <View style={s.statusDivider} />
-            <View style={s.statusSide}>
-              <AppIcon name="drop" size={30} color={C.green} />
-              <View>
-                <Text style={s.statusSmall}>습도</Text>
-                <Text style={s.statusB}>{rack.humidity}%</Text>
-              </View>
-            </View>
-          </View>
-        </Animated.View>
+        {bedSection()}
       </View>
     </AppShell>
   );

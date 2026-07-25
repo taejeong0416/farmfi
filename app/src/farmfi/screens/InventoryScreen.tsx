@@ -2,11 +2,135 @@ import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 import { C } from "../theme";
-import { LINKED_BEDS, STOCK_ROWS } from "../data";
-import { AppShell, BranchSelect, CropPixel, MiniRackPlant, SectionTitle, TapScale } from "../components";
+import {
+  cropKindOf,
+  harvestLabel,
+  rackIdAt,
+  ratioPercent,
+  type InventoryResponse,
+} from "../api";
+import {
+  AppShell,
+  BranchSelect,
+  CropPixel,
+  MiniRackPlant,
+  SectionTitle,
+  StateNotice,
+  TapScale,
+} from "../components";
+import { useFarmProjects } from "../branch";
+import { useApiResource } from "../useApiResource";
 
 export default function InventoryScreen() {
-  const [selected, setSelected] = useState<string>("butter");
+  const { projectId, loading: projectsLoading, error: projectsError, reload: reloadProjects } =
+    useFarmProjects();
+  const [selected, setSelected] = useState<string | null>(null);
+
+  const inventory = useApiResource<InventoryResponse>(
+    projectId ? `/api/inventory?projectId=${projectId}` : null,
+    "재고 현황을 불러오지 못했습니다."
+  );
+
+  const group = inventory.data?.projects[0] ?? null;
+  const items = group?.items ?? [];
+  const maxStock = items.reduce((max, i) => Math.max(max, i.inStock), 0);
+
+  const body = () => {
+    if (projectsError) {
+      return <StateNotice tone="error" message={projectsError} onRetry={reloadProjects} />;
+    }
+    if (projectsLoading || inventory.loading) {
+      return <StateNotice message="재고·생육 현황을 불러오는 중…" />;
+    }
+    if (inventory.error) {
+      return <StateNotice tone="error" message={inventory.error} onRetry={inventory.reload} />;
+    }
+    if (items.length === 0) {
+      return (
+        <StateNotice
+          message="이 지점에 등록된 재배 품목이 없습니다."
+          onRetry={inventory.reload}
+          retryLabel="새로고침"
+        />
+      );
+    }
+
+    return (
+      <>
+        {/* 매장 재고 현황 */}
+        <View style={[s.card, s.stockCard]}>
+          <SectionTitle>매장 재고 현황</SectionTitle>
+          <View style={s.stockList}>
+            {items.map((item) => (
+              <TapScale
+                key={item.productId}
+                scaleTo={0.985}
+                onPress={() => setSelected(item.productId)}
+                style={[s.stockRow, selected === item.productId && s.stockRowSel]}
+              >
+                <CropPixel kind={cropKindOf(item.productName, item.category)} />
+                <View style={s.stockMid}>
+                  <Text style={s.stockName}>{item.productName}</Text>
+                  <View style={s.bar}>
+                    <View style={[s.barFill, { width: `${ratioPercent(item.inStock, maxStock)}%` }]} />
+                  </View>
+                </View>
+                <Text style={s.stockQty}>
+                  {item.inStock}<Text style={s.stockUnit}>{item.unit}</Text>
+                </Text>
+              </TapScale>
+            ))}
+          </View>
+        </View>
+
+        {/* 생장 연동 현황 */}
+        <View style={[s.card, s.linkedCard]}>
+          <View style={s.linkedTitle}>
+            <SectionTitle>생장 연동 현황</SectionTitle>
+          </View>
+          <View style={s.linkedBeds}>
+            {items.map((item, index) => {
+              const kind = cropKindOf(item.productName, item.category);
+              return (
+                <TapScale
+                  key={item.productId}
+                  scaleTo={0.99}
+                  onPress={() => setSelected(item.productId)}
+                  style={[s.linkedBed, selected === item.productId && s.linkedBedSel]}
+                >
+                  <View style={s.bedPreview}>
+                    <Text style={s.bedPreviewLabel}>베드 {rackIdAt(index)}</Text>
+                    <View style={s.bedPlants}>
+                      {[0, 1, 2, 3].map((i) => (
+                        <MiniRackPlant kind={kind} key={i} />
+                      ))}
+                    </View>
+                    <View style={s.bedSoil} />
+                  </View>
+                  <View style={s.linkedCol}>
+                    <Text style={s.linkedColB}>{item.productName}</Text>
+                    <Text style={s.linkedColSmall}>
+                      성숙도 <Text style={s.linkedColStrong}>{item.maturityPercent}%</Text>
+                    </Text>
+                  </View>
+                  <View style={s.linkedCol}>
+                    <Text style={s.linkedColSmall}>예상 수확</Text>
+                    <Text style={s.linkedColB}>{harvestLabel(item.daysToHarvest)}</Text>
+                  </View>
+                  <View style={[s.linkedCol, s.linkedColLast]}>
+                    <Text style={s.linkedColSmall}>예상 수확량</Text>
+                    <Text style={s.linkedColYield}>
+                      {item.growing}<Text style={s.linkedColYieldEm}>{item.unit}</Text>
+                    </Text>
+                  </View>
+                </TapScale>
+              );
+            })}
+          </View>
+        </View>
+      </>
+    );
+  };
 
   return (
     <AppShell active="inventory">
@@ -15,75 +139,7 @@ export default function InventoryScreen() {
         <Text style={s.introTitle}>재고 · 생육 연동</Text>
         <Text style={s.introSub}>재고와 생육 상태를 함께 확인하세요.</Text>
       </View>
-
-      {/* 매장 재고 현황 */}
-      <View style={[s.card, s.stockCard]}>
-        <SectionTitle>매장 재고 현황</SectionTitle>
-        <View style={s.stockList}>
-          {STOCK_ROWS.map((item) => (
-            <TapScale
-              key={item.kind}
-              scaleTo={0.985}
-              onPress={() => setSelected(item.kind)}
-              style={[s.stockRow, selected === item.kind && s.stockRowSel]}
-            >
-              <CropPixel kind={item.kind} />
-              <View style={s.stockMid}>
-                <Text style={s.stockName}>{item.name}</Text>
-                <View style={s.bar}>
-                  <View style={[s.barFill, { width: `${item.value}%` }]} />
-                </View>
-              </View>
-              <Text style={s.stockQty}>
-                {item.stock}<Text style={s.stockUnit}>팩</Text>
-              </Text>
-            </TapScale>
-          ))}
-        </View>
-      </View>
-
-      {/* 생장 연동 현황 */}
-      <View style={[s.card, s.linkedCard]}>
-        <View style={s.linkedTitle}>
-          <SectionTitle>생장 연동 현황</SectionTitle>
-        </View>
-        <View style={s.linkedBeds}>
-          {LINKED_BEDS.map((bed) => (
-            <TapScale
-              key={bed.rack}
-              scaleTo={0.99}
-              onPress={() => setSelected(bed.kind)}
-              style={[s.linkedBed, selected === bed.kind && s.linkedBedSel]}
-            >
-              <View style={s.bedPreview}>
-                <Text style={s.bedPreviewLabel}>베드 {bed.rack}</Text>
-                <View style={s.bedPlants}>
-                  {[0, 1, 2, 3].map((i) => (
-                    <MiniRackPlant kind={bed.kind} key={i} />
-                  ))}
-                </View>
-                <View style={s.bedSoil} />
-              </View>
-              <View style={s.linkedCol}>
-                <Text style={s.linkedColB}>{bed.crop}</Text>
-                <Text style={s.linkedColSmall}>
-                  성숙도 <Text style={s.linkedColStrong}>{bed.maturity}%</Text>
-                </Text>
-              </View>
-              <View style={s.linkedCol}>
-                <Text style={s.linkedColSmall}>예상 수확</Text>
-                <Text style={s.linkedColB}>{bed.harvest}</Text>
-              </View>
-              <View style={[s.linkedCol, s.linkedColLast]}>
-                <Text style={s.linkedColSmall}>예상 수확량</Text>
-                <Text style={s.linkedColYield}>
-                  {bed.yield}<Text style={s.linkedColYieldEm}>팩</Text>
-                </Text>
-              </View>
-            </TapScale>
-          ))}
-        </View>
-      </View>
+      {body()}
     </AppShell>
   );
 }

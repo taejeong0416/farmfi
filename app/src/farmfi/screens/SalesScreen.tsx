@@ -1,45 +1,78 @@
 import { StyleSheet, Text, View } from "react-native";
-import Svg, { Circle, Line, Polyline, Text as SvgText } from "react-native-svg";
+import Svg, { Circle, G, Line, Polyline, Text as SvgText } from "react-native-svg";
 
 import { C } from "../theme";
-import { CHART_VALUES, SALES_HISTORY, SALES_RANKING } from "../data";
-import { AppShell, BranchSelect, CropPixel, SectionTitle } from "../components";
+import {
+  cropKindOf,
+  formatMonthDay,
+  formatWon,
+  ratioPercent,
+  type SalesResponse,
+  type SalesTrendResponse,
+} from "../api";
+import { AppShell, BranchSelect, CropPixel, SectionTitle, StateNotice } from "../components";
+import { useFarmProjects } from "../branch";
+import { useApiResource } from "../useApiResource";
 
-function SalesLineChart() {
+const PERIOD_DAYS = 30;
+
+// 눈금 상한 — 실제 최대 매출을 덮는 가장 가까운 "만원" 단위 값.
+function niceMax(values: number[]): number {
+  const peak = Math.max(...values, 0);
+  if (peak <= 0) return 10000;
+  const step = Math.pow(10, Math.floor(Math.log10(peak)) - 1) || 1;
+  return Math.ceil(peak / (step * 4)) * step * 4;
+}
+
+function SalesLineChart({ daily }: { daily: SalesResponse["daily"] }) {
   const width = 320;
   const height = 126;
   const padX = 40;
   const padY = 12;
-  const max = 200;
-  const pts = CHART_VALUES.map((v, i) => {
-    const x = padX + (i / (CHART_VALUES.length - 1)) * (width - padX - 8);
-    const y = height - padY - (v / max) * (height - padY * 2);
+  const values = daily.map((d) => d.amount);
+  const max = niceMax(values);
+
+  const pts = daily.map((d, i) => {
+    const x = padX + (daily.length === 1 ? 0 : (i / (daily.length - 1)) * (width - padX - 8));
+    const y = height - padY - (d.amount / max) * (height - padY * 2);
     return { x, y };
   });
   const polyPoints = pts.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
-  const gridVals = [0, 50, 100, 150, 200];
+  const gridVals = [0, 0.25, 0.5, 0.75, 1].map((f) => Math.round(max * f));
+
+  // X축 라벨 — 실제 판매일에서 5개를 균등 추출.
+  const labelCount = Math.min(5, daily.length);
+  const xLabels = Array.from({ length: labelCount }, (_, i) => {
+    const idx =
+      labelCount === 1 ? 0 : Math.round((i / (labelCount - 1)) * (daily.length - 1));
+    const d = new Date(daily[idx].date);
+    return `${d.getMonth() + 1}/${d.getDate()}`;
+  });
+
   return (
     <View style={s.chart}>
       <Svg viewBox={`0 0 ${width} ${height}`} width="100%" height={height}>
         {gridVals.map((v) => {
           const y = height - padY - (v / max) * (height - padY * 2);
           return (
-            <View key={v}>
+            <G key={v}>
               <Line x1={padX} x2={width - 8} y1={y} y2={y} stroke="#dadbd7" strokeDasharray="3 3" strokeWidth={1} />
               <SvgText x={2} y={y + 3} fill="#636660" fontSize={8}>
-                {v === 0 ? "0" : `${v}만`}
+                {v === 0 ? "0" : `${Math.round(v / 10000)}만`}
               </SvgText>
-            </View>
+            </G>
           );
         })}
-        <Polyline points={polyPoints} fill="none" stroke={C.green} strokeWidth={2.1} strokeLinejoin="round" />
+        {pts.length > 1 && (
+          <Polyline points={polyPoints} fill="none" stroke={C.green} strokeWidth={2.1} strokeLinejoin="round" />
+        )}
         {pts.map((p, i) => (
           <Circle key={i} cx={p.x} cy={p.y} r={3} fill="#fff" stroke={C.green} strokeWidth={2} />
         ))}
       </Svg>
       <View style={s.chartLabels}>
-        {["7/1", "7/8", "7/15", "7/22", "7/29"].map((l) => (
-          <Text key={l} style={s.chartLabel}>{l}</Text>
+        {xLabels.map((l, i) => (
+          <Text key={`${l}-${i}`} style={s.chartLabel}>{l}</Text>
         ))}
       </View>
     </View>
@@ -47,63 +80,120 @@ function SalesLineChart() {
 }
 
 export default function SalesScreen() {
+  const { projectId, loading: projectsLoading, error: projectsError, reload: reloadProjects } =
+    useFarmProjects();
+
+  const sales = useApiResource<SalesResponse>(
+    projectId ? `/api/sales?projectId=${projectId}&days=${PERIOD_DAYS}&recent=10` : null,
+    "판매 데이터를 불러오지 못했습니다."
+  );
+  const trend = useApiResource<SalesTrendResponse>(
+    projectId ? `/api/sales/trend?projectId=${projectId}&days=${PERIOD_DAYS}` : null,
+    "품목 추이를 불러오지 못했습니다."
+  );
+
+  const body = () => {
+    if (projectsError) {
+      return <StateNotice tone="error" message={projectsError} onRetry={reloadProjects} />;
+    }
+    if (projectsLoading || sales.loading) {
+      return <StateNotice message="판매 데이터를 불러오는 중…" />;
+    }
+    if (sales.error) {
+      return <StateNotice tone="error" message={sales.error} onRetry={sales.reload} />;
+    }
+    if (!sales.data) return null;
+
+    const { summary, daily, recent, periodDays } = sales.data;
+    const ranking = (trend.data?.byProduct ?? []).slice(0, 4);
+    const maxRankQty = ranking.reduce((max, r) => Math.max(max, r.totalQuantity), 0);
+
+    return (
+      <>
+        <View style={[s.card, s.summary]}>
+          <SectionTitle>최근 {periodDays}일 판매 요약</SectionTitle>
+          <View style={s.summaryRow}>
+            <View style={s.summaryItem}>
+              <Text style={s.summaryLabel}>매출(원)</Text>
+              <Text style={s.summaryValue}>{formatWon(summary.totalAmount)}</Text>
+            </View>
+            <View style={[s.summaryItem, s.summaryMid]}>
+              <Text style={s.summaryLabel}>판매량</Text>
+              <Text style={s.summaryValue}>
+                {formatWon(summary.totalQuantity)}<Text style={s.summaryUnit}>봉</Text>
+              </Text>
+            </View>
+            <View style={s.summaryItem}>
+              <Text style={s.summaryLabel}>주문수</Text>
+              <Text style={s.summaryValue}>
+                {formatWon(summary.orderCount)}<Text style={s.summaryUnit}>건</Text>
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={[s.card, s.chartCard]}>
+          <SectionTitle>일별 매출</SectionTitle>
+          {daily.length === 0 ? (
+            <StateNotice message={`최근 ${periodDays}일간 판매 기록이 없습니다.`} />
+          ) : (
+            <SalesLineChart daily={daily} />
+          )}
+        </View>
+
+        <View style={[s.card, s.rankingCard]}>
+          <SectionTitle>인기 품목 TOP 4</SectionTitle>
+          {trend.loading && <StateNotice message="품목 추이를 불러오는 중…" />}
+          {!trend.loading && trend.error && (
+            <StateNotice tone="error" message={trend.error} onRetry={trend.reload} />
+          )}
+          {!trend.loading && !trend.error && ranking.length === 0 && (
+            <StateNotice message="집계할 판매 기록이 없습니다." />
+          )}
+          {ranking.length > 0 && (
+            <View style={s.rankingRows}>
+              {ranking.map((item) => (
+                <View style={s.rankingRow} key={item.productId}>
+                  <CropPixel kind={cropKindOf(item.productName)} size="small" />
+                  <Text style={s.rankingName}>{item.productName}</Text>
+                  <View style={s.bar}>
+                    <View
+                      style={[s.barFill, { width: `${ratioPercent(item.totalQuantity, maxRankQty)}%` }]}
+                    />
+                  </View>
+                  <Text style={s.rankingCount}>{item.totalQuantity}봉</Text>
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
+
+        <View style={[s.card, s.historyCard]}>
+          <SectionTitle>최근 판매 내역</SectionTitle>
+          {recent.length === 0 ? (
+            <StateNotice message="판매 내역이 없습니다." />
+          ) : (
+            <View style={s.historyList}>
+              {recent.map((row, i) => (
+                <View style={[s.historyRow, i < recent.length - 1 && s.historyRowBorder]} key={row.id}>
+                  <Text style={s.historyDate}>{formatMonthDay(row.soldAt)}</Text>
+                  <Text style={s.historyName} numberOfLines={1}>{row.productName}</Text>
+                  <Text style={s.historyQty}>{row.quantity}{row.unit}</Text>
+                  <Text style={s.historyPrice}>{formatWon(row.amount)}원</Text>
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
+      </>
+    );
+  };
+
   return (
     <AppShell active="sales">
       <BranchSelect calendar />
       <Text style={s.pageTitle}>판매 데이터 리포트</Text>
-
-      <View style={[s.card, s.summary]}>
-        <SectionTitle>7월 판매 요약</SectionTitle>
-        <View style={s.summaryRow}>
-          <View style={s.summaryItem}>
-            <Text style={s.summaryLabel}>매출(원)</Text>
-            <Text style={s.summaryValue}>2,450,000</Text>
-          </View>
-          <View style={[s.summaryItem, s.summaryMid]}>
-            <Text style={s.summaryLabel}>판매량</Text>
-            <Text style={s.summaryValue}>1,280<Text style={s.summaryUnit}>개</Text></Text>
-          </View>
-          <View style={s.summaryItem}>
-            <Text style={s.summaryLabel}>주문수</Text>
-            <Text style={s.summaryValue}>86<Text style={s.summaryUnit}>건</Text></Text>
-          </View>
-        </View>
-      </View>
-
-      <View style={[s.card, s.chartCard]}>
-        <SectionTitle>일별 매출</SectionTitle>
-        <SalesLineChart />
-      </View>
-
-      <View style={[s.card, s.rankingCard]}>
-        <SectionTitle>인기 품목 TOP 4</SectionTitle>
-        <View style={s.rankingRows}>
-          {SALES_RANKING.map((item) => (
-            <View style={s.rankingRow} key={item.name}>
-              <CropPixel kind={item.kind} size="small" />
-              <Text style={s.rankingName}>{item.name}</Text>
-              <View style={s.bar}>
-                <View style={[s.barFill, { width: `${item.value}%` }]} />
-              </View>
-              <Text style={s.rankingCount}>{item.count}개</Text>
-            </View>
-          ))}
-        </View>
-      </View>
-
-      <View style={[s.card, s.historyCard]}>
-        <SectionTitle>최근 판매 내역</SectionTitle>
-        <View style={s.historyList}>
-          {SALES_HISTORY.map((row, i) => (
-            <View style={[s.historyRow, i < SALES_HISTORY.length - 1 && s.historyRowBorder]} key={`${row[0]}-${row[1]}`}>
-              <Text style={s.historyDate}>{row[0]}</Text>
-              <Text style={s.historyName}>{row[1]}</Text>
-              <Text style={s.historyQty}>{row[2]}</Text>
-              <Text style={s.historyPrice}>{row[3]}</Text>
-            </View>
-          ))}
-        </View>
-      </View>
+      {body()}
     </AppShell>
   );
 }

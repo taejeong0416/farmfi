@@ -5,7 +5,11 @@ import { Image } from "expo-image";
 import { C } from "../theme";
 import { AppIcon } from "../icons";
 import { OPERATOR_PORTRAIT, STORE_FLOOR_PLAN, TOMATO_BED } from "../assets";
-import { AppShell, BranchSelect, SectionTitle, TapScale } from "../components";
+import type { TodayTasksResponse } from "../api";
+import { AppShell, BranchSelect, SectionTitle, StateNotice, TapScale } from "../components";
+import { useFarmProjects } from "../branch";
+import { useApiResource } from "../useApiResource";
+import { useAuth } from "@/lib/auth";
 
 // 매장 공간도 라벨 (원본 % 좌표, 대략 중심 정렬용 오프셋)
 const FLOOR_LABELS: Array<{ text: string; left: string; top: string; w: number }> = [
@@ -17,8 +21,63 @@ const FLOOR_LABELS: Array<{ text: string; left: string; top: string; w: number }
   { text: "채소 판매 코너", left: "50%", top: "88%", w: 92 },
 ];
 
+const ROLE_LABEL: Record<string, string> = {
+  operator: "운영자",
+  admin: "관리자",
+  investor: "투자자",
+  landlord: "공간주",
+};
+
 export default function AssignmentScreen() {
+  const { user } = useAuth();
+  const { projectId, loading: projectsLoading, error: projectsError, reload: reloadProjects } =
+    useFarmProjects();
   const [message, setMessage] = useState("운영자 변경");
+
+  const today = useApiResource<TodayTasksResponse>(
+    projectId ? `/api/tasks/today?projectId=${projectId}` : null,
+    "오늘 할 일을 불러오지 못했습니다."
+  );
+
+  const tasks = today.data?.tasks ?? [];
+  const taskLine = today.loading
+    ? "오늘 할 일 확인 중…"
+    : today.error
+      ? "오늘 할 일을 불러오지 못했습니다"
+      : `오늘 할 일 ${tasks.length}건`;
+
+  const taskSection = () => {
+    if (projectsError) {
+      return <StateNotice tone="error" message={projectsError} onRetry={reloadProjects} />;
+    }
+    if (projectsLoading || today.loading) {
+      return <StateNotice message="오늘 할 일을 불러오는 중…" />;
+    }
+    if (today.error) {
+      return <StateNotice tone="error" message={today.error} onRetry={today.reload} />;
+    }
+    if (tasks.length === 0) {
+      return (
+        <StateNotice
+          message="오늘 처리할 수확·보충 작업이 없습니다."
+          onRetry={today.reload}
+          retryLabel="새로고침"
+        />
+      );
+    }
+    return (
+      <View style={s.taskList}>
+        {tasks.map((task, i) => (
+          <View key={`${task.type}-${task.productId}-${i}`} style={s.taskRow}>
+            <View style={[s.taskBadge, task.type === "harvest" ? s.taskBadgeHarvest : s.taskBadgeRestock]}>
+              <Text style={s.taskBadgeText}>{task.type === "harvest" ? "수확" : "보충"}</Text>
+            </View>
+            <Text style={s.taskText}>{task.message}</Text>
+          </View>
+        ))}
+      </View>
+    );
+  };
 
   return (
     <AppShell active="assignment">
@@ -36,18 +95,25 @@ export default function AssignmentScreen() {
           </View>
           <View style={s.operatorCopy}>
             <View style={s.operatorNameRow}>
-              <Text style={s.operatorName}>운영자 1</Text>
+              <Text style={s.operatorName} numberOfLines={1}>
+                {user ? user.name : "미로그인"}
+              </Text>
               <View style={s.workBadge}>
-                <Text style={s.workBadgeText}>근무 중</Text>
+                <Text style={s.workBadgeText}>{user ? (ROLE_LABEL[user.role] ?? user.role) : "로그인 필요"}</Text>
               </View>
             </View>
             <View style={s.operatorTime}>
               <AppIcon name="clock" size={18} color="#30322f" />
-              <Text style={s.operatorTimeText}>오전 09:00 ~ 오후 06:00</Text>
+              <Text style={s.operatorTimeText}>{taskLine}</Text>
             </View>
           </View>
           <Text style={s.chevronR}>›</Text>
         </TapScale>
+      </View>
+
+      <View style={s.section}>
+        <SectionTitle icon="check">오늘 할 일</SectionTitle>
+        {taskSection()}
       </View>
 
       <View style={s.floorSection}>
@@ -103,12 +169,31 @@ const s = StyleSheet.create({
   operatorImage: { width: "100%", height: "100%" },
   operatorCopy: { flex: 1 },
   operatorNameRow: { flexDirection: "row", alignItems: "center", gap: 9 },
-  operatorName: { fontSize: 24, letterSpacing: -1.2, color: C.ink, fontWeight: "700" },
+  operatorName: { flexShrink: 1, fontSize: 24, letterSpacing: -1.2, color: C.ink, fontWeight: "700" },
   workBadge: { borderRadius: 5, backgroundColor: C.green, paddingHorizontal: 8, paddingVertical: 6 },
   workBadgeText: { color: "#fff", fontSize: 10 },
   operatorTime: { flexDirection: "row", alignItems: "center", gap: 7, marginTop: 11 },
-  operatorTimeText: { color: "#30322f", fontSize: 12 },
+  operatorTimeText: { flex: 1, color: "#30322f", fontSize: 12 },
   chevronR: { fontSize: 35, fontWeight: "300", color: C.ink },
+
+  taskList: { marginTop: 9, gap: 6 },
+  taskRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 9,
+    minHeight: 46,
+    borderWidth: 1,
+    borderColor: "#e2dcd4",
+    borderRadius: 8,
+    backgroundColor: "#fff",
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+  taskBadge: { minWidth: 38, borderRadius: 5, paddingHorizontal: 7, paddingVertical: 5 },
+  taskBadgeHarvest: { backgroundColor: C.green },
+  taskBadgeRestock: { backgroundColor: "#b8722c" },
+  taskBadgeText: { color: "#fff", fontSize: 10, fontWeight: "700", textAlign: "center" },
+  taskText: { flex: 1, color: "#30322f", fontSize: 12, lineHeight: 17 },
 
   floorSection: { marginTop: 15 },
   floorPlan: {

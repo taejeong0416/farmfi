@@ -23,9 +23,9 @@ import Animated, {
 
 import { C, FRAME_MAX_WIDTH } from "./theme";
 import { AppIcon, PixelGlyph, type IconName } from "./icons";
-import { BRANCHES, CROP_CELL, LEAFY_SLOTS, RACK_DATA, TOMATO_SLOTS, type CropKind, type RackId, type ServiceKey } from "./data";
+import { CROP_CELL, LEAFY_SLOTS, TOMATO_SLOTS, type CropKind, type ServiceKey } from "./data";
 import { CROP_PLANT, CROP_SPRITE, RACK_BASE } from "./assets";
-import { useSelectedBranch } from "./branch";
+import { useFarmProjects } from "./branch";
 
 // ─── 하단 탭 정의 (원본 APP_TABS, href는 expo-router 경로로) ───
 const APP_TABS: Array<{ key: ServiceKey; label: string; icon: IconName; href: string }> = [
@@ -136,9 +136,17 @@ function RackPlant({ kind, index, maturity, scaleMul = 1 }: { kind: CropKind; in
   );
 }
 
-export function GrowthRackScene({ rackId, compact = false }: { rackId: RackId; compact?: boolean }) {
-  const rack = RACK_DATA[rackId];
-  const isTomato = rack.kind === "tomato";
+// 베드 장면 — 작물 종류와 성숙도는 호출자가 API에서 받아 넘긴다.
+export function GrowthRackScene({
+  kind,
+  maturity,
+  compact = false,
+}: {
+  kind: CropKind;
+  maturity: number;
+  compact?: boolean;
+}) {
+  const isTomato = kind === "tomato";
   const slots = isTomato ? TOMATO_SLOTS : LEAFY_SLOTS;
   // compact(썸네일)은 슬롯 위치는 유지하고 각 식물만 개별 축소 (원본 CSS와 동일).
   const scaleMul = compact ? (isTomato ? 0.5 : 0.48) : 1;
@@ -147,7 +155,7 @@ export function GrowthRackScene({ rackId, compact = false }: { rackId: RackId; c
       <Image source={isTomato ? RACK_BASE.tomato : RACK_BASE.leafy} style={styles.rackBase} contentFit="cover" />
       <View style={StyleSheet.absoluteFill} pointerEvents="none">
         {slots.map((_, i) => (
-          <RackPlant kind={rack.kind} index={i} maturity={rack.maturity} scaleMul={scaleMul} key={`${rackId}-${i}`} />
+          <RackPlant kind={kind} index={i} maturity={maturity} scaleMul={scaleMul} key={`${kind}-${i}`} />
         ))}
       </View>
     </View>
@@ -184,15 +192,25 @@ export function SectionTitle({ icon, children }: { icon?: IconName; children: Re
   );
 }
 
-// ─── 지점 선택 (원본 <select> → 모달 드롭다운) ───
+// ─── 지점 선택 (원본 <select> → 모달 드롭다운) — 목록은 GET /api/projects ───
 export function BranchSelect({ calendar = false }: { calendar?: boolean }) {
-  const [branch, setBranch] = useSelectedBranch();
+  const { projects, projectId, project, setProjectId, loading, error } = useFarmProjects();
   const [open, setOpen] = useState(false);
+
+  // 지점명을 아직 모르는 상태를 임의의 기본값으로 덮지 않는다.
+  const label = project?.name ?? (loading ? "불러오는 중…" : error ? "불러오기 실패" : "지점 없음");
+  const selectable = projects.length > 0;
+
   return (
     <View style={styles.branchRow}>
-      <Pressable style={styles.branchSelect} onPress={() => setOpen(true)}>
+      <Pressable
+        style={[styles.branchSelect, !selectable && styles.branchSelectMuted]}
+        onPress={() => selectable && setOpen(true)}
+      >
         <PixelGlyph name="store" size={24} />
-        <Text style={styles.branchText} numberOfLines={1}>{branch}</Text>
+        <Text style={[styles.branchText, !project && styles.branchTextMuted]} numberOfLines={1}>
+          {label}
+        </Text>
         <View style={styles.chevron} />
       </Pressable>
       {calendar && (
@@ -203,22 +221,51 @@ export function BranchSelect({ calendar = false }: { calendar?: boolean }) {
       <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
         <Pressable style={styles.modalBackdrop} onPress={() => setOpen(false)}>
           <View style={styles.modalSheet}>
-            {BRANCHES.map((b) => (
+            {projects.map((p) => (
               <Pressable
-                key={b}
+                key={p.id}
                 style={styles.modalItem}
                 onPress={() => {
-                  setBranch(b);
+                  setProjectId(p.id);
                   setOpen(false);
                 }}
               >
-                <Text style={[styles.modalItemText, b === branch && { color: C.green, fontWeight: "700" }]}>{b}</Text>
-                {b === branch && <AppIcon name="check" size={18} color={C.green} />}
+                <Text style={[styles.modalItemText, p.id === projectId && { color: C.green, fontWeight: "700" }]}>
+                  {p.name}
+                </Text>
+                {p.id === projectId && <AppIcon name="check" size={18} color={C.green} />}
               </Pressable>
             ))}
           </View>
         </Pressable>
       </Modal>
+    </View>
+  );
+}
+
+// ─── 로딩 / 오류 / 빈 상태 ───
+// API가 실패하면 목데이터로 되돌아가지 않고 반드시 이 컴포넌트로 사실을 말한다.
+export function StateNotice({
+  tone = "info",
+  message,
+  onRetry,
+  retryLabel = "다시 시도",
+}: {
+  tone?: "info" | "error";
+  message: string;
+  onRetry?: () => void;
+  retryLabel?: string;
+}) {
+  return (
+    <View style={styles.stateNotice}>
+      <Text style={[styles.stateNoticeText, tone === "error" && styles.stateNoticeTextErr]}>
+        {message}
+      </Text>
+      {onRetry && (
+        <TapScale style={styles.stateRetry} scaleTo={0.97} onPress={onRetry}>
+          <Text style={styles.stateRetryText}>{retryLabel}</Text>
+        </TapScale>
+      )}
     </View>
   );
 }
@@ -294,7 +341,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     paddingHorizontal: 11,
   },
+  branchSelectMuted: { borderColor: "#c3bcb0" },
   branchText: { flex: 1, fontSize: 15, fontWeight: "600", color: C.ink },
+  branchTextMuted: { color: "#8a8880" },
   chevron: {
     width: 8,
     height: 8,
@@ -319,6 +368,21 @@ const styles = StyleSheet.create({
 
   sectionTitleRow: { flexDirection: "row", alignItems: "center", gap: 8 },
   sectionTitleText: { fontSize: 18, letterSpacing: -0.45, color: C.ink, fontWeight: "600" },
+
+  stateNotice: { alignItems: "center", paddingVertical: 22, paddingHorizontal: 12 },
+  stateNoticeText: { color: "#666862", fontSize: 13, textAlign: "center", lineHeight: 19 },
+  stateNoticeTextErr: { color: "#c0492f" },
+  stateRetry: {
+    minHeight: 44,
+    justifyContent: "center",
+    marginTop: 12,
+    paddingHorizontal: 20,
+    borderWidth: 1.4,
+    borderColor: C.green,
+    borderRadius: 8,
+    backgroundColor: "#fff",
+  },
+  stateRetryText: { color: C.green, fontSize: 13, fontWeight: "700", textAlign: "center" },
 
   rackScene: { flex: 1, width: "100%", height: "100%", overflow: "hidden", backgroundColor: "#f4f3ef" },
   rackBase: { width: "100%", height: "100%" },

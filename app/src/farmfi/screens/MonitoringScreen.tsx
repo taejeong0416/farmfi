@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { Dimensions, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import Svg, { Circle, Line as SvgLine, Path, Rect } from "react-native-svg";
 
-import { apiFetch } from "@/lib/api";
+import { apiFetch, describeApiError } from "@/lib/api";
 import { C, FRAME_MAX_WIDTH } from "../theme";
 import { PixelGlyph } from "../icons";
-import { AppShell, SectionTitle } from "../components";
+import { AppShell, SectionTitle, StateNotice } from "../components";
+import { useFarmProjects } from "../branch";
 
 // ── 데이터 계약 (백엔드 /api/monitoring/[id] · lib/growth-monitoring.ts와 정합) ──
 type SensorKey = "temperature" | "humidity" | "co2Level" | "lightIntensity" | "phLevel";
@@ -38,8 +39,6 @@ type MonitoringResponse = {
   healthyRanges: Record<SensorKey, [number, number]>;
   summary: Summary;
 };
-
-type ProjectLite = { id: string; name: string };
 
 const SENSORS: { key: SensorKey; label: string; unit: string; color: string }[] = [
   { key: "temperature", label: "온도", unit: "°C", color: "#e05a3a" },
@@ -120,36 +119,29 @@ function SensorChart({
 }
 
 export default function MonitoringScreen() {
-  const [projects, setProjects] = useState<ProjectLite[]>([]);
-  const [projectId, setProjectId] = useState<string | null>(null);
+  // 지점 선택은 다른 운영 화면과 같은 전역 상태를 쓴다 (farmfi/branch.tsx).
+  const {
+    projects,
+    projectId,
+    setProjectId,
+    loading: projectsLoading,
+    error: projectsError,
+    reload: reloadProjects,
+  } = useFarmProjects();
   const [days, setDays] = useState(7);
   const [data, setData] = useState<MonitoringResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // 실 프로젝트 목록 로드 → 첫 프로젝트 선택
-  useEffect(() => {
-    let alive = true;
-    apiFetch<{ projects: ProjectLite[] }>("/api/projects")
-      .then((res) => {
-        if (!alive) return;
-        setProjects(res.projects);
-        if (res.projects.length > 0) setProjectId(res.projects[0].id);
-        else setLoading(false);
-      })
-      .catch((e) => {
-        if (!alive) return;
-        setError(e instanceof Error ? e.message : "프로젝트를 불러오지 못했습니다.");
-        setLoading(false);
-      });
-    return () => {
-      alive = false;
-    };
-  }, []);
+  const [nonce, setNonce] = useState(0);
 
   // 선택 프로젝트/기간 변경 시 모니터링 로드
   useEffect(() => {
-    if (!projectId) return;
+    if (!projectId) {
+      setData(null);
+      // 지점 목록이 아직 로딩 중이면 대기, 목록이 비었으면 로딩을 끝낸다.
+      setLoading(projectsLoading);
+      return;
+    }
     let alive = true;
     setLoading(true);
     setError(null);
@@ -161,13 +153,14 @@ export default function MonitoringScreen() {
       })
       .catch((e) => {
         if (!alive) return;
-        setError(e instanceof Error ? e.message : "모니터링 데이터를 불러오지 못했습니다.");
+        setData(null);
+        setError(describeApiError(e, "모니터링 데이터를 불러오지 못했습니다."));
         setLoading(false);
       });
     return () => {
       alive = false;
     };
-  }, [projectId, days]);
+  }, [projectId, days, nonce, projectsLoading]);
 
   const latest = data && data.points.length > 0 ? data.points[data.points.length - 1] : null;
 
@@ -205,8 +198,16 @@ export default function MonitoringScreen() {
         })}
       </View>
 
-      {loading && <Text style={s.notice}>불러오는 중…</Text>}
-      {error && !loading && <Text style={[s.notice, s.noticeErr]}>{error}</Text>}
+      {projectsError && (
+        <StateNotice tone="error" message={projectsError} onRetry={reloadProjects} />
+      )}
+      {!projectsError && !projectsLoading && projects.length === 0 && (
+        <StateNotice message="등록된 지점이 없습니다." onRetry={reloadProjects} retryLabel="새로고침" />
+      )}
+      {!projectsError && loading && <StateNotice message="불러오는 중…" />}
+      {!projectsError && error && !loading && (
+        <StateNotice tone="error" message={error} onRetry={() => setNonce((n) => n + 1)} />
+      )}
 
       {data && !loading && (
         <>
