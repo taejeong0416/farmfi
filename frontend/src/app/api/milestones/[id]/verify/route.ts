@@ -178,6 +178,25 @@ export async function POST(
         console.error("verifyMilestoneOnChain failed:", e);
       }
 
+      // 온체인 기록을 남겨야 화면(ProjectDetail의 온체인 증거)이 tx를 보여줄 수 있다.
+      // 이전에는 txHash를 응답에만 실어 보내 실제 체인 기록이 있어도 UI가 비어 있었다.
+      // 자금 이동이 아니므로 amount=0 (tsconfig es2017 → BigInt 리터럴 대신 생성자).
+      if (txHash) {
+        try {
+          await prisma.transaction.create({
+            data: {
+              projectId: milestone.projectId,
+              type: "milestone_verify",
+              amount: BigInt(0),
+              txHash,
+              memo: `마일스톤 ${milestone.seq} 검증 온체인 기록`,
+            },
+          });
+        } catch (e) {
+          console.error("verify txHash 기록 실패:", e);
+        }
+      }
+
       return NextResponse.json(
         serialize({
           passed: true,
