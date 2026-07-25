@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { withAICache } from "@/lib/ai-cache";
 import { extractFromImage } from "@/lib/ai-vision";
+import { requireRole } from "@/lib/auth";
 
 type MilestoneType = "construction" | "trial_run" | "harvest" | "operation";
 
@@ -25,6 +26,14 @@ interface DetectionResult {
 }
 
 export async function POST(req: NextRequest) {
+  // 마일스톤 검증 신호를 만드는 라우트 — 미인증 호출로 캐시를 채워
+  // 이후 검증을 통과시키는 경로를 막는다.
+  try {
+    await requireRole("operator");
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
   try {
     const { milestoneId, imageBase64, milestoneType } = await req.json();
 
@@ -44,7 +53,7 @@ export async function POST(req: NextRequest) {
 
     const prompt = PROMPTS[milestoneType as MilestoneType] + SUFFIX;
 
-    const response = await withAICache(milestoneId, "photo", async () => {
+    const response = await withAICache(milestoneId, "photo", imageBase64, async () => {
       const result = await extractFromImage<DetectionResult>(
         imageBase64,
         prompt

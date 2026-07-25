@@ -8,8 +8,11 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // 에스크로 자금을 실제로 집행하는 라우트라 admin 전용이다. Project에 소유자
+  // 필드가 없어 "내 프로젝트만" 검증이 불가하므로, 누구나 스스로 operator가 되어
+  // 남의 프로젝트 트랜치를 집행하는 권한 자가상승을 admin 게이트로 차단한다.
   try {
-    await requireRole("operator");
+    await requireRole("admin");
   } catch (err) {
     if (err instanceof Response) return err;
     throw err;
@@ -68,12 +71,24 @@ export async function POST(
       );
     }
 
-    // Update milestone, escrow, create transaction, and advance next milestone
+    // 상태검사 → 에스크로 차감 → 완료 처리를 한 트랜잭션으로 원자화한다.
+    // 위의 사전 검사는 에러 메시지용일 뿐 TOCTOU를 막지 못하므로, 실제 차단은
+    // 아래 조건부 updateMany(status: "verified")가 담당한다.
     const updatedMilestone = await prisma.$transaction(async (tx) => {
-      const completed = await tx.milestone.update({
-        where: { id },
+      // verified인 행만 completed로 전이. 동시 요청 중 하나만 성공한다.
+      const claimed = await tx.milestone.updateMany({
+        where: { id, status: "verified" },
         data: { status: "completed", completedAt: new Date() },
       });
+      if (claimed.count === 0) {
+        throw new Error("ALREADY_COMPLETED");
+      }
+
+      // 잔액도 트랜잭션 안에서 재확인 — 동시 집행으로 remaining이 음수가 되지 않게.
+      const freshEscrow = await tx.escrow.findUnique({ where: { id: escrow.id } });
+      if (!freshEscrow || releaseAmount > freshEscrow.remaining) {
+        throw new Error("INSUFFICIENT_ESCROW");
+      }
 
       await tx.escrow.update({
         where: { id: escrow.id },
@@ -124,7 +139,8 @@ export async function POST(
         });
       }
 
-      return completed;
+      // updateMany는 행을 반환하지 않으므로 트랜잭션 안에서 갱신된 행을 다시 읽는다.
+      return tx.milestone.findUniqueOrThrow({ where: { id } });
     });
 
     // 트랜치 자동집행을 온체인에 실행 (배포 전이면 null, 체인 오류 시 DB는 유지)
@@ -143,6 +159,20 @@ export async function POST(
       })
     );
   } catch (error) {
+    // 트랜잭션 안에서 던진 이중집행/잔액부족 신호는 4xx로 되돌린다.
+    const message = error instanceof Error ? error.message : "";
+    if (message.includes("ALREADY_COMPLETED")) {
+      return NextResponse.json(
+        { error: "Milestone already completed" },
+        { status: 400 }
+      );
+    }
+    if (message.includes("INSUFFICIENT_ESCROW")) {
+      return NextResponse.json(
+        { error: "Insufficient escrow balance for tranche release" },
+        { status: 400 }
+      );
+    }
     console.error("POST /api/milestones/[id]/complete error:", error);
     return NextResponse.json(
       { error: "Failed to complete milestone" },

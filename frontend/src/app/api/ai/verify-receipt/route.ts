@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { withAICache } from "@/lib/ai-cache";
 import { extractFromImage } from "@/lib/ai-vision";
+import { requireRole } from "@/lib/auth";
 
 // 영수증 관련 키워드 — 마일스톤 conditionText에서 영수증으로 검증 가능한 절만 추린다.
 const RECEIPT_KEYWORDS = ["영수증", "판매", "매출", "거래", "구매", "receipt"];
@@ -57,6 +58,15 @@ interface ExtractedData {
 }
 
 export async function POST(req: NextRequest) {
+  // 마일스톤 검증 신호를 만드는 라우트 — 미인증 호출로 캐시를 채워
+  // 이후 검증을 통과시키는 경로를 막는다. (verify 라우트가 호출자의
+  // Authorization/cookie를 그대로 전달한다.)
+  try {
+    await requireRole("operator");
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
   try {
     const { milestoneId, imageBase64 } = await req.json();
 
@@ -71,7 +81,7 @@ export async function POST(req: NextRequest) {
       where: { id: milestoneId },
     });
 
-    const result = await withAICache(milestoneId, "receipt", async () => {
+    const result = await withAICache(milestoneId, "receipt", imageBase64, async () => {
       const prompt = buildPrompt(milestone?.conditionText ?? null);
       const extractedData = await extractFromImage<ExtractedData>(
         imageBase64,

@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { detectAnomalies, isHealthy, IoTReading } from "@/lib/iot-health";
 import { prisma } from "@/lib/db";
+import { requireRole } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
+  // 마일스톤 IoT 게이트가 소비하는 판정 — 미인증 호출을 막는다.
+  try {
+    await requireRole("operator");
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
   try {
     const { projectId } = await req.json();
 

@@ -18,10 +18,9 @@ export type MySpace = {
 export const spacesQueryKey = () => ["spaces"] as const;
 
 /**
- * GET /api/spaces returns every space platform-wide (no session filter — that
- * route is owned by another agent and is read-only here). Callers on the
- * landlord dashboard MUST filter the result down to the signed-in owner's
- * spaces themselves; never render the raw list as "my spaces".
+ * GET /api/spaces is session-scoped: it returns only the signed-in user's own
+ * spaces (admin sees all) and 401s without a session. Callers still filter by
+ * ownerId client-side so an admin session never renders others' spaces as "mine".
  */
 export async function fetchAllSpaces(): Promise<MySpace[]> {
   const res = await fetch("/api/spaces", { credentials: "include" });

@@ -1,11 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { requireRole } from "@/lib/auth";
 
 // POST /api/sales — 운영자 판매 수기입력 (외부 POS 연동 아님)
 // body: { projectId, productId, quantity, soldAt? }
 // 판매 기록과 동시에 해당 품목의 매장 재고(inStock)를 차감한다 — '오늘 할 일'의
 // 보충(restock) 판정이 실판매를 반영하도록.
 export async function POST(req: NextRequest) {
+  // 매출·재고를 바꾸는 쓰기 라우트 — 미인증 데이터 위조를 막는다.
+  try {
+    await requireRole("operator");
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
+
   let body: { projectId?: string; productId?: string; quantity?: number; soldAt?: string } | null;
   try {
     body = await req.json();

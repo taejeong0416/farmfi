@@ -145,8 +145,12 @@ interface ConfirmVerifyResponse {
 const OFFER_ID_KEY = "_offerId";
 
 // "19990203", "1999.02.03", "1999-02-03" 등 → "1999-02-03"으로 보정.
-function normalizeBirthDate(raw: string): string {
+// 매핑할 수 없는 값이면 null (호출부가 birthDate를 비워둔다).
+function normalizeBirthDate(raw: string): string | null {
   const digits = raw.replace(/[^0-9]/g, "");
+  // 13자리는 주민등록번호다. 앞 6자리를 YYMMDD로 해석하면 "9902-03-12" 같은
+  // 잘못된 날짜가 만들어지므로 생년월일 매핑 실패로 처리한다.
+  if (digits.length === 13) return null;
   if (digits.length >= 8) {
     return `${digits.slice(0, 4)}-${digits.slice(4, 6)}-${digits.slice(6, 8)}`;
   }
@@ -177,7 +181,8 @@ function mapConfirmClaims(claims: ConfirmVerifyClaim[] | undefined): IdentityCla
     if (code.endsWith("user_name")) {
       out.realName = value;
     } else if (code.endsWith("birth_date")) {
-      out.birthDate = normalizeBirthDate(value);
+      const normalized = normalizeBirthDate(value);
+      if (normalized) out.birthDate = normalized;
     }
   }
   if (out.birthDate) {
@@ -224,6 +229,15 @@ export class OmniOneVerifier implements IdentityVerifier {
     // 재사용하려고 offerId를 claims(Json)에 임시 보관한다. verified 확정 시 덮어씀.
     const offerId =
       typeof data.payload?.offerId === "string" ? data.payload.offerId : "";
+    // offerId 없이 세션을 만들면 폴링이 confirm-verify를 부를 수 없어 영원히
+    // pending에 갇힌다. 조용히 진행하지 말고 즉시 실패시킨다.
+    if (!offerId) {
+      console.error(
+        "Verifier request-offer-qr 응답에 offerId가 없습니다:",
+        JSON.stringify(data.payload)
+      );
+      throw new Error("Verifier 응답에 offerId가 없습니다");
+    }
 
     // 세션 추적·상태 폴링용으로 로컬에 txId 기록.
     await prisma.identityVerification.create({
@@ -253,7 +267,13 @@ export class OmniOneVerifier implements IdentityVerifier {
     // pending이면 offerId로 confirm-verify를 물어본다. 지갑이 아직 VP를 제출하지
     // 않았으면 result=false거나 실패할 수 있으므로, 예외를 삼키고 pending 유지.
     const offerId = extractOfferId(row.claims);
-    if (!offerId) return "pending";
+    if (!offerId) {
+      // offerId가 유실된 세션은 폴링해도 영원히 진행되지 않는다 → failed로 끝낸다.
+      console.error(
+        `IdentityVerification(txId=${txId})에 offerId가 없습니다 — 폴링 종료(failed)`
+      );
+      return "failed";
+    }
 
     try {
       const res = await fetch(
@@ -269,6 +289,16 @@ export class OmniOneVerifier implements IdentityVerifier {
       if (data.result !== true) return "pending";
 
       const mapped = mapConfirmClaims(data.claims);
+      // 실명·생년월일이 없으면 클레임 코드 계약이 어긋난 것이다. verified로
+      // 확정하면 부적격 상태가 영구 고착되므로 실제 코드를 남기고 pending 유지.
+      if (!mapped.realName || !mapped.birthDate) {
+        console.error(
+          `confirm-verify 클레임 매핑 실패(txId=${txId}) — realName/birthDate 없음. 수신 코드:`,
+          (data.claims ?? []).map((c) => c.code)
+        );
+        return "pending";
+      }
+
       await prisma.identityVerification.update({
         where: { txId },
         data: { status: "verified", claims: mapped as Prisma.InputJsonValue },
@@ -300,7 +330,17 @@ export class OmniOneVerifier implements IdentityVerifier {
 export function getVerifier(): IdentityVerifier {
   if (process.env.IDENTITY_PROVIDER === "opendid") {
     const baseUrl = process.env.IDENTITY_VERIFIER_URL ?? "";
+    if (!baseUrl) {
+      // URL 없이 OmniOneVerifier를 만들면 모든 요청이 조용히 실패한다.
+      throw new Error("IDENTITY_VERIFIER_URL 미설정 — OpenDID Verifier 연동 불가");
+    }
     return new OmniOneVerifier(baseUrl);
+  }
+  // fail-closed: 프로덕션에서 스텁이 뜨면 누구나 "홍길동" 실명 인증을 통과한다.
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      "프로덕션에서는 StubVerifier를 사용할 수 없습니다 — IDENTITY_PROVIDER=opendid 설정 필요"
+    );
   }
   return new StubVerifier();
 }

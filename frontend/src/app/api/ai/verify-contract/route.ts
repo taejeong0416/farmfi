@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { withAICache } from "@/lib/ai-cache";
 import { extractFromImage } from "@/lib/ai-vision";
+import { requireRole } from "@/lib/auth";
 
 const PROMPT =
   "임대차 계약서 이미지에서 임대인, 임차인, 주소, 면적(㎡), 계약기간, 월세를 JSON으로 추출해주세요. 응답 형식: { landlord: string, tenant: string, address: string, areaSqm: number, period: string, rent: number }";
@@ -16,6 +17,14 @@ interface ExtractedData {
 }
 
 export async function POST(req: NextRequest) {
+  // 마일스톤 검증 신호를 만드는 라우트 — 미인증 호출로 캐시를 채워
+  // 이후 검증을 통과시키는 경로를 막는다.
+  try {
+    await requireRole("operator");
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
   try {
     const { milestoneId, imageBase64 } = await req.json();
 
@@ -31,7 +40,7 @@ export async function POST(req: NextRequest) {
       include: { project: true },
     });
 
-    const result = await withAICache(milestoneId, "contract", async () => {
+    const result = await withAICache(milestoneId, "contract", imageBase64, async () => {
       const extractedData = await extractFromImage<ExtractedData>(
         imageBase64,
         PROMPT
