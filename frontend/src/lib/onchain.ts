@@ -81,7 +81,8 @@ function getClients() {
 }
 
 // gas 0 체인이면 legacy(gasPrice 0)로 강제. 아니면 viem 기본 수수료 추정 사용.
-const GAS_OPTS = GAS_ZERO ? ({ gasPrice: 0n } as const) : ({} as const);
+// tsconfig target es2017이라 BigInt 리터럴(0n) 대신 BigInt() 생성자를 쓴다.
+const GAS_OPTS = GAS_ZERO ? ({ gasPrice: BigInt(0) } as const) : ({} as const);
 
 // 마일스톤 검증 통과를 온체인에 기록 (VERIFIER_ROLE). 비활성·실패 시 null.
 export async function verifyMilestoneOnChain(
