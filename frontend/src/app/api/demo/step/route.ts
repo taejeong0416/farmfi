@@ -252,9 +252,11 @@ export async function POST(request: NextRequest) {
       // 캐시 미스 시에는 아래에서 실제 실행으로 폴백 (시연 안전망).
     }
 
-    // 내부 self-fetch용 baseUrl·admin bearer
-    const baseUrl =
-      process.env.NEXT_PUBLIC_BASE_URL || new URL(request.url).origin;
+    // 내부 self-fetch용 baseUrl·admin bearer.
+    // 자기 자신을 부르는 것이므로 항상 "지금 들어온 요청의 origin"이 정답이다.
+    // NEXT_PUBLIC_BASE_URL은 빌드 시 번들에 인라인되는 값이라, 로컬 .env의
+    // localhost:3000이 프로덕션 번들에 구워져 self-fetch가 ECONNREFUSED로 죽었다.
+    const baseUrl = new URL(request.url).origin;
     const authHeader = await getAdminBearer();
 
     const executor = buildStepExecutors(baseUrl, authHeader)[step];

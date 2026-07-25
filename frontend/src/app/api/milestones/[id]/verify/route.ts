@@ -41,8 +41,10 @@ export async function POST(
   }
   try {
     const { id } = await params;
-    const baseUrl =
-      process.env.NEXT_PUBLIC_BASE_URL || new URL(request.url).origin;
+    // 자기 자신(/api/ai/*)을 부르므로 항상 현재 요청의 origin을 쓴다.
+    // NEXT_PUBLIC_BASE_URL은 빌드 타임 인라인이라 로컬 .env 값이 프로덕션에
+    // 구워질 수 있다(실제로 localhost:3000이 박혀 self-fetch가 죽었다).
+    const baseUrl = new URL(request.url).origin;
 
     // 내부 self-fetch(/api/ai/*)도 인증 게이트가 걸려 있어, 호출자의 자격증명을
     // 그대로 전달한다. 데모는 Authorization: Bearer(admin), 관리자 콘솔은 쿠키.
