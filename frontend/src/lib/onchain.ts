@@ -117,3 +117,37 @@ export async function releaseTrancheOnChain(
   await pub.waitForTransactionReceipt({ hash });
   return hash;
 }
+
+// ─── 블록 탐색기 링크 (온체인 증거 UI용) ───
+// 체인별 탐색기 베이스 URL. 값이 ""면 공개 탐색기가 없는 체인이라는 뜻이고,
+// 아래 두 헬퍼도 ""를 돌려준다 → 호출부는 링크 대신 해시/주소를 텍스트로만 렌더링한다.
+const EXPLORER_BASE: Record<number, string> = {
+  80002: "https://amoy.polygonscan.com", // Polygon Amoy
+  137: "https://polygonscan.com", // Polygon mainnet
+  201210: "", // OmniOne Chain — 공개 탐색기 없음
+};
+
+// 클라이언트 번들에는 NEXT_PUBLIC_ 접두사 env만 인라인된다. 서버 전용
+// ONCHAIN_CHAIN_ID는 브라우저에서 undefined이므로, 체인을 Amoy 외로 바꾸면
+// NEXT_PUBLIC_ONCHAIN_CHAIN_ID 도 같이 넣어야 링크가 올바른 탐색기를 가리킨다.
+function explorerBase(): string {
+  const chainId = Number(
+    process.env.NEXT_PUBLIC_ONCHAIN_CHAIN_ID ||
+      process.env.ONCHAIN_CHAIN_ID ||
+      process.env.NEXT_PUBLIC_CHAIN_ID ||
+      "80002"
+  );
+  return EXPLORER_BASE[chainId] ?? "";
+}
+
+// 트랜잭션 해시의 탐색기 URL. 탐색기 없는 체인이거나 해시가 비면 "".
+export function explorerTxUrl(hash: string): string {
+  const base = explorerBase();
+  return base && hash ? `${base}/tx/${hash}` : "";
+}
+
+// 컨트랙트/지갑 주소의 탐색기 URL. 탐색기 없는 체인이거나 주소가 비면 "".
+export function explorerAddressUrl(addr: string): string {
+  const base = explorerBase();
+  return base && addr ? `${base}/address/${addr}` : "";
+}

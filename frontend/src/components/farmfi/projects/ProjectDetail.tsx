@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { SubscribeForm } from "./SubscribeForm";
+import { explorerAddressUrl, explorerTxUrl } from "@/lib/onchain";
 
 type Milestone = {
   id: string;
@@ -17,7 +19,19 @@ type Escrow = {
   totalReleased: number;
   remaining: number;
   status: string;
+  contractAddress: string | null;
 } | null;
+// GET /api/projects/[id] 가 최근 10건을 내려준다 (createdAt desc).
+type Txn = {
+  id: string;
+  type: string;
+  amount: number;
+  tokenAmount: number | null;
+  txHash: string | null;
+  blockNumber: number | null;
+  memo: string | null;
+  createdAt: string;
+};
 type Project = {
   id: string;
   name: string;
@@ -32,6 +46,7 @@ type Project = {
   status: string;
   escrow: Escrow;
   milestones: Milestone[];
+  transactions: Txn[];
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -52,15 +67,28 @@ const MS_STATUS: Record<string, { label: string; color: string }> = {
   manual_review: { label: "수동 검토", color: "#c0392b" },
 };
 
+const TXN_LABEL: Record<string, string> = {
+  subscription: "청약",
+  tranche_release: "트랜치 집행",
+  dividend: "배당",
+  revenue: "매출",
+};
+
 function won(n: number): string {
   return n.toLocaleString("ko-KR") + "원";
+}
+
+// 0x1234…abcd 형태로 줄인다 (주소·해시 공통).
+function shortHex(v: string): string {
+  return v.length > 14 ? `${v.slice(0, 8)}…${v.slice(-6)}` : v;
 }
 
 export function ProjectDetail({ id }: { id: string }) {
   const [p, setP] = useState<Project | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  // 청약 성공 후에도 다시 부르므로 콜백으로 분리 (잔여·판매 구좌 갱신).
+  const load = useCallback(() => {
     fetch(`/api/projects/${id}`)
       .then(async (r) => {
         if (!r.ok) throw new Error();
@@ -69,6 +97,10 @@ export function ProjectDetail({ id }: { id: string }) {
       .then(setP)
       .catch(() => setError("프로젝트를 불러오지 못했습니다."));
   }, [id]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
 
   if (error)
     return (
@@ -87,6 +119,12 @@ export function ProjectDetail({ id }: { id: string }) {
   const pct =
     target > 0 ? Math.min(100, Math.round((p.currentAmount / target) * 100)) : 0;
   const isFundable = !!p.tokenSymbol;
+  const escrowUrl = p.escrow?.contractAddress
+    ? explorerAddressUrl(p.escrow.contractAddress)
+    : "";
+  // txHash가 있는 거래만 온체인 증거로 취급한다. 컨트랙트 미배포/소진 구간에서는
+  // 전부 null이므로 아래 카드 자체가 렌더링되지 않는다.
+  const onchainTxns = (p.transactions ?? []).filter((t) => t.txHash);
 
   return (
     <div className="shell">
@@ -108,13 +146,14 @@ export function ProjectDetail({ id }: { id: string }) {
         </p>
       ) : null}
 
-      <Link
-        className="link"
-        href={`/monitoring/${id}`}
-        style={{ marginTop: 14, display: "inline-block" }}
-      >
-        📈 이 지점 실시간 생육 환경 보기 →
-      </Link>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 18 }}>
+        <Link className="link" href={`/monitoring/${id}`}>
+          📈 이 지점 실시간 생육 환경 보기 →
+        </Link>
+        <Link className="link" href={`/optimization/${id}`}>
+          🧠 AI 최적화 리포트 보기 →
+        </Link>
+      </div>
 
       {isFundable ? (
         <div className="grid-2" style={{ marginTop: 24 }}>
@@ -153,13 +192,7 @@ export function ProjectDetail({ id }: { id: string }) {
               발행 {(p.totalTokens ?? 0).toLocaleString("ko-KR")}구좌 · 판매{" "}
               {p.soldTokens.toLocaleString("ko-KR")}구좌
             </p>
-            <Link
-              className="btn"
-              href="/login"
-              style={{ marginTop: 16, width: "100%" }}
-            >
-              청약하기 →
-            </Link>
+            <SubscribeForm project={p} onSubscribed={load} />
           </article>
 
           {/* 에스크로 */}
@@ -179,6 +212,25 @@ export function ProjectDetail({ id }: { id: string }) {
                 <strong>{won(p.escrow?.remaining ?? 0)}</strong>
               </li>
             </ul>
+            {p.escrow?.contractAddress ? (
+              <p className="muted" style={{ marginTop: 14, fontSize: 13 }}>
+                컨트랙트{" "}
+                {escrowUrl ? (
+                  <a
+                    className="link"
+                    href={escrowUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ marginTop: 0, fontSize: 13 }}
+                  >
+                    {shortHex(p.escrow.contractAddress)} ↗
+                  </a>
+                ) : (
+                  // 공개 탐색기가 없는 체인(OmniOne 등)에서는 주소 텍스트만 보여준다.
+                  <code style={{ fontSize: 12 }}>{p.escrow.contractAddress}</code>
+                )}
+              </p>
+            ) : null}
             <p className="muted" style={{ marginTop: 12, fontSize: 13 }}>
               마일스톤 검증을 통과할 때마다 코드가 트랜치를 단계 집행합니다.
             </p>
@@ -212,6 +264,52 @@ export function ProjectDetail({ id }: { id: string }) {
                   <span style={{ color: s.color, fontWeight: 800, fontSize: 13 }}>
                     {s.label}
                   </span>
+                </li>
+              );
+            })}
+          </ul>
+        </article>
+      ) : null}
+
+      {/* 온체인 증거 — 해시가 실제로 기록된 거래만 */}
+      {onchainTxns.length > 0 ? (
+        <article className="card" style={{ padding: 22, marginTop: 22 }}>
+          <h3 style={{ marginTop: 0 }}>온체인 기록</h3>
+          <ul style={{ display: "grid", gap: 12, marginTop: 14, listStyle: "none" }}>
+            {onchainTxns.map((t) => {
+              const url = explorerTxUrl(t.txHash!);
+              return (
+                <li
+                  key={t.id}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    gap: 12,
+                    flexWrap: "wrap",
+                    fontSize: 14,
+                  }}
+                >
+                  <span>
+                    <strong>{TXN_LABEL[t.type] ?? t.type}</strong>
+                    <span className="muted" style={{ marginLeft: 8, fontSize: 13 }}>
+                      {won(t.amount)}
+                      {t.memo ? ` · ${t.memo}` : ""}
+                    </span>
+                  </span>
+                  {url ? (
+                    <a
+                      className="link"
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ marginTop: 0, fontSize: 13 }}
+                    >
+                      {shortHex(t.txHash!)} ↗
+                    </a>
+                  ) : (
+                    <code style={{ fontSize: 12 }}>{shortHex(t.txHash!)}</code>
+                  )}
                 </li>
               );
             })}
