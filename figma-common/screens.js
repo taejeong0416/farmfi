@@ -35,10 +35,12 @@ var CONTENT_W = FRAME_W - PAD * 2;    // 384
 // 디자인 확인용 숫자이며 라이브 데이터가 아니다.
 var S = {
   branch: "온천장 스마트팜 1호점",
+  // kind/maturity 는 카드 썸네일에 쓰인다. 원본은 수확이 가장 임박한 품목을
+  // 대표로 쓴다(재고 API 정렬 기준 expectedHarvestAt asc).
   stores: [
-    { name: "온천장 스마트팜 1호점", status: "정상", harvest: "180봉", beds: "4개" },
-    { name: "장전동 스마트팜 2호점", status: "정상", harvest: "165봉", beds: "4개" },
-    { name: "명륜동 스마트팜 3호점", status: "점검 중", harvest: "142봉", beds: "4개" },
+    { name: "온천장 스마트팜 1호점", status: "정상", harvest: "180봉", beds: "4개", kind: "butter", maturity: 96 },
+    { name: "장전동 스마트팜 2호점", status: "정상", harvest: "165봉", beds: "4개", kind: "basil", maturity: 100 },
+    { name: "명륜동 스마트팜 3호점", status: "점검 중", harvest: "142봉", beds: "4개", kind: "romaine", maturity: 61 },
   ],
   operator: { name: "박운영", role: "운영자", tasks: "오늘 할 일 2건" },
   tasks: [
@@ -46,10 +48,10 @@ var S = {
     { type: "restock", label: "보충", text: "바질 재고 부족 · 현재 3봉 보충 필요" },
   ],
   beds: [
-    { rack: "A", product: "상추", maturity: 96, stage: "수확기", stock: 4, growing: 120, harvest: "수확 가능" },
-    { rack: "B", product: "루꼴라", maturity: 33, stage: "생장기", stock: 22, growing: 80, harvest: "12일 후" },
-    { rack: "C", product: "바질", maturity: 100, stage: "수확기", stock: 3, growing: 60, harvest: "수확 가능" },
-    { rack: "D", product: "방울토마토", maturity: 44, stage: "생장기", stock: 18, growing: 90, harvest: "25일 후" },
+    { rack: "A", product: "상추", kind: "butter", maturity: 96, stage: "수확기", stock: 4, growing: 120, harvest: "수확 가능" },
+    { rack: "B", product: "루꼴라", kind: "romaine", maturity: 33, stage: "생장기", stock: 22, growing: 80, harvest: "12일 후" },
+    { rack: "C", product: "바질", kind: "basil", maturity: 100, stage: "수확기", stock: 3, growing: 60, harvest: "수확 가능" },
+    { rack: "D", product: "방울토마토", kind: "tomato", maturity: 44, stage: "생장기", stock: 18, growing: 90, harvest: "25일 후" },
   ],
   growth: { uptime: "97", harvestToday: "180", monthly: "1,204", health: "정상", humidity: "64%" },
   monitoring: {
@@ -66,10 +68,10 @@ var S = {
     days: 30,
     amount: "5,842,000", quantity: "1,486", orders: "412",
     ranking: [
-      { name: "방울토마토", qty: 402, count: "402봉" },
-      { name: "상추", qty: 388, count: "388봉" },
-      { name: "루꼴라", qty: 366, count: "366봉" },
-      { name: "바질", qty: 330, count: "330봉" },
+      { name: "방울토마토", kind: "tomato", qty: 402, count: "402봉" },
+      { name: "상추", kind: "butter", qty: 388, count: "388봉" },
+      { name: "루꼴라", kind: "romaine", qty: 366, count: "366봉" },
+      { name: "바질", kind: "basil", qty: 330, count: "330봉" },
     ],
     recent: [
       { date: "07.29", name: "방울토마토", qty: "34봉", price: "204,000원" },
@@ -115,7 +117,9 @@ function svgNode(inner, vbW, vbH, w, h, name) {
   return n;
 }
 
-// 래스터 PNG 자리표시자 — app/assets/farmfi/*.png 는 0.5~2.3MB 라 임베드하지 않는다.
+// 앱 에셋 이미지. asset 키는 ./assets-spec.js 의 parseAssetKey 형식을 따른다.
+// 원본 PNG(0.5~2.3MB)를 표시 크기로 줄인 캐시를 쓴다. 캐시가 없으면 라벨 박스로
+// 떨어지므로, 이미지 없이도 레이아웃은 그대로 나온다.
 function raster(label, w, h, o) {
   o = o || {};
   var n = box({
@@ -124,10 +128,11 @@ function raster(label, w, h, o) {
     stroke: o.stroke || null,
     strokeW: o.strokeW || 1,
     radius: o.radius != null ? o.radius : 0,
-    mt: o.mt, ml: o.ml, absL: o.absL, absT: o.absT,
+    mt: o.mt, absL: o.absL, absT: o.absT,
   });
   n._placeholder = label;
-  n.name = "⬚ " + label;
+  n.name = label;
+  if (o.asset) n._image = { asset: o.asset, fit: o.fit || "cover" };
   return n;
 }
 
@@ -176,7 +181,7 @@ function branchSelect(label, withCalendar) {
     }, [
       pglyph("store", 24),
       // 원본 numberOfLines={1} — 남는 폭(184-22-24-6-12-6=114)에서 잘린다.
-      txt(label, { size: 15, weight: 600, color: C.ink, w: 114, maxLines: 1 }),
+      txt(label, { size: 15, weight: 600, color: C.ink, w: "fill", maxLines: 1 }),
       chevronDown(),
     ]),
   ];
@@ -236,8 +241,6 @@ function storeCard(store, selected) {
   // 원본 thumbnail width "41%" — RN 기준 content box = 384 - 테두리 - 패딩
   var inner = CONTENT_W - strokeW * 2 - pad * 2;
   var thumbW = Math.round(inner * 0.41);
-  var copyW = inner - thumbW - 11;
-  var badgeW = selected ? 58 : 48;
 
   var badge = selected
     ? row({ name: "badge", gap: 3, h: 30, radius: 5, bg: C.green, px: 7, align: "center" }, [
@@ -262,14 +265,17 @@ function storeCard(store, selected) {
     gap: 11, w: "fill", h: 154, px: pad, py: pad, bg: "#ffffff", radius: 10,
     stroke: selected ? C.green : "#ded5c9", strokeW: strokeW, align: "center",
   }, [
-    raster("재배 랙", thumbW, 132, { stroke: "#877e72", radius: 8 }),
-    col({ name: "copy", gap: 9, w: copyW, justify: "center" }, [
+    raster("재배 랙", thumbW, 132, {
+      stroke: "#877e72", radius: 8,
+      asset: "rack:" + store.kind + ":" + store.maturity + ":compact",
+    }),
+    col({ name: "copy", gap: 9, w: "fill", justify: "center" }, [
       row({ name: "heading", w: "fill", justify: "between", align: "center", gap: 7 }, [
-        txt(store.name, { size: 20, weight: 700, spacing: -0.9, color: C.ink, w: copyW - 7 - badgeW, maxLines: 1 }),
+        txt(store.name, { size: 20, weight: 700, spacing: -0.9, color: C.ink, w: "fill", maxLines: 1 }),
         badge,
       ]),
       fact(pglyph("sprout", 20), "농장 상태", store.status),
-      fact(raster("작물", 23, 23, { bg: C.greenSoft }), "수확 가능", store.harvest),
+      fact(raster("작물", 23, 23, { bg: C.greenSoft, asset: "crop:" + store.kind }), "수확 가능", store.harvest),
       fact(pglyph("bed", 20), "재배 베드", store.beds),
     ]),
   ]);
@@ -310,7 +316,7 @@ function storeScreen() {
         txt("TIP", { size: 14, weight: 700, spacing: 0.7, color: C.green }),
         // 384 - 테두리2 - px28 - 글리프23 - gap9 = 322
         txt("매장을 선택하면 운영, 모니터링, 리포트 정보를 확인할 수 있어요.", {
-          size: 11, line: 16, color: "#454844", w: 322, wrap: true,
+          size: 11, line: 16, color: "#454844", w: "fill", wrap: true,
         }),
       ]),
     ]),
@@ -332,9 +338,12 @@ function floorPlan() {
   var w = CONTENT_W;
   var h = Math.round(w / 1.09);      // 원본 aspectRatio 1.09
   var kids = [
-    raster("매장 평면도", w, h, { bg: "#eee9dd", stroke: "#8a8175", radius: 6 }),
+    raster("매장 평면도", w, h, {
+      bg: "#eee9dd", stroke: "#8a8175", radius: 6, asset: "plain:floorPlan",
+    }),
     raster("토마토 베드", Math.round(w * 0.302), Math.round(h * 0.205), {
       bg: "#d8cdb4", absL: Math.round(w * 0.605), absT: Math.round(h * 0.551),
+      asset: "plain:tomatoBed",
     }),
   ];
   FLOOR_LABELS.forEach(function (l) {
@@ -361,7 +370,7 @@ function assignmentScreen() {
         name: "operatorCard", gap: 9, w: "fill", h: 108, align: "center", mt: 9,
         pl: 8, pr: 14, bg: "#ffffff", stroke: "#d9d1c7", radius: 10,
       }, [
-        raster("운영자 사진", 84, 101, { bg: "#efeae1" }),
+        raster("운영자 사진", 84, 101, { bg: "#efeae1", asset: "plain:operator", fit: "contain" }),
         col({ name: "operatorCopy", w: "fill" }, [
           row({ gap: 9, align: "center" }, [
             txt(S.operator.name, { size: 24, weight: 700, spacing: -1.2, color: C.ink }),
@@ -389,8 +398,7 @@ function assignmentScreen() {
             bg: t.type === "harvest" ? C.green : "#b8722c" }, [
             txt(t.label, { size: 10, weight: 700, color: "#ffffff" }),
           ]),
-          // 384 - 테두리2 - px20 - 배지38 - gap9 = 315
-          txt(t.text, { size: 12, line: 17, color: "#30322f", w: 315, wrap: true }),
+          txt(t.text, { size: 12, line: 17, color: "#30322f", w: "fill", wrap: true }),
         ]);
       })),
     ]),
@@ -426,7 +434,7 @@ function growthScreen() {
         pglyph(glyphName, 18),
         txt(label, { size: 10, weight: 600, color: "#333333" }),
       ]),
-      row({ align: "end", mt: 8 }, [
+      row({ align: "baseline", mt: 8 }, [
         txt(value, { size: 25, weight: 700, spacing: -1, color: C.green }),
         txt(unit, { size: 12, weight: 500, color: "#151715" }),
       ]),
@@ -468,7 +476,10 @@ function growthScreen() {
       })),
       col({ name: "rackCard", w: "fill", bg: "#ffffff", stroke: "#d6cec2" }, [
         stack({ name: "rackImage", w: rackW, h: rackH }, [
-          raster("재배 랙 · " + bed.product, rackW, rackH, { bg: "#f4f3ef" }),
+          raster("재배 랙 · " + bed.product, rackW, rackH, {
+            bg: "#f4f3ef",
+            asset: "rack:" + bed.kind + ":" + bed.maturity + ":full",
+          }),
           row({
             name: "stageBadge", absL: 9, absT: 9, px: 8, py: 5, radius: 5,
             bg: C.paper, bgOpacity: 0.91, stroke: C.green, strokeOpacity: 0.26,
@@ -505,22 +516,24 @@ function growthScreen() {
 function inventoryScreen() {
   var maxStock = S.beds.reduce(function (m, b) { return Math.max(m, b.stock); }, 0);
 
-  // 매장 재고 현황 — 카드 px14, 행 px4, 작물 23 + gap7, 수량 47 + gap7
-  var stockBarW = CONTENT_W - 2 - 28 - 8 - 23 - 7 - 47 - 7;
   var stockRows = S.beds.map(function (b, i) {
     var sel = i === 0;
     return row({
       name: "stockRow/" + b.product, w: "fill", h: 40, gap: 7, align: "center",
       px: 4, radius: 6, bg: sel ? "#f1f6ef" : null,
     }, [
-      raster("작물", 40, 40, { bg: C.greenSoft }),
+      raster("작물", 40, 40, { bg: C.greenSoft, asset: "crop:" + b.kind }),
       col({ name: "stockMid", w: "fill" }, [
         txt(b.product, { size: 13, color: C.ink }),
-        stack({ name: "bar", w: stockBarW, h: 7, bg: "#f0eeea", radius: 4, mt: 6 }, [
-          box({ w: Math.round(stockBarW * b.stock / maxStock), h: 7, bg: C.green, radius: 4, absL: 0, absT: 0 }),
+        stack({ name: "bar", w: "fill", h: 7, bg: "#f0eeea", radius: 4, mt: 6 }, [
+          box({ wPct: b.stock / maxStock, h: 7, bg: C.green, radius: 4, absL: 0, absT: 0 }),
         ]),
       ]),
-      txt(String(b.stock), { size: 14, weight: 600, color: C.ink, w: 47, alignText: "right" }),
+      // 원본 stockQty — 값(14/600) + 중첩 단위(9/500), 폭 47 우측 정렬
+      row({ w: 47, justify: "end", align: "baseline" }, [
+        txt(String(b.stock), { size: 14, weight: 600, color: C.ink }),
+        txt("봉", { size: 9, weight: 500, color: C.ink }),
+      ]),
     ]);
   });
 
@@ -539,16 +552,16 @@ function inventoryScreen() {
         txt("베드 " + b.rack, { size: 13, weight: 700, color: C.green }),
         // 원본 MiniRackPlant 는 marginLeft -5 로 서로 겹친다 → 음수 gap 으로 옮긴다.
         row({ name: "bedPlants", h: 31, align: "end", gap: -5, mt: 2 }, [
-          raster("모형 작물", 24, 28, { bg: C.greenSoft }),
-          raster("모형 작물", 24, 28, { bg: C.greenSoft }),
-          raster("모형 작물", 24, 28, { bg: C.greenSoft }),
-          raster("모형 작물", 24, 28, { bg: C.greenSoft }),
+          raster("모형 작물", 24, 28, { bg: null, asset: "plant:" + b.kind, fit: "contain" }),
+          raster("모형 작물", 24, 28, { bg: null, asset: "plant:" + b.kind, fit: "contain" }),
+          raster("모형 작물", 24, 28, { bg: null, asset: "plant:" + b.kind, fit: "contain" }),
+          raster("모형 작물", 24, 28, { bg: null, asset: "plant:" + b.kind, fit: "contain" }),
         ]),
         box({ w: colW(1.55) - 10, h: 6, bg: "#74502e", stroke: "#493420", strokeW: 2, mt: 2 }),
       ]),
       col({ name: "col/product", w: colW(0.95), px: 7 }, [
         txt(b.product, { size: 11, color: C.ink }),
-        row({ mt: 5, align: "end", gap: 2 }, [
+        row({ mt: 5, align: "baseline", gap: 2 }, [
           txt("성숙도", { size: 8, color: "#5e625d" }),
           txt(b.maturity + "%", { size: 12, color: C.green }),
         ]),
@@ -559,7 +572,7 @@ function inventoryScreen() {
       ]),
       col({ name: "col/yield", w: colW(0.72), align: "center" }, [
         txt("예상 수확량", { size: 8, color: "#5e625d" }),
-        row({ mt: 5, align: "end" }, [
+        row({ mt: 5, align: "baseline" }, [
           txt(String(b.growing), { size: 15, weight: 600, color: C.green }),
           txt("봉", { size: 8, color: C.green }),
         ]),
@@ -643,7 +656,8 @@ function monitoringScreen() {
       name: "chip/" + s.name, h: 38, px: 14, align: "center",
       bg: on ? C.green : "#ffffff", stroke: on ? C.green : "#d6cec2", radius: 9,
     }, [
-      txt(s.name, { size: 13, weight: on ? 700 : 600, color: on ? "#ffffff" : C.ink, w: 132, maxLines: 1 }),
+      // 원본 chip maxWidth 160 → px14×2 + 테두리2 를 뺀 130 에서 잘린다.
+      txt(s.name, { size: 13, weight: on ? 700 : 600, color: on ? "#ffffff" : C.ink, w: 130, maxLines: 1 }),
     ]);
   });
 
@@ -659,7 +673,7 @@ function monitoringScreen() {
           box({ w: 9, h: 9, bg: sensor.color, radius: 5 }),
           txt(sensor.label, { size: 14, weight: 700, color: C.ink }),
         ]),
-        row({ align: "end", gap: 3 }, [
+        row({ align: "baseline", gap: 3 }, [
           txt(sensor.value, { size: 17, weight: 700, color: C.ink }),
           txt(sensor.unit, { size: 11, weight: 500, color: "#888888" }),
         ]),
@@ -736,7 +750,6 @@ function salesChart(w) {
 function salesScreen() {
   var cardInner = CONTENT_W - 2 - 24;         // 카드 테두리 + px12
   var maxRank = S.sales.ranking.reduce(function (m, r) { return Math.max(m, r.qty); }, 0);
-  var rankBarW = cardInner - 31 - 72 - 50 - 15;   // 작물31 + 이름72 + 수량50 + gap5*3
 
   return shell("App / 6 Sales", "sales", [
     branchSelect(S.branch, true),
@@ -753,7 +766,7 @@ function salesScreen() {
         box({ w: 1, h: 42, bg: "#e1dcd4" }),
         col({ w: "fill", px: 10 }, [
           txt("판매량", { size: 11, color: "#252725" }),
-          row({ align: "end", mt: 6 }, [
+          row({ align: "baseline", mt: 6 }, [
             txt(S.sales.quantity, { size: 17, weight: 700, color: C.green }),
             txt("봉", { size: 11, weight: 500, color: C.green }),
           ]),
@@ -761,7 +774,7 @@ function salesScreen() {
         box({ w: 1, h: 42, bg: "#e1dcd4" }),
         col({ w: "fill", px: 10 }, [
           txt("주문수", { size: 11, color: "#252725" }),
-          row({ align: "end", mt: 6 }, [
+          row({ align: "baseline", mt: 6 }, [
             txt(S.sales.orders, { size: 17, weight: 700, color: C.green }),
             txt("건", { size: 11, weight: 500, color: C.green }),
           ]),
@@ -780,10 +793,10 @@ function salesScreen() {
       sectionTitle("인기 품목 TOP 4"),
       col({ name: "rankingRows", w: "fill", gap: 5, mt: 9 }, S.sales.ranking.map(function (r) {
         return row({ name: "rank/" + r.name, w: "fill", gap: 5, align: "center" }, [
-          raster("작물", 31, 31, { bg: C.greenSoft }),
+          raster("작물", 31, 31, { bg: C.greenSoft, asset: "crop:" + r.kind }),
           txt(r.name, { size: 12, color: C.ink, w: 72, maxLines: 1 }),
-          stack({ name: "bar", w: rankBarW, h: 7, bg: "#f0eeea", radius: 4 }, [
-            box({ w: Math.round(rankBarW * r.qty / maxRank), h: 7, bg: C.green, radius: 4, absL: 0, absT: 0 }),
+          stack({ name: "bar", w: "fill", h: 7, bg: "#f0eeea", radius: 4 }, [
+            box({ wPct: r.qty / maxRank, h: 7, bg: C.green, radius: 4, absL: 0, absT: 0 }),
           ]),
           txt(r.count, { size: 12, weight: 700, color: C.green, w: 50, alignText: "right" }),
         ]);

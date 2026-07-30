@@ -124,7 +124,9 @@ function buildFrame(parent, n) {
   applySize(f, n);
   if (n.rotation) f.rotation = -n.rotation;   // Figma 는 반시계 방향이 +
 
-  // 래스터 자리표시자는 라벨 텍스트를 안에 넣는다.
+  // 앱 에셋 이미지 — 캐시에 있으면 이미지 채움, 없으면 라벨 박스로 떨어진다.
+  if (n._image && applyImageFill(f, n)) return f;
+
   if (n._placeholder) {
     f.layoutMode = "VERTICAL";
     f.primaryAxisAlignItems = "CENTER";
@@ -135,6 +137,35 @@ function buildFrame(parent, n) {
     buildText(f, { text: n._placeholder, size: size, color: "#656863" });
   }
   return f;
+}
+
+// ── 앱 에셋 이미지 ──
+// ASSETS 는 build.js 가 figma-common/assets-cache.json 을 인라인해 넣는다.
+// 키는 "<에셋>|<폭>|<높이>|<fit>" — 래스터 노드의 w/h 는 모두 숫자라 SVG 쪽과 같다.
+var imageHashes = {};
+
+function applyImageFill(frame, n) {
+  if (typeof ASSETS === "undefined") return false;
+  var key =
+    n._image.asset + "|" + Math.round(n.w) + "|" + Math.round(n.h) + "|" + (n._image.fit || "cover");
+  var uri = ASSETS[key];
+  if (!uri) return false;
+
+  var hash = imageHashes[key];
+  if (!hash) {
+    var b64 = uri.slice(uri.indexOf(",") + 1);
+    hash = figma.createImage(figma.base64Decode(b64)).hash;
+    imageHashes[key] = hash;
+  }
+  frame.fills = [
+    {
+      type: "IMAGE",
+      // 이미지를 표시 크기로 미리 줄여뒀으므로 FILL/FIT 이 원본 contentFit 과 같다.
+      scaleMode: n._image.fit === "contain" ? "FIT" : "FILL",
+      imageHash: hash,
+    },
+  ];
+  return true;
 }
 
 // ── 텍스트 ──
@@ -245,8 +276,17 @@ function addSpacer(parent, size, mode) {
 async function main() {
   await loadFonts();
 
+  // 이미 내용이 있는 페이지에 넣어도 겹치지 않도록, 기존 요소들의 오른쪽에서 시작한다.
+  // (프레임을 만들면 곧바로 페이지에 붙으므로 목록을 미리 찍어둬야 한다.)
+  var before = figma.currentPage.children.slice();
   var made = [];
   var x = 0;
+  if (before.length) {
+    x = before.reduce(function (right, n) {
+      return Math.max(right, n.x + n.width);
+    }, -Infinity) + 120;
+  }
+
   for (var i = 0; i < SCREENS.length; i++) {
     var tree = SCREENS[i].build();
     var frame = buildNode(figma.currentPage, tree);
