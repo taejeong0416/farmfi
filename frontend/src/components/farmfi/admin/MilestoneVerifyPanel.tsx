@@ -26,9 +26,12 @@ const SIGNAL_LABEL: Record<Signal, string> = {
 };
 const DEMO_IMAGES: Record<Signal, { label: string; url: string }[]> = {
   contract: [{ label: "계약서(정상)", url: "/demo/mock-contract.jpg" }],
+  // 두 영수증은 용도가 다른 정상 증빙이다(위조본이 아니다).
+  // demo/step은 seq1에 설비 영수증(-1), seq3·4에 판매 영수증(-2)을 넣고 둘 다 통과를 기대한다.
+  // 예전 라벨이 -2를 "위조"로 표기해 실패 시연과 모순됐다 — 실제 매핑에 맞춰 정정.
   receipt: [
-    { label: "영수증(정상)", url: "/demo/mock-receipt-1.jpg" },
-    { label: "영수증(위조)", url: "/demo/mock-receipt-2.jpg" },
+    { label: "영수증(설비 구매)", url: "/demo/mock-receipt-1.jpg" },
+    { label: "영수증(수확물 판매)", url: "/demo/mock-receipt-2.jpg" },
   ],
   photo: [
     { label: "현장사진 A", url: "/demo/mock-photo-1.jpg" },

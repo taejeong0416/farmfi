@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Panel, PortfolioPanel } from "@/components/FarmFi";
+import { IdentityBadge } from "@/components/farmfi/auth/IdentityBadge";
+import { formatKRW } from "@/lib/format";
 import { useAuth, type AuthUserRole } from "@/lib/useAuth";
 
 const ROLE_LABEL: Record<AuthUserRole, string> = {
@@ -63,9 +65,24 @@ export function MyPageClient() {
       </div>
 
       {user.role === "investor" && (
-        <div style={{ marginTop: 20 }}>
-          <PortfolioPanel />
-        </div>
+        <>
+          <div style={{ marginTop: 20 }}>
+            <Panel title="본인인증">
+              <IdentityBadge
+                identityVerified={user.identityVerified}
+                verifiedAt={user.verifiedAt}
+              />
+              {user.identityVerified && user.investorAnnualLimit !== null && (
+                <p className="muted" style={{ marginTop: 12 }}>
+                  연간 투자한도 {formatKRW(user.investorAnnualLimit)}
+                </p>
+              )}
+            </Panel>
+          </div>
+          <div style={{ marginTop: 20 }}>
+            <PortfolioPanel />
+          </div>
+        </>
       )}
 
       <button className="ghost" type="button" style={{ marginTop: 28 }} onClick={handleLogout}>

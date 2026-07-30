@@ -124,6 +124,82 @@ export class StubVerifier implements IdentityVerifier {
 // 상태 소스로 쓴다(confirm-verify 콜백이 붙기 전까지 pending 유지).
 // 연동 배경·엔드포인트: docs/opendid-verifier-연동.md
 // ─────────────────────────────────────────────────────────────
+// confirm-verify 응답 형태 (오라클 Verifier 소스 계약).
+interface ConfirmVerifyClaim {
+  caption?: string;
+  code?: string;
+  format?: string;
+  hideValue?: boolean;
+  type?: string;
+  value?: unknown;
+}
+interface ConfirmVerifyResponse {
+  vc?: string;
+  issuer?: string;
+  result?: boolean;
+  claims?: ConfirmVerifyClaim[];
+}
+
+// prisma 스키마 변경을 피하려고 offerId를 IdentityVerification.claims(Json)에
+// 임시 보관할 때 쓰는 예약 키. verified로 확정될 때 실 클레임으로 덮어쓴다.
+const OFFER_ID_KEY = "_offerId";
+
+// "19990203", "1999.02.03", "1999-02-03" 등 → "1999-02-03"으로 보정.
+// 매핑할 수 없는 값이면 null (호출부가 birthDate를 비워둔다).
+function normalizeBirthDate(raw: string): string | null {
+  const digits = raw.replace(/[^0-9]/g, "");
+  // 13자리는 주민등록번호다. 앞 6자리를 YYMMDD로 해석하면 "9902-03-12" 같은
+  // 잘못된 날짜가 만들어지므로 생년월일 매핑 실패로 처리한다.
+  if (digits.length === 13) return null;
+  if (digits.length >= 8) {
+    return `${digits.slice(0, 4)}-${digits.slice(4, 6)}-${digits.slice(6, 8)}`;
+  }
+  return raw;
+}
+
+// 생년월일 기준 만 나이 >= 18 여부.
+function isAdultByBirthDate(birthDate?: string): boolean {
+  if (!birthDate) return false;
+  const b = new Date(birthDate);
+  if (Number.isNaN(b.getTime())) return false;
+  const now = new Date();
+  let age = now.getFullYear() - b.getFullYear();
+  const monthDiff = now.getMonth() - b.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < b.getDate())) {
+    age -= 1;
+  }
+  return age >= 18;
+}
+
+// confirm-verify claims[]를 IdentityClaims로 매핑. 정확한 풀 코드가 달라도
+// 접미사(endsWith)로 견고하게 잡는다. (예: org.farmfi.v1.identity.user_name)
+function mapConfirmClaims(claims: ConfirmVerifyClaim[] | undefined): IdentityClaims {
+  const out: IdentityClaims = {};
+  for (const c of claims ?? []) {
+    const code = typeof c.code === "string" ? c.code : "";
+    const value = c.value == null ? "" : String(c.value);
+    if (code.endsWith("user_name")) {
+      out.realName = value;
+    } else if (code.endsWith("birth_date")) {
+      const normalized = normalizeBirthDate(value);
+      if (normalized) out.birthDate = normalized;
+    }
+  }
+  if (out.birthDate) {
+    out.adult = isAdultByBirthDate(out.birthDate);
+  }
+  return out;
+}
+
+// 로컬 행의 claims(Json)에 임시 보관한 offerId를 안전하게 꺼낸다.
+function extractOfferId(claims: Prisma.JsonValue | null | undefined): string | null {
+  if (claims && typeof claims === "object" && !Array.isArray(claims)) {
+    const v = (claims as Record<string, unknown>)[OFFER_ID_KEY];
+    if (typeof v === "string" && v.length > 0) return v;
+  }
+  return null;
+}
+
 export class OmniOneVerifier implements IdentityVerifier {
   constructor(private readonly baseUrl: string) {}
 
@@ -149,9 +225,27 @@ export class OmniOneVerifier implements IdentityVerifier {
       payload: Record<string, unknown>;
     };
 
+    // confirm-verify는 offerId로 검증 결과를 가져온다. 스키마 변경 없이 폴링에서
+    // 재사용하려고 offerId를 claims(Json)에 임시 보관한다. verified 확정 시 덮어씀.
+    const offerId =
+      typeof data.payload?.offerId === "string" ? data.payload.offerId : "";
+    // offerId 없이 세션을 만들면 폴링이 confirm-verify를 부를 수 없어 영원히
+    // pending에 갇힌다. 조용히 진행하지 말고 즉시 실패시킨다.
+    if (!offerId) {
+      console.error(
+        "Verifier request-offer-qr 응답에 offerId가 없습니다:",
+        JSON.stringify(data.payload)
+      );
+      throw new Error("Verifier 응답에 offerId가 없습니다");
+    }
+
     // 세션 추적·상태 폴링용으로 로컬에 txId 기록.
     await prisma.identityVerification.create({
-      data: { txId: data.txId, status: "pending" },
+      data: {
+        txId: data.txId,
+        status: "pending",
+        claims: { [OFFER_ID_KEY]: offerId } as Prisma.InputJsonValue,
+      },
     });
 
     return {
@@ -166,7 +260,54 @@ export class OmniOneVerifier implements IdentityVerifier {
       where: { txId },
     });
     if (!row) return "failed";
-    return row.status as IdentityStatus;
+    // 이미 확정된 세션은 confirm-verify 재호출 없이 그대로 반환.
+    if (row.status === "verified") return "verified";
+    if (row.status !== "pending") return row.status as IdentityStatus;
+
+    // pending이면 offerId로 confirm-verify를 물어본다. 지갑이 아직 VP를 제출하지
+    // 않았으면 result=false거나 실패할 수 있으므로, 예외를 삼키고 pending 유지.
+    const offerId = extractOfferId(row.claims);
+    if (!offerId) {
+      // offerId가 유실된 세션은 폴링해도 영원히 진행되지 않는다 → failed로 끝낸다.
+      console.error(
+        `IdentityVerification(txId=${txId})에 offerId가 없습니다 — 폴링 종료(failed)`
+      );
+      return "failed";
+    }
+
+    try {
+      const res = await fetch(
+        `${this.baseUrl}/verifier/api/v1/confirm-verify`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ offerId }),
+        }
+      );
+      if (!res.ok) return "pending";
+      const data = (await res.json()) as ConfirmVerifyResponse;
+      if (data.result !== true) return "pending";
+
+      const mapped = mapConfirmClaims(data.claims);
+      // 실명·생년월일이 없으면 클레임 코드 계약이 어긋난 것이다. verified로
+      // 확정하면 부적격 상태가 영구 고착되므로 실제 코드를 남기고 pending 유지.
+      if (!mapped.realName || !mapped.birthDate) {
+        console.error(
+          `confirm-verify 클레임 매핑 실패(txId=${txId}) — realName/birthDate 없음. 수신 코드:`,
+          (data.claims ?? []).map((c) => c.code)
+        );
+        return "pending";
+      }
+
+      await prisma.identityVerification.update({
+        where: { txId },
+        data: { status: "verified", claims: mapped as Prisma.InputJsonValue },
+      });
+      return "verified";
+    } catch {
+      // fetch/파싱 실패 = 아직 미제출 등 → 폴링 지속. 라우트를 500 내지 않는다.
+      return "pending";
+    }
   }
 
   async getClaims(txId: string): Promise<IdentityClaims | null> {
@@ -174,7 +315,11 @@ export class OmniOneVerifier implements IdentityVerifier {
       where: { txId },
     });
     if (!row || row.status !== "verified") return null;
-    return (row.claims as IdentityClaims | null) ?? null;
+    const claims = row.claims as IdentityClaims | null;
+    if (!claims) return null;
+    // 임시 보관 키(_offerId)는 소비자에게 노출하지 않는다.
+    const { [OFFER_ID_KEY]: _omit, ...rest } = claims as Record<string, unknown>;
+    return rest as IdentityClaims;
   }
 }
 
@@ -185,7 +330,17 @@ export class OmniOneVerifier implements IdentityVerifier {
 export function getVerifier(): IdentityVerifier {
   if (process.env.IDENTITY_PROVIDER === "opendid") {
     const baseUrl = process.env.IDENTITY_VERIFIER_URL ?? "";
+    if (!baseUrl) {
+      // URL 없이 OmniOneVerifier를 만들면 모든 요청이 조용히 실패한다.
+      throw new Error("IDENTITY_VERIFIER_URL 미설정 — OpenDID Verifier 연동 불가");
+    }
     return new OmniOneVerifier(baseUrl);
+  }
+  // fail-closed: 프로덕션에서 스텁이 뜨면 누구나 "홍길동" 실명 인증을 통과한다.
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      "프로덕션에서는 StubVerifier를 사용할 수 없습니다 — IDENTITY_PROVIDER=opendid 설정 필요"
+    );
   }
   return new StubVerifier();
 }

@@ -11,8 +11,8 @@ import { MySpaceGrid } from "@/components/farmfi/landlord/MySpaceGrid";
 export default function LandlordPage() {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
 
-  // GET /api/spaces is platform-wide and has no session filter (owned by another
-  // agent's route — not edited here). Filter to this user's own spaces client-side.
+  // GET /api/spaces is session-scoped (own spaces only; admin sees all).
+  // Still filter by ownerId client-side so an admin never sees others' as "mine".
   const { data, isLoading: spacesLoading, isError } = useQuery({
     queryKey: spacesQueryKey(),
     queryFn: fetchAllSpaces,

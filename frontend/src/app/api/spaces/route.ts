@@ -136,9 +136,19 @@ export async function POST(request: NextRequest) {
   }
 }
 
+/**
+ * GET /api/spaces — 세션 필수. 본인이 등록한 공간만 반환한다(admin은 전체).
+ * 이전에는 미인증으로 전량을 반환해 건물주 실주소·소유자 ID가 공개됐다.
+ */
 export async function GET() {
   try {
+    const session = await getServerSession();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const spaces = await prisma.space.findMany({
+      where: session.role === "admin" ? undefined : { ownerId: session.userId },
       orderBy: { createdAt: "desc" },
     });
     return NextResponse.json({ spaces });

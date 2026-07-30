@@ -13,6 +13,11 @@ export type AuthUser = {
   name: string;
   role: AuthUserRole;
   email: string | null;
+  // 신원인증(OpenDID) 실상태. /api/auth/me가 DB 값을 그대로 내려준다.
+  identityVerified: boolean;
+  verifiedAt: string | null;
+  realName: string | null;
+  investorAnnualLimit: number | null;
 };
 
 export type SignupInput = {

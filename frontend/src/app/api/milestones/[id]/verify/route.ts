@@ -30,16 +30,32 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // 에스크로 집행으로 이어지는 경로라 admin 전용이다. Project에 소유자 필드가 없어
+  // "내 프로젝트만" 검증을 강제할 수 없으므로, 누구나 스스로 operator가 되어
+  // 남의 프로젝트를 집행하는 권한 자가상승을 admin 게이트로 차단한다.
   try {
-    await requireRole("operator");
+    await requireRole("admin");
   } catch (err) {
     if (err instanceof Response) return err;
     throw err;
   }
   try {
     const { id } = await params;
-    const baseUrl =
-      process.env.NEXT_PUBLIC_BASE_URL || new URL(request.url).origin;
+    // 자기 자신(/api/ai/*)을 부르므로 항상 현재 요청의 origin을 쓴다.
+    // NEXT_PUBLIC_BASE_URL은 빌드 타임 인라인이라 로컬 .env 값이 프로덕션에
+    // 구워질 수 있다(실제로 localhost:3000이 박혀 self-fetch가 죽었다).
+    const baseUrl = new URL(request.url).origin;
+
+    // 내부 self-fetch(/api/ai/*)도 인증 게이트가 걸려 있어, 호출자의 자격증명을
+    // 그대로 전달한다. 데모는 Authorization: Bearer(admin), 관리자 콘솔은 쿠키.
+    const authHeader = request.headers.get("authorization");
+    const cookieHeader = request.headers.get("cookie");
+    const internalHeaders: Record<string, string> = {
+      "Content-Type": "application/json",
+      ...(authHeader ? { Authorization: authHeader } : {}),
+      ...(cookieHeader ? { cookie: cookieHeader } : {}),
+    };
+
     const body = await request.json();
     const { contractImage, receiptImage, photoImage, milestoneType } = body;
 
@@ -55,6 +71,15 @@ export async function POST(
       );
     }
 
+    // 이미 집행된 마일스톤을 다시 verified로 되돌려 complete를 재실행하는
+    // 트랜치 이중집행 경로를 차단한다.
+    if (milestone.status === "completed") {
+      return NextResponse.json(
+        { error: "Milestone already completed" },
+        { status: 400 }
+      );
+    }
+
     const signals: Record<string, boolean> = {};
     const signalDetails: Record<string, any> = {};
 
@@ -63,7 +88,7 @@ export async function POST(
         case "contract": {
           const res = await fetch(`${baseUrl}/api/ai/verify-contract`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: internalHeaders,
             body: JSON.stringify({
               imageBase64: contractImage,
               milestoneId: id,
@@ -77,7 +102,7 @@ export async function POST(
         case "receipt": {
           const res = await fetch(`${baseUrl}/api/ai/verify-receipt`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: internalHeaders,
             body: JSON.stringify({
               imageBase64: receiptImage,
               milestoneId: id,
@@ -92,7 +117,7 @@ export async function POST(
         case "photo": {
           const res = await fetch(`${baseUrl}/api/ai/verify-photo`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: internalHeaders,
             body: JSON.stringify({
               imageBase64: photoImage,
               milestoneId: id,
@@ -107,7 +132,7 @@ export async function POST(
         case "iot": {
           const res = await fetch(`${baseUrl}/api/ai/detect-anomaly`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: internalHeaders,
             body: JSON.stringify({
               projectId: milestone.projectId,
               milestoneId: id,
@@ -151,6 +176,25 @@ export async function POST(
         txHash = await verifyMilestoneOnChain(milestone.seq);
       } catch (e) {
         console.error("verifyMilestoneOnChain failed:", e);
+      }
+
+      // 온체인 기록을 남겨야 화면(ProjectDetail의 온체인 증거)이 tx를 보여줄 수 있다.
+      // 이전에는 txHash를 응답에만 실어 보내 실제 체인 기록이 있어도 UI가 비어 있었다.
+      // 자금 이동이 아니므로 amount=0 (tsconfig es2017 → BigInt 리터럴 대신 생성자).
+      if (txHash) {
+        try {
+          await prisma.transaction.create({
+            data: {
+              projectId: milestone.projectId,
+              type: "milestone_verify",
+              amount: BigInt(0),
+              txHash,
+              memo: `마일스톤 ${milestone.seq} 검증 온체인 기록`,
+            },
+          });
+        } catch (e) {
+          console.error("verify txHash 기록 실패:", e);
+        }
       }
 
       return NextResponse.json(

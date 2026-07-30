@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { detectAnomalies } from "@/lib/iot-health";
+import { requireRole } from "@/lib/auth";
 
 function serialize(obj: any): any {
   return JSON.parse(
@@ -9,6 +10,13 @@ function serialize(obj: any): any {
 }
 
 export async function POST(request: NextRequest) {
+  // 마일스톤 IoT 게이트(가동률·이상탐지)의 입력이 되는 데이터라 미인증 위조를 막는다.
+  try {
+    await requireRole("operator");
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
   try {
     const { projectId } = await request.json();
 

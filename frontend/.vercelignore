@@ -1,0 +1,15 @@
+# vercel CLI 배포 시 업로드에서 제외할 것.
+# .vercelignore가 없으면 로컬 .env까지 업로드돼 빌드에 반영된다 —
+# 실제로 NEXT_PUBLIC_BASE_URL=http://localhost:3000 이 프로덕션 번들에 인라인되어
+# 내부 self-fetch가 ECONNREFUSED로 죽었다. 환경변수는 Vercel 대시보드 값만 쓴다.
+.env
+.env.*
+!.env.example
+
+node_modules
+.next
+dist
+
+# 로컬 산출물·로그
+*.log
+.DS_Store

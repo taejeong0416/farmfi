@@ -3,9 +3,11 @@ import { StyleSheet, Text, View } from "react-native";
 
 import { C } from "../theme";
 import { AppIcon, PixelGlyph } from "../icons";
-import { STORE_DATA, RACK_DATA, type RackId } from "../data";
-import { AppShell, CropPixel, GrowthRackScene, SectionTitle, TapScale } from "../components";
-import { useSelectedBranch } from "../branch";
+import type { CropKind } from "../data";
+import { cropKindOf, projectStatusLabel, type InventoryResponse } from "../api";
+import { AppShell, CropPixel, GrowthRackScene, StateNotice, TapScale } from "../components";
+import { useFarmProjects } from "../branch";
+import { useApiResource } from "../useApiResource";
 
 function Diamond() {
   return <View style={s.diamond} />;
@@ -21,25 +23,36 @@ function StoreFact({ icon, label, value }: { icon: React.ReactNode; label: strin
   );
 }
 
+type StoreFacts = {
+  harvestReady: number;
+  bedCount: number;
+  kind: CropKind;
+  maturity: number;
+} | null;
+
 function StoreCard({
   name,
-  harvest,
-  beds,
-  rack,
+  statusLabel,
+  facts,
+  factsPlaceholder,
   selected,
   onSelect,
 }: {
   name: string;
-  harvest: number;
-  beds: number;
-  rack: RackId;
+  statusLabel: string;
+  facts: StoreFacts;
+  factsPlaceholder: string;
   selected: boolean;
   onSelect: () => void;
 }) {
   return (
     <TapScale onPress={onSelect} style={[s.storeCard, selected && s.storeCardSelected]}>
       <View style={s.thumbnail}>
-        <GrowthRackScene rackId={rack} compact />
+        {facts ? (
+          <GrowthRackScene kind={facts.kind} maturity={facts.maturity} compact />
+        ) : (
+          <View style={s.thumbnailEmpty} />
+        )}
       </View>
       <View style={s.cardCopy}>
         <View style={s.cardHeading}>
@@ -56,17 +69,45 @@ function StoreCard({
             </View>
           )}
         </View>
-        <StoreFact icon={<PixelGlyph name="sprout" size={20} />} label="농장 상태" value="정상" />
-        <StoreFact icon={<CropPixel kind={RACK_DATA[rack].kind} size="tiny" />} label="수확 가능" value={`${harvest}포기`} />
-        <StoreFact icon={<PixelGlyph name="bed" size={20} />} label="재배 베드" value={`${beds}개`} />
+        <StoreFact icon={<PixelGlyph name="sprout" size={20} />} label="농장 상태" value={statusLabel} />
+        <StoreFact
+          icon={facts ? <CropPixel kind={facts.kind} size="tiny" /> : <View style={s.factIconEmpty} />}
+          label="수확 가능"
+          value={facts ? `${facts.harvestReady}봉` : factsPlaceholder}
+        />
+        <StoreFact
+          icon={<PixelGlyph name="bed" size={20} />}
+          label="재배 베드"
+          value={facts ? `${facts.bedCount}개` : factsPlaceholder}
+        />
       </View>
     </TapScale>
   );
 }
 
 export default function StoreScreen() {
-  const [branch, setBranch] = useSelectedBranch();
+  const { projects, projectId, setProjectId, loading, error, reload } = useFarmProjects();
   const [addMessage, setAddMessage] = useState("매장 추가");
+
+  // 지점별 수확 가능량·베드 수는 재고 API가 유일한 출처. projectId 없이 호출하면
+  // 전 지점이 한 번에 오므로 카드마다 요청을 반복하지 않는다.
+  const inventory = useApiResource<InventoryResponse>(
+    "/api/inventory",
+    "재고 현황을 불러오지 못했습니다."
+  );
+
+  const factsOf = (id: string): StoreFacts => {
+    const group = inventory.data?.projects.find((p) => p.projectId === id);
+    if (!group || group.items.length === 0) return null;
+    // 썸네일은 수확이 가장 임박한 품목(정렬 기준 expectedHarvestAt asc)을 대표로 쓴다.
+    const lead = group.items[0];
+    return {
+      harvestReady: group.summary.harvestReadyTotal,
+      bedCount: group.summary.bedCount,
+      kind: cropKindOf(lead.productName, lead.category),
+      maturity: lead.maturityPercent,
+    };
+  };
 
   return (
     <AppShell active="store">
@@ -96,13 +137,26 @@ export default function StoreScreen() {
           </TapScale>
         </View>
 
+        {loading && <StateNotice message="매장 목록을 불러오는 중…" />}
+        {!loading && error && <StateNotice tone="error" message={error} onRetry={reload} />}
+        {!loading && !error && projects.length === 0 && (
+          <StateNotice message="등록된 매장이 없습니다." onRetry={reload} retryLabel="새로고침" />
+        )}
+
+        {!loading && !error && inventory.error && (
+          <StateNotice tone="error" message={inventory.error} onRetry={inventory.reload} />
+        )}
+
         <View style={s.cards}>
-          {STORE_DATA.map((store) => (
+          {projects.map((project) => (
             <StoreCard
-              {...store}
-              selected={branch === store.name}
-              onSelect={() => setBranch(store.name)}
-              key={store.name}
+              key={project.id}
+              name={project.name}
+              statusLabel={projectStatusLabel(project.status)}
+              facts={factsOf(project.id)}
+              factsPlaceholder={inventory.loading ? "…" : "–"}
+              selected={projectId === project.id}
+              onSelect={() => setProjectId(project.id)}
             />
           ))}
         </View>
@@ -174,6 +228,7 @@ const s = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: "#e8e5df",
   },
+  thumbnailEmpty: { flex: 1, backgroundColor: "#e8e5df" },
   cardCopy: { flex: 1, justifyContent: "center", gap: 9 },
   cardHeading: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 7 },
   cardName: { flex: 1, fontSize: 20, letterSpacing: -0.9, color: C.ink, fontWeight: "700" },
@@ -203,6 +258,7 @@ const s = StyleSheet.create({
 
   storeFact: { flexDirection: "row", alignItems: "center", gap: 6 },
   factIcon: { width: 23, alignItems: "flex-start" },
+  factIconEmpty: { width: 23, height: 23 },
   factLabel: { flex: 1, fontSize: 12, color: C.ink },
   factValue: { color: C.green, fontSize: 14, fontWeight: "600" },
 
