@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="430" height="970" viewBox="0 0 430 970" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif">
+<rect x="0" y="0" width="430" height="970" fill="#fffefa"/>
+<g transform="translate(180.5 53) scale(2.88 2.88)"><path fill="#252923" d="M4 3h16v2h1v6h-1v10H4V11H3V5h1zm2 10v6h12v-6z"/><path fill="#f2cf68" d="M5 5h3v5H5zm6 0h3v5h-3zm6 0h2v5h-2z"/><path fill="#5f973d" d="M8 5h3v5H8zm6 0h3v5h-3z"/><path fill="#fff7d9" d="M6 12h12v7H6z"/><path fill="#1e603d" d="M7 13h4v6H7zm6 1h4v3h-4z"/></g>
+<text x="151.5" y="164.42" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="31" font-weight="700" fill="#1d1e1c" text-anchor="start" letter-spacing="-1.4">매장 선택</text>
+<rect x="109.5" y="192" width="7" height="7" fill="#96866e" transform="rotate(45 113 195.5)"/>
+<text x="129.5" y="199.66" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="13" font-weight="400" fill="#444743" text-anchor="start">관리할 매장을 선택해주세요.</text>
+<rect x="313.5" y="192" width="7" height="7" fill="#96866e" transform="rotate(45 317 195.5)"/>
+<g transform="translate(23 245.5) scale(1.04 1.04)"><path fill="#252923" d="M4 3h16v2h1v6h-1v10H4V11H3V5h1zm2 10v6h12v-6z"/><path fill="#f2cf68" d="M5 5h3v5H5zm6 0h3v5h-3zm6 0h2v5h-2z"/><path fill="#5f973d" d="M8 5h3v5H8zm6 0h3v5h-3z"/><path fill="#fff7d9" d="M6 12h12v7H6z"/><path fill="#1e603d" d="M7 13h4v6H7zm6 1h4v3h-4z"/></g>
+<text x="56" y="264.08" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="19" font-weight="600" fill="#1d1e1c" text-anchor="start" letter-spacing="-0.48">등록된 매장</text>
+<rect x="302" y="239" width="105" height="38" rx="7" fill="#ffffff" stroke="#1e603d" stroke-width="1.4"/>
+<g transform="translate(313 247) scale(0.92 0.92)"><g fill="none" stroke="#1e603d" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M4 12h16"/></g></g>
+<text x="340" y="262.16" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="13" font-weight="700" fill="#1e603d" text-anchor="start">매장 추가</text>
+<rect x="23" y="288" width="384" height="154" rx="10" fill="#ffffff" stroke="#1e603d" stroke-width="2"/>
+<rect x="32" y="299" width="148" height="132" rx="8" fill="#e8e5df" stroke="#877e72" stroke-width="1"/>
+<text x="106" y="368.85" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="11" fill="#656863" text-anchor="middle">재배 랙</text>
+<text x="191" y="326.4" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="20" font-weight="700" fill="#1d1e1c" text-anchor="start" letter-spacing="-0.9">온천장 스마트…</text>
+<rect x="336" y="305" width="58" height="30" rx="5" fill="#1e603d"/>
+<g transform="translate(343 313) scale(0.58 0.58)"><g fill="none" stroke="#ffffff" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16.5 8"/></g></g>
+<text x="360" y="322.88" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="9" font-weight="700" fill="#ffffff" text-anchor="start">선택됨</text>
+<g transform="translate(191 344) scale(0.83 0.83)"><path fill="#252923" d="M11 9h2v11h-2zM4 4h6v2H4zm-1 2h2v4H3zm2 4h6v2H5zm9-7h7v2h-7zm-2 2h2v6h-2zm2 6h5v2h-5zM7 20h10v2H7z"/><path fill="#a8cf52" d="M5 6h4v2H5zm2 2h4v2H7zm9-3h4v2h-4zm-2 2h4v3h-4z"/><path fill="#5f973d" d="M5 8h2v2H5zm4 0h2v2H9zm5 2h4v1h-4z"/><path fill="#8a6039" d="M9 19h6v2H9z"/></g>
+<text x="220" y="357.84" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="12" font-weight="400" fill="#1d1e1c" text-anchor="start">농장 상태</text>
+<text x="366" y="358.48" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="14" font-weight="600" fill="#1e603d" text-anchor="start">정상</text>
+<rect x="191" y="373" width="23" height="23" fill="#eef4ea"/>
+<text x="202.5" y="386.6" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="6" fill="#656863" text-anchor="middle">작물</text>
+<text x="220" y="388.34" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="12" font-weight="400" fill="#1d1e1c" text-anchor="start">수확 가능</text>
+<text x="356" y="388.98" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="14" font-weight="600" fill="#1e603d" text-anchor="start">180봉</text>
+<g transform="translate(191 405) scale(0.83 0.83)"><path fill="#252923" d="M3 5h2v14H3zm16 0h2v14h-2zM5 6h14v3H5zm0 6h14v3H5zM2 19h4v2H2zm16 0h4v2h-4z"/><path fill="#8a6039" d="M5 7h14v1H5zm0 6h14v1H5z"/></g>
+<text x="220" y="418.84" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="12" font-weight="400" fill="#1d1e1c" text-anchor="start">재배 베드</text>
+<text x="372" y="419.48" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="14" font-weight="600" fill="#1e603d" text-anchor="start">4개</text>
+<rect x="23" y="454" width="384" height="154" rx="10" fill="#ffffff" stroke="#ded5c9" stroke-width="1"/>
+<rect x="33" y="465" width="148" height="132" rx="8" fill="#e8e5df" stroke="#877e72" stroke-width="1"/>
+<text x="107" y="534.85" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="11" fill="#656863" text-anchor="middle">재배 랙</text>
+<text x="192" y="492.4" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="20" font-weight="700" fill="#1d1e1c" text-anchor="start" letter-spacing="-0.9">장전동 스마트…</text>
+<rect x="349" y="471" width="46" height="30" rx="5" fill="#ffffff" stroke="#bcb0a0" stroke-width="1"/>
+<rect x="356" y="480.5" width="11" height="11" rx="6" fill="none" stroke="#333333" stroke-width="1.5"/>
+<text x="370" y="488.88" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="9" font-weight="700" fill="#333333" text-anchor="start">선택</text>
+<g transform="translate(192 510) scale(0.83 0.83)"><path fill="#252923" d="M11 9h2v11h-2zM4 4h6v2H4zm-1 2h2v4H3zm2 4h6v2H5zm9-7h7v2h-7zm-2 2h2v6h-2zm2 6h5v2h-5zM7 20h10v2H7z"/><path fill="#a8cf52" d="M5 6h4v2H5zm2 2h4v2H7zm9-3h4v2h-4zm-2 2h4v3h-4z"/><path fill="#5f973d" d="M5 8h2v2H5zm4 0h2v2H9zm5 2h4v1h-4z"/><path fill="#8a6039" d="M9 19h6v2H9z"/></g>
+<text x="221" y="523.84" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="12" font-weight="400" fill="#1d1e1c" text-anchor="start">농장 상태</text>
+<text x="367" y="524.48" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="14" font-weight="600" fill="#1e603d" text-anchor="start">정상</text>
+<rect x="192" y="539" width="23" height="23" fill="#eef4ea"/>
+<text x="203.5" y="552.6" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="6" fill="#656863" text-anchor="middle">작물</text>
+<text x="221" y="554.34" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="12" font-weight="400" fill="#1d1e1c" text-anchor="start">수확 가능</text>
+<text x="357" y="554.98" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="14" font-weight="600" fill="#1e603d" text-anchor="start">165봉</text>
+<g transform="translate(192 571) scale(0.83 0.83)"><path fill="#252923" d="M3 5h2v14H3zm16 0h2v14h-2zM5 6h14v3H5zm0 6h14v3H5zM2 19h4v2H2zm16 0h4v2h-4z"/><path fill="#8a6039" d="M5 7h14v1H5zm0 6h14v1H5z"/></g>
+<text x="221" y="584.84" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="12" font-weight="400" fill="#1d1e1c" text-anchor="start">재배 베드</text>
+<text x="373" y="585.48" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="14" font-weight="600" fill="#1e603d" text-anchor="start">4개</text>
+<rect x="23" y="620" width="384" height="154" rx="10" fill="#ffffff" stroke="#ded5c9" stroke-width="1"/>
+<rect x="33" y="631" width="148" height="132" rx="8" fill="#e8e5df" stroke="#877e72" stroke-width="1"/>
+<text x="107" y="700.85" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="11" fill="#656863" text-anchor="middle">재배 랙</text>
+<text x="192" y="658.4" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="20" font-weight="700" fill="#1d1e1c" text-anchor="start" letter-spacing="-0.9">명륜동 스마트…</text>
+<rect x="349" y="637" width="46" height="30" rx="5" fill="#ffffff" stroke="#bcb0a0" stroke-width="1"/>
+<rect x="356" y="646.5" width="11" height="11" rx="6" fill="none" stroke="#333333" stroke-width="1.5"/>
+<text x="370" y="654.88" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="9" font-weight="700" fill="#333333" text-anchor="start">선택</text>
+<g transform="translate(192 676) scale(0.83 0.83)"><path fill="#252923" d="M11 9h2v11h-2zM4 4h6v2H4zm-1 2h2v4H3zm2 4h6v2H5zm9-7h7v2h-7zm-2 2h2v6h-2zm2 6h5v2h-5zM7 20h10v2H7z"/><path fill="#a8cf52" d="M5 6h4v2H5zm2 2h4v2H7zm9-3h4v2h-4zm-2 2h4v3h-4z"/><path fill="#5f973d" d="M5 8h2v2H5zm4 0h2v2H9zm5 2h4v1h-4z"/><path fill="#8a6039" d="M9 19h6v2H9z"/></g>
+<text x="221" y="689.84" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="12" font-weight="400" fill="#1d1e1c" text-anchor="start">농장 상태</text>
+<text x="348" y="690.48" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="14" font-weight="600" fill="#1e603d" text-anchor="start">점검 중</text>
+<rect x="192" y="705" width="23" height="23" fill="#eef4ea"/>
+<text x="203.5" y="718.6" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="6" fill="#656863" text-anchor="middle">작물</text>
+<text x="221" y="720.34" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="12" font-weight="400" fill="#1d1e1c" text-anchor="start">수확 가능</text>
+<text x="357" y="720.98" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="14" font-weight="600" fill="#1e603d" text-anchor="start">142봉</text>
+<g transform="translate(192 737) scale(0.83 0.83)"><path fill="#252923" d="M3 5h2v14H3zm16 0h2v14h-2zM5 6h14v3H5zm0 6h14v3H5zM2 19h4v2H2zm16 0h4v2h-4z"/><path fill="#8a6039" d="M5 7h14v1H5zm0 6h14v1H5z"/></g>
+<text x="221" y="750.84" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="12" font-weight="400" fill="#1d1e1c" text-anchor="start">재배 베드</text>
+<text x="373" y="751.48" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="14" font-weight="600" fill="#1e603d" text-anchor="start">4개</text>
+<rect x="23" y="791" width="384" height="79" rx="9" fill="#fbfdf9" stroke="#6b9a75" stroke-width="1"/>
+<g transform="translate(37 803) scale(0.96 0.96)"><path fill="#252923" d="M9 2h6v2h2v2h2v7h-2v2h-2v3H9v-3H7v-2H5V6h2V4h2zm0 4v6h2v3h2v-3h2V6zM9 20h6v2H9z"/><path fill="#f2cf68" d="M9 5h6v2h2v5h-2v2h-6v-2H7V7h2z"/><path fill="#fff2a6" d="M10 6h3v2h-3z"/></g>
+<text x="69" y="816.48" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="14" font-weight="700" fill="#1e603d" text-anchor="start" letter-spacing="0.7">TIP</text>
+<text x="69" y="837.52" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="11" font-weight="400" fill="#454844" text-anchor="start">매장을 선택하면 운영, 모니터링, 리포트 정보를 확인할 수 있어</text>
+<text x="69" y="853.52" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="11" font-weight="400" fill="#454844" text-anchor="start">요.</text>
+<rect x="0" y="894" width="430" height="1" fill="#e3dfd8"/>
+<rect x="0" y="895" width="430" height="75" fill="#fffefa"/>
+<g transform="translate(38.5 911) scale(1.04 1.04)"><g fill="none" stroke="#1e603d" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18l-2-5H5L3 9Z"/><path d="M5 9v10h14V9M8 19v-6h4v6M15 12h2"/><path d="M4 9c0 1.2 1 2 2.1 2S8 10.2 8 9c0 1.2 1 2 2 2s2-1 2-2c0 1.2 1 2 2 2s2-1 2-2c0 1.2.9 2 2 2s2-1 2-2"/></g></g>
+<text x="41" y="950.7" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="10" font-weight="700" fill="#1e603d" text-anchor="start">매장</text>
+<g transform="translate(120.5 911) scale(1.04 1.04)"><g fill="none" stroke="#676a67" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21v-9"/><path d="M12 12C7 12 5 9.8 5 5c4.8 0 7 2 7 7ZM12 11c0-4.4 2.2-6.4 7-6.4 0 4.5-2.3 6.4-7 6.4Z"/><path d="M8 21h8"/></g></g>
+<text x="123" y="950.7" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="10" font-weight="500" fill="#676a67" text-anchor="start">운영</text>
+<g transform="translate(202.5 911) scale(1.04 1.04)"><g fill="none" stroke="#676a67" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M8 21h8M12 17v4"/></g></g>
+<text x="195" y="950.7" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="10" font-weight="500" fill="#676a67" text-anchor="start">모니터링</text>
+<g transform="translate(284.5 911) scale(1.04 1.04)"><g fill="none" stroke="#676a67" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 14.5-2 2a3.5 3.5 0 0 1-5-5l3-3a3.5 3.5 0 0 1 5 0"/><path d="m14.5 9.5 2-2a3.5 3.5 0 1 1 5 5l-3 3a3.5 3.5 0 0 1-5 0M8.5 15.5l7-7"/></g></g>
+<text x="287" y="950.7" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="10" font-weight="500" fill="#676a67" text-anchor="start">연동</text>
+<g transform="translate(366.5 911) scale(1.04 1.04)"><g fill="#676a67"><rect x="3.5" y="14" width="4.2" height="7" rx=".8"/><rect x="9.9" y="9" width="4.2" height="12" rx=".8"/><rect x="16.3" y="3" width="4.2" height="18" rx=".8"/></g></g>
+<text x="364" y="950.7" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="10" font-weight="500" fill="#676a67" text-anchor="start">리포트</text>
+</svg>
