@@ -6,6 +6,7 @@
 
 import { getCrop } from "./crop-profiles";
 import { TARIFF_TOU_GENERAL, dliSchedule, resolveLighting } from "./optimization";
+import { PARAMS } from "./optimization-params";
 import { mulberry32, gaussFrom } from "./prng";
 
 // ── 돌파 2: 광주기 안전 DLI (농학 하드 제약) ──────────────────────────────
@@ -93,8 +94,8 @@ export function thermalCoupledSchedule(opts: {
 }): ThermalCoupledPlan {
   const tariff = opts.tariff ?? TARIFF_TOU_GENERAL;
   const P = opts.requiredHours;
-  const heatCoef = opts.heatCoef ?? 60; // 난방 대체가치
-  const coolCoef = opts.coolCoef ?? 90; // 냉방 추가비용
+  const heatCoef = opts.heatCoef ?? PARAMS.heatCreditPerKwh.value;
+  const coolCoef = opts.coolCoef ?? PARAMS.coolCostPerKwh.value;
   const avgExt = opts.hourlyExtTemp.reduce((a, b) => a + b, 0) / 24;
   const season = avgExt < 12 ? "winter" : avgExt > 24 ? "summer" : "mild";
 
@@ -275,9 +276,9 @@ export function profitOptimization(opts: {
 }): ProfitPlan {
   const crop = getCrop(opts.cropKey);
   const area = opts.areaM2 ?? 60;
-  const price = opts.cropPricePerKg ?? 4000; // 상추 산지가 근사
-  const ymax = opts.yieldMaxKgM2 ?? 4.5; // ㎡당 사이클 수율 포화
-  const k = opts.yieldK ?? 0.08;
+  const price = opts.cropPricePerKg ?? PARAMS.cropPricePerKg.value;
+  const ymax = opts.yieldMaxKgM2 ?? PARAMS.yieldMaxKgM2.value;
+  const k = opts.yieldK ?? PARAMS.yieldLightK.value;
   const avgTariff = opts.avgTariff ?? 140;
 
   const yieldOf = (dli: number) => ymax * (1 - Math.exp(-k * dli));
@@ -375,8 +376,8 @@ export function fleetVPP(opts: {
   // 계약감축량 = 사이트당 LED 전량 (이벤트 시 끄고 광주기 안전범위 내 보광)
   const contractedKw = ledKw * opts.sites;
 
-  const basicPrice = opts.basicPricePerKwYear ?? 43994; // 전력거래소 공시(2017)
-  const perfPrice = opts.performancePricePerKwh ?? 100; // 실적정산 근사 ₩/kWh
+  const basicPrice = opts.basicPricePerKwYear ?? PARAMS.drBasicPricePerKwYear.value;
+  const perfPrice = opts.performancePricePerKwh ?? PARAMS.drPerformancePricePerKwh.value;
   const events = opts.drEventsPerMonth ?? 4;
   const eventH = opts.drEventHours ?? 2;
   const reductionHoursPerYear = events * eventH * 12;

@@ -23,6 +23,7 @@ import {
   resolveLighting,
 } from "./optimization";
 import { mulberry32, gaussFrom } from "./prng";
+import { PARAMS } from "./optimization-params";
 
 export interface UnifiedWeights {
   thermal: number; // 열 항 가중 (계절이 조절)
@@ -66,7 +67,7 @@ export function unifiedCoOptimize(opts: {
 }): UnifiedResult {
   const crop = getCrop(opts.cropKey);
   const tariff = opts.tariff ?? TARIFF_TOU_GENERAL;
-  const price = opts.cropPricePerKg ?? 4000;
+  const price = opts.cropPricePerKg ?? PARAMS.cropPricePerKg.value;
   const area = opts.areaM2 ?? 60;
   const vol = opts.priceVolatility ?? 0.35;
   const drWindows = opts.drWindowHours ?? [18, 19, 20]; // 저녁 피크 = DR 빈발
@@ -84,8 +85,8 @@ export function unifiedCoOptimize(opts: {
   };
 
   // 수율/비용 모델
-  const ymax = 4.5;
-  const k = 0.08;
+  const ymax = PARAMS.yieldMaxKgM2.value;
+  const k = PARAMS.yieldLightK.value;
   const yieldOf = (dli: number) => ymax * (1 - Math.exp(-k * dli));
   const dailyYieldRevenue = (dli: number) =>
     (yieldOf(dli) * area * price) / crop.cycleDays;
@@ -98,8 +99,8 @@ export function unifiedCoOptimize(opts: {
     scenarios.push(tariff.map((p) => Math.max(30, p * (1 + gauss() * vol * (p > 180 ? 1.5 : 1)))));
 
   const TARGET_TEMP = 20;
-  const heatCoef = 60;
-  const coolCoef = 90;
+  const heatCoef = PARAMS.heatCreditPerKwh.value;
+  const coolCoef = PARAMS.coolCostPerKwh.value;
 
   // 후보 평가: (dli, blockStart) → 통합 순가치
   const evalCandidate = (dli: number, start: number) => {
@@ -133,7 +134,7 @@ export function unifiedCoOptimize(opts: {
       .slice(0, 8);
     for (const h of pumpSlots) hourProfile[h] += 0.7;
     const peakKw = Math.max(...hourProfile);
-    const demand = peakKw * 8320 / 30; // 일 환산
+    const demand = (peakKw * PARAMS.demandChargePerKw.value) / 30; // 일 환산
 
     // 순열비용: 시간별 외부온도 비례 연동
     // 이진 방식(t<20 ? -fixed : +fixed)은 겨울에 모든 시간이 동일값 → 블록 배치 구분 불가.
@@ -148,7 +149,7 @@ export function unifiedCoOptimize(opts: {
 
     // CO2 비용 (시간대 탄소집약도, 탄소가격 근사 30원/kg)
     const co2 = litHours.reduce(
-      (s, h) => s + kw * GRID_EMISSION_FACTOR * CARBON_INTENSITY_FACTOR[h] * 30,
+      (s, h) => s + kw * GRID_EMISSION_FACTOR * CARBON_INTENSITY_FACTOR[h] * PARAMS.carbonPricePerKg.value,
       0
     );
 

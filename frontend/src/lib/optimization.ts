@@ -11,38 +11,14 @@
 import { IoTReading, HEALTHY_RANGES } from "./iot-health";
 import { getCrop } from "./crop-profiles";
 import { mulberry32, gaussFrom } from "./prng";
+import { PARAMS } from "./optimization-params";
 
-// 계통 전력 배출계수 (kg CO2/kWh) — 한국 2024 근사. 절감 kWh를 CO2로 환산해
-// ESG 리포트·투자자 대시보드에 올리는 데 쓴다(거시 재무 환산).
-export const GRID_EMISSION_FACTOR = 0.459;
-
-// 시간대별 계통 탄소집약도 배율 — 낮(태양광 다량)은 배출 낮고 저녁 피크는 높다.
-// TOU 요금과 같은 방향이라, LED를 저렴 시간대로 옮기면 원과 CO2가 함께 준다
-// (Economic MPC의 탄소 목적함수 차용, arXiv 2410.23793). 평균 1.0로 정규화.
-export const CARBON_INTENSITY_FACTOR: number[] = [
-  1.05, 1.05, 1.05, 1.05, 1.05, 1.05, 1.0, 1.0, 1.0, // 00~08
-  0.9, 0.9, 0.75, 0.7, 0.7, 0.75, // 09~14 태양광 피크
-  0.9, 1.0, 1.05, 1.25, 1.25, 1.25, // 15~20 저녁 피크
-  1.05, 1.0, 1.0, // 21~23
-];
-
-// ── ① 전력비: 시간대별 요금 스케줄링 ──────────────────────────────────────
-// 2026.4 한전 요금 개편(49년 만의 시간대 개편) 구조 반영:
-//  - 낮 11~15시: 태양광 잉여로 요금 인하(경부하성 시간대로 재분류)
-//  - 저녁 18~21시: 최대부하로 편입
-// 아래 단가는 일반용(을) 저압 기준의 근사치(원/kWh)이며 확정 계약종·고시가로
-// 교체하는 지점이다. 농사용(을) 확정 시 TARIFF_FLAT_AGRI로 교체.
-export const TARIFF_TOU_GENERAL: number[] = [
-  110, 110, 110, 110, 110, 110, 110, 110, 110, // 00~08 경부하
-  150, 150,                                     // 09~10 중간부하
-  130, 130, 130, 130,                           // 11~14 낮 할인(개편 신설)
-  150, 150, 150,                                // 15~17 중간부하
-  210, 210, 210,                                // 18~20 최대부하(개편 편입)
-  150, 150,                                     // 21~22 중간부하
-  110,                                          // 23    경부하
-];
-
-export const TARIFF_FLAT_AGRI: number[] = Array(24).fill(53); // 농사용(을) 근사 flat
+// 요금·배출·원가 상수는 전부 파라미터 레지스트리에서 온다. 값과 근거(고시/추정/가정)를
+// 한 곳에 모아둬야 "이 숫자 어디서 왔나"에 답할 수 있고 교체 지점도 한눈에 보인다.
+export const GRID_EMISSION_FACTOR = PARAMS.gridEmissionFactor.value;
+export const CARBON_INTENSITY_FACTOR: number[] = PARAMS.carbonIntensityFactor.value;
+export const TARIFF_TOU_GENERAL: number[] = PARAMS.tariffTouGeneral.value;
+export const TARIFF_FLAT_AGRI: number[] = PARAMS.tariffFlatAgri.value;
 
 export interface LedBlock {
   startHour: number; // 0~23
@@ -982,8 +958,7 @@ export interface OperationsSavings {
 // 폐기 절감 1포기의 가치는 **판매가가 아니라 변동비**다. 안 심어서 아끼는 것은
 // 종자·양액·전기·포장이지 매출이 아니며(애초에 안 팔릴 물량이다), 판매가로 세면
 // 이 레버 하나가 전력 절감 전체를 몇 배로 압도해 리포트가 왜곡된다.
-// 종자 ~50 + 양액 ~150 + 배분 전기 ~350 + 자재 ~250 ≈ 800원/포기 — 원가 확정 시 교체.
-const UNIT_VARIABLE_COST = 800;
+const UNIT_VARIABLE_COST = PARAMS.unitVariableCost.value;
 
 export function operationsSavingsReport(opts: {
   dliSavingPerMonth: number; // 전력량요금 절감 (LED 시간 이동)
@@ -1098,7 +1073,7 @@ export interface PeakPlan {
   demandChargeSavingPerMonth: number; // 원 — (피크 절감 kW) × 기본요금 단가
 }
 
-const DEMAND_CHARGE_PER_KW = 8320; // 일반용(을) 저압 기본요금 근사(원/kW·월) — 계약종 교체 지점
+const DEMAND_CHARGE_PER_KW = PARAMS.demandChargePerKw.value;
 
 export function peakStagger(loads: LoadSpec[]): PeakPlan {
   // 관행: 모든 부하가 08시부터 연속 가동
