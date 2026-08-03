@@ -1,25 +1,7 @@
 import { prisma } from "@/lib/db";
-import {
-  dliSchedule,
-  dliFeedback,
-  maintenanceRisk,
-  seedingPlan,
-  nutrientAdvice,
-  holtWintersForecast,
-  cusumDrift,
-  weatherCompensatedCusum,
-  peakStagger,
-  annealJointSchedule,
-  recipeOptimization,
-  operationsSavingsReport,
-  TARIFF_TOU_GENERAL,
-} from "@/lib/optimization";
-import { optimalStack } from "@/lib/optimization-advanced";
-import { cropMeanVariance, remainingUsefulLife } from "@/lib/optimization-frontier";
-import { unifiedCoOptimize } from "@/lib/optimization-unified";
+import { buildOptimizationReport } from "@/lib/optimization-report";
 import { growthRecipeDemo } from "@/lib/growth-recipe-advanced";
-import { fetchSalesData, fetchOpenData } from "@/lib/opendata";
-import { getCrop } from "@/lib/crop-profiles";
+import { fetchSalesData, fetchOpenData, alignExternalSeries } from "@/lib/opendata";
 import { IoTReading } from "@/lib/iot-health";
 import { notFound } from "next/navigation";
 import fleetBaseline from "../../../../prisma/fleet-baseline.json";
@@ -28,6 +10,7 @@ export const dynamic = "force-dynamic";
 
 // AI 운영 최적화 리포트 — 미시(알고리즘)·중간(아키텍처)·거시(재무) 3층.
 // 데이터: 스마트팜코리아 그린씨에스 실측 온실 환경 시계열.
+// 계산은 buildOptimizationReport 한 곳에서만 한다 — /api/optimization/[id]와 같은 숫자.
 export default async function OptimizationPage({
   params,
 }: {
@@ -55,70 +38,28 @@ export default async function OptimizationPage({
     phLevel: d.phLevel,
   }));
 
-  const cropKey = "leafy";
-  const crop = getCrop(cropKey);
-  const ledPowerKw = 4;
+  const [sales, envRecs] = await Promise.all([fetchSalesData(), fetchOpenData()]);
+  const external = alignExternalSeries(iot, envRecs);
 
-  const dli = dliSchedule({ cropKey, ledPowerKw, tariff: TARIFF_TOU_GENERAL });
-  const feedback =
-    iot.length > 0
-      ? dliFeedback({ cropKey, recentLux: iot.slice(-24).map((d) => d.lightIntensity) })
-      : null;
-  const peak = peakStagger([
-    { name: "LED", kw: ledPowerKw, hoursNeeded: dli.requiredHours, fixedHours: dli.litHours },
-    { name: "공조", kw: 1.5, hoursNeeded: 10 },
-    { name: "양액펌프", kw: 0.7, hoursNeeded: 6 },
-  ]);
-  const joint = annealJointSchedule({
-    ledPowerKw,
-    photoperiodHours: dli.requiredHours,
-    flexLoads: [
-      { name: "공조", kw: 1.5, hoursNeeded: 10 },
-      { name: "양액펌프", kw: 0.7, hoursNeeded: 6 },
-    ],
+  const report = buildOptimizationReport({
+    projectId: project.id,
+    projectName: project.name,
+    readings,
+    externalTempC: external.extTemp,
+    externalInsolationWm2: external.extInsolation,
+    salesUnits: sales.map((s) => s.units),
+    fleetPrior: fleetBaseline.tempDiff,
   });
-  const maint = readings.length > 0 ? maintenanceRisk(readings) : null;
-  const rawCusum = readings.length > 0 ? cusumDrift(readings, { lag: 24 }).filter((c) => c.detected) : [];
-  const internal = iot.map((d) => d.temperature);
-  const external = iot.map((d) => d.temperature - fleetBaseline.tempDiff.median);
-  const weatherCusum =
-    internal.length > 12
-      ? weatherCompensatedCusum(internal, external, { fleetPrior: fleetBaseline.tempDiff })
-      : null;
-  const sales = await fetchSalesData();
-  const forecast = holtWintersForecast(sales.map((s) => s.units));
-  const seed = seedingPlan({ monthlySalesForecast: forecast.monthlyTotal });
-  const nutrient = readings.length > 0 ? nutrientAdvice(readings[readings.length - 1], cropKey) : null;
-  const recipeMix = recipeOptimization(); // 미시: 품종/레시피 선택
-  // 중간: 사이트 간 품목 배분 — 마코위츠 평균-분산(리스크-수익 프론티어)
-  const portfolio = cropMeanVariance({
-    assets: [
-      { name: "엽채류(상추)", expectedMargin: 7000, volatility: 1800 },
-      { name: "바질(허브)", expectedMargin: 11000, volatility: 3500 },
-      { name: "방울토마토", expectedMargin: 14000, volatility: 6000 },
-    ],
-  });
-  // 예지보전 → 잔여수명(베이불): CUSUM 최대 통계량을 열화지표로 환산
-  const degIndex = maint ? Math.min(0.95, maint.riskScore / 6) : 0;
-  const rul = remainingUsefulLife({ degradationIndex: degIndex });
-  const savings = operationsSavingsReport({
-    dliSavingPerMonth: dli.savingPerMonth,
-    peakSavingPerMonth: peak.demandChargeSavingPerMonth,
-    saImprovementPerMonth: joint.improvementPerMonth,
-    wasteReductionUnits: seed.expectedWasteReduction,
-    dliCo2PerMonth: dli.co2SavedKgPerMonth,
-    confidence: "projected",
-  });
+  const { crop, micro, meso, macro, advanced: adv, unified, dataAvailability } = report;
+  const { dli, feedback, peak, joint, forecast, seeding, recipeMix, nutrient } = micro;
+  const { maintenance, rawCusum, weatherCusum, portfolio, rul } = meso;
+  const savings = macro.savings;
 
-  // 고도화 스택 (5개 돌파의 최적 조합) — 외부온도 실데이터 사용
-  const envRecs = await fetchOpenData();
-  const ext24 = envRecs.slice(-24).map((r) => r.extTemp ?? 15);
-  const adv = optimalStack({ cropKey, ledPowerKw, sites: 20, hourlyExtTemp: ext24 });
-  // 캡스톤: 통합 공동최적화 (6개 목적을 하나의 목적함수로 동시 최적화)
-  const unified = unifiedCoOptimize({ cropKey, ledPowerKw, sites: 20, hourlyExtTemp: ext24 });
   // 생육레시피 분석 — 환경↔수율 학습으로 최적 목표(레시피)를 도출 (최적화의 입력)
-  const recipe = growthRecipeDemo(cropKey);
+  const recipe = growthRecipeDemo(crop.key);
 
+  const driftDetected = rawCusum.filter((c) => c.detected);
+  const driftUnjudged = rawCusum.filter((c) => c.status !== "ok");
   const fmt = (n: number) => Math.round(n).toLocaleString("ko-KR");
 
   return (
@@ -126,7 +67,7 @@ export default async function OptimizationPage({
       <header>
         <h1 className="text-2xl font-bold">AI 운영 최적화 리포트</h1>
         <p className="text-sm text-gray-500 mt-1">
-          {project.name} · {crop.label} · 실측 IoT {iot.length}건 (스마트팜코리아 그린씨에스, 10농가 플릿)
+          {project.name} · {crop.label} · 실측 IoT {report.inputs.iotRecords}건 (스마트팜코리아 그린씨에스, 10농가 플릿)
         </p>
       </header>
 
@@ -160,11 +101,17 @@ export default async function OptimizationPage({
         <div className="rounded bg-gray-50 p-3 text-sm">
           <div className="font-medium">① DLI 광주기 (농학 제약 + TOU + 탄소)</div>
           <p className="mt-1">
-            {crop.label} 목표 DLI {dli.dliTarget} → 필요 {dli.requiredHours}h,
-            달성 {dli.achievedDli} mol{dli.feasible ? "" : " (PPFD 상향 필요)"}.
+            {crop.label} 목표 DLI {dli.dliTarget} → 연속 명기 {dli.requiredHours}h(PPFD {dli.ppfdUsed},
+            {" "}{dli.ledPowerKwUsed}kW) + 연속 암기 {dli.darkContinuousH}h, 달성 {dli.achievedDli} mol.
             관행 {fmt(dli.naiveCostPerDay)} → 최저요금·저탄소 배치 {fmt(dli.costPerDay)}원/일 —
             월 <b className="text-emerald-700">{fmt(dli.savingPerMonth)}원 + CO₂ {dli.co2SavedKgPerMonth}kg</b>.
             {feedback && <> 닫힌루프: {feedback.action}</>}
+          </p>
+          <p className="mt-1 text-xs text-gray-500">
+            {dli.photoperiodSafe
+              ? "추대·생체리듬 하드제약 충족 — 빛을 싼 시간마다 흩뿌리지 않고 연속 블록으로만 배치한다."
+              : `연속 암기 ${dli.darkContinuousH}h로 최소 기준 미달 — 목표 DLI 하향 또는 광량 증설 필요.`}
+            {!dli.feasible && " 정격 PPFD 초과 — 시설 광량 재설계 지점."}
           </p>
         </div>
 
@@ -172,18 +119,30 @@ export default async function OptimizationPage({
           <div className="font-medium text-sky-800">② 피크 분산 + SA 통합</div>
           <p className="mt-1 text-sky-700">
             동시가동 {peak.naivePeakKw}kW → {peak.optimizedPeakKw}kW, 기본요금 월 {fmt(peak.demandChargeSavingPerMonth)}원.
-            SA 전역탐색이 단계별 해 대비 월 {fmt(joint.improvementPerMonth)}원 추가 절감.
+            SA 전역탐색이 단계별 해 대비 월 {fmt(joint.improvementPerMonth)}원 추가 절감
+            (전력량요금과 겹치므로 위 합계엔 넣지 않는다).
           </p>
         </div>
 
         <div className="rounded bg-violet-50 p-3 text-sm">
           <div className="font-medium text-violet-800">④ 수요예측(Holt-Winters) → ⑤ 작물믹스(톰슨샘플링)</div>
           <p className="mt-1 text-violet-700">
-            판매 {sales.length}일 학습 → 30일 {fmt(forecast.monthlyTotal)}포기 예측 → {seed.note}.
+            판매 {report.inputs.salesRecords}일 학습 → 30일 {fmt(forecast.monthlyTotal)}포기 예측 → {seeding.note}.
             품종/레시피 밴딧: {recipeMix.allocation.map((a) => `${a.name} ${Math.round(a.share * 100)}%`).join(" · ")}
-            (균등 대비 +{((recipeMix.uplift / recipeMix.uniformTotalMargin) * 100).toFixed(1)}%).
-            {nutrient && ` ${nutrient.message}`}
+            (균등 대비 기대마진 +{((recipeMix.uplift / recipeMix.uniformTotalMargin) * 100).toFixed(1)}%).
           </p>
+          {recipeMix.synthetic && (
+            <p className="mt-1 text-xs text-violet-500">
+              ※ 밴딧 상승분은 가정한 품종별 마진에 기반한 시뮬레이션 — 1호점 수확·판매 실적이 쌓이면 실측으로 대체된다.
+            </p>
+          )}
+          {nutrient && (
+            <p
+              className={`mt-1 text-xs ${nutrient.status === "unavailable" ? "text-gray-400" : "text-violet-600"}`}
+            >
+              {nutrient.message}
+            </p>
+          )}
         </div>
       </section>
 
@@ -194,21 +153,26 @@ export default async function OptimizationPage({
           <div className="font-medium text-amber-800">③ 외부기상 차분 CUSUM + 플릿 콜드스타트</div>
           <p className="mt-1 text-amber-700">
             원시 CUSUM은 계절 하강을 설비 드리프트로 오탐
-            ({rawCusum.length > 0 ? rawCusum.map((c) => `${c.sensor} ${c.maxStatistic}σ`).join(", ") : "이번 창엔 없음"}).
-            {weatherCusum && (
-              <>
-                {" "}외부기상 차분 → {weatherCusum.maxStatistic}σ, {weatherCusum.note}
-              </>
-            )}
+            ({driftDetected.length > 0
+              ? driftDetected.map((c) => `${c.sensor} ${c.maxStatistic}σ`).join(", ")
+              : "이번 창엔 없음"}).
+            {" "}외부기상 차분 → {weatherCusum.status === "ok" ? `${weatherCusum.maxStatistic}σ, ` : ""}
+            {weatherCusum.note}
           </p>
+          {driftUnjudged.length > 0 && (
+            <p className="mt-1 text-xs text-amber-500">
+              판정 보류: {driftUnjudged.map((c) => `${c.sensor}(${c.status})`).join(", ")} —
+              센서 값이 굵게 양자화돼 산포 추정이 성립하지 않는 구간. 관리도를 억지로 돌리는 대신 보류한다.
+            </p>
+          )}
           <p className="mt-1 text-xs text-amber-600">
             플릿 {fleetBaseline.meta.farms}농가 {fmt(fleetBaseline.meta.rows)}건 베이스라인을 신규 사이트
             CUSUM 사전분포로 사용 → 이력 없는 1호점도 첫날부터 판정 (teacher-student 콜드스타트).
-            예지보전 리스크 {maint?.riskScore ?? "—"}σ →{" "}
+            예지보전 리스크 {maintenance?.riskScore ?? "—"}σ →{" "}
             <b className={rul.action === "urgent" ? "text-red-700" : rul.action === "schedule" ? "text-amber-800" : "text-emerald-700"}>
               잔여수명 ~{rul.estimatedRulDays}일 ({rul.action})
             </b>{" "}
-            — 베이불 생존분석으로 "이상함"을 실행가능한 잔여수명(RUL)으로 격상.
+            — 베이불 생존분석으로 &quot;이상함&quot;을 실행가능한 잔여수명(RUL)으로 격상.
           </p>
         </div>
         <div className="rounded bg-teal-50 p-3 text-sm">
@@ -226,7 +190,7 @@ export default async function OptimizationPage({
       <section className="rounded-lg border-2 border-lime-300 bg-lime-50 p-5 space-y-3">
         <h2 className="font-semibold text-lime-900">AI 생육레시피 분석 — 최적 목표를 데이터에서 학습</h2>
         <p className="text-xs text-lime-800">
-          스케줄링이 "어떻게 싸게 달성할지"라면, 레시피 분석은 "무엇을 목표로 할지"를 정한다.
+          스케줄링이 &quot;어떻게 싸게 달성할지&quot;라면, 레시피 분석은 &quot;무엇을 목표로 할지&quot;를 정한다.
           환경↔수율 {recipe.samples}개 사이클을 학습해 최적 생육조건을 도출 — 이 레시피가
           최적화 스택의 목표(DLI·정상범위)가 되어 두 시스템이 맞물린다. 비전공 운영자도 따라할 수 있다.
         </p>
@@ -238,7 +202,7 @@ export default async function OptimizationPage({
             <div className="font-medium">특성 중요도 (SHAP 섀플리 값)</div>
             <p className="mt-1 text-gray-600">
               {recipe.shap.slice(0, 4).map((s) => `${s.label} ${Math.round(s.meanAbsShap * 100)}`).join(" · ")}
-              — 협조게임이론의 공정 기여도로 "수율을 좌우하는 요인" 순위.
+              — 협조게임이론의 공정 기여도로 &quot;수율을 좌우하는 요인&quot; 순위.
             </p>
           </div>
           <div className="rounded bg-white p-3">
@@ -269,8 +233,9 @@ export default async function OptimizationPage({
         <h2 className="font-semibold">캡스톤 · 통합 공동최적화 (6개 목적을 하나로)</h2>
         <p className="text-sm text-slate-300">
           순차 파이프라인(각 알고리즘이 바통 넘김)이 아니라, <b>단일 목적함수로 전부 동시에 저울질</b>한다.
-          결정변수(광량 DLI·광블록 시작)를 전수열거(264개 후보 전역탐색)로 함께 탐색하며 수율매출·전력량·기본요금·
+          결정변수(광량 DLI·광블록 시작)를 전수열거로 함께 탐색하며 수율매출·전력량·기본요금·
           열·CO₂·VPP 유연성을 한 번에 최적화. 광주기 안전은 하드제약, 가격은 강건.
+          광량을 올리면 명기를 줄이는 대신 PPFD와 소비전력이 함께 오르므로, DLI 상향은 공짜가 아니다.
         </p>
         <div className="flex flex-wrap items-baseline gap-3">
           <span className="text-2xl font-bold text-emerald-400">
@@ -278,6 +243,9 @@ export default async function OptimizationPage({
           </span>
           <span className="text-slate-300">
             순차 파이프라인 대비 <b className="text-emerald-400">+{fmt(unified.vsSequentialNetValue)}원/일</b>
+          </span>
+          <span className="text-xs text-slate-400">
+            선택 DLI {unified.dliChosen}(PPFD {unified.ppfd}) · 명기 {unified.litHours.length}h / 암기 {unified.darkContinuousH}h
           </span>
         </div>
         <div className="grid gap-2 sm:grid-cols-3 text-xs">
@@ -304,6 +272,11 @@ export default async function OptimizationPage({
           {unified.tradeoffs.map((t, i) => (
             <div key={i} className="text-slate-400">· {t}</div>
           ))}
+          {dataAvailability.externalTemp === "assumed" && (
+            <div className="mt-1 text-amber-300">
+              ※ 실측 외기온도 미확보 — 열 항은 실내 목표온도와 같은 중립 가정(계절 이득/부담 0)으로 계산됐다.
+            </div>
+          )}
         </div>
       </section>
 
@@ -316,9 +289,10 @@ export default async function OptimizationPage({
           <div className="rounded bg-white p-3">
             <div className="font-medium">① 광주기 안전 (농학 하드제약)</div>
             <p className="mt-1 text-gray-600">
-              명기 {adv.photoperiod.requiredHours}h(PPFD {adv.photoperiod.ppfdUsed}) + 연속 암기{" "}
+              명기 {adv.photoperiod.requiredHours}h(PPFD {adv.photoperiod.ppfdUsed},
+              {" "}{adv.photoperiod.ledPowerKwUsed}kW) + 연속 암기{" "}
               {adv.photoperiod.darkContinuousH}h → 추대·생체리듬 안전 {adv.photoperiod.safe ? "✓" : "✗"}.
-              빛을 아무 때나 흩뿌리지 않아 작물을 지킨다.
+              산란 배치 대비 안전 비용 {fmt(adv.photoperiod.safetyCostPerDay)}원/일.
             </p>
           </div>
           <div className="rounded bg-white p-3">
@@ -340,7 +314,7 @@ export default async function OptimizationPage({
             <div className="font-medium">④ 수율-이익 (Economic MPC)</div>
             <p className="mt-1 text-gray-600">
               비용최소가 아니라 이익최대: DLI {adv.profit.costMinDli}→{adv.profit.profitMaxDli},
-              일 +{fmt(adv.profit.upliftPerDay)}원. 채소값 비싸면 광량↑가 이득.
+              일 +{fmt(adv.profit.upliftPerDay)}원. 광주기·정격이 허용하는 상한은 DLI {adv.profit.maxFeasibleDli}.
             </p>
           </div>
         </div>
