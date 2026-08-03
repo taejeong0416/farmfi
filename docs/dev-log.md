@@ -30,7 +30,7 @@ STO 재융합 후 미결이던 데모 자동 재생 흐름 복원. 지금까진 
 - **여전히 미결(외부 대기)**: OpenDID KYC(라온시큐어 Oracle 엔드포인트 = 외부 발급 서버URL+키 수령 후 — 코드베이스에 없음), 앱 프론트(외부 수령).
 
 ### STO 재융합 (feat/sto-operation-fusion) — 백엔드 복원 · 웹 UI · 앱 기반
-피벗으로 제거했던 STO/블록체인을 운영 인프라와 **재융합**. 기준 문서 `FarmFi_STO_기획안_v18.md`(STO 에스크로 + AI검증 + 스마트팜 운영). 베이스 = `feat/pivot-operation-infra`, STO 원본은 `main`에 보존돼 있어 거기서 복원.
+피벗으로 제거했던 STO/블록체인을 운영 인프라와 **재융합**. 기준 문서 `sto-plan.md`(STO 에스크로 + AI검증 + 스마트팜 운영). 베이스 = `feat/pivot-operation-infra`, STO 원본은 `main`에 보존돼 있어 거기서 복원.
 
 - **스키마·백엔드 복원**: STO 11모델 복원 + 운영 5모델 유지 통합. Project STO 금융필드 **nullable**(운영전용 지점 표현), Notification `milestoneId`·`projectId` 둘 다 optional. 온체인(Foundry 컨트랙트 + viem 서버 실행기)·STO 도메인 lib(subscription·waterfall·nav·ai-vision·ai-cache)·STO 코어 라우트 11개 복원. 인증은 기존 auth.ts(getServerSession·requireRole)가 SIWE 호환이라 무수정. 병합 스키마 **db push(세션pooler 5432, additive)** + 시드에 STO 통합(1호점 funded·2호점 운영·3호점 모집중).
 - **코드리뷰 10건 반영**(워크플로우 high): 복원 라우트 4개(milestones complete/verify·dividends/distribute·admin/notify)가 **무인증**이던 것 requireRole 게이트, complete에 `release≤remaining` 가드, 실패알림 projectId, 시드 solvency, ai-cache 실패 미저장, subscribe 정수검증, verify baseUrl=request origin, bigint 직렬화 헬퍼 공용화(`lib/serialize.ts`).

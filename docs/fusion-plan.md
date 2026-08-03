@@ -1,7 +1,7 @@
 # 융합 실행계획 (STO + 운영 인프라)
 
-기준 문서: `service-plan.md` (전체 서비스 기획안 v18 — STO 에스크로 + AI 검증 + 스마트팜 운영 융합).
-브랜치: `feat/sto-operation-fusion` (베이스 = `feat/pivot-operation-infra`).
+기준 문서: `service-plan.md` (전체 서비스 기획안 — STO 에스크로 + AI 검증 + 스마트팜 운영 융합), `sto-plan.md` (자금집행 구조).
+Phase 1~4는 `main`에 병합 완료. 잔여 항목은 Phase 5에 정리돼 있다.
 
 ## 확정 아키텍처
 
