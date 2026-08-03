@@ -48,11 +48,24 @@ export default async function OptimizationPage({
     externalTempC: external.extTemp,
     externalInsolationWm2: external.extInsolation,
     salesUnits: sales.map((s) => s.units),
+    envRecords: envRecs.map((r) => ({ measDt: r.measDt, extTemp: r.extTemp ?? null })),
     fleetPrior: fleetBaseline.tempDiff,
   });
-  const { crop, micro, meso, macro, advanced: adv, unified, dataAvailability } = report;
-  const { dli, feedback, peak, joint, forecast, seeding, recipeMix, nutrient } = micro;
-  const { maintenance, rawCusum, weatherCusum, portfolio, rul } = meso;
+  const {
+    crop,
+    micro,
+    meso,
+    macro,
+    planning,
+    verification,
+    advanced: adv,
+    unified,
+    dataAvailability,
+  } = report;
+  const { dli, feedback, peak, joint, forecast, seeding, newsvendor, recipeMix, nutrient } = micro;
+  const { maintenance, rawCusum, weatherCusum, multivariate, portfolio, contextual, rul } = meso;
+  const { cycleDli, contractPower, co2Light } = planning;
+  const { backtest, adherence, paramSummary } = verification;
   const savings = macro.savings;
 
   // 생육레시피 분석 — 환경↔수율 학습으로 최적 목표(레시피)를 도출 (최적화의 입력)
@@ -92,6 +105,58 @@ export default async function OptimizationPage({
         <p className="mt-2 text-xs text-emerald-600">
           {savings.note} · 이 숫자가 투자자 대시보드·STO 청약자료·ESG 리포트에 연결된다.
         </p>
+        <p className="mt-1 text-xs text-emerald-700">
+          신뢰도 판정: {dataAvailability.confidenceReason} · 파라미터 {paramSummary.total}개 중
+          가정 {paramSummary.byBasis["가정"]}개({Math.round(paramSummary.assumedShare * 100)}%)
+        </p>
+      </section>
+
+      {/* 검증: 백테스트 + 실행 준수 */}
+      <section className="rounded-lg border-2 border-stone-300 bg-stone-50 p-5 space-y-3">
+        <h2 className="font-semibold text-stone-800">검증 · 이 숫자를 어떻게 확인했나</h2>
+        <p className="text-xs text-stone-600">
+          절감액은 &quot;관행이라면 이랬을 것&quot; 대비 반사실이고, 그 관행도 우리가 정한 가정(08시 점등)이다.
+          최소한 보유한 과거 구간에서는 얼마였는지 되짚어야 주장이 선다.
+        </p>
+        {backtest && backtest.completeDays > 0 ? (
+          <>
+            <div className="grid gap-2 sm:grid-cols-4 text-sm">
+              <div className="rounded bg-white p-3">
+                <div className="text-xs text-stone-500">검증 일수</div>
+                <div className="font-bold">{backtest.completeDays}일</div>
+                <div className="text-xs text-stone-400">제외 {backtest.skippedDays}일(표본 부족)</div>
+              </div>
+              <div className="rounded bg-white p-3">
+                <div className="text-xs text-stone-500">일 절감 중앙값</div>
+                <div className="font-bold text-emerald-700">{fmt(backtest.medianSavingPerDay)}원</div>
+                <div className="text-xs text-stone-400">평균 {fmt(backtest.meanSavingPerDay)}원</div>
+              </div>
+              <div className="rounded bg-white p-3">
+                <div className="text-xs text-stone-500">하위 10% 날</div>
+                <div className="font-bold text-amber-700">{fmt(backtest.p10SavingPerDay)}원</div>
+                <div className="text-xs text-stone-400">절감 없던 날 {backtest.nonPositiveDays}일</div>
+              </div>
+              <div className="rounded bg-white p-3">
+                <div className="text-xs text-stone-500">최적 시작시각</div>
+                <div className="font-bold">{backtest.startHourSpread}가지</div>
+                <div className="text-xs text-stone-400">
+                  {backtest.startHourSpread <= 2 ? "고정 스케줄로 충분" : "일별 재계산 필요"}
+                </div>
+              </div>
+            </div>
+            <p className="text-xs text-stone-600">{backtest.note}</p>
+          </>
+        ) : (
+          <p className="text-sm text-stone-500">백테스트 가능한 완전한 날이 없다 — 시간 표본 확보 후 재계산.</p>
+        )}
+        <div className="rounded bg-white p-3 text-sm">
+          <div className="font-medium text-stone-700">실행 준수</div>
+          <p className="mt-1 text-stone-600">{adherence.note}</p>
+          <p className="mt-1 text-xs text-stone-400">
+            이 지표 없이는 &quot;AI가 절감했다&quot;와 &quot;운영자가 안 따랐다&quot;를 구분할 수 없다.
+            제어 이력이 붙으면 신뢰도가 자동으로 measured로 올라간다.
+          </p>
+        </div>
       </section>
 
       {/* 미시: 알고리즘 */}
@@ -127,7 +192,20 @@ export default async function OptimizationPage({
         <div className="rounded bg-violet-50 p-3 text-sm">
           <div className="font-medium text-violet-800">④ 수요예측(Holt-Winters) → ⑤ 작물믹스(톰슨샘플링)</div>
           <p className="mt-1 text-violet-700">
-            판매 {report.inputs.salesRecords}일 학습 → 30일 {fmt(forecast.monthlyTotal)}포기 예측 → {seeding.note}.
+            판매 {report.inputs.salesRecords}일 학습 → 30일 {fmt(forecast.monthlyTotal)}포기 예측
+            {micro.forecastInterval.interval.valid && (
+              <>
+                {" "}(14일 구간 ±{micro.forecastInterval.interval.halfWidth}/일,{" "}
+                {Math.round(micro.forecastInterval.interval.achievedCoverage * 100)}% 커버리지)
+              </>
+            )}
+            . {seeding.note}
+          </p>
+          <p className="mt-1 text-violet-700">
+            뉴스벤더 파종: <b>{newsvendor.recommendedUnits}포기</b> (결정론 {newsvendor.deterministicUnits}포기,
+            임계 분위수 {Math.round(newsvendor.criticalFractile * 100)}%) — {newsvendor.note}
+          </p>
+          <p className="mt-1 text-violet-700">
             품종/레시피 밴딧: {recipeMix.allocation.map((a) => `${a.name} ${Math.round(a.share * 100)}%`).join(" · ")}
             (균등 대비 기대마진 +{((recipeMix.uplift / recipeMix.uniformTotalMargin) * 100).toFixed(1)}%).
           </p>
@@ -183,7 +261,64 @@ export default async function OptimizationPage({
             {portfolio.minVariance.weights.map((w, i) => `${portfolio.assets[i]} ${Math.round(w * 100)}%`).join(" · ")}.
             작물 가격·수율 변동성과 상관을 넣어 효율적 프론티어를 그린다 — 작물도 투자 포트폴리오처럼 분산.
           </p>
+          <p className="mt-2 text-teal-700">
+            <b>문맥 밴딧(LinUCB)</b>: {contextual.armShares.map((a) => `${a.name} ${Math.round(a.share * 100)}%`).join(" · ")}
+            {" "}— {contextual.note}
+          </p>
         </div>
+        <div className="rounded bg-rose-50 p-3 text-sm">
+          <div className="font-medium text-rose-800">다변량 관리도(MEWMA) — 센서 간 관계 붕괴</div>
+          <p className="mt-1 text-rose-700">
+            {multivariate.status === "ok"
+              ? multivariate.note
+              : `판정 보류 (${multivariate.status}) — ${multivariate.note}`}
+          </p>
+          <p className="mt-1 text-xs text-rose-500">
+            센서별 CUSUM은 각 축을 따로 본다. 온도도 습도도 각각은 정상범위인데 둘의 관계가 평소와
+            다른 상황(제습 실패·순환 정지)은 공분산 거리로만 잡힌다.
+          </p>
+        </div>
+      </section>
+
+      {/* 계획 계층 */}
+      <section className="rounded-lg border-2 border-cyan-200 bg-cyan-50 p-5 space-y-3">
+        <h2 className="font-semibold text-cyan-900">계획 · 하루 단위가 못 쓰는 자유도</h2>
+        <div className="grid gap-3 sm:grid-cols-3 text-sm">
+          <div className="rounded bg-white p-3">
+            <div className="font-medium">사이클 광량 배분</div>
+            <p className="mt-1 text-gray-600">
+              {cycleDli.days.length}일 누적 {cycleDli.targetCumulativeDli} mol을 요금 싼 날에 몰아 배분
+              (하루 {cycleDli.dailyMin}~{cycleDli.dailyMax}). 균등 대비 사이클당{" "}
+              <b className="text-emerald-700">{fmt(cycleDli.savingPerCycle)}원</b>.
+            </p>
+            <p className="mt-1 text-xs text-gray-400">
+              수율은 사이클 누적 광량에 반응하므로 매일 같은 양을 줄 이유가 없다. 연속 배낭 정확해.
+            </p>
+          </div>
+          <div className="rounded bg-white p-3">
+            <div className="font-medium">계약전력</div>
+            <p className="mt-1 text-gray-600">
+              {contractPower.currentKw}kW → <b>{contractPower.recommendedKw}kW</b> 권고
+              (초과 확률 {Math.round(contractPower.exceedanceProbability * 100)}%), 월{" "}
+              <b className="text-emerald-700">{fmt(contractPower.savingPerMonth)}원</b>.
+            </p>
+            <p className="mt-1 text-xs text-gray-400">
+              피크를 낮췄으면 계약도 낮춰야 절감이 실현된다 — 초과 위약까지 넣은 균형점.
+            </p>
+          </div>
+          <div className="rounded bg-white p-3">
+            <div className="font-medium">CO₂-광 대체</div>
+            <p className="mt-1 text-gray-600">
+              {co2Light.chosen.co2Ppm}ppm · DLI {co2Light.chosen.dli} → 일 이익{" "}
+              {fmt(co2Light.chosen.profitPerDay)}원 (시비 없이 광량만: {fmt(co2Light.lightOnly.profitPerDay)}원).
+              CO₂ 100ppm이 DLI {co2Light.substitutionDliPer100Ppm} 대체.
+            </p>
+            <p className="mt-1 text-xs text-gray-400">
+              CO₂를 올리면 광포화점이 올라가 같은 광량으로 더 자란다 — 전기를 덜 사도 되게 만드는 축.
+            </p>
+          </div>
+        </div>
+        <p className="text-xs text-cyan-700">{co2Light.note}</p>
       </section>
 
       {/* 생육레시피 분석 — 최적화의 "목표"를 데이터에서 학습 */}

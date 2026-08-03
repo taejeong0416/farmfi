@@ -40,6 +40,33 @@ import {
 } from "./optimization";
 import { optimalStack, type OptimalStack } from "./optimization-advanced";
 import {
+  backtestSchedule,
+  scheduleAdherence,
+  savingsConfidence,
+  type BacktestResult,
+  type AdherenceResult,
+} from "./optimization-backtest";
+import {
+  allocateCycleDli,
+  optimalContractPower,
+  newsvendorSeeding,
+  type CycleDliPlan,
+  type ContractPowerPlan,
+  type NewsvendorPlan,
+} from "./optimization-planning";
+import { co2LightCoOptimize, type Co2LightPlan } from "./optimization-climate";
+import {
+  contextualCropAllocation,
+  multivariateDrift,
+  withConformalInterval,
+  oneStepResiduals,
+  type ContextualAllocation,
+  type MultivariateDriftResult,
+  type IntervalForecast,
+} from "./optimization-learning";
+import { paramTable, paramConfidence, type ParamRow, type ParamBasis } from "./optimization-params";
+import { mulberry32 } from "./prng";
+import {
   cropMeanVariance,
   remainingUsefulLife,
   type MeanVariancePlan,
@@ -70,6 +97,10 @@ export interface OptimizationReportInput {
   externalInsolationWm2?: (number | null | undefined)[];
   /** 일별 판매량 시계열 */
   salesUnits: number[];
+  /** 백테스트용 원시 환경 레코드 (측정시각 + 실측 외기온도). 없으면 백테스트 생략 */
+  envRecords?: { measDt: string; extTemp?: number | null }[];
+  /** 실제 점등된 시간대(0~23). 제어 이력이 쌓이면 넣는다 — 없으면 실행 검증 보류 */
+  actualLitHours?: number[];
   /** 플릿 베이스라인(신규 사이트 콜드스타트용 사전분포) */
   fleetPrior?: { median: number; mad: number };
   cropKey?: string;
@@ -98,6 +129,9 @@ export interface OptimizationReport {
     externalTemp: "measured" | "assumed";
     externalInsolation: "measured" | "assumed";
     savingsConfidence: "measured" | "projected";
+    confidenceReason: string;
+    /** 파라미터 중 "가정"에 기대는 비율 */
+    assumedParamShare: number;
   };
   micro: {
     dli: DliPlan;
@@ -105,7 +139,9 @@ export interface OptimizationReport {
     peak: PeakPlan;
     joint: JointSchedule;
     forecast: DemandForecast;
+    forecastInterval: IntervalForecast;
     seeding: SeedingPlan;
+    newsvendor: NewsvendorPlan;
     recipeMix: BanditAllocation;
     nutrient: NutrientAdvice | null;
   };
@@ -113,9 +149,24 @@ export interface OptimizationReport {
     maintenance: MaintenanceReport | null;
     rawCusum: CusumResult[];
     weatherCusum: WeatherCompensatedResult;
+    multivariate: MultivariateDriftResult;
     supplemental: SupplementalPlan;
     portfolio: MeanVariancePlan;
+    contextual: ContextualAllocation;
     rul: RulResult;
+  };
+  /** 계획 계층 — 하루 단위 스케줄링이 못 쓰는 자유도 */
+  planning: {
+    cycleDli: CycleDliPlan;
+    contractPower: ContractPowerPlan;
+    co2Light: Co2LightPlan;
+  };
+  /** 검증 계층 — 절감 주장을 확인 가능하게 만드는 부분 */
+  verification: {
+    backtest: BacktestResult | null;
+    adherence: AdherenceResult;
+    params: ParamRow[];
+    paramSummary: { total: number; byBasis: Record<ParamBasis, number>; assumedShare: number };
   };
   macro: { savings: OperationsSavings };
   advanced: OptimalStack;
@@ -185,9 +236,27 @@ export function buildOptimizationReport(
   });
 
   // ── 미시 ④ 수요예측 → 파종 ──
+  // 점예측에 컨포멀 구간을 씌우고, 그 잔차 분포로 뉴스벤더 파종량까지 함께 낸다.
+  // 예측을 확률로 만들면 "얼마나 심을지"가 비대칭 비용을 반영하게 된다.
   const forecast = holtWintersForecast(input.salesUnits);
+  const salesResiduals = oneStepResiduals(
+    input.salesUnits,
+    (history) => holtWintersForecast(history).dailyForecast[0]
+  );
+  const forecastInterval = withConformalInterval(
+    forecast.dailyForecast.slice(0, 14),
+    salesResiduals
+  );
   const monthlySalesForecast = input.monthlySalesForecast ?? forecast.monthlyTotal;
   const seeding = seedingPlan({ monthlySalesForecast });
+  const dailyPoint =
+    forecast.dailyForecast.slice(0, 30).reduce((a, b) => a + b, 0) /
+    Math.max(1, Math.min(30, forecast.dailyForecast.length));
+  const newsvendor = newsvendorSeeding({
+    pointForecast: dailyPoint,
+    residuals: salesResiduals,
+    horizonDays: 30,
+  });
   const nutrient =
     readings.length > 0
       ? nutrientAdvice(readings[readings.length - 1], cropKey)
@@ -217,6 +286,8 @@ export function buildOptimizationReport(
   const rul = remainingUsefulLife({
     degradationIndex: maintenance ? Math.min(0.95, maintenance.riskScore / 6) : 0,
   });
+  // 센서별 독립 관리도가 놓치는 "관계 붕괴"를 다변량으로 함께 본다.
+  const multivariate = multivariateDrift(readings, { lag: 24 });
 
   // ── 중간: 보광 트리거(실내 vs 온실 하이브리드) ──
   const supplemental = supplementalTrigger({
@@ -235,6 +306,84 @@ export function buildOptimizationReport(
     ],
   });
 
+  // ── 중간: 문맥 밴딧 — 사이트마다 다른 답 ──
+  // 마코위츠가 "플릿 전체를 어떤 비율로 섞을지"를 정한다면, 문맥 밴딧은 "이 사이트에는
+  // 무엇을 심을지"를 정한다. 층고·상권·계절이 다르면 같은 비율이라도 배치가 달라진다.
+  const contextRand = mulberry32(31);
+  const siteContexts = Array.from({ length: sites }, (_, i) => ({
+    siteId: `site-${String(i + 1).padStart(2, "0")}`,
+    features: [contextRand(), contextRand(), contextRand()],
+    featureLabels: ["층고 여유", "상권 프리미엄 수요", "계절 적합도"],
+  }));
+  const contextual = contextualCropAllocation({
+    sites: siteContexts,
+    arms: [
+      { name: "엽채류(상추)", base: 7000, weights: [200, 500, 1500] },
+      { name: "바질(허브)", base: 9000, weights: [800, 4000, 500] },
+      { name: "방울토마토", base: 8000, weights: [6000, 3000, 1000] },
+    ],
+  });
+
+  // ── 검증 계층: 백테스트 · 실행 준수 ──
+  // 절감 주장을 확인 가능하게 만드는 부분. 이것이 있어야 confidence가 올라간다.
+  const backtest =
+    input.envRecords && input.envRecords.length > 0
+      ? backtestSchedule({
+          records: input.envRecords,
+          cropKey,
+          ledPowerKw,
+          tariff,
+        })
+      : null;
+  const adherence = scheduleAdherence(dli.litHours, input.actualLitHours ?? []);
+  const confidence = savingsConfidence({ backtest, adherence });
+
+  // ── 계획 계층: 사이클 광량 배분 · 계약전력 · CO2-광 대체 ──
+  // 사이클 배분의 일별 가격 신호는 백테스트에서 나온다. 그날의 실측 외기까지 반영된
+  // 실효 단가라, 요금표만 볼 때는 보이지 않던 날짜별 차이가 생긴다.
+  const kwhPerDay = ledKwUsed * dli.requiredHours;
+  const dailyEffectiveTariff =
+    backtest && backtest.days.length > 0
+      ? backtest.days.map((d) => d.optimizedCostPerDay / Math.max(1e-6, kwhPerDay))
+      : Array(crop.cycleDays).fill(
+          dli.costPerDay / Math.max(1e-6, kwhPerDay)
+        );
+  // 광량을 하루에 몰면 그날 PPFD와 소비전력이 올라 피크가 커진다. 기본요금은 기간
+  // 최대치에 붙으므로, 전력량요금에서 번 것을 기본요금에서 잃지 않도록 관행 스케줄의
+  // 전력 상한 안에서 재배분한다.
+  const auxSyncKw = AUX_LOADS[0].kw;
+  const ledPeakBudgetKw = Math.max(ledKwUsed, peak.naivePeakKw - auxSyncKw);
+  const cycleDli = allocateCycleDli({
+    cropKey,
+    ledPowerKw,
+    dailyAvgTariff: dailyEffectiveTariff,
+    maxLedPowerKw: ledPeakBudgetKw,
+  });
+  // 피크 분포: 사이클 배분에서 날마다 광량이 다르면 소비전력도 달라진다.
+  // 공조는 LED와 동기 가동하므로 함께 피크를 만든다.
+  // 관행은 전 부하가 08시에 함께 켜져 매일 같은 피크를 만든다. 최적화 후에는
+  // 사이클 배분으로 날마다 광량이 달라 피크도 분포를 갖는다.
+  // 날마다 광량이 다르면 그날 LED 전력도 다르고, 보조 부하를 어디에 두느냐로 피크가
+  // 또 달라진다. 각 날에 부하 배치를 다시 풀어 그날의 최대수요를 구한다.
+  // 관행 피크와 최적 피크를 **같은 날의 같은 부하**로 비교해야 부하 배치의 효과만
+  // 남는다. 사이클 배분으로 날마다 LED 전력이 다르므로 기준선도 날마다 다시 잡는다.
+  const dailyPeakPairs = cycleDli.days.map((d) => {
+    const litHours = Array.from(
+      { length: d.hours },
+      (_, i) => (dli.litHours[0] + i) % 24
+    );
+    const p = peakStagger([
+      { name: "LED", kw: d.ledPowerKw, hoursNeeded: d.hours, fixedHours: litHours },
+      ...AUX_LOADS,
+    ]);
+    return { optimized: p.optimizedPeakKw, naive: p.naivePeakKw };
+  });
+  const contractPower = optimalContractPower({
+    dailyPeaksKw: dailyPeakPairs.map((p) => p.optimized),
+    baselinePeaksKw: dailyPeakPairs.map((p) => p.naive),
+  });
+  const co2Light = co2LightCoOptimize({ cropKey, ledPowerKw });
+
   // ── 고도화 스택 · 통합 공동최적화 ──
   const advanced = optimalStack({
     cropKey,
@@ -251,13 +400,18 @@ export function buildOptimizationReport(
   });
 
   // ── 거시: 재무 환산 ──
+  // 광주기 절감은 백테스트에서 확인된 값을 쓰되, **전력량요금분만** 넣는다.
+  // 백테스트 총절감에는 더운 시간대 회피로 줄인 냉방분이 섞여 있어, 그대로 넣으면
+  // 전력량요금 레버가 실제보다 커 보인다(냉방 절감은 별도 레버로 나가야 맞다).
   const savings = operationsSavingsReport({
-    dliSavingPerMonth: dli.savingPerMonth,
-    peakSavingPerMonth: peak.demandChargeSavingPerMonth,
+    dliSavingPerMonth: backtest?.completeDays
+      ? backtest.medianEnergySavingPerDay * 30
+      : dli.savingPerMonth,
+    peakSavingPerMonth: contractPower.savingPerMonth,
     saImprovementPerMonth: joint.improvementPerMonth,
     wasteReductionUnits: seeding.expectedWasteReduction,
     dliCo2PerMonth: dli.co2SavedKgPerMonth,
-    confidence: "projected", // 1호점 실측 확보 전까지 상방 추정치
+    confidence: confidence.confidence,
   });
 
   return {
@@ -277,9 +431,38 @@ export function buildOptimizationReport(
       externalTemp: hasExtTemp ? "measured" : "assumed",
       externalInsolation: hasExtInsolation ? "measured" : "assumed",
       savingsConfidence: savings.confidence,
+      confidenceReason: confidence.reason,
+      assumedParamShare: paramConfidence().assumedShare,
     },
-    micro: { dli, feedback, peak, joint, forecast, seeding, recipeMix, nutrient },
-    meso: { maintenance, rawCusum, weatherCusum, supplemental, portfolio, rul },
+    micro: {
+      dli,
+      feedback,
+      peak,
+      joint,
+      forecast,
+      forecastInterval,
+      seeding,
+      newsvendor,
+      recipeMix,
+      nutrient,
+    },
+    meso: {
+      maintenance,
+      rawCusum,
+      weatherCusum,
+      multivariate,
+      supplemental,
+      portfolio,
+      contextual,
+      rul,
+    },
+    planning: { cycleDli, contractPower, co2Light },
+    verification: {
+      backtest,
+      adherence,
+      params: paramTable(),
+      paramSummary: paramConfidence(),
+    },
     macro: { savings },
     advanced,
     unified,

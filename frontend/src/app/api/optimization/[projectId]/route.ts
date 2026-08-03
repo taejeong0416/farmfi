@@ -55,6 +55,7 @@ export async function GET(
       externalTempC: external.extTemp,
       externalInsolationWm2: external.extInsolation,
       salesUnits: sales.map((s) => s.units),
+      envRecords: envRecs.map((r) => ({ measDt: r.measDt, extTemp: r.extTemp ?? null })),
       fleetPrior: fleetBaseline.tempDiff,
       cropKey: sp.get("crop") ?? undefined,
       tariffKey: sp.get("tariff") === "agri" ? "agri" : "tou",
