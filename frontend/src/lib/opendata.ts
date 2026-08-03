@@ -47,7 +47,7 @@ export function mapRecordToReading(r: OpenEnvRecord): IoTReading {
 // 불요 — GET /structuredDataset/fileDownload.do?type=ent&fileName=...) →
 // 장비코드(FG-EI-TI 내부온도/FG-EI-HI 내부습도/FG-EI-CI CO2/FG-EI-IS 일사량/
 // FG-EL-PL 토양pH) 기준 피벗 → 이 파일 교체.
-// 주의: 실데이터는 딸기 온실(일사량 W/m², 토양 pH)이라 새싹삼 수경 도메인과
+// 주의: 실데이터는 딸기 온실(일사량 W/m², 토양 pH)이라 엽채류 수경 도메인과
 // 품목이 다르다 — 알고리즘 데모용 실측 시계열이며, 품목별 정상범위(HEALTHY_RANGES)는
 // 운영 품목에 맞춰 교체하는 지점.
 export async function fetchOpenData(): Promise<OpenEnvRecord[]> {
