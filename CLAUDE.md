@@ -1,11 +1,14 @@
 # CLAUDE.md
 
-FarmFi — 도심 유휴공간 공실전환 창업 지원 인프라 (PNU 창의융합AI해커톤 2026).
+FarmFi — 토큰증권(STO) 활용 미니팜 자금집행 웹플랫폼 (PNU 창의융합AI해커톤 2026).
+도심 유휴공실을 스마트팜 매장으로 전환하는 자금을 STO로 조달하고, AI 검증에 연동된 에스크로가 단계 집행한다.
 사람용 가이드는 `CONTRIBUTING.md`, 문서 작성 규칙은 `docs/README.md` 참고.
 
 ## 구조
-- `frontend/` — Next.js 14 (App Router) + Prisma + API Routes
-- `docs/` — 공유 문서 (기획안 v18 / 피벗 실행계획 / api-spec / dev-log)
+- `frontend/` — Next.js 14 (App Router) + Prisma + API Routes (웹 + 백엔드)
+- `app/` — Expo React Native 운영자 앱
+- `contracts/` — Foundry (Escrow · FarmToken · Dividend · RoundGate)
+- `docs/` — 공유 문서 (onboarding / service-plan / sto-plan / api-spec / dev-log)
 
 ## 명령어 (frontend/)
 - 개발: `npm run dev`
