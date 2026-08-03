@@ -155,7 +155,17 @@ export async function seedScenario(prisma: PrismaClient) {
     await prisma.salesRecord.createMany({ data: sales });
 
     // IoT 60일치 (생육 모니터링·이상감지)
-    await prisma.iotData.createMany({ data: buildIotRecords(proj.id, now) });
+    // 1호점은 관행 점등 + 고장 시나리오(냉방 저하·펌프 막힘·LED 열화)를 담아 탐지기가
+    // 실제로 발화하는 계열을, 2호점은 TOU 최적 점등 + 무고장 계열을 갖는다. 두 지점을
+    // 나란히 보면 "심야 점등은 정상, 순간 조도가 아니라 일적산으로 판정한다"가 드러난다.
+    const isPilot = proj.id === p1.id;
+    await prisma.iotData.createMany({
+      data: buildIotRecords(proj.id, now, {
+        cropKey: "leafy",
+        schedule: isPilot ? "conventional" : "tou-optimized",
+        scenario: isPilot,
+      }),
+    });
   }
 
   // ─── STO: 1호점 에스크로·마일스톤4·파트너·투자 (청약·배당·검증 데모) ───
@@ -250,12 +260,33 @@ export async function seedScenario(prisma: PrismaClient) {
       amount: BigInt(amount) * BigInt(10_000), tokenAmount: amount, memo: "청약 (시드)",
     })),
   });
-  // IoT 60일치 — 시운전·지속운영 마일스톤(가동률 게이트) 검증용
-  await prisma.iotData.createMany({ data: buildIotRecords(p3.id, now) });
+  // IoT 60일치 — 시운전·지속운영 마일스톤(가동률 게이트) 검증용. 게이트를 재는 지점이라
+  // 고장 시나리오는 넣지 않는다.
+  await prisma.iotData.createMany({
+    data: buildIotRecords(p3.id, now, { cropKey: "leafy", scenario: false }),
+  });
 
   // ─── 생육 이상 알림 ───
-  await prisma.notification.create({
-    data: { projectId: p1.id, type: "anomaly_detected", message: "온도 이상 감지 · 현재 31.2℃ (정상범위 18~28℃)" },
+  // 1호점 IoT 계열에 심은 세 고장에 각각 대응한다. 탐지 경로가 다르다는 것이 요점 —
+  // 스파이크는 Z-score, 지속 드리프트는 CUSUM, 광량 열화는 일적산(DLI)만이 잡는다.
+  await prisma.notification.createMany({
+    data: [
+      {
+        projectId: p1.id,
+        type: "drift_temperature",
+        message: "온도 지속 드리프트 · CUSUM 4.1σ — 냉방 성능 저하 예지보전 점검 권고",
+      },
+      {
+        projectId: p1.id,
+        type: "range_violation",
+        message: "설비 이상 의심 · 양액 pH 4.2pH (정상 5~7) — 현장 점검이 필요합니다",
+      },
+      {
+        projectId: p1.id,
+        type: "dli_shortfall",
+        message: "일적산광량 미달 · 목표의 78% — LED 광량 열화 의심",
+      },
+    ],
   });
 
   return {
