@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { detectAnomalies, isHealthy, IoTReading } from "@/lib/iot-health";
+import { cropKeyFor } from "@/lib/crop-profiles";
 import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 
@@ -54,9 +55,16 @@ export async function POST(req: NextRequest) {
       ...new Set(anomalyResults.flatMap((r) => r.affectedSensors)),
     ];
 
-    // 가동률(uptime): 모든 센서가 도메인 정상범위 안인 판독의 비율.
-    // 마일스톤 IoT 게이트(가동률 90%+ · verify 라우트)가 소비한다.
-    const healthyCount = readings.filter(isHealthy).length;
+    // 가동률(uptime): 모든 센서가 고장 게이트 안인 판독의 비율. 작물 최적대가 아니라
+    // 넓은 고장 게이트를 쓴다 — 재는 대상이 "작물에 최적이었나"가 아니라 "설비가 살아
+    // 있었나"이기 때문. 마일스톤 IoT 게이트(가동률 90%+ · verify 라우트)가 소비한다.
+    const lead = await prisma.inventory.findFirst({
+      where: { projectId },
+      orderBy: { growing: "desc" },
+      select: { product: { select: { name: true, category: true } } },
+    });
+    const cropKey = cropKeyFor(lead?.product.name, lead?.product.category);
+    const healthyCount = readings.filter((r) => isHealthy(r, cropKey)).length;
     const uptimeRate = Math.round((healthyCount / readings.length) * 1000) / 10;
 
     return NextResponse.json({
