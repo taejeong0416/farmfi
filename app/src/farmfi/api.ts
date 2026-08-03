@@ -84,15 +84,39 @@ export type TodayTasksResponse = {
 };
 
 // ─── GET /api/monitoring/[projectId] (요약만 사용하는 화면용 부분 타입) ───
+export type LightAssessment = {
+  dliTarget: number;
+  recentDli: number;
+  ratioPct: number;
+  status: "ok" | "under" | "over" | "unknown";
+  degrading: boolean;
+  message: string;
+};
+
+export type HarvestForecast = {
+  cropLabel: string;
+  cycleElapsedDays: number;
+  accumulatedGdd: number;
+  targetGdd: number;
+  gddProgressPct: number;
+  observedGrowthPct: number;
+  daysRemaining: number | null;
+  delayDays: number | null;
+  message: string;
+};
+
 export type MonitoringSummaryResponse = {
   project: { id: string; name: string };
   days: number;
-  points: { humidity: number; healthy: boolean }[];
+  points: { humidity: number; healthy: boolean; growthRate: number }[];
+  light: LightAssessment;
+  harvest: HarvestForecast;
   summary: {
     count: number;
     uptimeRate: number;
     anomalyCount: number;
     driftSensors: string[];
+    suboptimalCount: number;
     latestHealthy: boolean;
   };
 };

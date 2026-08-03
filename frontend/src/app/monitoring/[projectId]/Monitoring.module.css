@@ -167,6 +167,126 @@
   .chartGrid { grid-template-columns: 1fr; }
 }
 
+/* ── 생장 지표 (DLI · GDD) ── */
+.growthGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 22px;
+}
+@media (max-width: 860px) {
+  .growthGrid { grid-template-columns: 1fr; }
+}
+
+.growthCard {
+  background: #fff;
+  border: 1px solid #e1e7e1;
+  border-radius: 16px;
+  padding: 16px 18px 14px;
+}
+.growthCard.good { border-color: #a8e0bd; }
+.growthCard.warn { border-color: #f0c98a; }
+.growthCard.bad { border-color: #f0a89a; }
+
+.growthHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.growthHead h3 {
+  font-size: 15px;
+  font-weight: 700;
+}
+.growthNow {
+  font-size: 21px;
+  font-weight: 800;
+}
+.growthNow em {
+  font-size: 12px;
+  font-weight: 600;
+  color: #67736a;
+  font-style: normal;
+}
+
+.ratioRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ratioRow b {
+  font-size: 13px;
+  font-weight: 700;
+  min-width: 44px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.ratioBar {
+  position: relative;
+  flex: 1;
+  height: 8px;
+  border-radius: 999px;
+  background: #eef2ee;
+  overflow: hidden;
+}
+.ratioBar i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: #d6a12f;
+}
+.ratioBar i.gddFill {
+  background: #0b7d46;
+}
+/* 목표선 — 막대가 100%를 넘어가도 기준이 어디였는지 남는다 */
+.ratioBar span {
+  position: absolute;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  background: #0b7d46;
+  transform: translateX(-1px);
+}
+
+.kvRow {
+  display: flex;
+  gap: 14px;
+  margin-top: 12px;
+}
+.kvRow > div {
+  flex: 1;
+}
+.kvRow small {
+  display: block;
+  font-size: 11px;
+  color: #67736a;
+  margin-bottom: 3px;
+}
+.kvRow span {
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.kvRow span em {
+  font-size: 11px;
+  font-weight: 500;
+  color: #67736a;
+  font-style: normal;
+}
+
+.miniChart {
+  width: 100%;
+  height: 116px;
+  margin-top: 12px;
+}
+
+.growthMsg {
+  margin-top: 10px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #4a5a4d;
+}
+
 .card {
   background: #fff;
   border: 1px solid #e1e7e1;
@@ -217,7 +337,9 @@
 .badge.ok { background: #eaf6ee; color: #08703f; border-color: #bfe3cb; }
 .badge.spike { background: #fdece7; color: #c0492c; border-color: #f0bcae; }
 .badge.drift { background: #fff4e0; color: #b07d16; border-color: #efd39a; }
-.badge.range { background: #f3eefc; color: #6a52c0; border-color: #d7cbf3; }
+.badge.range { background: #fdece7; color: #a8341c; border-color: #f0bcae; }
+.badge.suboptimal { background: #fff8e8; color: #96701a; border-color: #ecdcb0; }
+.badge.info { background: #eef2fb; color: #4a5b8c; border-color: #ccd6ec; }
 
 .chartBox {
   width: 100%;

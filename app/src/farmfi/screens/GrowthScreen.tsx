@@ -193,6 +193,53 @@ export default function GrowthScreen() {
         <StateNotice tone="error" message={monitoring.error} onRetry={monitoring.reload} />
       )}
 
+      {/* 생장 지표 — 환경값이 아니라 "얼마나 자랐나"를 본다.
+          적산온도로 수확 시점을, 일적산광량으로 그 속도의 제약을 읽는다. */}
+      {monitoring.data && (
+        <View style={s.growth}>
+          <View style={s.growthRow}>
+            <View style={s.growthCell}>
+              <Text style={s.growthLabel}>수확 예정</Text>
+              <Text style={s.growthValue}>
+                {monitoring.data.harvest.daysRemaining != null
+                  ? `D-${Math.ceil(monitoring.data.harvest.daysRemaining)}`
+                  : "–"}
+              </Text>
+            </View>
+            <View style={s.growthDivider} />
+            <View style={s.growthCell}>
+              <Text style={s.growthLabel}>생장 진행률</Text>
+              <Text style={s.growthValue}>
+                {monitoring.data.harvest.gddProgressPct}
+                <Text style={s.growthUnit}>%</Text>
+              </Text>
+            </View>
+            <View style={s.growthDivider} />
+            <View style={s.growthCell}>
+              <Text style={s.growthLabel}>일적산광량</Text>
+              <Text
+                style={[
+                  s.growthValue,
+                  monitoring.data.light.status === "under" && s.growthValueWarn,
+                ]}
+              >
+                {monitoring.data.light.ratioPct}
+                <Text style={s.growthUnit}>%</Text>
+              </Text>
+            </View>
+          </View>
+          <View style={s.growthTrack}>
+            <View
+              style={[
+                s.growthFill,
+                { width: `${Math.min(100, monitoring.data.harvest.gddProgressPct)}%` },
+              ]}
+            />
+          </View>
+          <Text style={s.growthMsg}>{monitoring.data.harvest.message}</Text>
+        </View>
+      )}
+
       <Link href="/farm/monitoring" style={s.monitorBtn}>
         상세 센서 모니터링 →
       </Link>
@@ -230,6 +277,25 @@ const s = StyleSheet.create({
   metricLabel: { fontSize: 10, fontWeight: "600", color: "#333" },
   metricValue: { marginTop: 8, color: C.green, fontSize: 25, letterSpacing: -1, fontWeight: "700" },
   metricUnit: { color: "#151715", fontSize: 12, fontWeight: "500" },
+
+  growth: {
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: "#d9d1c5",
+    borderRadius: 10,
+    backgroundColor: "#fffefa",
+    padding: 13,
+  },
+  growthRow: { flexDirection: "row", alignItems: "center" },
+  growthCell: { flex: 1, alignItems: "center" },
+  growthDivider: { width: 1, height: 32, backgroundColor: "#e2dcd2" },
+  growthLabel: { fontSize: 10, fontWeight: "600", color: "#666862" },
+  growthValue: { marginTop: 5, color: C.green, fontSize: 19, letterSpacing: -0.6, fontWeight: "700" },
+  growthValueWarn: { color: "#c0492f" },
+  growthUnit: { color: "#151715", fontSize: 11, fontWeight: "500" },
+  growthTrack: { marginTop: 11, height: 7, borderRadius: 999, backgroundColor: "#eef2ee", overflow: "hidden" },
+  growthFill: { height: "100%", borderRadius: 999, backgroundColor: C.green },
+  growthMsg: { marginTop: 9, fontSize: 11, lineHeight: 16, color: "#4a5a4d", textAlign: "center" },
 
   monitorBtn: {
     marginTop: 12,
