@@ -21,7 +21,7 @@
 | `fusion-plan.md` | 융합 실행계획 (STO + 운영 인프라, Expo RN 앱) | 레퍼런스 |
 | `api-spec.md` | API 요청/응답 명세 | 레퍼런스 |
 | `verification-spec.md` | 마일스톤 검증 레이어 명세 | 레퍼런스 |
-| `optimization-roadmap.md` | 운영 최적화 발전 방향 (한계·다음 단계) | 레퍼런스 |
+| `optimization-roadmap.md` | 운영 최적화 스택 구성과 다음 단계 | 레퍼런스 |
 | `opendid-verifier-연동.md` | OpenDID 신원인증 연동 가이드 (서버·정책·삽질 로그) | 레퍼런스 |
 | `dev-log.md` | 진행상황·결정 기록 | 기록 |
 | `dev-assessment.md` | 개발 자기평가 보고서 | 기록 |
