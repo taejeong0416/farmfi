@@ -50,7 +50,7 @@ function blocksCost(blocks: LedBlock[], powerKw: number, tariff: number[]): numb
 // 광주기는 잦은 분할이 생육에 부담이므로 연속 1블록 또는 2블록(각 4h 이상)만
 // 허용한다. 탐색 공간이 작아(24×24×시간 분할) 전수 탐색으로 최적해를 구한다.
 export function optimizeLedSchedule(opts: {
-  photoperiodHours: number; // 새싹삼 기본 14h
+  photoperiodHours: number; // 엽채류 기본 14h
   ledPowerKw: number;
   tariff?: number[];
   baselineStartHour?: number; // 관행 스케줄(기본 08시 점등)
@@ -521,12 +521,76 @@ const CUSUM_SENSORS: (keyof IoTReading)[] = [
   "phLevel",
 ];
 
+// ── 관리한계 ─────────────────────────────────────────────────────────────────
+// 고정 H=5는 짧은 계열에만 맞다. K=0.5·H=5의 관리상태 평균런길이(ARL₀)가 약 465표본
+// 이므로 그보다 긴 창을 훑으면 드리프트가 없어도 오경보가 사실상 확정된다. 그렇다고
+// Siegmund 근사
+//   ARL₀ ≈ (exp(2K(H+1.166)) − 2K(H+1.166) − 1) / (2K²)
+// 로 길이만 보정해도 부족하다 — 그 근사는 i.i.d. 정규를 전제하는데 실제 센서 계열은
+// 자기상관과 두꺼운 꼬리를 갖고 있어, 실측 오경보율이 이론값보다 훨씬 느리게 떨어진다.
+//
+// 그래서 한계는 이 계열 자신의 **관리상태 표본**에서 부트스트랩으로 잡는다. 관리도
+// Phase I의 표준 절차 그대로다 — 관리이탈로 보이는 점을 먼저 걸러내 관리상태 표본을
+// 만들고, 그 산포를 재표집해 "관리상태에서 이 길이를 감시할 때 나올 수 있는 최대
+// 누적량"의 분포를 얻은 뒤 상위 분위수를 한계로 쓴다. 자기상관·두꺼운 꼬리에 자동
+// 적응한다.
+//
+// 걸러내는 단계가 핵심이다. 계열을 통째로 재표집하면 드리프트 구간의 값이 귀무분포에
+// 섞여 한계를 자기 신호만큼 밀어올린다 — 드리프트가 클수록 못 잡는 자기무력화가 된다.
+// 앞 1/4만 기준으로 삼는 것도 부족하다. 드리프트가 그 안에서 시작하면 기준이 오염된다.
+const NULL_ITERATIONS = 400;
+const NULL_ALPHA = 0.005; // 센서당 — 4센서 동시검정에서 화면 기준 ~2%
+const IN_CONTROL_Z = 3; // 이보다 큰 |z|는 관리이탈로 보고 귀무표본에서 제외
+
+function maxCusumStat(z: number[], from: number, k: number): number {
+  let cPos = 0;
+  let cNeg = 0;
+  let max = 0;
+  for (let i = from; i < z.length; i++) {
+    cPos = Math.max(0, cPos + z[i] - k);
+    cNeg = Math.max(0, cNeg - z[i] - k);
+    const stat = Math.max(cPos, cNeg);
+    if (stat > max) max = stat;
+  }
+  return max;
+}
+
+/** 관리상태 표본 부트스트랩 귀무분포의 (1−alpha) 분위수. */
+function bootstrapLimit(
+  zs: number[],
+  monitoredLength: number,
+  k: number,
+  seed: number
+): number {
+  // 관리이탈점 제외. 절반 넘게 걸러지면 "이탈이 예외"라는 전제가 깨진 것이므로
+  // 거르지 않고 전체를 쓴다 — 남은 소수를 정상으로 삼으면 기준이 뒤집힌다.
+  const screened = zs.filter((z) => Math.abs(z) <= IN_CONTROL_Z);
+  const baseline = screened.length >= zs.length / 2 ? screened : zs;
+  const rand = mulberry32(seed);
+  const nulls: number[] = [];
+  const draw = new Array(monitoredLength);
+  for (let b = 0; b < NULL_ITERATIONS; b++) {
+    for (let i = 0; i < monitoredLength; i++) {
+      draw[i] = baseline[Math.floor(rand() * baseline.length)];
+    }
+    nulls.push(maxCusumStat(draw, 0, k));
+  }
+  nulls.sort((a, b) => a - b);
+  const idx = Math.min(
+    nulls.length - 1,
+    Math.ceil((1 - NULL_ALPHA) * nulls.length) - 1
+  );
+  return nulls[idx];
+}
+
 export function cusumDrift(
   readings: IoTReading[],
-  opts?: { lag?: number }
+  opts?: { lag?: number; h?: number; calibrate?: boolean }
 ): CusumResult[] {
   const K = 0.5;
-  const H = 5;
+  const H = opts?.h ?? 5;
+  // 순열 보정은 계열이 충분히 길 때만 의미가 있다 — 짧으면 섞을 순서가 없다.
+  const calibrate = opts?.calibrate ?? false;
   const lag = opts?.lag ?? 24; // 기본: 시간당 표본
   const sensors = CUSUM_SENSORS;
 
@@ -540,11 +604,14 @@ export function cusumDrift(
         status: "insufficient-data",
       };
     }
-    // 계절 차분 시계열
-    const diffs: number[] = [];
-    for (let i = lag; i < readings.length; i++) {
-      diffs.push(readings[i][key] - readings[i - lag][key]);
-    }
+    // 계절 차분 시계열. lag=0은 "차분하지 않음" — 이미 한 주기를 평균낸 계열(일평균
+    // 등)에는 계절 성분이 없으므로 차분이 해롭기만 하다. 차분은 저주파 흔들림을
+    // lag 길이의 동일부호 런으로 바꾸는데(acf(lag) ≈ −0.5), 그 런이 바로 관리도가
+    // 잡도록 설계된 패턴이라 정상 계열에서도 통계량이 쌓인다.
+    const diffs: number[] =
+      lag <= 0
+        ? readings.map((r) => r[key])
+        : readings.slice(lag).map((r, i) => r[key] - readings[i][key]);
     // 산포 추정: 주야간 노이즈 크기가 달라(이분산) 특정 구간만으로 σ를 잡으면
     // 오탐한다. 전체 차분의 로버스트 산포를 쓴다.
     const { center, scale, degenerate } = robustScale(diffs);
@@ -558,18 +625,33 @@ export function cusumDrift(
       };
     }
     const baseN = Math.max(8, Math.floor(diffs.length / 4));
+    const zs = diffs.map((d) => (d - center) / scale);
+
+    // 한계: 보정을 쓰면 기준기간 부트스트랩에서, 아니면 고정/주입된 H를 쓴다.
+    // 시드는 센서마다 다르되 고정 — 같은 입력이면 항상 같은 판정이 나와야 한다.
+    const limit = calibrate
+      ? Math.max(
+          H,
+          bootstrapLimit(
+            zs,
+            zs.length - baseN,
+            K,
+            0x5eed + key.length * 7919
+          )
+        )
+      : H;
 
     let cPos = 0;
     let cNeg = 0;
     let maxStat = 0;
     let detectedIndex: number | null = null;
-    for (let i = baseN; i < diffs.length; i++) {
-      const z = (diffs[i] - center) / scale;
+    for (let i = baseN; i < zs.length; i++) {
+      const z = zs[i];
       cPos = Math.max(0, cPos + z - K);
       cNeg = Math.max(0, cNeg - z - K);
       const stat = Math.max(cPos, cNeg);
       if (stat > maxStat) maxStat = stat;
-      if (stat > H && detectedIndex === null) detectedIndex = i + lag; // 원본 인덱스로 환산
+      if (stat > limit && detectedIndex === null) detectedIndex = i + lag; // 원본 인덱스로 환산
     }
     return {
       sensor: key,
