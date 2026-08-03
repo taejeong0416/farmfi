@@ -25,6 +25,7 @@ import {
 import { profitOptimization, photoperiodSafeDli } from "./optimization-advanced";
 import { unifiedCoOptimize } from "./optimization-unified";
 import { getCrop } from "./crop-profiles";
+import { PARAMS } from "./optimization-params";
 import type { IoTReading } from "./iot-health";
 
 const LEAFY = getCrop("leafy");
@@ -228,9 +229,12 @@ test("operationsSavingsReport: 폐기 절감은 판매가가 아니라 변동비
     dliCo2PerMonth: 35.8,
   });
   const waste = r.breakdown.find((b) => b.lever.includes("폐기"))!;
-  assert.equal(waste.wonPerMonth, 100 * 800);
+  const unitCost = PARAMS.unitVariableCost.value;
+  // 판매가(직판 2,000원)가 아니라 변동비로 센다 — 안 심어서 아끼는 건 매출이 아니다.
+  assert.ok(unitCost < PARAMS.unitSalePrice.value);
+  assert.equal(waste.wonPerMonth, 100 * unitCost);
   // SA 개선분은 전력량요금과 겹치므로 합계에 들어가면 안 된다.
-  assert.equal(r.monthlyWonSaved, 45600 + 5824 + 80000);
+  assert.equal(r.monthlyWonSaved, 45600 + 5824 + 100 * unitCost);
   assert.equal(r.annualWonSaved, r.monthlyWonSaved * 12);
 });
 
