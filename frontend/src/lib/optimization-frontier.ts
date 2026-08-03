@@ -318,8 +318,8 @@ export function remainingUsefulLife(opts: {
   // 잔여수명: 남은 유효수명을 베이불 마모가속으로 보정 — β>1이면 후반부일수록
   // 실제 잔여가 선형보다 짧다. RUL = η(1-deg) × (1-deg)^(β-1).
   const rul = Math.max(0, eta * (1 - deg) * Math.pow(1 - deg, beta - 1));
-  // 위험률 h(t) = (β/η)(t/η)^(β-1), 정규화(0~1)
-  const hazard = Math.min(1, (beta / eta) * Math.pow(tNow / eta, beta - 1) * eta / beta);
+  // 위험률 h(t) = (β/η)(t/η)^(β-1)에 η/β를 곱해 0~1로 정규화하면 (t/η)^(β-1)만 남는다.
+  const hazard = Math.min(1, Math.pow(tNow / eta, beta - 1));
 
   const action = rul < 7 ? "urgent" : rul < 21 ? "schedule" : "normal";
   return {

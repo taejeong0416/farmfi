@@ -140,19 +140,69 @@ export function optimizeLedSchedule(opts: {
   };
 }
 
+// ── 광량 해석: 목표 DLI → (명기, PPFD, 소비전력) ───────────────────────────
+// 스케줄러·이익최적화·통합최적화가 같은 물리를 쓰도록 한 곳에서 푼다.
+// DLI(mol/m²/day) = PPFD(μmol/m²/s) × 3600 × 명기(h) / 1e6.
+// 설계 PPFD로 목표 DLI를 채우려면 명기가 최대 광주기를 넘을 수 있다. 그때는 PPFD를
+// 올려 시간을 압축하는데, 이는 디밍을 푸는 것이므로 소비전력이 같은 비율로 오른다 —
+// 시간 압축은 공짜가 아니다. 정격 상한(maxPpfd)을 넘겨야만 담기는 DLI는 그 설비로
+// 달성 불가능한 목표이며, 광량 재설계 없이는 선택지가 아니다.
+export interface LightingSolution {
+  hours: number; // 명기(h)
+  ppfd: number; // 실제 운전 PPFD
+  ledPowerKw: number; // 그 PPFD에서의 소비전력 (설계값 × PPFD 비)
+  darkH: number; // 연속 암기(h) — 연속 블록 배치이므로 24 − 명기
+  photoperiodSafe: boolean; // 명기 ≤ 최대광주기 ∧ 암기 ≥ 최소암기
+  feasible: boolean; // 정격 PPFD 안에서 달성 가능한가
+  achievedDli: number;
+}
+
+export function resolveLighting(opts: {
+  cropKey?: string;
+  dliTarget: number;
+  ledPowerKw: number; // 설계 PPFD 기준 소비전력
+  ppfd?: number; // 설계 PPFD 오버라이드
+}): LightingSolution {
+  const crop = getCrop(opts.cropKey);
+  const designPpfd = opts.ppfd ?? crop.ppfd;
+  const hoursAt = (p: number) => Math.ceil(opts.dliTarget / ((p * 3600) / 1e6));
+
+  let ppfd = designPpfd;
+  let hours = hoursAt(ppfd);
+  if (hours > crop.maxPhotoperiodH) {
+    ppfd = Math.ceil((opts.dliTarget * 1e6) / (crop.maxPhotoperiodH * 3600));
+    hours = Math.min(hoursAt(ppfd), crop.maxPhotoperiodH);
+  }
+  const darkH = 24 - hours;
+  return {
+    hours,
+    ppfd,
+    ledPowerKw: opts.ledPowerKw * (ppfd / designPpfd),
+    darkH,
+    photoperiodSafe: hours <= crop.maxPhotoperiodH && darkH >= crop.minDarkH,
+    feasible: ppfd <= crop.maxPpfd && hours <= crop.maxPhotoperiodH,
+    achievedDli: Math.round(((ppfd * 3600) / 1e6) * hours * 10) / 10,
+  };
+}
+
 // ── ①-DLI: 일적산광량 기반 광주기 최적화 (농학적으로 옳은 제어) ───────────
-// "14시간 점등"이 아니라 "목표 DLI를 충족하는 최소 요금 배치"를 푼다.
-// DLI(mol/m²/day) = PPFD(μmol/m²/s) × 3600 × 광시간(h) / 1e6.
-// 목표 DLI를 채우는 데 필요한 최대광량 시간을 계산하고, 그 시간을 가장 싼
-// TOU 슬롯에 배치한다. 생육(DLI)은 하드 제약으로 보존되므로 "싸게 켜도 작물은
-// 똑같이 자란다"가 성립한다 — 전력 절감의 농학적 정당화(Economic MPC, arXiv 2410.23793).
+// "14시간 점등"이 아니라 "목표 DLI를 충족하는 최소 요금 배치"를 푼다. 생육(DLI)이
+// 하드 제약으로 보존되므로 "싸게 켜도 작물은 똑같이 자란다"가 성립한다 — 전력 절감의
+// 농학적 정당화(Economic MPC, arXiv 2410.23793).
+// 배치는 연속 블록만 허용한다. 총 광량이 같아도 빛을 싼 시간마다 흩뿌리면 암기가
+// 조각나 생체리듬이 깨지고, 명기 자체도 하루 끝까지 늘어나 추대 위험이 생긴다.
+// 연속 블록이면 암기는 자동으로 (24 − 명기)만큼 한 덩어리로 확보된다.
 export interface DliPlan {
   cropLabel: string;
   dliTarget: number;
-  requiredHours: number; // 최대 PPFD에서 목표 DLI 충족에 필요한 광시간
+  requiredHours: number; // 목표 DLI 충족에 필요한 명기
   achievedDli: number;
-  feasible: boolean; // 24h 내 충족 가능한가 (아니면 PPFD 상향 필요)
-  litHours: number[]; // 점등 시간대 (원형 24h)
+  ppfdUsed: number; // 시간 압축으로 상향된 실제 PPFD
+  ledPowerKwUsed: number; // 그에 따라 오른 소비전력
+  darkContinuousH: number;
+  photoperiodSafe: boolean;
+  feasible: boolean; // 정격 PPFD 안에서 달성 가능한가 (아니면 광량 재설계 필요)
+  litHours: number[]; // 점등 시간대 (연속 블록, 원형 24h)
   costPerDay: number; // 원 — TOU 최적 배치
   naiveCostPerDay: number; // 08시 연속 점등 관행
   savingPerDay: number;
@@ -170,30 +220,41 @@ export function dliSchedule(opts: {
   const crop = getCrop(opts.cropKey);
   const tariff = opts.tariff ?? TARIFF_TOU_GENERAL;
   const dliTarget = opts.dliTarget ?? crop.dliTarget;
-  const ppfd = opts.ppfd ?? crop.ppfd;
+  const light = resolveLighting({
+    cropKey: opts.cropKey,
+    dliTarget,
+    ledPowerKw: opts.ledPowerKw,
+    ppfd: opts.ppfd,
+  });
+  const kw = light.ledPowerKw;
 
-  // 필요 광시간 = DLI 목표 / (PPFD 시간당 기여). 반올림 올림(정수 시간 슬롯).
-  const dliPerHour = (ppfd * 3600) / 1e6;
-  const requiredHoursRaw = dliTarget / dliPerHour;
-  const requiredHours = Math.min(24, Math.ceil(requiredHoursRaw));
-  const feasible = requiredHoursRaw <= 24;
-  const achievedDli = Math.round(requiredHours * dliPerHour * 10) / 10;
-
-  // 최적 배치: 가장 싼 시간부터 requiredHours개 선택
-  const order = [...Array(24).keys()].sort((a, b) => tariff[a] - tariff[b]);
-  const litHours = order.slice(0, requiredHours).sort((a, b) => a - b);
-  const costPerDay = litHours.reduce((s, h) => s + opts.ledPowerKw * tariff[h], 0);
+  // 연속 블록의 시작시각 24개를 전수 탐색해 최저 요금 배치를 고른다.
+  const blockCostAt = (start: number) => {
+    let c = 0;
+    for (let i = 0; i < light.hours; i++) c += kw * tariff[(start + i) % 24];
+    return c;
+  };
+  let bestStart = 0;
+  let costPerDay = Infinity;
+  for (let s = 0; s < 24; s++) {
+    const c = blockCostAt(s);
+    if (c < costPerDay) {
+      costPerDay = c;
+      bestStart = s;
+    }
+  }
+  const litHours = Array.from({ length: light.hours }, (_, i) => (bestStart + i) % 24);
 
   // 관행: 08시부터 연속 점등
-  const naive = Array.from({ length: requiredHours }, (_, i) => (8 + i) % 24);
-  const naiveCostPerDay = naive.reduce((s, h) => s + opts.ledPowerKw * tariff[h], 0);
+  const naive = Array.from({ length: light.hours }, (_, i) => (8 + i) % 24);
+  const naiveCostPerDay = naive.reduce((s, h) => s + kw * tariff[h], 0);
 
   const savingPerDay = naiveCostPerDay - costPerDay;
   // CO2: kWh는 같지만(같은 시간 켬) 저탄소 시간대로 옮기면 배출이 준다.
   // 시간대 배출 = kWh × 평균배출계수 × 시간대 배율.
   const co2Of = (hours: number[]) =>
     hours.reduce(
-      (s, h) => s + opts.ledPowerKw * GRID_EMISSION_FACTOR * CARBON_INTENSITY_FACTOR[h],
+      (s, h) => s + kw * GRID_EMISSION_FACTOR * CARBON_INTENSITY_FACTOR[h],
       0
     );
   const co2SavedKgPerMonth =
@@ -201,9 +262,13 @@ export function dliSchedule(opts: {
   return {
     cropLabel: crop.label,
     dliTarget,
-    requiredHours,
-    achievedDli,
-    feasible,
+    requiredHours: light.hours,
+    achievedDli: light.achievedDli,
+    ppfdUsed: light.ppfd,
+    ledPowerKwUsed: Math.round(kw * 100) / 100,
+    darkContinuousH: light.darkH,
+    photoperiodSafe: light.photoperiodSafe,
+    feasible: light.feasible,
     litHours,
     costPerDay: Math.round(costPerDay),
     naiveCostPerDay: Math.round(naiveCostPerDay),
@@ -325,12 +390,27 @@ export function seedingPlan(opts: {
 }
 
 export interface NutrientAdvice {
-  status: "ok" | "adjust";
+  status: "ok" | "adjust" | "unavailable";
   message: string;
 }
 
+// 양액 pH 프로브의 물리적 신뢰 구간. 수경 양액은 산·염기로 보정하더라도 이 밖으로
+// 나가지 않는다. 벗어난 값은 양액 이상이 아니라 센서·단위 불일치로 보는 게 맞다
+// (예: 토양 pH 프로브, 또는 0~2 스케일로 보고하는 장비). 그런 값에 보정제 투입을
+// 권고하면 데이터가 바뀌기 전까지 매번 같은 경보가 뜬다.
+const PH_SENSOR_PLAUSIBLE: [number, number] = [3.5, 9.5];
+
 export function nutrientAdvice(latest: IoTReading, cropKey?: string): NutrientAdvice {
   const [lo, hi] = getCrop(cropKey).healthyRanges.phLevel;
+  if (
+    latest.phLevel < PH_SENSOR_PLAUSIBLE[0] ||
+    latest.phLevel > PH_SENSOR_PLAUSIBLE[1]
+  ) {
+    return {
+      status: "unavailable",
+      message: `양액 pH ${latest.phLevel.toFixed(2)} — 수경 양액 범위 밖. 센서·단위 불일치로 보고 판정 보류`,
+    };
+  }
   if (latest.phLevel < lo) {
     return {
       status: "adjust",
@@ -418,11 +498,41 @@ export interface CusumResult {
   detected: boolean;
   detectedIndex: number | null; // readings 배열상 최초 교차 시점
   maxStatistic: number; // σ 단위
+  status: "ok" | "insufficient-data" | "degenerate-scale";
+}
+
+// ── 로버스트 산포 추정 (양자화 센서 방어) ──────────────────────────────────
+// MAD(중앙절대편차 × 1.4826)는 드리프트 구간이 섞여 있어도 강건하다. 다만 값이 굵게
+// 양자화된 센서(예: 0.17 단위로만 보고하는 pH 프로브)는 MAD가 0이거나 양자화 계단보다
+// 작아진다. 그 값을 그대로 분모에 쓰면 Z가 발산해 관리도가 천문학적 통계량을 내고,
+// 0을 작은 상수로 덮으면 없는 신호가 있는 것처럼 보인다. 산포가 양자화 계단에
+// 못 미치면 "판정 불가"로 돌려보내는 편이 정직하다.
+function robustScale(values: number[]): {
+  center: number;
+  scale: number;
+  degenerate: boolean;
+} {
+  const sorted = [...values].sort((a, b) => a - b);
+  const center = sorted[Math.floor(sorted.length / 2)];
+  const absDev = values.map((v) => Math.abs(v - center)).sort((a, b) => a - b);
+  const scale = 1.4826 * absDev[Math.floor(absDev.length / 2)];
+  // 양자화 계단 = 서로 다른 인접 관측값 사이의 최소 간격
+  let step = Infinity;
+  for (let i = 1; i < sorted.length; i++) {
+    const d = sorted[i] - sorted[i - 1];
+    if (d > 0 && d < step) step = d;
+  }
+  return {
+    center,
+    scale,
+    degenerate: !(scale > 0) || (Number.isFinite(step) && scale < step),
+  };
 }
 
 // 온실 데이터는 주야 사이클(계절성)이 강해 원시값에 CUSUM을 걸면 사이클
-// 자체를 드리프트로 오탐한다. 24시간 차분(x[i] − x[i−lag], lag=48@30분 간격)으로
-// 계절성을 제거한 뒤 관리도를 적용한다 — 정상이면 차분이 0 근방, 열화면
+// 자체를 드리프트로 오탐한다. 24시간 차분(x[i] − x[i−lag])으로
+// 계절성을 제거한 뒤 관리도를 적용한다 — lag는 "24시간에 해당하는 표본 수"이므로
+// 표본 주기에 맞춰 넘긴다(시간당 24, 30분당 48). 정상이면 차분이 0 근방, 열화면
 // 차분이 지속적으로 한쪽으로 쏠린다.
 // lightIntensity는 제외 — 점등/소등의 이중 상태(regime-switching) 센서라
 // 주야간 노이즈 산포가 달라 관리도의 균질 산포 전제가 성립하지 않는다.
@@ -441,12 +551,18 @@ export function cusumDrift(
 ): CusumResult[] {
   const K = 0.5;
   const H = 5;
-  const lag = opts?.lag ?? 48;
+  const lag = opts?.lag ?? 24; // 기본: 시간당 표본
   const sensors = CUSUM_SENSORS;
 
-  return sensors.map((key) => {
+  return sensors.map((key): CusumResult => {
     if (readings.length < lag + 12) {
-      return { sensor: key, detected: false, detectedIndex: null, maxStatistic: 0 };
+      return {
+        sensor: key,
+        detected: false,
+        detectedIndex: null,
+        maxStatistic: 0,
+        status: "insufficient-data",
+      };
     }
     // 계절 차분 시계열
     const diffs: number[] = [];
@@ -454,13 +570,17 @@ export function cusumDrift(
       diffs.push(readings[i][key] - readings[i - lag][key]);
     }
     // 산포 추정: 주야간 노이즈 크기가 달라(이분산) 특정 구간만으로 σ를 잡으면
-    // 오탐한다. 전체 차분의 MAD(중앙절대편차 × 1.4826) — 드리프트 구간이 섞여
-    // 있어도 중앙값 기반이라 강건하다.
-    const sorted = [...diffs].sort((a, b) => a - b);
-    const median = sorted[Math.floor(sorted.length / 2)];
-    const absDev = diffs.map((d) => Math.abs(d - median)).sort((a, b) => a - b);
-    const mean = median;
-    const std = 1.4826 * absDev[Math.floor(absDev.length / 2)] || 1e-9;
+    // 오탐한다. 전체 차분의 로버스트 산포를 쓴다.
+    const { center, scale, degenerate } = robustScale(diffs);
+    if (degenerate) {
+      return {
+        sensor: key,
+        detected: false,
+        detectedIndex: null,
+        maxStatistic: 0,
+        status: "degenerate-scale",
+      };
+    }
     const baseN = Math.max(8, Math.floor(diffs.length / 4));
 
     let cPos = 0;
@@ -468,7 +588,7 @@ export function cusumDrift(
     let maxStat = 0;
     let detectedIndex: number | null = null;
     for (let i = baseN; i < diffs.length; i++) {
-      const z = (diffs[i] - mean) / std;
+      const z = (diffs[i] - center) / scale;
       cPos = Math.max(0, cPos + z - K);
       cNeg = Math.max(0, cNeg - z - K);
       const stat = Math.max(cPos, cNeg);
@@ -480,6 +600,7 @@ export function cusumDrift(
       detected: detectedIndex !== null,
       detectedIndex,
       maxStatistic: Math.round(maxStat * 10) / 10,
+      status: "ok",
     };
   });
 }
@@ -489,11 +610,17 @@ export function cusumDrift(
 // 오탐한다(실데이터에서 실제로 관측됨). 내부-외부 온도차(differential)에 관리도를
 // 걸면 계절 성분이 상쇄되고, 히터·차광·단열 성능 저하만 차분의 이동으로 남는다.
 // (RL-Guided MPC의 외란 보상 원리, arXiv 2506.13278 — 여기선 통계적 차분으로 경량 구현.)
+// 이 관리도는 외기 시계열이 내부와 **독립적으로 실측된 것**일 때만 의미가 있다.
+// 외기를 내부온도에서 상수를 빼 만들면 차분이 상수가 되어 관리도가 영원히 "정상"만
+// 낸다 — 판정하지 않는 것을 판정 결과로 오해하기 쉬운 실패 모드다. 그런 입력은
+// degenerate-scale로 돌려보내고, 호출부가 "정상"이라 표시하지 못하게 한다.
 export interface WeatherCompensatedResult {
+  status: "ok" | "insufficient-data" | "degenerate-scale";
   detected: boolean;
   detectedIndex: number | null;
   maxStatistic: number;
   baselineDiff: number; // 정상 가동 시 내외기 온도차 중앙값
+  usedFleetPrior: boolean;
   note: string;
 }
 
@@ -505,23 +632,32 @@ export function weatherCompensatedCusum(
   const n = Math.min(internal.length, external.length);
   if (n < 12) {
     return {
+      status: "insufficient-data",
       detected: false,
       detectedIndex: null,
       maxStatistic: 0,
       baselineDiff: 0,
-      note: "데이터 부족",
+      usedFleetPrior: false,
+      note: "데이터 부족 — 판정 보류 (최소 12건 필요)",
     };
   }
   const diff = Array.from({ length: n }, (_, i) => internal[i] - external[i]);
-  const sorted = [...diff].sort((a, b) => a - b);
-  const median = sorted[Math.floor(n / 2)];
-  const absDev = diff.map((d) => Math.abs(d - median)).sort((a, b) => a - b);
+  const own = robustScale(diff);
   // 신규 사이트(자체 이력 부족)는 플릿 사전분포로 부트스트랩(teacher-student 콜드스타트).
-  const useFleet = n < 48 && opts?.fleetPrior;
-  const center = useFleet ? opts!.fleetPrior!.median : median;
-  const scale = useFleet
-    ? opts!.fleetPrior!.mad
-    : 1.4826 * absDev[Math.floor(n / 2)] || 1e-9;
+  const useFleet = n < 48 && opts?.fleetPrior != null;
+  if (!useFleet && own.degenerate) {
+    return {
+      status: "degenerate-scale",
+      detected: false,
+      detectedIndex: null,
+      maxStatistic: 0,
+      baselineDiff: Math.round(own.center * 10) / 10,
+      usedFleetPrior: false,
+      note: "내외기 차분에 산포가 없음 — 외기가 내부값에서 파생된 대체값일 가능성. 독립 실측 외기 시계열이 있어야 판정 가능",
+    };
+  }
+  const center = useFleet ? opts!.fleetPrior!.median : own.center;
+  const scale = useFleet ? opts!.fleetPrior!.mad : own.scale;
 
   const K = 0.5;
   const H = 5;
@@ -539,10 +675,12 @@ export function weatherCompensatedCusum(
     if (stat > H && detectedIndex === null) detectedIndex = i;
   }
   return {
+    status: "ok",
     detected: detectedIndex !== null,
     detectedIndex,
     maxStatistic: Math.round(maxStat * 10) / 10,
     baselineDiff: Math.round(center * 10) / 10,
+    usedFleetPrior: useFleet,
     note: useFleet
       ? "플릿 사전분포로 판정(자체 이력 축적 전 콜드스타트)"
       : detectedIndex !== null
@@ -634,6 +772,14 @@ export function annealJointSchedule(opts: {
   //       유연 부하 = 시간 집합(비트마스크 대신 배열).
   type State = { ledSplit: number; ledS1: number; ledS2: number; flex: number[][] };
 
+  // 반복마다 상태를 복제한다(3만 회). JSON 왕복은 이 구조에 과한 비용이라 필드 복사로.
+  const cloneState = (s: State): State => ({
+    ledSplit: s.ledSplit,
+    ledS1: s.ledS1,
+    ledS2: s.ledS2,
+    flex: s.flex.map((h) => [...h]),
+  });
+
   const ledHoursOf = (s: State): number[] => {
     const h1 = s.ledSplit;
     const hours = [];
@@ -675,21 +821,26 @@ export function annealJointSchedule(opts: {
   );
   const baselineCost = cost(init);
 
-  let cur: State = JSON.parse(JSON.stringify(init));
+  let cur: State = cloneState(init);
   let curCost = baselineCost;
   let best = cur;
   let bestCost = curCost;
 
+  // 2블록 분할은 각 블록이 최소 MIN_BLOCK 시간이어야 성립한다. 명기가 그보다 짧으면
+  // 분할 자체가 불가능하므로 해당 이동을 제안하지 않는다(제안해도 전부 기각된다).
+  const MIN_BLOCK = 4;
+  const canSplit = P >= 2 * MIN_BLOCK;
+
   for (let it = 0; it < iters; it++) {
     const temp = 1000 * (1 - it / iters) + 1;
-    const next: State = JSON.parse(JSON.stringify(cur));
+    const next: State = cloneState(cur);
     const move = Math.floor(rand() * 3);
     if (move === 0) {
       next.ledS1 = Math.floor(rand() * 24);
-    } else if (move === 1) {
+    } else if (move === 1 && canSplit) {
       next.ledS2 = Math.floor(rand() * 24);
-      next.ledSplit = 4 + Math.floor(rand() * Math.max(1, P - 8)); // 각 블록 4h+
-    } else if (opts.flexLoads.length > 0) {
+      next.ledSplit = MIN_BLOCK + Math.floor(rand() * (P - 2 * MIN_BLOCK + 1));
+    } else if (move === 2 && opts.flexLoads.length > 0) {
       const li = Math.floor(rand() * opts.flexLoads.length);
       const hours = new Set(next.flex[li]);
       const from = next.flex[li][Math.floor(rand() * next.flex[li].length)];
@@ -749,12 +900,19 @@ export interface BanditArm {
   trueStd: number;
 }
 
+// 상승분은 **양쪽 다 기대값**으로 비교한다. 밴딧의 노이즈 포함 실현합을 균등 배분의
+// 무노이즈 기대값과 견주면 그 차이에 운이 섞여, 같은 알고리즘도 시드에 따라 상승분이
+// 달라진다. 배분(nᵢ)이 결정되면 기대 마진은 Σ nᵢ·trueMeanᵢ로 확정된다.
 export interface BanditAllocation {
   rounds: number;
   allocation: { name: string; trays: number; share: number; posteriorMean: number }[];
-  banditTotalMargin: number;
-  uniformTotalMargin: number; // 균등 배분 대비
+  banditTotalMargin: number; // 밴딧 배분의 기대 마진 합
+  uniformTotalMargin: number; // 균등 배분의 기대 마진 합
+  realizedTotalMargin: number; // 시뮬레이션에서 실제로 관측된 보상 합 (노이즈 포함)
   uplift: number;
+  // trueMeanMargin은 실측 이전엔 가정값이다. 화면에 상승분을 띄울 때 근거가 실측인지
+  // 시뮬레이션인지 구분하라고 호출부에 넘기는 표식.
+  synthetic: boolean;
 }
 
 // 호환 별칭 (구 API)
@@ -821,24 +979,30 @@ export interface OperationsSavings {
   note: string;
 }
 
+// 폐기 절감 1포기의 가치는 **판매가가 아니라 변동비**다. 안 심어서 아끼는 것은
+// 종자·양액·전기·포장이지 매출이 아니며(애초에 안 팔릴 물량이다), 판매가로 세면
+// 이 레버 하나가 전력 절감 전체를 몇 배로 압도해 리포트가 왜곡된다.
+// 종자 ~50 + 양액 ~150 + 배분 전기 ~350 + 자재 ~250 ≈ 800원/포기 — 원가 확정 시 교체.
+const UNIT_VARIABLE_COST = 800;
+
 export function operationsSavingsReport(opts: {
   dliSavingPerMonth: number; // 전력량요금 절감 (LED 시간 이동)
   peakSavingPerMonth: number; // 기본요금 절감 (피크 분산) — 서로 다른 요금 축이라 비중복
   saImprovementPerMonth: number; // SA 통합 최적화가 찾은 추가분
   wasteReductionUnits: number;
-  unitPrice?: number; // 폐기 절감 1포기 가치(원)
+  unitVariableCost?: number; // 폐기 절감 1포기당 아끼는 변동비(원)
   dliCo2PerMonth: number;
   confidence?: "measured" | "projected";
 }): OperationsSavings {
-  const unitPrice = opts.unitPrice ?? 3500;
-  const wasteWon = opts.wasteReductionUnits * unitPrice;
+  const unitCost = opts.unitVariableCost ?? UNIT_VARIABLE_COST;
+  const wasteWon = opts.wasteReductionUnits * unitCost;
   // 합산은 비중복 레버만: 전력량요금(DLI) + 기본요금(피크)은 요금 축이 달라 중복 없음.
   // SA는 이 둘을 동시에 푸는 전역탐색이라 LED 이동분이 DLI와 겹친다 → 합산 제외,
   // "통합 검증치"로만 표기(정직성).
   const breakdown = [
     { lever: "DLI 광주기(전력량요금)", wonPerMonth: opts.dliSavingPerMonth },
     { lever: "피크 분산(기본요금)", wonPerMonth: opts.peakSavingPerMonth },
-    { lever: "수요연동 파종(폐기 절감)", wonPerMonth: wasteWon },
+    { lever: "수요연동 파종(폐기 변동비)", wonPerMonth: wasteWon },
   ];
   const monthlyWonSaved = breakdown.reduce((s, b) => s + b.wonPerMonth, 0);
   const confidence = opts.confidence ?? "projected";
@@ -861,6 +1025,7 @@ export function thompsonAllocation(opts: {
   arms: BanditArm[];
   rounds?: number; // 배정 단위 수 (라운드당 1개)
   seed?: number;
+  synthetic?: boolean; // arms의 trueMeanMargin이 실측이면 false로 넘긴다
 }): BanditAllocation {
   const rand = mulberry32(opts.seed ?? 7);
   const rounds = opts.rounds ?? 200;
@@ -887,8 +1052,13 @@ export function thompsonAllocation(opts: {
     banditTotal += reward;
   }
 
-  // 균등 배분 기대치 (비교 기준)
-  const uniformTotal =
+  // 기대 마진: 밴딧은 실제 배분 nᵢ로, 균등은 라운드를 팔 수만큼 고르게 나눠 계산.
+  // 같은 기준(무노이즈 기대값)끼리 견주므로 상승분에 운이 섞이지 않는다.
+  const banditExpected = opts.arms.reduce(
+    (s, a, i) => s + stats[i].n * a.trueMeanMargin,
+    0
+  );
+  const uniformExpected =
     (opts.arms.reduce((s, a) => s + a.trueMeanMargin, 0) / opts.arms.length) *
     rounds;
 
@@ -900,9 +1070,11 @@ export function thompsonAllocation(opts: {
       share: Math.round((stats[i].n / rounds) * 100) / 100,
       posteriorMean: stats[i].n > 0 ? Math.round(stats[i].sum / stats[i].n) : 0,
     })),
-    banditTotalMargin: Math.round(banditTotal),
-    uniformTotalMargin: Math.round(uniformTotal),
-    uplift: Math.round(banditTotal - uniformTotal),
+    banditTotalMargin: Math.round(banditExpected),
+    uniformTotalMargin: Math.round(uniformExpected),
+    realizedTotalMargin: Math.round(banditTotal),
+    uplift: Math.round(banditExpected - uniformExpected),
+    synthetic: opts.synthetic ?? true,
   };
 }
 
@@ -988,19 +1160,7 @@ export function recipeOptimization(opts?: {
   return thompsonAllocation({ arms, rounds: opts?.rounds ?? 200, seed: opts?.seed ?? 11 });
 }
 
-// ── 밴딧 용도 ②(중간): 사이트 간 품목 배분 (포트폴리오) ─────────────────────
-// 다지점 운영자의 결정: 각 사이트를 엽채류 vs 바질 vs 방울토마토 중 무엇으로
-// 배정해야 네트워크 전체 마진이 최대인가. 사이트 스펙(층고)·상권 수요가 달라
-// 어느 배합이 최적인지 미지 → 사이트를 조금씩 다르게 배정하며 학습(탐색/활용).
-export function cropPortfolioAllocation(opts?: {
-  arms?: BanditArm[];
-  sites?: number;
-  seed?: number;
-}): BanditAllocation {
-  const arms = opts?.arms ?? [
-    { name: "엽채류(상추)", trueMeanMargin: 7000, trueStd: 1800 },
-    { name: "바질(허브)", trueMeanMargin: 11000, trueStd: 3500 },
-    { name: "방울토마토", trueMeanMargin: 14000, trueStd: 6000 },
-  ];
-  return thompsonAllocation({ arms, rounds: opts?.sites ?? 30, seed: opts?.seed ?? 13 });
-}
+// 사이트 간 품목 배분은 밴딧이 아니라 마코위츠 평균-분산으로 푼다
+// (optimization-frontier.ts의 cropMeanVariance). 배분 결정은 리스크-수익 프론티어
+// 위에서 내려야 하고, 답이 한 곳에서만 나와야 리포트가 서로 다른 배합을 권하지 않는다.
+// 밴딧은 사이트 안에서의 품종·레시피 탐색(위 recipeOptimization)에 쓴다.

@@ -22,7 +22,11 @@ export interface CropProfile {
     phLevel: [number, number]; // 양액 pH
   };
   dliTarget: number; // mol/m²/day — 광주기 최적화의 제약
-  ppfd: number; // μmol/m²/s — LED 설계 광량
+  ppfd: number; // μmol/m²/s — LED 설계 광량(상시 운전점)
+  maxPpfd: number; // μmol/m²/s — LED 정격 상한. 디밍 헤드룸의 끝이며, 광량을
+  // 시간에 압축할 때 넘을 수 없는 물리 한계. 설비 사양 확정 시 교체하는 지점.
+  maxPhotoperiodH: number; // 추대·연속광 장해를 피하는 최대 명기(h)
+  minDarkH: number; // 생체리듬 유지에 필요한 최소 연속 암기(h)
   ecTarget: [number, number]; // dS/m 양액 EC
   cycleDays: number; // 재배 사이클 (파종~수확)
   role: "primary" | "optional" | "premium";
@@ -41,6 +45,9 @@ export const CROP_PROFILES: Record<string, CropProfile> = {
     },
     dliTarget: 15, // 상추 권장 12~17
     ppfd: 220,
+    maxPpfd: 350,
+    maxPhotoperiodH: 16, // 장일 추대 회피
+    minDarkH: 6,
     ecTarget: [1.2, 1.8],
     cycleDays: 28,
     role: "primary",
@@ -57,6 +64,9 @@ export const CROP_PROFILES: Record<string, CropProfile> = {
     },
     dliTarget: 16,
     ppfd: 250,
+    maxPpfd: 400,
+    maxPhotoperiodH: 18,
+    minDarkH: 5,
     ecTarget: [1.6, 2.2],
     cycleDays: 35,
     role: "primary",
@@ -73,6 +83,9 @@ export const CROP_PROFILES: Record<string, CropProfile> = {
     },
     dliTarget: 24, // 과채류라 광 요구 큼
     ppfd: 350,
+    maxPpfd: 500,
+    maxPhotoperiodH: 17, // 연속광 장해 회피
+    minDarkH: 6,
     ecTarget: [2.0, 3.5],
     cycleDays: 100,
     role: "optional",
@@ -89,6 +102,9 @@ export const CROP_PROFILES: Record<string, CropProfile> = {
     },
     dliTarget: 10, // 짧은 사이클·저광
     ppfd: 180,
+    maxPpfd: 300,
+    maxPhotoperiodH: 20, // 수확 빠름, 관대
+    minDarkH: 4,
     ecTarget: [1.0, 1.6],
     cycleDays: 14,
     role: "premium",

@@ -16,8 +16,12 @@
 // 문맥 적응: 계절이 열 가중치를, DR 달력이 VPP 가중치를 자동 조절 → 자연스럽게.
 
 import { getCrop } from "./crop-profiles";
-import { TARIFF_TOU_GENERAL, CARBON_INTENSITY_FACTOR, GRID_EMISSION_FACTOR } from "./optimization";
-import { CROP_PHOTOPERIOD } from "./optimization-advanced";
+import {
+  TARIFF_TOU_GENERAL,
+  CARBON_INTENSITY_FACTOR,
+  GRID_EMISSION_FACTOR,
+  resolveLighting,
+} from "./optimization";
 import { mulberry32, gaussFrom } from "./prng";
 
 export interface UnifiedWeights {
@@ -52,7 +56,6 @@ export interface UnifiedResult {
 export function unifiedCoOptimize(opts: {
   cropKey?: string;
   ledPowerKw: number;
-  sites: number;
   hourlyExtTemp: number[]; // 24h
   tariff?: number[];
   cropPricePerKg?: number;
@@ -62,7 +65,6 @@ export function unifiedCoOptimize(opts: {
   seed?: number;
 }): UnifiedResult {
   const crop = getCrop(opts.cropKey);
-  const pc = CROP_PHOTOPERIOD[crop.key] ?? { maxPhotoperiodH: 16, minDarkH: 6 };
   const tariff = opts.tariff ?? TARIFF_TOU_GENERAL;
   const price = opts.cropPricePerKg ?? 4000;
   const area = opts.areaM2 ?? 60;
@@ -93,7 +95,7 @@ export function unifiedCoOptimize(opts: {
   const gauss = gaussFrom(rand);
   const scenarios: number[][] = [];
   for (let n = 0; n < S; n++)
-    scenarios.push(tariff.map((p, h) => Math.max(30, p * (1 + gauss() * vol * (p > 180 ? 1.5 : 1)))));
+    scenarios.push(tariff.map((p) => Math.max(30, p * (1 + gauss() * vol * (p > 180 ? 1.5 : 1)))));
 
   const TARGET_TEMP = 20;
   const heatCoef = 60;
@@ -101,22 +103,22 @@ export function unifiedCoOptimize(opts: {
 
   // 후보 평가: (dli, blockStart) → 통합 순가치
   const evalCandidate = (dli: number, start: number) => {
-    // 광주기 안전: 필요 명기 계산(최대광주기 내로 PPFD 압축)
-    let ppfd = crop.ppfd;
-    let hours = Math.ceil(dli / ((ppfd * 3600) / 1e6));
-    if (hours > pc.maxPhotoperiodH) {
-      ppfd = Math.ceil((dli * 1e6) / (pc.maxPhotoperiodH * 3600));
-      hours = pc.maxPhotoperiodH;
-    }
-    const darkH = 24 - hours;
-    const safe = darkH >= pc.minDarkH;
-    if (!safe) return null;
+    // 광주기 안전 + 정격 상한을 함께 푼다. 명기가 최대광주기를 넘으면 PPFD를 올려
+    // 시간을 압축하는데, 그만큼 소비전력도 오른다(ledPowerKw) — 이 스케일이 빠지면
+    // 광량 증설이 공짜가 되어 최적해가 항상 탐색 상한에 붙는다.
+    const light = resolveLighting({
+      cropKey: opts.cropKey,
+      dliTarget: dli,
+      ledPowerKw: opts.ledPowerKw,
+    });
+    if (!light.feasible || !light.photoperiodSafe) return null;
+    const { hours, ppfd, darkH, ledPowerKw: kw } = light;
     const litHours = Array.from({ length: hours }, (_, i) => (start + i) % 24);
     const litSet = new Set(litHours);
 
     // 전력량요금: 시나리오 기대값 + CVaR
     const costs = scenarios
-      .map((sc) => litHours.reduce((s, h) => s + opts.ledPowerKw * sc[h], 0))
+      .map((sc) => litHours.reduce((s, h) => s + kw * sc[h], 0))
       .sort((a, b) => a - b);
     const expEnergy = costs.reduce((a, b) => a + b, 0) / S;
     const cvar = costs.slice(Math.floor(S * 0.95)).reduce((a, b, _, arr) => a + b / arr.length, 0);
@@ -125,7 +127,7 @@ export function unifiedCoOptimize(opts: {
     // 공조(1.5kW)는 LED와 동기 가동(식물 환경 유지 필수), 펌프(0.7kW, 8h/일)는
     // 유연 — 부하 가장 낮은 시간대에 배치해 피크 최소화.
     const hourProfile = Array(24).fill(0);
-    for (const h of litHours) hourProfile[h] += opts.ledPowerKw + 1.5;
+    for (const h of litHours) hourProfile[h] += kw + 1.5;
     const pumpSlots = [...Array(24).keys()]
       .sort((a, b) => hourProfile[a] - hourProfile[b])
       .slice(0, 8);
@@ -139,34 +141,35 @@ export function unifiedCoOptimize(opts: {
     const thermal = litHours.reduce((s, h) => {
       const t = opts.hourlyExtTemp[h];
       const delta = t - TARGET_TEMP;
-      return s + opts.ledPowerKw * (delta < 0
+      return s + kw * (delta < 0
         ? delta * heatCoef * 0.05   // 겨울: 더 추운 시간대 = 더 큰 난방상쇄 이득 (음수)
         : delta * coolCoef * 0.05); // 여름: 더 더운 시간대 = 더 큰 냉방 부하 (양수)
     }, 0);
 
     // CO2 비용 (시간대 탄소집약도, 탄소가격 근사 30원/kg)
     const co2 = litHours.reduce(
-      (s, h) => s + opts.ledPowerKw * GRID_EMISSION_FACTOR * CARBON_INTENSITY_FACTOR[h] * 30,
+      (s, h) => s + kw * GRID_EMISSION_FACTOR * CARBON_INTENSITY_FACTOR[h] * 30,
       0
     );
 
     // VPP 유연성 가치: DR 창에 LED가 없으면(=그 시간 끌 필요 없어 유연) 가치↑
     const drOverlap = drWindows.filter((h) => litSet.has(h)).length;
-    const vppFlexValue = ((drWindows.length - drOverlap) / Math.max(1, drWindows.length)) *
-      (opts.ledPowerKw * opts.sites * 100 * 2) / 30 / opts.sites; // 일·사이트 환산 근사
+    const vppFlexValue =
+      ((drWindows.length - drOverlap) / Math.max(1, drWindows.length)) *
+      ((kw * 100 * 2) / 30); // 일·사이트 환산 근사
 
     const revenue = dailyYieldRevenue(dli);
     const net =
       revenue -
       expEnergy -
-      weights.thermal * thermal / 1 -
+      weights.thermal * thermal -
       weights.co2 * co2 -
       weights.robust * (cvar - expEnergy) +
       weights.vpp * vppFlexValue -
       demand;
 
     return {
-      dli, ppfd, hours, litHours, darkH, safe,
+      dli, ppfd, hours, litHours, darkH, safe: light.photoperiodSafe,
       revenue, expEnergy, cvar, demand, thermal, co2, vppFlexValue, net,
     };
   };
@@ -183,16 +186,24 @@ export function unifiedCoOptimize(opts: {
       if (!bestEvalOrNull || ev.net > bestEvalOrNull.net) bestEvalOrNull = ev;
     }
   }
-  const bestEval = bestEvalOrNull ?? evalCandidate(crop.dliTarget, 0)!;
+  if (!bestEvalOrNull) {
+    // 탐색 구간 전체가 광주기·정격 제약에 걸림 — 이 설비로는 어떤 DLI도 안전하게
+    // 만들 수 없다는 뜻이므로 최적화 결과를 지어내지 않고 그대로 알린다.
+    throw new Error(
+      `${crop.label}: DLI ${dliMin}~${dliMax} 전 구간이 광주기·정격 제약 밖. 광량 설계(maxPpfd/maxPhotoperiodH) 재검토 필요`
+    );
+  }
+  const bestEval = bestEvalOrNull;
 
-  // 순차 파이프라인 기준: DLI=목표 고정, 전력만 최저 배치 (비교용)
+  // 순차 파이프라인 기준: DLI=목표 고정, 전력만 최저 배치 (비교용).
+  // 목표 DLI가 제약 밖이면 비교 자체가 성립하지 않으므로 통합해를 그대로 쓴다(개선 0).
   const seqEval = (() => {
-    let e = evalCandidate(crop.dliTarget, 0)!;
-    for (let s = 1; s < 24; s++) {
+    let e: NonNullable<ReturnType<typeof evalCandidate>> | null = null;
+    for (let s = 0; s < 24; s++) {
       const c = evalCandidate(crop.dliTarget, s);
-      if (c && c.expEnergy < e.expEnergy) e = c;
+      if (c && (!e || c.expEnergy < e.expEnergy)) e = c;
     }
-    return e;
+    return e ?? bestEval;
   })();
 
   // 트레이드오프 서술
@@ -208,7 +219,7 @@ export function unifiedCoOptimize(opts: {
   return {
     dliChosen: bestEval.dli,
     ppfd: bestEval.ppfd,
-    litHours: bestEval.litHours.slice().sort((a, b) => a - b),
+    litHours: bestEval.litHours,
     darkContinuousH: bestEval.darkH,
     photoperiodSafe: bestEval.safe,
     breakdown: {

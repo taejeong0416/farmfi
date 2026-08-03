@@ -5,33 +5,24 @@
 // 이익 기준으로 값매기고, 불확실성에 강건화한 뒤, 플릿이 모아 전력망에 판다.
 
 import { getCrop } from "./crop-profiles";
-import { TARIFF_TOU_GENERAL } from "./optimization";
+import { TARIFF_TOU_GENERAL, dliSchedule, resolveLighting } from "./optimization";
 import { mulberry32, gaussFrom } from "./prng";
 
 // ── 돌파 2: 광주기 안전 DLI (농학 하드 제약) ──────────────────────────────
-// 순진한 DLI 스케줄러는 총 광량만 맞추면 시간을 마음대로 흩뿌린다 — 그러나 상추는
-// 낮 길이(광주기)가 길면 추대(bolting)로 상품가치를 잃고, 생체리듬은 연속 암기를
-// 요구한다. 그래서 (a) 명기 ≤ 최대광주기, (b) 연속 암기 ≥ 최소암기 를 하드 제약으로
-// 걸고, 빛을 "연속 블록"으로만 배치한다. 절감은 산란보다 작지만 작물이 안전하다.
-export interface PhotoperiodConstraints {
-  maxPhotoperiodH: number; // 추대 방지 최대 명기(엽채류 ~16h)
-  minDarkH: number; // 생체리듬 최소 연속 암기(~6h)
-}
-
-export const CROP_PHOTOPERIOD: Record<string, PhotoperiodConstraints> = {
-  leafy: { maxPhotoperiodH: 16, minDarkH: 6 }, // 상추 장일 추대 회피
-  basil: { maxPhotoperiodH: 18, minDarkH: 5 },
-  cherryTomato: { maxPhotoperiodH: 17, minDarkH: 6 }, // 연속광 장해 회피
-  microgreen: { maxPhotoperiodH: 20, minDarkH: 4 }, // 수확 빠름, 관대
-};
-
+// 총 광량만 맞추고 시간을 마음대로 흩뿌리면 상추는 낮 길이(광주기)가 길어져 추대로
+// 상품가치를 잃고, 조각난 암기 때문에 생체리듬도 깨진다. 그래서 (a) 명기 ≤ 최대광주기,
+// (b) 연속 암기 ≥ 최소암기 를 하드 제약으로 걸고 빛을 "연속 블록"으로만 배치한다.
+// 제약과 배치는 dliSchedule이 이미 수행하므로 여기서는 그 해에 "안전을 위해 포기한
+// 절감액"을 붙인다 — 산란 배치와의 차액이 제약의 가격표다.
 export interface PhotoperiodSafePlan {
   cropLabel: string;
   requiredHours: number; // DLI 충족 명기 (PPFD 상향 반영)
   ppfdUsed: number;
+  ledPowerKwUsed: number; // PPFD 상향으로 오른 소비전력
   litHours: number[]; // 연속 광 블록
   darkContinuousH: number; // 확보된 연속 암기
   safe: boolean; // 광주기 제약 충족
+  feasible: boolean; // 정격 PPFD 안에서 달성 가능
   costPerDay: number;
   naiveScatterCostPerDay: number; // 산란(비안전) 배치 비용 — 비교용
   safetyCostPerDay: number; // 안전을 위해 포기한 절감액
@@ -46,60 +37,34 @@ export function photoperiodSafeDli(opts: {
   ppfd?: number;
 }): PhotoperiodSafePlan {
   const crop = getCrop(opts.cropKey);
-  const pc = CROP_PHOTOPERIOD[crop.key] ?? { maxPhotoperiodH: 16, minDarkH: 6 };
   const tariff = opts.tariff ?? TARIFF_TOU_GENERAL;
-  const dliTarget = opts.dliTarget ?? crop.dliTarget;
-  let ppfd = opts.ppfd ?? crop.ppfd;
-
-  // 필요 명기 = DLI / 시간당기여. 최대광주기 초과 시 PPFD를 올려 시간을 압축.
-  const hoursAt = (p: number) => Math.ceil(dliTarget / ((p * 3600) / 1e6));
-  const basePpfd = ppfd;
-  let ledPowerKw = opts.ledPowerKw;
-  let requiredHours = hoursAt(ppfd);
-  if (requiredHours > pc.maxPhotoperiodH) {
-    // maxPhotoperiodH 안에 담기도록 PPFD 상향 — PPFD↑ = 전력↑.
-    // 전제: LED가 정격 미만으로 디밍 중이므로 PPFD 비율만큼 전력 선형 스케일.
-    ppfd = Math.ceil((dliTarget * 1e6) / (pc.maxPhotoperiodH * 3600));
-    ledPowerKw = opts.ledPowerKw * (ppfd / basePpfd);
-    requiredHours = hoursAt(ppfd);
-  }
-  requiredHours = Math.min(requiredHours, pc.maxPhotoperiodH);
-
-  const darkH = 24 - requiredHours;
-  const safe = requiredHours <= pc.maxPhotoperiodH && darkH >= pc.minDarkH;
-
-  // 연속 광 블록을 최저요금 위치에 배치 (자동으로 연속 암기 24-requiredHours 확보)
-  let bestStart = 0;
-  let bestCost = Infinity;
-  for (let s = 0; s < 24; s++) {
-    let c = 0;
-    for (let i = 0; i < requiredHours; i++) c += ledPowerKw * tariff[(s + i) % 24];
-    if (c < bestCost) {
-      bestCost = c;
-      bestStart = s;
-    }
-  }
-  const litHours = Array.from({ length: requiredHours }, (_, i) => (bestStart + i) % 24);
+  const plan = dliSchedule(opts);
+  const kw = plan.ledPowerKwUsed;
 
   // 비교: 산란(가장 싼 시간 아무거나 — 비안전) 배치 비용
   const order = [...Array(24).keys()].sort((a, b) => tariff[a] - tariff[b]);
   const scatterCost = order
-    .slice(0, requiredHours)
-    .reduce((s, h) => s + ledPowerKw * tariff[h], 0);
+    .slice(0, plan.requiredHours)
+    .reduce((s, h) => s + kw * tariff[h], 0);
+  const safetyCost = plan.costPerDay - scatterCost;
 
   return {
     cropLabel: crop.label,
-    requiredHours,
-    ppfdUsed: ppfd,
-    litHours,
-    darkContinuousH: darkH,
-    safe,
-    costPerDay: Math.round(bestCost),
+    requiredHours: plan.requiredHours,
+    ppfdUsed: plan.ppfdUsed,
+    ledPowerKwUsed: kw,
+    litHours: plan.litHours,
+    darkContinuousH: plan.darkContinuousH,
+    safe: plan.photoperiodSafe,
+    feasible: plan.feasible,
+    costPerDay: plan.costPerDay,
     naiveScatterCostPerDay: Math.round(scatterCost),
-    safetyCostPerDay: Math.round(bestCost - scatterCost),
-    note: safe
-      ? `연속 명기 ${requiredHours}h + 연속 암기 ${darkH}h 확보 (추대·생체리듬 안전). 안전 비용 +${Math.round(bestCost - scatterCost)}원/일`
-      : `제약 충족 불가 — PPFD ${ppfd}로도 광주기 초과. 시설 광량 재설계 필요`,
+    safetyCostPerDay: Math.round(safetyCost),
+    note: !plan.feasible
+      ? `제약 충족 불가 — PPFD ${plan.ppfdUsed}는 정격 상한 ${crop.maxPpfd} 초과. 시설 광량 재설계 필요`
+      : plan.photoperiodSafe
+        ? `연속 명기 ${plan.requiredHours}h + 연속 암기 ${plan.darkContinuousH}h 확보 (추대·생체리듬 안전). 안전 비용 +${Math.round(safetyCost)}원/일`
+        : `연속 암기 ${plan.darkContinuousH}h — 최소 ${crop.minDarkH}h 미달. 목표 DLI 하향 또는 광량 증설 필요`,
   };
 }
 
@@ -141,7 +106,9 @@ export function thermalCoupledSchedule(opts: {
     const ext = opts.hourlyExtTemp[h];
     let thermal = 0;
     if (ext < TARGET) thermal = -heatCoef * 0.95; // 난방 상쇄(크레딧)
-    else thermal = coolCoef * 0.95; // 냉방 가산(페널티)
+    else if (ext > TARGET) thermal = coolCoef * 0.95; // 냉방 가산(페널티)
+    // 외기가 목표온도와 같으면 열 항은 0이다. 실측 외기가 없을 때 목표온도를
+    // 중립 가정으로 넣으면 계절 이득/부담을 어느 쪽으로도 주장하지 않게 된다.
     return elec + thermal;
   };
 
@@ -196,6 +163,7 @@ export function thermalCoupledSchedule(opts: {
 // 여러 미래에 강건한 스케줄을 고른다. 목적 = 기대비용 + λ·CVaR(최악 5% 평균).
 export interface RobustPlan {
   scenarios: number;
+  blockStartHour: number; // 강건 최적해가 고른 점등 시작시각 — 실제로 실행할 스케줄
   expectedCostPerDay: number;
   worstCasePerDay: number; // CVaR95
   cvar95: number;
@@ -266,6 +234,7 @@ export function robustSchedule(opts: {
 
   return {
     scenarios: N,
+    blockStartHour: bestStart,
     expectedCostPerDay: Math.round(bestExpected),
     worstCasePerDay: Math.round(bestCvar),
     cvar95: Math.round(bestCvar),
@@ -281,9 +250,13 @@ export function robustSchedule(opts: {
 // 비용 최소가 아니라 이익(수율×가격 − 비용) 최대. 포화형 수율모델
 // y(DLI) = ymax·(1 − e^(−k·DLI))로 "빛 더 줘서 얻는 수율 증가"와 "그 전기비"를
 // 저울질한다. 채소값이 비싸면 광량을 늘리고, 싸면 줄이는 게 최적.
+// 단, 이익이 크다고 아무 DLI나 고를 수는 없다. 광량은 명기 × PPFD로만 만들어지고
+// 둘 다 상한(최대광주기·LED 정격)이 있으므로, 그 상한을 넘는 DLI는 후보에서 뺀다 —
+// 이 게이트가 없으면 광주기 안전(돌파 2)이 금지한 명기를 이익최적화가 되살린다.
 export interface ProfitPlan {
   profitMaxDli: number;
   costMinDli: number; // 기본(작물 목표 DLI)
+  maxFeasibleDli: number; // 정격 PPFD × 최대광주기로 만들 수 있는 최대 DLI
   profitAtOptimum: number; // 원/일/㎡
   profitAtTarget: number;
   upliftPerDay: number;
@@ -306,28 +279,34 @@ export function profitOptimization(opts: {
   const ymax = opts.yieldMaxKgM2 ?? 4.5; // ㎡당 사이클 수율 포화
   const k = opts.yieldK ?? 0.08;
   const avgTariff = opts.avgTariff ?? 140;
-  const ppfd = crop.ppfd;
 
   const yieldOf = (dli: number) => ymax * (1 - Math.exp(-k * dli));
-  const costOf = (dli: number) => {
-    const hours = dli / ((ppfd * 3600) / 1e6);
-    if (hours > 24) return Infinity; // 물리적 불가능 — 24h/일 상한 초과
-    return opts.ledPowerKw * hours * avgTariff; // 원/일 (사이트 전체 LED)
+  // 광주기·정격 상한을 넘겨야만 만들어지는 DLI는 후보에서 제외(null).
+  const costOf = (dli: number): number | null => {
+    const light = resolveLighting({
+      cropKey: opts.cropKey,
+      dliTarget: dli,
+      ledPowerKw: opts.ledPowerKw,
+    });
+    if (!light.feasible || !light.photoperiodSafe) return null;
+    return light.ledPowerKw * light.hours * avgTariff; // 원/일 (사이트 전체 LED)
   };
   // 이익 = 수율가치(원/일 환산) − 전기비. 수율은 사이클(cycleDays)에 걸쳐 실현 → 일 환산.
-  const profitOf = (dli: number) => {
-    const cycleRevenue = yieldOf(dli) * area * price;
-    const dailyRevenue = cycleRevenue / crop.cycleDays;
-    return dailyRevenue - costOf(dli);
+  const profitOf = (dli: number): number | null => {
+    const cost = costOf(dli);
+    if (cost === null) return null;
+    return (yieldOf(dli) * area * price) / crop.cycleDays - cost;
   };
+  const maxFeasibleDli =
+    Math.floor(((crop.maxPpfd * 3600) / 1e6) * crop.maxPhotoperiodH * 10) / 10;
 
   const frontier: ProfitPlan["frontier"] = [];
   let bestDli = crop.dliTarget;
   let bestProfit = -Infinity;
   for (let dli = 4; dli <= 30; dli += 1) {
     const cost = costOf(dli);
-    if (!isFinite(cost)) continue; // DLI가 24h분을 초과하는 물리적 불가능 구간 제외
-    const p = profitOf(dli);
+    if (cost === null) continue;
+    const p = profitOf(dli)!;
     frontier.push({
       dli,
       yield: Math.round(yieldOf(dli) * 100) / 100,
@@ -339,19 +318,22 @@ export function profitOptimization(opts: {
       bestDli = dli;
     }
   }
+  const profitAtTarget = profitOf(crop.dliTarget);
 
   return {
     profitMaxDli: bestDli,
     costMinDli: crop.dliTarget,
+    maxFeasibleDli,
     profitAtOptimum: Math.round(bestProfit),
-    profitAtTarget: Math.round(profitOf(crop.dliTarget)),
-    upliftPerDay: Math.round(bestProfit - profitOf(crop.dliTarget)),
+    profitAtTarget: profitAtTarget === null ? 0 : Math.round(profitAtTarget),
+    upliftPerDay:
+      profitAtTarget === null ? 0 : Math.round(bestProfit - profitAtTarget),
     frontier: frontier.filter((f) => f.dli % 2 === 0),
     note:
       bestDli > crop.dliTarget
         ? `채소값 ${price}원/kg에선 목표 DLI ${crop.dliTarget}→${bestDli}로 광량 상향이 이익 최대(수율 증가 > 전기비). 일 +${Math.round(
-            bestProfit - profitOf(crop.dliTarget)
-          )}원`
+            bestProfit - (profitAtTarget ?? 0)
+          )}원. 광주기·정격 상한이 허용하는 최대 DLI는 ${maxFeasibleDli}`
         : `채소값 낮음 → DLI ${bestDli}로 광량 절감이 이익 최대(전기비 > 수율 증가)`,
   };
 }
@@ -462,17 +444,20 @@ export function optimalStack(opts: {
     ledPowerKw: opts.ledPowerKw,
     tariff: opts.tariff,
   });
+  // 아래 단계는 모두 ①이 확정한 운전점(압축된 PPFD에서의 소비전력)을 쓴다.
+  // 설계값을 그대로 넘기면 시간 압축의 전력 증가가 비용에서 빠진다.
+  const ledPowerKw = photoperiod.ledPowerKwUsed;
   // ② 빛-열 통합 (안전 명기 시간을 계절 최적 배치)
   const thermal = thermalCoupledSchedule({
     cropKey: opts.cropKey,
-    ledPowerKw: opts.ledPowerKw,
+    ledPowerKw,
     requiredHours: photoperiod.requiredHours,
     hourlyExtTemp: opts.hourlyExtTemp,
     tariff: opts.tariff,
   });
   // ③ 강건 (가격 불확실성)
   const robust = robustSchedule({
-    ledPowerKw: opts.ledPowerKw,
+    ledPowerKw,
     requiredHours: photoperiod.requiredHours,
     baseTariff: opts.tariff,
   });
@@ -486,7 +471,7 @@ export function optimalStack(opts: {
   const flexHours = Math.max(0, 24 - photoperiod.requiredHours - photoperiod.darkContinuousH + 3);
   const vpp = fleetVPP({
     sites: opts.sites,
-    ledPowerKw: opts.ledPowerKw,
+    ledPowerKw,
     photoperiodFlexHours: Math.min(3, flexHours || 3),
   });
 
