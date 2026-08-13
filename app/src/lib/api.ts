@@ -1,16 +1,34 @@
+import { Platform } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { API_BASE_URL } from "./config";
 
 const TOKEN_KEY = "farmfi.token";
 
-// ─── 토큰 저장소 (SecureStore = 안드 Keystore 기반 보안 저장) ───
+// ─── 토큰 저장소 ───
+// 네이티브는 SecureStore(안드 Keystore 기반 보안 저장). expo-secure-store는 웹을
+// 지원하지 않아(Android·iOS·tvOS 전용) 웹에서 호출하면 네이티브 모듈이 없어 터진다.
+// 웹은 localStorage로 내린다 — Keystore 수준의 보호는 없고 데모 배포용 경로다.
+// 정적 렌더(프리렌더)는 브라우저가 아니라 localStorage 자체가 없으므로 함께 막는다.
+const isWeb = Platform.OS === "web";
+const webStore = (): Storage | null =>
+  typeof localStorage === "undefined" ? null : localStorage;
+
 export async function getToken(): Promise<string | null> {
+  if (isWeb) return webStore()?.getItem(TOKEN_KEY) ?? null;
   return SecureStore.getItemAsync(TOKEN_KEY);
 }
 export async function setToken(token: string): Promise<void> {
+  if (isWeb) {
+    webStore()?.setItem(TOKEN_KEY, token);
+    return;
+  }
   await SecureStore.setItemAsync(TOKEN_KEY, token);
 }
 export async function clearToken(): Promise<void> {
+  if (isWeb) {
+    webStore()?.removeItem(TOKEN_KEY);
+    return;
+  }
   await SecureStore.deleteItemAsync(TOKEN_KEY);
 }
 
