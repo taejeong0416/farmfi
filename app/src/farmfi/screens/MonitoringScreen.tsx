@@ -5,7 +5,7 @@ import Svg, { Circle, Line as SvgLine, Path, Rect } from "react-native-svg";
 import { apiFetch, describeApiError } from "@/lib/api";
 import { C, FRAME_MAX_WIDTH } from "../theme";
 import { PixelGlyph } from "../icons";
-import { AppShell, SectionTitle, StateNotice } from "../components";
+import { AppShell, DataAsOf, SectionTitle, StateNotice } from "../components";
 import { useFarmProjects } from "../branch";
 import type { HarvestForecast, LightAssessment } from "../api";
 
@@ -56,6 +56,9 @@ type Summary = {
 type MonitoringResponse = {
   project: { id: string; name: string };
   days: number;
+  // 조회 창의 끝점 = 센서 최신 시각. stale이면 화면이 기준일을 밝힌다.
+  dataAsOf: string | null;
+  stale: boolean;
   points: Point[];
   drift: DriftAlert[];
   daily: DailyMetric[];
@@ -347,6 +350,7 @@ export default function MonitoringScreen() {
             <SummaryTile label="드리프트" value={`${data.summary.driftSensors.length}종`} />
             <SummaryTile label="현재 상태" value={data.summary.latestHealthy ? "정상" : "주의"} warn={!data.summary.latestHealthy} />
           </View>
+          <DataAsOf dataAsOf={data.dataAsOf} stale={data.stale} />
 
           {/* 일적산광량 — 광량은 순간값이 아니라 하루 총량으로 판정한다 */}
           <View style={s.block}>

@@ -10,7 +10,14 @@ import {
   type SalesResponse,
   type SalesTrendResponse,
 } from "../api";
-import { AppShell, BranchSelect, CropPixel, SectionTitle, StateNotice } from "../components";
+import {
+  AppShell,
+  BranchSelect,
+  CropPixel,
+  DataAsOf,
+  SectionTitle,
+  StateNotice,
+} from "../components";
 import { useFarmProjects } from "../branch";
 import { useApiResource } from "../useApiResource";
 
@@ -104,7 +111,7 @@ export default function SalesScreen() {
     }
     if (!sales.data) return null;
 
-    const { summary, daily, recent, periodDays } = sales.data;
+    const { summary, daily, recent, periodDays, dataAsOf, stale } = sales.data;
     const ranking = (trend.data?.byProduct ?? []).slice(0, 4);
     const maxRankQty = ranking.reduce((max, r) => Math.max(max, r.totalQuantity), 0);
 
@@ -130,6 +137,7 @@ export default function SalesScreen() {
               </Text>
             </View>
           </View>
+          <DataAsOf dataAsOf={dataAsOf} stale={stale} />
         </View>
 
         <View style={[s.card, s.chartCard]}>

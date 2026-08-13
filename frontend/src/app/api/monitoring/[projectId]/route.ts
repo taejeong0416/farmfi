@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { analyzeGrowthMonitoring } from "@/lib/growth-monitoring";
 import { cropKeyFor } from "@/lib/crop-profiles";
+import { resolveDataWindow } from "@/lib/data-window";
 import type { IoTReading } from "@/lib/iot-health";
 
 // GET /api/monitoring/[projectId]?days=7
@@ -41,10 +42,19 @@ export async function GET(
     });
     const cropKey = cropKeyFor(lead?.product.name, lead?.product.category);
 
-    const windowStart = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+    // 창의 끝점은 현재가 아니라 이 지점의 센서 최신 시각이다 — 데이터가 멈춘 뒤에도
+    // 최근 N일치를 계속 판독한다.
+    const latest = await prisma.iotData.findFirst({
+      where: { projectId },
+      orderBy: { recordedAt: "desc" },
+      select: { recordedAt: true },
+    });
+    const { since, dataAsOf, stale } = resolveDataWindow(latest?.recordedAt, days);
+
+
     // 오름차순(과거→현재) — 차트/CUSUM 인덱스가 시간순과 일치해야 한다.
     const records = await prisma.iotData.findMany({
-      where: { projectId, recordedAt: { gte: windowStart } },
+      where: { projectId, recordedAt: { gte: since } },
       orderBy: { recordedAt: "asc" },
     });
 
@@ -68,6 +78,8 @@ export async function GET(
     return NextResponse.json({
       project,
       days,
+      dataAsOf,
+      stale,
       ...analysis,
     });
   } catch (error) {

@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
-
-const DAY_MS = 24 * 60 * 60 * 1000;
+import { resolveDataWindow } from "@/lib/data-window";
 
 // GET /api/sales?projectId=&days=30&recent=10
 // 지점 판매 리포트 — 기간 합계 + 일자별 매출 + 최근 판매 내역.
@@ -41,7 +40,14 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
 
-    const since = new Date(Date.now() - days * DAY_MS);
+    // 창의 끝점은 현재가 아니라 이 지점의 판매 최신 시각이다 — 판매 기록이 멈춘 뒤에도
+    // 마지막 N일치 실적을 계속 보여준다.
+    const lastSale = await prisma.salesRecord.findFirst({
+      where: { projectId },
+      orderBy: { soldAt: "desc" },
+      select: { soldAt: true },
+    });
+    const { since, dataAsOf, stale } = resolveDataWindow(lastSale?.soldAt, days);
 
     const [records, recentRecords] = await Promise.all([
       prisma.salesRecord.findMany({
@@ -75,6 +81,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       project,
       periodDays: days,
+      dataAsOf,
+      stale,
       summary: {
         totalAmount: records.reduce((sum, r) => sum + r.amount, 0),
         totalQuantity: records.reduce((sum, r) => sum + r.quantity, 0),

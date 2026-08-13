@@ -270,6 +270,19 @@ export function StateNotice({
   );
 }
 
+// ─── 데이터 기준일 ───
+// 화면의 수치가 언제 시점의 것인지 밝힌다. API가 stale=true를 줄 때만 나타난다 —
+// 데이터가 계속 들어오는 지점에서는 기준일이 곧 오늘이라 표기할 이유가 없다.
+export function DataAsOf({ dataAsOf, stale }: { dataAsOf: string | null; stale: boolean }) {
+  if (!stale || !dataAsOf) return null;
+  const d = new Date(dataAsOf);
+  if (Number.isNaN(d.getTime())) return null;
+  const label = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(
+    d.getDate()
+  ).padStart(2, "0")}`;
+  return <Text style={styles.dataAsOf}>데이터 기준일 {label}</Text>;
+}
+
 // ─── 하단 네비게이션 ───
 function BottomNavigation({ active }: { active: ServiceKey }) {
   const router = useRouter();
@@ -372,6 +385,7 @@ const styles = StyleSheet.create({
   stateNotice: { alignItems: "center", paddingVertical: 22, paddingHorizontal: 12 },
   stateNoticeText: { color: "#666862", fontSize: 13, textAlign: "center", lineHeight: 19 },
   stateNoticeTextErr: { color: "#c0492f" },
+  dataAsOf: { color: "#8a8c86", fontSize: 11, textAlign: "center", marginTop: 6 },
   stateRetry: {
     minHeight: 44,
     justifyContent: "center",

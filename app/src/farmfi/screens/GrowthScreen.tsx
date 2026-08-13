@@ -15,6 +15,7 @@ import {
 import {
   AppShell,
   BranchSelect,
+  DataAsOf,
   GrowthRackScene,
   SectionTitle,
   StateNotice,
@@ -188,6 +189,10 @@ export default function GrowthScreen() {
           </Text>
         </View>
       </View>
+
+      {monitoring.data && (
+        <DataAsOf dataAsOf={monitoring.data.dataAsOf} stale={monitoring.data.stale} />
+      )}
 
       {monitoring.error && !monitoring.loading && (
         <StateNotice tone="error" message={monitoring.error} onRetry={monitoring.reload} />

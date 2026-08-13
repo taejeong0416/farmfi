@@ -44,6 +44,9 @@ export type InventoryResponse = {
 export type SalesResponse = {
   project: { id: string; name: string };
   periodDays: number;
+  // 조회 창의 끝점 = 판매 최신 시각. stale이면 화면이 기준일을 밝힌다.
+  dataAsOf: string | null;
+  stale: boolean;
   summary: { totalAmount: number; totalQuantity: number; orderCount: number };
   daily: { date: string; amount: number; quantity: number; orderCount: number }[];
   recent: {
@@ -108,6 +111,9 @@ export type HarvestForecast = {
 export type MonitoringSummaryResponse = {
   project: { id: string; name: string };
   days: number;
+  // 조회 창의 끝점 = 센서 최신 시각. stale이면 화면이 기준일을 밝힌다.
+  dataAsOf: string | null;
+  stale: boolean;
   points: { humidity: number; healthy: boolean; growthRate: number }[];
   light: LightAssessment;
   harvest: HarvestForecast;

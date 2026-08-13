@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { resolveDataWindow } from "@/lib/data-window";
 
 // GET /api/sales/trend?projectId=&days=14
 // 품목별 판매 추이 → 다음 재배 사이클의 품목·수량 조정 근거.
@@ -10,7 +11,13 @@ export async function GET(req: NextRequest) {
   }
   const daysRaw = Number(req.nextUrl.searchParams.get("days") ?? 14);
   const days = Number.isFinite(daysRaw) && daysRaw > 0 ? daysRaw : 14;
-  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+  // 품목 순위도 /api/sales와 같은 구간을 봐야 한다 — 창의 끝점은 판매 최신 시각.
+  const lastSale = await prisma.salesRecord.findFirst({
+    where: { projectId },
+    orderBy: { soldAt: "desc" },
+    select: { soldAt: true },
+  });
+  const { since } = resolveDataWindow(lastSale?.soldAt, days);
 
   const grouped = await prisma.salesRecord.groupBy({
     by: ["productId"],
