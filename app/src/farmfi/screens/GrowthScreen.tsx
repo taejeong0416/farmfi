@@ -199,8 +199,9 @@ export default function GrowthScreen() {
       )}
 
       {/* 생장 지표 — 환경값이 아니라 "얼마나 자랐나"를 본다.
-          적산온도로 수확 시점을, 일적산광량으로 그 속도의 제약을 읽는다. */}
-      {monitoring.data && (
+          적산온도로 수확 시점을, 일적산광량으로 그 속도의 제약을 읽는다.
+          구버전 백엔드는 harvest·light 없이 응답하므로 둘 다 있을 때만 그린다. */}
+      {monitoring.data?.harvest && monitoring.data.light && (
         <View style={s.growth}>
           <View style={s.growthRow}>
             <View style={s.growthCell}>

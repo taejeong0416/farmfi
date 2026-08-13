@@ -69,6 +69,24 @@ type MonitoringResponse = {
   summary: Summary;
 };
 
+// 구버전 백엔드는 최신 필드가 빠진 응답을 200으로 돌려준다. 화면은 이 필드들을
+// 전제로 렌더하므로 없으면 렌더 도중 터진다 — 렌더 전에 계약을 확인해
+// 흰 화면 대신 무엇이 없는지 알린다. dataAsOf는 정상적으로 null일 수 있어 뺀다.
+const REQUIRED_FIELDS = [
+  "points",
+  "drift",
+  "daily",
+  "light",
+  "harvest",
+  "healthyRanges",
+  "optimalRanges",
+  "summary",
+] as const satisfies readonly (keyof MonitoringResponse)[];
+
+function missingContractFields(res: MonitoringResponse): string[] {
+  return REQUIRED_FIELDS.filter((key) => res[key] == null);
+}
+
 const SENSORS: { key: SensorKey; label: string; unit: string; color: string }[] = [
   { key: "temperature", label: "온도", unit: "°C", color: "#e05a3a" },
   { key: "humidity", label: "습도", unit: "%", color: "#2f8fd6" },
@@ -272,6 +290,15 @@ export default function MonitoringScreen() {
     apiFetch<MonitoringResponse>(`/api/monitoring/${projectId}?days=${days}`)
       .then((res) => {
         if (!alive) return;
+        const missing = missingContractFields(res);
+        if (missing.length > 0) {
+          setData(null);
+          setError(
+            `서버 응답에 필요한 항목이 없습니다 (${missing.join(", ")}). 백엔드 배포가 화면보다 오래됐을 수 있습니다.`
+          );
+          setLoading(false);
+          return;
+        }
         setData(res);
         setLoading(false);
       })
