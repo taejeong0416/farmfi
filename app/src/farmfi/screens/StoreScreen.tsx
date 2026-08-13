@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 import { C } from "../theme";
@@ -87,7 +86,6 @@ function StoreCard({
 
 export default function StoreScreen() {
   const { projects, projectId, setProjectId, loading, error, reload } = useFarmProjects();
-  const [addMessage, setAddMessage] = useState("매장 추가");
 
   // 지점별 수확 가능량·베드 수는 재고 API가 유일한 출처. projectId 없이 호출하면
   // 전 지점이 한 번에 오므로 카드마다 요청을 반복하지 않는다.
@@ -127,14 +125,6 @@ export default function StoreScreen() {
             <PixelGlyph name="store" size={25} />
             <Text style={s.listHeadingText}>등록된 매장</Text>
           </View>
-          <TapScale
-            style={s.addBtn}
-            scaleTo={0.98}
-            onPress={() => setAddMessage((c) => (c === "매장 추가" ? "준비 중" : "매장 추가"))}
-          >
-            <AppIcon name="plus" size={22} color={C.green} />
-            <Text style={s.addBtnText}>{addMessage}</Text>
-          </TapScale>
         </View>
 
         {loading && <StateNotice message="매장 목록을 불러오는 중…" />}
@@ -185,18 +175,6 @@ const s = StyleSheet.create({
   listHeading: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   listHeadingTitle: { flexDirection: "row", alignItems: "center", gap: 8 },
   listHeadingText: { fontSize: 19, letterSpacing: -0.48, color: C.ink, fontWeight: "600" },
-  addBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-    minHeight: 38,
-    borderWidth: 1.4,
-    borderColor: C.green,
-    borderRadius: 7,
-    backgroundColor: "#fff",
-    paddingHorizontal: 11,
-  },
-  addBtnText: { color: C.green, fontSize: 13, fontWeight: "700" },
 
   cards: { gap: 12 },
   storeCard: {

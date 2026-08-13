@@ -73,7 +73,7 @@ export default function LoginScreen() {
         </Pressable>
 
         <Text style={styles.hint}>
-          데모 계정: investor@farmfi.test / operator@farmfi.test{"\n"}
+          데모 계정: operator@farmfi.test{"\n"}
           비밀번호: farmfi123
         </Text>
       </KeyboardAvoidingView>

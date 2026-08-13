@@ -95,8 +95,9 @@ const SENSORS: { key: SensorKey; label: string; unit: string; color: string }[] 
   { key: "phLevel", label: "양액 pH", unit: "pH", color: "#0b7d46" },
 ];
 
+// 24시간 창은 생육일 버킷이 항상 잘려(완전한 생육일 0건) DLI·GDD 판정이
+// 성립하지 않는다. 판정이 나오는 최소 창인 7일부터 제공한다.
 const RANGES: { days: number; label: string }[] = [
-  { days: 1, label: "24시간" },
   { days: 7, label: "7일" },
   { days: 30, label: "30일" },
 ];

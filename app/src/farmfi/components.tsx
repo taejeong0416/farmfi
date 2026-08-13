@@ -21,6 +21,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
+import { useAuth } from "@/lib/auth";
 import { C, FRAME_MAX_WIDTH } from "./theme";
 import { AppIcon, PixelGlyph, type IconName } from "./icons";
 import { CROP_CELL, LEAFY_SLOTS, TOMATO_SLOTS, type CropKind, type ServiceKey } from "./data";
@@ -286,6 +287,7 @@ export function DataAsOf({ dataAsOf, stale }: { dataAsOf: string | null; stale: 
 // ─── 하단 네비게이션 ───
 function BottomNavigation({ active }: { active: ServiceKey }) {
   const router = useRouter();
+  const pathname = usePathname();
   const softBg = active === "growth" || active === "inventory";
   return (
     <View style={styles.bottomNav}>
@@ -296,7 +298,9 @@ function BottomNavigation({ active }: { active: ServiceKey }) {
             key={item.key}
             style={[styles.navItem, on && softBg && styles.navItemSoft]}
             onPress={() => {
-              if (!on) router.replace(item.href as never);
+              // 상세 화면(예: /farm/monitoring)은 상위 탭을 활성으로 표시한다.
+              // 그때 같은 탭을 누르면 그 탭의 기본 화면으로 돌아와야 갇히지 않는다.
+              if (pathname !== item.href) router.replace(item.href as never);
             }}
           >
             <AppIcon name={item.icon} size={25} color={on ? C.green : "#676a67"} />
@@ -308,7 +312,28 @@ function BottomNavigation({ active }: { active: ServiceKey }) {
   );
 }
 
-// ─── 앱 셸 (프레임 + 콘텐츠 스크롤 + 하단 네비) ───
+// ─── 셸 상단 줄 ───
+// 운영 화면에는 계정을 벗어날 수단이 없었다. 여기가 로그아웃의 유일한 자리다.
+// 미로그인(데모 우회) 방문자에게는 반대로 로그인으로 가는 길을 연다.
+function ShellTopBar() {
+  const { user, logout } = useAuth();
+  const router = useRouter();
+  return (
+    <View style={styles.topBar}>
+      <Text style={styles.topBarWho} numberOfLines={1}>
+        {user ? `${user.name} 님` : "둘러보기"}
+      </Text>
+      <Pressable
+        hitSlop={10}
+        onPress={user ? logout : () => router.replace("/login")}
+      >
+        <Text style={styles.topBarAction}>{user ? "로그아웃" : "로그인"}</Text>
+      </Pressable>
+    </View>
+  );
+}
+
+// ─── 앱 셸 (프레임 + 상단 줄 + 콘텐츠 스크롤 + 하단 네비) ───
 export function AppShell({ active, children }: { active: ServiceKey; children: ReactNode }) {
   const enter = useSharedValue(0);
   useEffect(() => {
@@ -321,6 +346,7 @@ export function AppShell({ active, children }: { active: ServiceKey; children: R
   return (
     <SafeAreaView style={styles.stage} edges={["top", "bottom"]}>
       <Animated.View style={[styles.frame, aStyle]}>
+        <ShellTopBar />
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           {children}
         </ScrollView>
@@ -340,6 +366,17 @@ const styles = StyleSheet.create({
     backgroundColor: C.paper,
   },
   content: { paddingHorizontal: 23, paddingTop: 14, paddingBottom: 24 },
+
+  topBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 23,
+    paddingTop: 10,
+    gap: 12,
+  },
+  topBarWho: { flex: 1, fontSize: 13, fontWeight: "600", color: "#8a8880" },
+  topBarAction: { fontSize: 13, fontWeight: "700", color: "#4f875f" },
 
   branchRow: { flexDirection: "row", minHeight: 46, alignItems: "center", justifyContent: "space-between", gap: 12 },
   branchSelect: {

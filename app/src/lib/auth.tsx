@@ -43,8 +43,8 @@ function useProtectedRoute(user: User | null, loading: boolean) {
   const segments = useSegments();
   const router = useRouter();
 
-  // 데모 우회 플래그. EXPO_PUBLIC_DEMO_BYPASS=1 이면 미로그인도 /farm 미리보기 허용
-  // (진입은 모니터링으로). 프로덕션에선 이 값을 비워 원래 /login 가드로 동작한다.
+  // 데모 우회 플래그. EXPO_PUBLIC_DEMO_BYPASS=1 이면 미로그인이어도 /farm/* 에
+  // 직접 URL로 들어온 경우는 통과시킨다. 프로덕션에선 이 값을 비운다.
   const demoBypass = process.env.EXPO_PUBLIC_DEMO_BYPASS === "1";
 
   useEffect(() => {
@@ -52,9 +52,10 @@ function useProtectedRoute(user: User | null, loading: boolean) {
     if (demoBypass && segments[0] === "farm") return;
     const inAuthScreen = segments[0] === "login";
     if (!user && !inAuthScreen) {
-      router.replace(demoBypass ? "/farm/monitoring" : "/login");
+      router.replace("/login");
     } else if (user && inAuthScreen) {
-      router.replace("/");
+      // 홈은 통과 지점이므로 운영 화면 첫 탭으로 바로 보낸다.
+      router.replace("/farm/store");
     }
   }, [user, loading, segments, router, demoBypass]);
 }
