@@ -9,7 +9,7 @@
 
 *제7회 PNU 창의융합AI해커톤 · 팀 B301*
 
-**🔗 라이브 데모 — 웹 [farmfi-web.vercel.app](https://farmfi-web.vercel.app) · 앱 [GitHub Pages](https://pnu-2026-ai-hackathon.github.io/pnuai-b-01-b301/)**
+**🔗 라이브 데모 — 웹 [farmfi.co.kr](https://farmfi.co.kr) · 앱 [GitHub Pages](https://pnu-2026-ai-hackathon.github.io/pnuai-b-01-b301/)**
 
 </div>
 
