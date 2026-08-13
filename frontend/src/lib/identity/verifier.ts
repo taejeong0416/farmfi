@@ -122,7 +122,6 @@ export class StubVerifier implements IdentityVerifier {
 // 받아온다. 검증 완료(verified)는 사용자 지갑이 request-verify→confirm-verify를
 // 제출할 때 일어나며, 폴링 전용 엔드포인트가 없어 로컬 IdentityVerification 행을
 // 상태 소스로 쓴다(confirm-verify 콜백이 붙기 전까지 pending 유지).
-// 연동 배경·엔드포인트: docs/opendid-verifier-연동.md
 // ─────────────────────────────────────────────────────────────
 // confirm-verify 응답 형태 (오라클 Verifier 소스 계약).
 interface ConfirmVerifyClaim {

@@ -246,7 +246,7 @@ OmniOne CX 표준인증창 호출 (QR/딥링크)
 
 #### 3.3. 기능명세서
 
-주요 API 엔드포인트 (상세는 [docs/api-spec.md](docs/api-spec.md)):
+주요 API 엔드포인트 (기능 정의는 [docs/feature-spec.md](docs/feature-spec.md)):
 
 | API | 메서드 | 설명 |
 |:---|:---|:---|
@@ -365,7 +365,7 @@ $ cd contracts && git submodule update --init && forge test
 
 시드 로그인 계정: `operator@farmfi.test` / `admin@farmfi.test` (비밀번호 `farmfi123`)
 
-**신규 합류자는** [docs/onboarding.md](docs/onboarding.md)를 먼저 읽으면 구조와 설계 근거를 파악할 수 있다.
+**신규 합류자는** [docs/feature-spec.md](docs/feature-spec.md)와 [docs/user-flow.md](docs/user-flow.md)를 먼저 읽으면 기능 범위와 화면 흐름을 파악할 수 있다.
 
 <br/>
 

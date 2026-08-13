@@ -8,7 +8,7 @@ FarmFi — 토큰증권(STO) 활용 미니팜 자금집행 웹플랫폼 (PNU 창
 - `frontend/` — Next.js 14 (App Router) + Prisma + API Routes (웹 + 백엔드)
 - `app/` — Expo React Native 운영자 앱
 - `contracts/` — Foundry (Escrow · FarmToken · Dividend · RoundGate)
-- `docs/` — 공유 문서 (onboarding / service-plan / sto-plan / api-spec / dev-log)
+- `docs/` — 공유 문서 (feature-spec / user-flow / dev-log)
 
 ## 명령어 (frontend/)
 - 개발: `npm run dev`

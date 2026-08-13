@@ -1,6 +1,6 @@
 # Contributing
 
-FarmFi 개발 가이드. 구조와 설계 근거는 [docs/onboarding.md](docs/onboarding.md)를 먼저 읽으면 빠르다.
+FarmFi 개발 가이드. 기능 범위와 화면 흐름은 [docs/feature-spec.md](docs/feature-spec.md)·[docs/user-flow.md](docs/user-flow.md)를 먼저 읽으면 빠르다.
 
 ## 기술 스택
 - **웹/백엔드**: Next.js 14 (App Router + API Routes), TypeScript
@@ -58,10 +58,6 @@ FarmFi 개발 가이드. 구조와 설계 근거는 [docs/onboarding.md](docs/on
 ## 문서
 | 파일 | 내용 |
 |---|---|
-| [docs/onboarding.md](docs/onboarding.md) | 신규 합류자용 — 구조와 설계 근거 |
-| [docs/service-plan.md](docs/service-plan.md) | 전체 서비스 기획안 |
-| [docs/sto-plan.md](docs/sto-plan.md) | STO 자금집행 구조 기획안 |
-| [docs/api-spec.md](docs/api-spec.md) | API 명세 |
-| [docs/verification-spec.md](docs/verification-spec.md) | 마일스톤 검증 레이어 명세 |
-| [docs/opendid-verifier-연동.md](docs/opendid-verifier-연동.md) | OpenDID 신원인증 연동 가이드 |
+| [docs/feature-spec.md](docs/feature-spec.md) | 기능명세서 |
+| [docs/user-flow.md](docs/user-flow.md) | 유저플로우 |
 | [docs/dev-log.md](docs/dev-log.md) | 진행상황·결정 기록 |

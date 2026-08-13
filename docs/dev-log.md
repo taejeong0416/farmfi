@@ -5,6 +5,21 @@
 
 ---
 
+## 2026-08-14 — 박태정
+
+### 문서 정리 — 확정 명세만 남긴다
+`docs/`가 11개까지 늘면서 무엇이 현재 기준인지 흐려져 있었다. 확정된 기능명세서·유저플로우를 `feature-spec.md`·`user-flow.md`로 들이고, 나머지를 정리해 3개로 줄였다.
+
+기준은 **개발할 때 무엇을 만들지 보는 문서인가**다. 남긴 둘은 만들 대상을 정의하고, 뺀 것들은 이미 만든 것을 서술한다. 후자는 코드가 앞서가면 그 순간 틀린 문서가 되고, 실제로 `api-spec.md`는 07-21 기준에 멈춰 그 뒤 추가된 라우트가 빠져 있었다. 구현의 현재 상태는 코드가 답한다.
+
+- **제거(기획 단계)**: `onboarding.md`(설계 근거 서술), `service-plan.md`·`sto-plan.md`(사업 기획안), `fusion-plan.md`(STO 재융합 실행계획, Phase 1~4 `main` 병합 완료), `dev-assessment.md`(08-03 기준 제출 보고서 스냅샷).
+- **제거(구현 서술)**: `api-spec.md`, `verification-spec.md`, `optimization-roadmap.md`, `opendid-verifier-연동.md`. 내용은 git history에 있다.
+- **참조 정리**: `README`·`CONTRIBUTING`·`CLAUDE.md`·`docs/README`의 진입 문서를 명세서·유저플로우로 교체. `identity/verifier.ts`의 연동 가이드 포인터도 제거(파일 상단 주석에 연동 방식이 이미 적혀 있다).
+
+남은 `docs/`는 확정 명세 2종과 기록 `dev-log` 하나.
+
+---
+
 ## 2026-08-03 — 박태정
 
 ### 생육 모니터링 — 광량을 일적산으로, 생장을 환경의 함수로

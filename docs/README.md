@@ -4,7 +4,7 @@
 
 ## 규칙
 
-- 파일명은 영문 kebab-case (`api-spec.md`).
+- 파일명은 영문 kebab-case (`feature-spec.md`).
 - 문서를 수정하면 개발 단위로 커밋한다.
 - 문서는 두 종류로 나눠 다룬다.
   - **레퍼런스** (현재 상태만): 제자리에서 수정하고 낡은 내용은 지운다. 날짜별 사본을 만들지 않는다 (이력은 git history).
@@ -15,13 +15,6 @@
 
 | 파일 | 내용 | 종류 |
 |---|---|---|
-| `onboarding.md` | 신규 합류자용 — 구조와 설계 근거 | 레퍼런스 |
-| `service-plan.md` | 전체 서비스 기획안 (유일 정답 문서) | 레퍼런스 |
-| `sto-plan.md` | STO 자금집행 구조 기획안 (투자 조건·마일스톤·법규) | 레퍼런스 |
-| `fusion-plan.md` | 융합 실행계획 (STO + 운영 인프라, Expo RN 앱) | 레퍼런스 |
-| `api-spec.md` | API 요청/응답 명세 | 레퍼런스 |
-| `verification-spec.md` | 마일스톤 검증 레이어 명세 | 레퍼런스 |
-| `optimization-roadmap.md` | 운영 최적화 스택 구성과 다음 단계 | 레퍼런스 |
-| `opendid-verifier-연동.md` | OpenDID 신원인증 연동 가이드 (서버·정책·삽질 로그) | 레퍼런스 |
+| `feature-spec.md` | 기능명세서 — 기능 목록·수용 기준·개발 준비 슬롯 (유일 정답 문서) | 레퍼런스 |
+| `user-flow.md` | 유저플로우 — 역할별 화면 이동 경로 | 레퍼런스 |
 | `dev-log.md` | 진행상황·결정 기록 | 기록 |
-| `dev-assessment.md` | 개발 자기평가 보고서 | 기록 |
