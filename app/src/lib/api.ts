@@ -1,16 +1,34 @@
+import { Platform } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { API_BASE_URL } from "./config";
 
 const TOKEN_KEY = "farmfi.token";
 
-// ─── 토큰 저장소 (SecureStore = 안드 Keystore 기반 보안 저장) ───
+// ─── 토큰 저장소 ───
+// 네이티브: SecureStore (안드 Keystore / iOS Keychain 기반 보안 저장).
+// 웹: expo-secure-store 에 웹 구현이 없어 호출 즉시 throw 한다. GitHub Pages 웹
+// 빌드에서 AuthProvider 가 앱 시작 시 getToken() 을 부르기 때문에, 폴백이 없으면
+// 모든 화면이 "getValueWithKeyAsync is not a function" 으로 깨진다.
+// ⚠️ localStorage 는 XSS 에 노출된다. 웹 빌드는 시연·미리보기 용도이며,
+// 웹을 정식 배포 대상으로 삼으려면 httpOnly 쿠키 세션으로 바꿔야 한다.
+const isWeb = Platform.OS === "web";
+
 export async function getToken(): Promise<string | null> {
+  if (isWeb) return globalThis.localStorage?.getItem(TOKEN_KEY) ?? null;
   return SecureStore.getItemAsync(TOKEN_KEY);
 }
 export async function setToken(token: string): Promise<void> {
+  if (isWeb) {
+    globalThis.localStorage?.setItem(TOKEN_KEY, token);
+    return;
+  }
   await SecureStore.setItemAsync(TOKEN_KEY, token);
 }
 export async function clearToken(): Promise<void> {
+  if (isWeb) {
+    globalThis.localStorage?.removeItem(TOKEN_KEY);
+    return;
+  }
   await SecureStore.deleteItemAsync(TOKEN_KEY);
 }
 
