@@ -5,7 +5,7 @@ import Svg, { Circle, Line as SvgLine, Path, Rect } from "react-native-svg";
 import { apiFetch, describeApiError } from "@/lib/api";
 import { C, FRAME_MAX_WIDTH } from "../theme";
 import { PixelGlyph } from "../icons";
-import { AppShell, SectionTitle, StateNotice } from "../components";
+import { AppShell, DataAsOf, SectionTitle, StateNotice } from "../components";
 import { useFarmProjects } from "../branch";
 
 // ── 데이터 계약 (백엔드 /api/monitoring/[id] · lib/growth-monitoring.ts와 정합) ──
@@ -35,6 +35,9 @@ type Summary = {
 type MonitoringResponse = {
   project: { id: string; name: string };
   days: number;
+  // 조회 창의 끝점 = 센서 최신 시각. stale이면 화면이 기준일을 밝힌다.
+  dataAsOf: string | null;
+  stale: boolean;
   points: Point[];
   healthyRanges: Record<SensorKey, [number, number]>;
   summary: Summary;
@@ -218,6 +221,7 @@ export default function MonitoringScreen() {
             <SummaryTile label="드리프트" value={`${data.summary.driftSensors.length}종`} />
             <SummaryTile label="현재 상태" value={data.summary.latestHealthy ? "정상" : "주의"} warn={!data.summary.latestHealthy} />
           </View>
+          <DataAsOf dataAsOf={data.dataAsOf} stale={data.stale} />
 
           {/* 센서별 차트 */}
           <View style={s.sensors}>
