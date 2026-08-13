@@ -1,6 +1,7 @@
 // 백엔드(frontend/src/app/api/**) 응답 계약과 픽셀아트 UI 사이의 변환 계층.
 // 화면은 이 파일의 타입만 알면 되고, 목데이터는 어디에도 남기지 않는다.
 import type { CropKind, RackId } from "./data";
+import type { PixelIconName } from "./assets";
 
 // ─── GET /api/inventory ───
 export type InventoryItem = {
@@ -96,6 +97,64 @@ export type MonitoringSummaryResponse = {
     latestHealthy: boolean;
   };
 };
+
+// ─── GET /api/monitoring/[projectId] (센서 상세 화면용 전체 타입) ───
+// 위 부분 타입과 같은 엔드포인트다. 베드 상세·센서 이력은 판독 5종과 서버가 준
+// 정상범위(healthyRanges)까지 써야 하므로 계약 전체를 선언한다.
+// 임계값을 앱에 하드코딩하면 서버 기준이 바뀔 때 화면만 거짓을 말하게 된다.
+export const SENSOR_KEYS = ["temperature", "humidity", "co2Level", "lightIntensity", "phLevel"] as const;
+export type SensorKey = (typeof SENSOR_KEYS)[number];
+
+export const SENSOR_META: Record<SensorKey, { label: string; unit: string; icon: PixelIconName }> = {
+  temperature: { label: "온도", unit: "℃", icon: "sensor-temp" },
+  humidity: { label: "습도", unit: "%", icon: "sensor-humidity" },
+  co2Level: { label: "CO₂", unit: "ppm", icon: "sensor-co2" },
+  // 광량·양액 pH 전용 픽셀 아이콘이 아직 없어 근사치를 쓴다(생성 요청 대기).
+  lightIntensity: { label: "광량", unit: "lux", icon: "ui-warning" },
+  phLevel: { label: "양액 pH", unit: "pH", icon: "sensor-ec" },
+};
+
+export type MonitoringPoint = {
+  t: string;
+  ts: number;
+  anomalyScore: number;
+  isAnomaly: boolean;
+  affectedSensors: SensorKey[];
+} & Record<SensorKey, number>;
+
+export type MonitoringResponse = {
+  project: { id: string; name: string };
+  days: number;
+  points: MonitoringPoint[];
+  healthyRanges: Record<SensorKey, [number, number]>;
+  drift: { sensor: SensorKey; detected: boolean; detectedAt: string | null; maxStatistic: number }[];
+  summary: {
+    count: number;
+    uptimeRate: number;
+    anomalyCount: number;
+    driftSensors: string[];
+    latestHealthy: boolean;
+    windowStart: string | null;
+    windowEnd: string | null;
+  };
+};
+
+// 임계 밖이면 위험, 경계 10% 안쪽이면 주의. 범위는 서버 값을 그대로 쓴다.
+export type Severity = "critical" | "warning" | "normal";
+
+export function evaluateSensor(value: number, range: [number, number]): Severity {
+  const [min, max] = range;
+  if (value < min || value > max) return "critical";
+  const margin = (max - min) * 0.1;
+  if (value < min + margin || value > max - margin) return "warning";
+  return "normal";
+}
+
+export function worstOf(list: Severity[]): Severity {
+  if (list.includes("critical")) return "critical";
+  if (list.includes("warning")) return "warning";
+  return "normal";
+}
 
 // ─── 성숙도 → 생육 단계 문구 ───
 export function stageLabel(maturityPercent: number): string {

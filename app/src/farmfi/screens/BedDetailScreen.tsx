@@ -1,173 +1,155 @@
-// 명세 4.1 베드 환경 모니터링 + 4.2 설비 제어.
-// 제어는 낙관적으로 켜지 않고, 결과가 온 뒤 실제 상태를 반영한다(명세 예외: 응답 없으면 실패 후 재조회).
-import { useRef, useState } from "react";
+// 명세 4.1 베드 환경 모니터링 — GET /api/monitoring/[projectId] 실연동.
+//
+// 임계값은 서버가 주는 healthyRanges 를 그대로 쓴다. 앱에 하드코딩하면 서버 기준이
+// 바뀔 때 화면만 조용히 거짓을 말하게 된다.
+//
+// 명세 4.2 설비 제어는 백엔드 엔드포인트가 아직 없다. 가짜 토글을 두면 운영자가
+// 실제로 제어된 줄 알게 되므로, 상태 표시 없이 "미연동" 안내만 둔다.
 import { StyleSheet, Text, View } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 
-import { C, type Severity } from "../theme";
-import { type RackId } from "../data";
-import { BED_SENSORS, DEFAULT_THRESHOLDS, RACK_DATA, SENSOR_META, type Device, type SensorKey } from "../demoData";
-import { GrowthRackScene } from "../components";
-import { Badge, Card, CardTitle, DetailShell, GhostButton, PixelIcon, Popup, SensorTile, Toggle , DemoBadge } from "../ui";
+import { C } from "../theme";
+import { useFarmProjects } from "../branch";
+import { useApiResource } from "../useApiResource";
+import {
+  SENSOR_KEYS,
+  SENSOR_META,
+  evaluateSensor,
+  formatMonthDay,
+  worstOf,
+  type MonitoringResponse,
+  type Severity,
+} from "../api";
+import { Badge, Card, CardTitle, DetailShell, EmptyState, PixelIcon, SensorTile } from "../ui";
 
-
-const SENSOR_ORDER: SensorKey[] = ["temp", "humidity", "co2", "ec"];
-
-// 임계 밖이면 위험, 임계 경계 10% 안쪽이면 주의.
-// (클론B의 MonitoringScreen 은 API 연동본이라 이 판정을 갖고 있지 않아 여기서 정의한다)
-function evaluate(key: SensorKey, value: number): Severity {
-  const { min, max } = DEFAULT_THRESHOLDS[key];
-  if (value < min || value > max) return "critical";
-  const margin = (max - min) * 0.1;
-  if (value < min + margin || value > max - margin) return "warning";
-  return "normal";
-}
-
-
-type ControlResult = { ok: boolean; device: string; nextOn: boolean } | null;
+const MONITOR_DAYS = 1;
 
 export default function BedDetailScreen() {
-  const router = useRouter();
   const { rack } = useLocalSearchParams<{ rack?: string }>();
-  const rackId = (rack && ["A", "B", "C", "D"].includes(rack) ? rack : "A") as RackId;
-  const bed = BED_SENSORS[rackId];
-  const info = RACK_DATA[rackId];
+  const { project, projectId } = useFarmProjects();
 
-  const [devices, setDevices] = useState<Device[]>(() => bed.devices.map((d) => ({ ...d })));
-  const [pending, setPending] = useState<string | null>(null);
-  const [result, setResult] = useState<ControlResult>(null);
-  // 같은 명령이 연속으로 나가지 않도록 잠근다(명세: 중복 전송 방지).
-  const inFlight = useRef<Set<string>>(new Set());
+  const res = useApiResource<MonitoringResponse>(
+    projectId ? `/api/monitoring/${projectId}?days=${MONITOR_DAYS}` : null,
+    "센서 데이터를 불러오지 못했습니다."
+  );
 
-  const control = (device: Device) => {
-    if (!device.controllable || inFlight.current.has(device.key)) return;
-    inFlight.current.add(device.key);
-    setPending(device.key);
+  const latest = res.data?.points?.length ? res.data.points[res.data.points.length - 1] : null;
+  const ranges = res.data?.healthyRanges;
 
-    // 데모: 환기팬만 응답 실패로 흘려 실패 경로를 보여준다.
-    const willFail = device.key === "fan" && rackId === "D";
-    setTimeout(() => {
-      inFlight.current.delete(device.key);
-      setPending(null);
-      if (willFail) {
-        setResult({ ok: false, device: device.name, nextOn: device.on });
-        return;
-      }
-      const nextOn = !device.on;
-      setDevices((prev) => prev.map((d) => (d.key === device.key ? { ...d, on: nextOn } : d)));
-      setResult({ ok: true, device: device.name, nextOn });
-    }, 650);
-  };
-
-  const states = SENSOR_ORDER.map((k) => evaluate(k, bed.readings[k]));
-  const worst: Severity = states.includes("critical") ? "critical" : states.includes("warning") ? "warning" : "normal";
+  const states: Severity[] =
+    latest && ranges ? SENSOR_KEYS.map((k) => evaluateSensor(latest[k], ranges[k])) : [];
+  const worst = states.length ? worstOf(states) : "normal";
 
   return (
     <DetailShell
-      title={`베드 ${rackId}`}
-      subtitle={`${info.crop} · 최근 수신 ${bed.updatedAt}`}
-      action={<Badge severity={worst} />}
+      title={rack ? `베드 ${rack}` : "베드 상세"}
+      subtitle={
+        latest
+          ? `${project?.name ?? ""} · 최근 수신 ${formatMonthDay(latest.t)} ${new Date(latest.ts).toTimeString().slice(0, 5)}`
+          : project?.name ?? ""
+      }
+      action={latest ? <Badge severity={worst} /> : undefined}
     >
-      <Card padded={false} style={s.sceneCard}>
-        <View style={s.scene}>
-          <GrowthRackScene kind={info.kind} maturity={info.maturity} />
-        </View>
-      </Card>
-
       <Card>
         <CardTitle icon="monitor">환경 센서</CardTitle>
-        <View style={s.sensorGrid}>
-          {SENSOR_ORDER.slice(0, 2).map((key) => (
-            <SensorTile
-              key={key}
-              label={SENSOR_META[key].label}
-              value={String(bed.readings[key])}
-              unit={SENSOR_META[key].unit}
-              state={evaluate(key, bed.readings[key])}
-              icon={SENSOR_META[key].icon}
-            />
-          ))}
-        </View>
-        <View style={[s.sensorGrid, s.sensorGridSecond]}>
-          {SENSOR_ORDER.slice(2).map((key) => (
-            <SensorTile
-              key={key}
-              label={SENSOR_META[key].label}
-              value={String(bed.readings[key])}
-              unit={SENSOR_META[key].unit}
-              state={evaluate(key, bed.readings[key])}
-              icon={SENSOR_META[key].icon}
-            />
-          ))}
-        </View>
-        <Text style={s.thresholdHint}>
-          기준 온도 {DEFAULT_THRESHOLDS.temp.min}~{DEFAULT_THRESHOLDS.temp.max}℃ · CO₂ {DEFAULT_THRESHOLDS.co2.min}~
-          {DEFAULT_THRESHOLDS.co2.max}ppm
-        </Text>
+        {res.loading ? (
+          <EmptyState icon="sensor-temp" title="센서 값을 불러오는 중…" />
+        ) : res.error ? (
+          <EmptyState icon="ui-warning" title="센서 데이터를 불러오지 못했어요" caption={res.error} />
+        ) : !latest || !ranges ? (
+          <EmptyState icon="ui-warning" title="수신된 판독이 없어요" caption="이 기간에 센서 데이터가 없습니다." />
+        ) : (
+          <>
+            {[SENSOR_KEYS.slice(0, 2), SENSOR_KEYS.slice(2, 4), SENSOR_KEYS.slice(4)].map((row, i) => (
+              <View style={s.sensorRow} key={i}>
+                {row.map((key) => {
+                  const meta = SENSOR_META[key];
+                  const value = latest[key];
+                  return (
+                    <SensorTile
+                      key={key}
+                      label={meta.label}
+                      value={value >= 1000 ? value.toLocaleString("ko-KR") : String(Math.round(value * 10) / 10)}
+                      unit={meta.unit}
+                      state={evaluateSensor(value, ranges[key])}
+                      icon={meta.icon}
+                    />
+                  );
+                })}
+                {/* 5종은 홀수라 마지막 줄에 빈 칸을 채워 폭을 맞춘다 */}
+                {row.length === 1 ? <View style={s.spacer} /> : null}
+              </View>
+            ))}
+            <Text style={s.ranges}>
+              {SENSOR_KEYS.map((k) => `${SENSOR_META[k].label} ${ranges[k][0]}~${ranges[k][1]}${SENSOR_META[k].unit}`).join(" · ")}
+            </Text>
+          </>
+        )}
       </Card>
+
+      {res.data?.summary ? (
+        <Card>
+          <CardTitle icon="check">가동 요약</CardTitle>
+          <View style={s.kpis}>
+            {[
+              ["가동률", `${Math.round(res.data.summary.uptimeRate)}%`, C.green],
+              ["이상 신호", `${res.data.summary.anomalyCount}건`, res.data.summary.anomalyCount > 0 ? C.warn : C.green],
+              ["드리프트", `${res.data.summary.driftSensors.length}종`, res.data.summary.driftSensors.length > 0 ? C.warn : C.green],
+              ["현재 상태", res.data.summary.latestHealthy ? "정상" : "점검", res.data.summary.latestHealthy ? C.green : C.danger],
+            ].map(([k, v, tone]) => (
+              <View style={s.kpi} key={k}>
+                <Text style={s.kpiLabel}>{k}</Text>
+                <Text style={[s.kpiValue, { color: tone }]}>{v}</Text>
+              </View>
+            ))}
+          </View>
+        </Card>
+      ) : null}
 
       <Card>
         <CardTitle icon="link">설비 제어</CardTitle>
-        <View style={s.devices}>
-          {devices.map((d) => (
-            <View style={s.deviceRow} key={d.key}>
-              <PixelIcon name={d.icon} size={30} />
-              <View style={s.deviceCopy}>
-                <Text style={s.deviceName}>{d.name}</Text>
-                <Text style={s.deviceState}>
-                  {pending === d.key ? "명령 전송 중…" : d.controllable ? (d.on ? "가동 중" : "정지") : "자동 제어 (수동 불가)"}
-                </Text>
-              </View>
-              {d.controllable ? (
-                <Toggle on={d.on} onChange={() => control(d)} />
-              ) : (
-                <Badge tone={{ fg: C.muted, bg: "#f1efeb" }} label="자동" />
-              )}
-            </View>
-          ))}
+        <View style={s.notWired}>
+          <PixelIcon name="ui-warning" size={26} />
+          <Text style={s.notWiredText}>
+            설비 제어 API가 아직 없습니다. 조작 결과를 보장할 수 없어 토글을 노출하지 않습니다.
+          </Text>
         </View>
       </Card>
-
-      <View style={s.actions}>
-        <GhostButton label="센서 이력 그래프" icon="bars" onPress={() => router.push(`/farm/sensor-history?rack=${rackId}`)} />
-        <GhostButton label="임계값 설정" icon="check" onPress={() => router.push(`/farm/threshold?rack=${rackId}`)} />
-      </View>
-
-      <Popup
-        visible={!!result}
-        severity={result?.ok ? "normal" : "critical"}
-        title={result?.ok ? "제어 명령이 처리됐어요" : "제어에 실패했어요"}
-        message={
-          result?.ok
-            ? `${result.device} — ${result.nextOn ? "가동" : "정지"} 상태로 변경됐습니다.`
-            : `${result?.device} 응답이 없어 명령이 취소됐습니다. 설비 상태를 다시 조회했습니다.`
-        }
-        onConfirm={() => setResult(null)}
-      />
     </DetailShell>
   );
 }
 
 const s = StyleSheet.create({
-  sceneCard: { overflow: "hidden" },
-  scene: { aspectRatio: 1.35, backgroundColor: "#f4f3ef" },
+  sensorRow: { flexDirection: "row", gap: 7, marginTop: 12 },
+  spacer: { flex: 1 },
+  ranges: { marginTop: 10, fontSize: 10, lineHeight: 15, color: C.muted },
 
-  sensorGrid: { flexDirection: "row", gap: 7, marginTop: 12 },
-  sensorGridSecond: { marginTop: 7 },
-  thresholdHint: { marginTop: 10, fontSize: 10, color: C.muted },
+  kpis: { flexDirection: "row", gap: 7, marginTop: 12 },
+  kpi: {
+    flex: 1,
+    alignItems: "center",
+    gap: 6,
+    minHeight: 66,
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: C.cardLine,
+    borderRadius: 9,
+    backgroundColor: "#fff",
+  },
+  kpiLabel: { fontSize: 10, color: C.muted },
+  kpiValue: { fontSize: 17, fontWeight: "700" },
 
-  devices: { marginTop: 8 },
-  deviceRow: {
+  notWired: {
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
-    minHeight: 54,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0ebe3",
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: "#e2cfa8",
+    borderRadius: 8,
+    backgroundColor: C.warnSoft,
+    paddingHorizontal: 11,
+    paddingVertical: 10,
   },
-  deviceCopy: { flex: 1, gap: 3 },
-  deviceName: { fontSize: 13, color: C.ink, fontWeight: "600" },
-  deviceState: { fontSize: 11, color: C.muted },
-
-  actions: { gap: 8 },
+  notWiredText: { flex: 1, fontSize: 11, lineHeight: 16, color: "#7a5a1e", fontWeight: "600" },
 });
