@@ -31,6 +31,7 @@ model User {
   spaces                Space[]
   operatorApplications  OperatorApplication[]
   identityVerifications IdentityVerification[]
+  operatedProjects      Project[]              @relation("ProjectOperator")
 }
 
 // ─── 운영자 지원 신청 ───
@@ -99,6 +100,8 @@ model Project {
   imageUrl      String?
   institutionId String?      // 도입 기관 (성과 리포트 집계 단위)
   institution   Institution? @relation(fields: [institutionId], references: [id])
+  operatorId    String?      // 이 지점을 운영하는 운영자 (운영자 몫 지급 대상)
+  operator      User?        @relation("ProjectOperator", fields: [operatorId], references: [id])
   createdAt     DateTime     @default(now())
   escrow         Escrow?
   milestones     Milestone[]
@@ -111,6 +114,8 @@ model Project {
   inventories    Inventory[]
   harvestRecords HarvestRecord[]
   salesRecords   SalesRecord[]
+  settlementRule SettlementRule?
+  payouts        Payout[]
 }
 
 // ─── 에스크로 ───
@@ -151,6 +156,7 @@ model Milestone {
   // 단계는 null.
   deadlineAt           DateTime?
   notifications        Notification[]
+  appeals              Appeal[]
 
   @@unique([projectId, seq])
 }
@@ -297,6 +303,105 @@ model Institution {
   contactEmail String?
   createdAt    DateTime  @default(now())
   projects     Project[]
+}
+
+// ─── 감사 로그 (청약·검증·집행·정산·권한변경 추적) ───
+// 다른 모델과 FK로 묶지 않는다. 감사 기록은 대상 행이 삭제·변경돼도 그 자체로 남아야
+// 하므로 actorId·entityId·projectId를 값으로만 들고 있는다.
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?  // null = 시스템 이벤트 (스케줄러·자동 집행)
+  actorRole  String?  // investor, operator, landlord, admin, system
+  action     String   // subscription.created, milestone.verified, payout.processed 등
+  entityType String   // project, milestone, dividend, payout, appeal, settlement_rule, user
+  entityId   String?
+  projectId  String?  // 프로젝트 단위 필터용 (entityType이 project가 아닐 때도 채움)
+  summary    String   // 화면에 그대로 뿌리는 한 줄 요약
+  detail     Json?    // 변경 전/후 값 등 부가 정보
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([projectId, createdAt])
+  @@index([action, createdAt])
+  @@index([actorId, createdAt])
+}
+
+// ─── 정산 규칙 (프로젝트별 — 행이 없으면 lib/waterfall.ts 기본값) ───
+// 임대료는 여기 두지 않는다. ProjectPartner(role="landlord").monthlyRecoveryAmount가
+// 이미 프로젝트별 월 고정 임대료를 들고 있어 단일 출처로 유지한다.
+model SettlementRule {
+  id                 String  @id @default(cuid())
+  projectId          String  @unique
+  project            Project @relation(fields: [projectId], references: [id])
+  monthlyPlatformFee BigInt  @default(200000) // 플랫폼 이용료 월 정액
+  experienceFeeRate  Float   @default(0.3)    // 체험 중개 수수료율
+  b2bFeeRate         Float   @default(0.08)   // B2B 신규계약 성사 수수료율
+  // 우선배분/전환 — 흑자 전환 전에는 투자자 배분을 높게 두고(우선배분),
+  // 기간 매출이 breakEvenRevenue 이상이면 흑자 구간 비율로 전환한다.
+  deficitInvestorShare Float  @default(0.6)
+  surplusInvestorShare Float  @default(0.6)
+  breakEvenRevenue     BigInt @default(0) // 0 = 전환 없음 (항상 흑자 구간 비율)
+  updatedById        String?
+  updatedAt          DateTime @updatedAt
+}
+
+// ─── 이의제기 (반려·보류 마일스톤에 대한 단계적 재검증) ───
+model Appeal {
+  id            String    @id @default(cuid())
+  milestoneId   String
+  milestone     Milestone @relation(fields: [milestoneId], references: [id])
+  projectId     String    // 프로젝트 단위 조회용 비정규화 (milestone 조인 회피)
+  submittedById String    // 이의제기한 운영자
+  reason        String
+  // open(접수) → under_review(운영팀 검토) → escalated(외부 전문가) → approved/rejected(최종)
+  status        String    @default("open")
+  decision      String?   // 최종 판정 사유
+  decidedById   String?
+  decidedAt     DateTime?
+  createdAt     DateTime  @default(now())
+  comments      AppealComment[]
+
+  @@index([projectId, createdAt])
+  @@index([status, createdAt])
+}
+
+// ─── 이의제기 코멘트 스레드 ───
+model AppealComment {
+  id            String   @id @default(cuid())
+  appealId      String
+  appeal        Appeal   @relation(fields: [appealId], references: [id])
+  authorId      String
+  authorRole    String   // operator, admin (운영팀), auditor (외부 전문가)
+  body          String
+  attachmentUrl String?  // 보완 자료
+  createdAt     DateTime @default(now())
+
+  @@index([appealId, createdAt])
+}
+
+// ─── 지급 원장 (배당·임대료·운영자 정산) ───
+// MVP 범위: 실제 계좌이체·온체인 전송은 하지 않는다. 지급 예정 건을 등록하고
+// 상태(예정/완료/실패)와 증빙만 관리한다 (명세 2.2.1).
+model Payout {
+  id            String    @id @default(cuid())
+  projectId     String
+  project       Project   @relation(fields: [projectId], references: [id])
+  category      String    // dividend, landlord_rent, operator_settlement
+  payeeUserId   String?   // 계정이 없는 수취인(건물주 파트너 등)은 null
+  payeeName     String
+  amount        BigInt
+  period        String    // YYYY-MM
+  status        String    @default("scheduled") // scheduled → paid / failed
+  paidAt        DateTime?
+  failureReason String?
+  evidenceUrl   String?   // 세금계산서 등 지급 증빙
+  memo          String?
+  createdAt     DateTime  @default(now())
+
+  // 같은 기간·같은 수취인에게 같은 항목이 두 번 등록되는 것을 막는다.
+  @@unique([projectId, period, category, payeeName])
+  @@index([payeeUserId, period])
+  @@index([status, period])
 }
 
 // ─── 품목 마스터 (재배·판매 대상 작물) ───

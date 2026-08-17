@@ -35,7 +35,12 @@ export async function seedScenario(prisma: PrismaClient) {
   await prisma.tokenHolding.deleteMany();
   await prisma.transaction.deleteMany();
   await prisma.notification.deleteMany();
+  await prisma.appealComment.deleteMany();
+  await prisma.appeal.deleteMany();
   await prisma.milestone.deleteMany();
+  await prisma.payout.deleteMany();
+  await prisma.settlementRule.deleteMany();
+  await prisma.auditLog.deleteMany();
   await prisma.navSnapshot.deleteMany();
   await prisma.projectPartner.deleteMany();
   await prisma.escrow.deleteMany();
@@ -113,7 +118,7 @@ export async function seedScenario(prisma: PrismaClient) {
   const p1 = await prisma.project.create({
     data: {
       name: "온천장 스마트팜 1호점", location: "부산 동래구", buildingType: "vacant_store", areaSqm: 83,
-      status: "funded", institutionId: institution.id,
+      status: "funded", institutionId: institution.id, operatorId: operator.id,
       // STO 라운드 완료 — 기획 v16 §3: 사이트당 4,400만(설비 4,000만 + 온보딩피 400만),
       // 1구좌 1만원 → 4,400구좌. contracts/script/Deploy.s.sol의 FarmToken 총발행 4400과 동일.
       tokenSymbol: "MF01", tokenPrice: BigInt(10_000), totalTokens: 4400, soldTokens: 4400,
@@ -123,7 +128,7 @@ export async function seedScenario(prisma: PrismaClient) {
     },
   });
   const p2 = await prisma.project.create({
-    data: { name: "장전동 스마트팜 2호점", location: "부산 금정구", buildingType: "vacant_store", areaSqm: 66, status: "operating", institutionId: institution.id },
+    data: { name: "장전동 스마트팜 2호점", location: "부산 금정구", buildingType: "vacant_store", areaSqm: 66, status: "operating", institutionId: institution.id, operatorId: operator.id },
   });
   const projects = [p1, p2];
 
@@ -206,7 +211,7 @@ export async function seedScenario(prisma: PrismaClient) {
       name: "명륜동 스마트팜 3호점",
       description: "부산 동래구 명륜동 공실 상가 전환 라운드 (모집 중).",
       location: "부산 동래구 명륜동", buildingType: "vacant_store", areaSqm: 76,
-      status: "funding", institutionId: institution.id,
+      status: "funding", institutionId: institution.id, operatorId: operator.id,
       // 1호점과 같은 표준 유닛 — 4,400구좌/4,400만. 모집 진행률 79%(3,480구좌 = 3,480만).
       // 잔여 920구좌 = 데모 스텝 1~3(300+200+420)이 채우는 양 → 스텝 3에서 정확히 완납(funded)되고
       // escrow가 4,400만이 되어 트랜치 4개(1,540+1,320+880+660만 = 4,400만)를 전부 집행할 수 있다.
