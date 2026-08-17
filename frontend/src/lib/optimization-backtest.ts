@@ -12,7 +12,11 @@
 //
 // 이 둘이 갖춰져야 절감액의 신뢰도(projected → measured)를 올릴 수 있다.
 
-import { resolveLighting, TARIFF_TOU_GENERAL } from "./optimization";
+import {
+  resolveLighting,
+  TARIFF_TOU_GENERAL,
+  ledThermalCostPerHour,
+} from "./optimization";
 import { getCrop } from "./crop-profiles";
 import { PARAMS } from "./optimization-params";
 
@@ -111,14 +115,17 @@ export function backtestSchedule(opts: {
       extByHour.reduce<number>((s, v) => s + (v ?? 0), 0) / Math.max(1, samples);
     const extAt = (h: number) => extByHour[h] ?? dayAvg;
 
-    // 시간당 순비용 = 전력요금 + 열(난방 상쇄는 음수, 냉방 부담은 양수)
-    const hourCost = (h: number) => {
-      const ext = extAt(h);
-      let thermal = 0;
-      if (ext < TARGET) thermal = -heatCoef * 0.95;
-      else if (ext > TARGET) thermal = coolCoef * 0.95;
-      return plan.ledPowerKw * (tariff[h] + thermal);
-    };
+    // 시간당 순비용 = 전력요금 + LED 발열의 순 열비용(난방 대체는 음수, 잔여열 제거는 양수).
+    // 열 항은 ledThermalCostPerHour 한 곳에서만 계산한다 — 리포트의 다른 계층과 같은 물리.
+    const hourCost = (h: number) =>
+      plan.ledPowerKw * tariff[h] +
+      ledThermalCostPerHour({
+        ledPowerKw: plan.ledPowerKw,
+        externalTempC: extAt(h),
+        targetTempC: TARGET,
+        heatCreditPerKwh: heatCoef,
+        coolCostPerKwh: coolCoef,
+      });
     const blockCost = (start: number) => {
       let c = 0;
       for (let i = 0; i < plan.hours; i++) c += hourCost((start + i) % 24);

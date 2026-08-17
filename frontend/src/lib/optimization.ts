@@ -161,6 +161,58 @@ export function resolveLighting(opts: {
   };
 }
 
+// ── LED 발열의 시간별 순 열비용 ──────────────────────────────────────────────
+// 밀폐 재배실에서 LED는 소비전력의 대부분을 실내 현열로 남긴다. 그 열이 난방을
+// 대체하면 이득이고, 남으면 제거해야 하므로 비용이다. 두 항의 크기를 정하는 건
+// 외기온도지만, 관계는 선형이 아니다 — 난방 대체는 **그 시간의 난방 수요만큼만**
+// 가능하기 때문에 포화한다.
+//
+//   난방 수요  Q_heat(h) = max(0, UA × (목표실온 − 외기))        [kW]
+//   LED 발열   Q_led     = 소비전력 × 발열비율                    [kW]
+//   대체분     offset    = min(Q_led, Q_heat)                     ← 여기서 포화
+//   잔여열     excess    = Q_led − offset                          ← 반드시 제거
+//   순 열비용  = −offset × 난방단가 + excess × 제거단가
+//
+// 제거단가는 외기가 목표실온보다 낮으면 외기냉방(급배기 팬 전력)이라 싸고, 높으면
+// 압축기 냉방이라 비싸다. 이 구조가 "추운 시간대 점등이 유리한 진짜 이유"다 —
+// 난방 상쇄가 아니라 잔여열을 싸게 버릴 수 있기 때문이다. 우리 규모(LED 4~5kW,
+// UA 0.03kW/K)에서 LED 발열은 난방 수요의 여러 배라, 겨울에도 재배실은 냉방 지배다.
+//
+// 이 함수 하나로 모든 계층(열통합·백테스트·통합최적화)이 같은 물리를 쓴다. 이전에는
+// 계층마다 이진식·선형식이 따로 있어, 겨울에는 열 항이 상수가 되어 배치를 전혀
+// 가르지 못하면서도 "추운 시간대 점등이 유리"라고 서술했다.
+export function ledThermalCostPerHour(opts: {
+  ledPowerKw: number;
+  externalTempC: number;
+  targetTempC?: number;
+  uaKwPerK?: number;
+  heatFraction?: number;
+  heatCreditPerKwh?: number;
+  coolCostPerKwh?: number;
+  freeCoolingCostPerKwh?: number;
+}): number {
+  const target = opts.targetTempC ?? PARAMS.targetRoomTempC.value;
+  const ua = opts.uaKwPerK ?? PARAMS.envelopeUaKwPerK.value;
+  const heatFraction = opts.heatFraction ?? PARAMS.ledHeatFraction.value;
+  const heatCredit = opts.heatCreditPerKwh ?? PARAMS.heatCreditPerKwh.value;
+  const coolCost = opts.coolCostPerKwh ?? PARAMS.coolCostPerKwh.value;
+  const freeCool = opts.freeCoolingCostPerKwh ?? PARAMS.freeCoolingCostPerKwh.value;
+
+  const ledHeat = opts.ledPowerKw * heatFraction;
+  const heatDemand = Math.max(0, ua * (target - opts.externalTempC));
+  const offset = Math.min(ledHeat, heatDemand);
+  const excess = ledHeat - offset;
+  // 외기가 목표실온보다 낮으면 잔여열은 외기냉방으로 버린다. 높으면 압축기를 쓰는데,
+  // 응축온도가 올라 같은 열을 빼는 비용이 외기와 함께 오른다 — 이 의존성이 없으면
+  // 여름철 시간대별 비용이 평탄해져 배치를 가르지 못한다.
+  const overshoot = Math.max(0, opts.externalTempC - target);
+  const removalRate =
+    overshoot > 0
+      ? coolCost * (1 + PARAMS.coolCopDegradationPerK.value * overshoot)
+      : freeCool;
+  return -offset * heatCredit + excess * removalRate;
+}
+
 // ── ①-DLI: 일적산광량 기반 광주기 최적화 (농학적으로 옳은 제어) ───────────
 // "14시간 점등"이 아니라 "목표 DLI를 충족하는 최소 요금 배치"를 푼다. 생육(DLI)이
 // 하드 제약으로 보존되므로 "싸게 켜도 작물은 똑같이 자란다"가 성립한다 — 전력 절감의

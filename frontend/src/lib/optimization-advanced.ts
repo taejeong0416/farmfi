@@ -5,7 +5,12 @@
 // 이익 기준으로 값매기고, 불확실성에 강건화한 뒤, 플릿이 모아 전력망에 판다.
 
 import { getCrop } from "./crop-profiles";
-import { TARIFF_TOU_GENERAL, dliSchedule, resolveLighting } from "./optimization";
+import {
+  TARIFF_TOU_GENERAL,
+  dliSchedule,
+  resolveLighting,
+  ledThermalCostPerHour,
+} from "./optimization";
 import { PARAMS } from "./optimization-params";
 import { mulberry32, gaussFrom } from "./prng";
 
@@ -114,26 +119,26 @@ export function thermalCoupledSchedule(opts: {
   const avgExt = opts.hourlyExtTemp.reduce((a, b) => a + b, 0) / 24;
   const season = avgExt < 12 ? "winter" : avgExt > 24 ? "summer" : "mild";
 
-  // 시간별 LED 1kWh의 순비용 = 전력요금 − (겨울 난방크레딧) + (여름 냉방페널티)
-  // LED 열 ≈ 전력의 0.95배. 실내 목표온도 20℃ 가정.
-  const TARGET = 20;
-  const hourNetCost = (h: number) => {
-    const elec = tariff[h];
-    const ext = opts.hourlyExtTemp[h];
-    let thermal = 0;
-    if (ext < TARGET) thermal = -heatCoef * 0.95; // 난방 상쇄(크레딧)
-    else if (ext > TARGET) thermal = coolCoef * 0.95; // 냉방 가산(페널티)
-    // 외기가 목표온도와 같으면 열 항은 0이다. 실측 외기가 없을 때 목표온도를
-    // 중립 가정으로 넣으면 계절 이득/부담을 어느 쪽으로도 주장하지 않게 된다.
-    return elec + thermal;
-  };
+  // 시간별 순비용(원/h) = 전력요금 + LED 발열의 순 열비용.
+  // 열 항은 ledThermalCostPerHour 한 곳에서만 계산한다 — 백테스트·통합최적화가 같은
+  // 물리를 쓰게 하려면 여기에 사본을 두지 않아야 한다. 난방 대체는 그 시간의 난방
+  // 수요만큼만 가능해 포화하고, 남는 열은 외기 온도에 따라 싸게(외기냉방) 또는
+  // 비싸게(압축기) 버린다.
+  const hourNetCost = (h: number) =>
+    opts.ledPowerKw * tariff[h] +
+    ledThermalCostPerHour({
+      ledPowerKw: opts.ledPowerKw,
+      externalTempC: opts.hourlyExtTemp[h],
+      heatCreditPerKwh: heatCoef,
+      coolCostPerKwh: coolCoef,
+    });
 
   // 통합비용 기준 연속 광블록 최적 배치
   let bestStart = 0;
   let bestCost = Infinity;
   for (let s = 0; s < 24; s++) {
     let c = 0;
-    for (let i = 0; i < P; i++) c += opts.ledPowerKw * hourNetCost((s + i) % 24);
+    for (let i = 0; i < P; i++) c += hourNetCost((s + i) % 24);
     if (c < bestCost) {
       bestCost = c;
       bestStart = s;
@@ -153,7 +158,7 @@ export function thermalCoupledSchedule(opts: {
     }
   }
   const elecOnlyLit = Array.from({ length: P }, (_, i) => (elecBestStart + i) % 24);
-  const elecOnlyTotal = elecOnlyLit.reduce((s, h) => s + opts.ledPowerKw * hourNetCost(h), 0);
+  const elecOnlyTotal = elecOnlyLit.reduce((s, h) => s + hourNetCost(h), 0);
 
   const energyCost = litHours.reduce((s, h) => s + opts.ledPowerKw * tariff[h], 0);
   const netThermal = bestCost - energyCost;
@@ -165,12 +170,13 @@ export function thermalCoupledSchedule(opts: {
     netThermalCostPerDay: Math.round(netThermal),
     totalCostPerDay: Math.round(bestCost),
     vsEnergyOnlyPerDay: Math.round(elecOnlyTotal - bestCost),
-    note:
-      season === "winter"
-        ? `겨울: LED 열로 난방 상쇄 — 추운 시간대 점등이 유리. 전력만 최적화 대비 ${Math.round(elecOnlyTotal - bestCost)}원/일 개선`
-        : season === "summer"
-          ? `여름: LED 열이 냉방 부하 — 더운 시간대 회피. 전력만 최적화 대비 ${Math.round(elecOnlyTotal - bestCost)}원/일 개선`
-          : `간절기: 열 영향 작음`,
+    note: `${
+      season === "winter" ? "겨울" : season === "summer" ? "여름" : "간절기"
+    }: LED 발열 ${Math.round(opts.ledPowerKw * PARAMS.ledHeatFraction.value * 10) / 10}kW가 난방 수요(외피 UA ${
+      PARAMS.envelopeUaKwPerK.value
+    }kW/K)를 넘어 재배실은 냉방 지배다 — 난방 대체분은 그 시간의 난방 수요만큼만 인정되고 남는 열은 버려야 한다. 외기가 낮은 시간엔 그 잔여열을 외기냉방으로 싸게 버릴 수 있어 점등이 유리하고, 더운 시간엔 압축기로 빼야 해 불리하다. 전력만 최적화 대비 ${Math.round(
+      elecOnlyTotal - bestCost
+    )}원/일 개선.`,
   };
 }
 

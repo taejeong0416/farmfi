@@ -21,6 +21,7 @@ import {
   CARBON_INTENSITY_FACTOR,
   GRID_EMISSION_FACTOR,
   resolveLighting,
+  ledThermalCostPerHour,
 } from "./optimization";
 import { mulberry32, gaussFrom } from "./prng";
 import { PARAMS } from "./optimization-params";
@@ -77,8 +78,10 @@ export function unifiedCoOptimize(opts: {
   const avgExt = opts.hourlyExtTemp.reduce((a, b) => a + b, 0) / 24;
   const season = avgExt < 12 ? "winter" : avgExt > 24 ? "summer" : "mild";
   const weights: UnifiedWeights = {
-    // 혹서·혹한기: 3.0으로 강화해 비례 열비용이 블록 배치를 실제로 뒤집게 함
-    thermal: season === "mild" ? 0.4 : 3.0,
+    // 열은 원 단위 실비용이므로 가중치가 1.0이다. 계절 적응은 가중치가 아니라 물리가
+    // 한다 — 난방 수요는 외기에 따라 커지고 잔여열 제거단가는 외기냉방/압축기로 갈린다.
+    // 계수를 끼워 비용을 부풀리면 그만큼 목적함수가 실제 청구서에서 멀어진다.
+    thermal: 1.0,
     vpp: drWindows.length > 0 ? 1.0 : 0.3,
     co2: 0.6,
     robust: vol > 0.3 ? 0.6 : 0.2,
@@ -136,16 +139,21 @@ export function unifiedCoOptimize(opts: {
     const peakKw = Math.max(...hourProfile);
     const demand = (peakKw * PARAMS.demandChargePerKw.value) / 30; // 일 환산
 
-    // 순열비용: 시간별 외부온도 비례 연동
-    // 이진 방식(t<20 ? -fixed : +fixed)은 겨울에 모든 시간이 동일값 → 블록 배치 구분 불가.
-    // 비례 방식: 더 추울수록 LED 발열 이득↑(음수 증가), 더 더울수록 냉방 부하↑(양수 증가).
-    const thermal = litHours.reduce((s, h) => {
-      const t = opts.hourlyExtTemp[h];
-      const delta = t - TARGET_TEMP;
-      return s + kw * (delta < 0
-        ? delta * heatCoef * 0.05   // 겨울: 더 추운 시간대 = 더 큰 난방상쇄 이득 (음수)
-        : delta * coolCoef * 0.05); // 여름: 더 더운 시간대 = 더 큰 냉방 부하 (양수)
-    }, 0);
+    // 순열비용: 난방 대체는 그 시간의 난방 수요만큼만 가능해 포화하고, 남는 LED 발열은
+    // 외기가 낮으면 외기냉방으로 싸게, 높으면 압축기로 비싸게 버린다. 계층마다 사본을
+    // 두지 않고 ledThermalCostPerHour를 공유한다.
+    const thermal = litHours.reduce(
+      (s, h) =>
+        s +
+        ledThermalCostPerHour({
+          ledPowerKw: kw,
+          externalTempC: opts.hourlyExtTemp[h],
+          targetTempC: TARGET_TEMP,
+          heatCreditPerKwh: heatCoef,
+          coolCostPerKwh: coolCoef,
+        }),
+      0
+    );
 
     // CO2 비용 (시간대 탄소집약도, 탄소가격 근사 30원/kg)
     const co2 = litHours.reduce(
@@ -211,8 +219,11 @@ export function unifiedCoOptimize(opts: {
   const tradeoffs: string[] = [];
   if (bestEval.dli > crop.dliTarget)
     tradeoffs.push(`채소값 반영해 DLI ${crop.dliTarget}→${bestEval.dli} 상향 (수율매출 > 추가 전기비)`);
-  if (weights.thermal >= 1.0)
-    tradeoffs.push(`${season}철: 열 항을 강조해 ${season === "winter" ? "추운" : "더운"} 시간대 ${season === "winter" ? "선호(난방상쇄)" : "회피(냉방)"}`);
+  tradeoffs.push(
+    season === "summer"
+      ? `여름: LED 잔여열을 압축기로 빼야 해 더운 시간대 회피 (열비용 ${Math.round(bestEval.thermal)}원/일)`
+      : `${season === "winter" ? "겨울" : "간절기"}: LED 잔여열을 외기냉방으로 싸게 버릴 수 있어 외기 낮은 시간대 선호 (열비용 ${Math.round(bestEval.thermal)}원/일)`
+  );
   const drOverlap = drWindows.filter((h) => new Set(bestEval.litHours).has(h)).length;
   if (drOverlap < drWindows.length)
     tradeoffs.push(`DR창(${drWindows.join(",")}시) 중 ${drWindows.length - drOverlap}h를 비워 VPP 유연성 확보 — 최저요금을 조금 포기하고 수요반응 수익 유지`);
