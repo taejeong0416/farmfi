@@ -254,6 +254,7 @@ model ProjectPartner {
   project                Project @relation(fields: [projectId], references: [id])
   role                   String  // landlord, equipment_partner
   name                   String
+  userId                 String? // 계정이 있는 파트너 — 지급 내역을 본인이 조회할 수 있게 연결
   totalContribution      BigInt  @default(0)
   recoveredAmount        BigInt  @default(0)
   monthlyRecoveryAmount  BigInt  @default(0)

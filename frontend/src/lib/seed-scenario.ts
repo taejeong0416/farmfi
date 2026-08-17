@@ -196,7 +196,7 @@ export async function seedScenario(prisma: PrismaClient) {
     ],
   });
   await prisma.projectPartner.create({
-    data: { projectId: p1.id, role: "landlord", name: "최영호", monthlyRecoveryAmount: BigInt(500_000) },
+    data: { projectId: p1.id, role: "landlord", name: "최영호", userId: landlord.id, monthlyRecoveryAmount: BigInt(500_000) },
   });
   await prisma.tokenHolding.create({
     data: { userId: investor1.id, projectId: p1.id, amount: 50, avgPrice: BigInt(10_000) },
