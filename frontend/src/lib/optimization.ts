@@ -703,6 +703,21 @@ export function weatherCompensatedCusum(
   const own = robustScale(diff);
   // 신규 사이트(자체 이력 부족)는 플릿 사전분포로 부트스트랩(teacher-student 콜드스타트).
   const useFleet = n < 48 && opts?.fleetPrior != null;
+  // 산포가 아예 없으면 플릿 사전분포로도 판정할 수 없다. 차분이 상수인데 플릿의 중앙값을
+  // 빼면 z가 0이 아닌 상수가 되어 누적합이 선형으로 쌓인다 — 판정 보류가 아니라 없는
+  // 열화를 보고하게 된다. 표본이 짧아 산포 추정이 거친 경우(양자화 계단 미만)와 달리,
+  // 산포가 0인 것은 외기가 내부값에서 파생됐다는 증거이므로 사전분포로 덮지 않는다.
+  if (!(own.scale > 0)) {
+    return {
+      status: "degenerate-scale",
+      detected: false,
+      detectedIndex: null,
+      maxStatistic: 0,
+      baselineDiff: Math.round(own.center * 10) / 10,
+      usedFleetPrior: false,
+      note: "내외기 차분에 산포가 전혀 없음 — 외기가 내부값에서 파생된 대체값. 독립 실측 외기 시계열이 있어야 판정 가능",
+    };
+  }
   if (!useFleet && own.degenerate) {
     return {
       status: "degenerate-scale",
@@ -739,11 +754,11 @@ export function weatherCompensatedCusum(
     maxStatistic: Math.round(maxStat * 10) / 10,
     baselineDiff: Math.round(center * 10) / 10,
     usedFleetPrior: useFleet,
-    note: useFleet
-      ? "플릿 사전분포로 판정(자체 이력 축적 전 콜드스타트)"
-      : detectedIndex !== null
-        ? "내외기 차분 이동 감지 — 계절 아닌 설비 요인(단열/히터/차광) 점검"
-        : "차분 안정 — 설비 정상(계절 변화는 상쇄됨)",
+    note:
+      (useFleet ? "플릿 사전분포로 판정(자체 이력 축적 전 콜드스타트) — " : "") +
+      (detectedIndex !== null
+        ? "내외기 차분 이동 감지, 계절 아닌 설비 요인(단열/히터/차광) 점검"
+        : "차분 안정, 설비 정상(계절 변화는 상쇄됨)"),
   };
 }
 
