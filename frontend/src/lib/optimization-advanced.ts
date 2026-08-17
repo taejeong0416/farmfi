@@ -9,6 +9,21 @@ import { TARIFF_TOU_GENERAL, dliSchedule, resolveLighting } from "./optimization
 import { PARAMS } from "./optimization-params";
 import { mulberry32, gaussFrom } from "./prng";
 
+// LED 1kWh의 실효 단가. 스케줄이 정해졌으면 그 배치의 평균 단가(총비용 ÷ kWh)가
+// 실효 단가다 — 24시간 평균은 싼 시간에 켜는 이득을 지운다. 스케줄이 없으면 요금표 평균.
+export function effectiveUnitPrice(opts: {
+  costPerDay: number;
+  ledPowerKw: number;
+  hours: number;
+}): number | undefined {
+  const kwh = opts.ledPowerKw * opts.hours;
+  return kwh > 0 ? opts.costPerDay / kwh : undefined;
+}
+
+function meanTariff(tariff: number[]): number {
+  return tariff.reduce((a, b) => a + b, 0) / tariff.length;
+}
+
 // ── 돌파 2: 광주기 안전 DLI (농학 하드 제약) ──────────────────────────────
 // 총 광량만 맞추고 시간을 마음대로 흩뿌리면 상추는 낮 길이(광주기)가 길어져 추대로
 // 상품가치를 잃고, 조각난 암기 때문에 생체리듬도 깨진다. 그래서 (a) 명기 ≤ 최대광주기,
@@ -272,6 +287,11 @@ export function profitOptimization(opts: {
   cropPricePerKg?: number; // 산지가
   yieldMaxKgM2?: number; // 포화 수율
   yieldK?: number; // 포화 속도
+  /**
+   * LED 1kWh의 실효 단가(원). 광량을 늘릴지는 "추가 전기비 대 추가 수율"의 비교이므로
+   * 이 단가가 결정적이다 — 계약종이 바뀌면(농사용 53원) 최적 DLI도 바뀐다.
+   * 생략하면 기저 TOU의 24시간 평균을 쓴다.
+   */
   avgTariff?: number;
 }): ProfitPlan {
   const crop = getCrop(opts.cropKey);
@@ -279,7 +299,7 @@ export function profitOptimization(opts: {
   const price = opts.cropPricePerKg ?? PARAMS.cropPricePerKg.value;
   const ymax = opts.yieldMaxKgM2 ?? PARAMS.yieldMaxKgM2.value;
   const k = opts.yieldK ?? PARAMS.yieldLightK.value;
-  const avgTariff = opts.avgTariff ?? 140;
+  const avgTariff = opts.avgTariff ?? meanTariff(TARIFF_TOU_GENERAL);
 
   const yieldOf = (dli: number) => ymax * (1 - Math.exp(-k * dli));
   // 광주기·정격 상한을 넘겨야만 만들어지는 DLI는 후보에서 제외(null).
@@ -374,12 +394,15 @@ export function fleetVPP(opts: {
   const ledKw = opts.ledPowerKw ?? 4;
   const flexH = opts.photoperiodFlexHours ?? 3;
   // 계약감축량 = 사이트당 LED 전량 (이벤트 시 끄고 광주기 안전범위 내 보광)
-  const contractedKw = ledKw * opts.sites;
+  // 단, 끈 시간을 되메울 여유가 없으면 감축 자체를 약속할 수 없다. 광주기 안전
+  // 범위를 넘겨 보광하면 DLI를 지키려다 추대를 부르므로, 감축 시간은 암기 여유가
+  // 상한이고 여유가 0이면 이 사이트는 DR에 참여할 수 없다.
+  const contractedKw = flexH > 0 ? ledKw * opts.sites : 0;
 
   const basicPrice = opts.basicPricePerKwYear ?? PARAMS.drBasicPricePerKwYear.value;
   const perfPrice = opts.performancePricePerKwh ?? PARAMS.drPerformancePricePerKwh.value;
   const events = opts.drEventsPerMonth ?? 4;
-  const eventH = opts.drEventHours ?? 2;
+  const eventH = Math.min(opts.drEventHours ?? 2, flexH);
   const reductionHoursPerYear = events * eventH * 12;
 
   const basic = contractedKw * basicPrice;
@@ -399,13 +422,16 @@ export function fleetVPP(opts: {
     dividendContributionPerYear: dividendRounded,
     annualDrRevenuePerSite: Math.round(totalRounded / opts.sites),
     dividendPerSitePerYear: Math.round(dividendRounded / opts.sites),
-    note: `플릿 ${opts.sites}개 사이트 총 ${Math.round(
-      total / 10000
-    )}만원/년 DR 매출(기본정산 ${Math.round(basic / 10000)}만 + 실적정산 ${Math.round(
-      performance / 10000
-    )}만, 연 ${reductionHoursPerYear}h 감축) → 배당 풀 플릿 총 ${Math.round(
-      (total * share) / 10000
-    )}만원/년 = 사이트당 ${Math.round((total * share) / opts.sites / 10000 * 10) / 10}만원/년. 규모에 비례 — ${opts.sites * 10}사이트면 ${Math.round((total * share) * 10 / 10000)}만원대. 광주기 유연성 ${flexH}h를 판매, 절감이 아니라 새 수익원.`,
+    note:
+      flexH <= 0
+        ? `암기 여유가 없어(연속 암기가 최소 요구치와 같음) 감축을 약속할 수 없다 — 이 운전점에서는 DR 참여 불가. 목표 DLI를 낮추거나 광량을 늘려 명기를 줄이면 유연성이 생긴다.`
+        : `플릿 ${opts.sites}개 사이트 총 ${Math.round(
+            total / 10000
+          )}만원/년 DR 매출(기본정산 ${Math.round(basic / 10000)}만 + 실적정산 ${Math.round(
+            performance / 10000
+          )}만, 연 ${reductionHoursPerYear}h 감축) → 배당 풀 플릿 총 ${Math.round(
+            (total * share) / 10000
+          )}만원/년 = 사이트당 ${Math.round((total * share) / opts.sites / 10000 * 10) / 10}만원/년. 규모에 비례 — ${opts.sites * 10}사이트면 ${Math.round((total * share) * 10 / 10000)}만원대. 광주기 유연성 ${flexH}h 안에서 회당 ${eventH}h 감축, 절감이 아니라 새 수익원.`,
   };
 }
 
@@ -462,18 +488,27 @@ export function optimalStack(opts: {
     requiredHours: photoperiod.requiredHours,
     baseTariff: opts.tariff,
   });
-  // ④ 수율-이익 (광량 자체 최적화)
+  // ④ 수율-이익 (광량 자체 최적화). 광량 증설 판단은 실효 전기 단가에 달려 있으므로
+  // ①이 고른 배치의 단가를 넘긴다 — 요금표 평균을 쓰면 계약종을 바꿔도 답이 안 바뀐다.
   const profit = profitOptimization({
     cropKey: opts.cropKey,
     ledPowerKw: opts.ledPowerKw,
     cropPricePerKg: opts.cropPricePerKg,
+    avgTariff: effectiveUnitPrice({
+      costPerDay: photoperiod.costPerDay,
+      ledPowerKw,
+      hours: photoperiod.requiredHours,
+    }),
   });
   // ⑤ 플릿 VPP (광주기 안전 내 남은 유연성을 판다)
-  const flexHours = Math.max(0, 24 - photoperiod.requiredHours - photoperiod.darkContinuousH + 3);
+  // 팔 수 있는 유연성 = 명기를 앞뒤로 밀 수 있는 폭. 연속 암기가 최소 요구치보다
+  // 긴 만큼만 블록을 옮길 수 있고, 그 여유가 곧 DR 이벤트에 응답 가능한 시간이다.
+  const crop = getCrop(opts.cropKey);
+  const flexHours = Math.max(0, photoperiod.darkContinuousH - crop.minDarkH);
   const vpp = fleetVPP({
     sites: opts.sites,
     ledPowerKw,
-    photoperiodFlexHours: Math.min(3, flexHours || 3),
+    photoperiodFlexHours: flexHours,
   });
 
   const perSiteDailyCost = thermal.totalCostPerDay + robust.robustnessPremium;

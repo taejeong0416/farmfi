@@ -38,7 +38,11 @@ import {
   type MaintenanceReport,
   type OperationsSavings,
 } from "./optimization";
-import { optimalStack, type OptimalStack } from "./optimization-advanced";
+import {
+  optimalStack,
+  effectiveUnitPrice,
+  type OptimalStack,
+} from "./optimization-advanced";
 import {
   backtestSchedule,
   scheduleAdherence,
@@ -436,7 +440,15 @@ export function buildOptimizationReport(
     dailyPeaksKw: dailyPeakPairs.map((p) => p.optimized),
     baselinePeaksKw: dailyPeakPairs.map((p) => p.naive),
   });
-  const co2Light = co2LightCoOptimize({ cropKey, ledPowerKw });
+  const co2Light = co2LightCoOptimize({
+    cropKey,
+    ledPowerKw,
+    avgTariff: effectiveUnitPrice({
+      costPerDay: dli.costPerDay,
+      ledPowerKw: ledKwUsed,
+      hours: dli.requiredHours,
+    }),
+  });
 
   // ── 고도화 스택 · 통합 공동최적화 ──
   const advanced = optimalStack({

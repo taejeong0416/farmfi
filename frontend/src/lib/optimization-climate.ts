@@ -10,7 +10,7 @@
 // 근거: 광-CO2-온도 상호작용 반응면 문헌(ASHS JASHS 147(2), 2022) 및
 //       광·CO2 비용 동시 최적화 사례(Expert Systems with Applications, 2023).
 
-import { resolveLighting } from "./optimization";
+import { resolveLighting, TARIFF_TOU_GENERAL } from "./optimization";
 import { getCrop } from "./crop-profiles";
 import { PARAMS } from "./optimization-params";
 
@@ -79,7 +79,11 @@ export function co2LightCoOptimize(opts: {
   const height = opts.roomHeightM ?? 2.7;
   const volume = area * height;
   const price = opts.cropPricePerKg ?? PARAMS.cropPricePerKg.value;
-  const avgTariff = opts.avgTariff ?? 140;
+  // 탄산과 전기의 교환비를 정하는 건 전기 단가다. 계약종이 바뀌면 대체 판정도 바뀌어야
+  // 하므로 호출부가 실효 단가를 넘긴다. 생략 시 기저 TOU 24시간 평균.
+  const avgTariff =
+    opts.avgTariff ??
+    TARIFF_TOU_GENERAL.reduce((a, b) => a + b, 0) / TARIFF_TOU_GENERAL.length;
   const co2Cost = opts.co2CostPerKg ?? PARAMS.co2CostPerKg.value;
   const maxCo2 = opts.maxCo2Ppm ?? 1200;
   const ymax = PARAMS.yieldMaxKgM2.value;
