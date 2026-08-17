@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { recordAudit } from "@/lib/audit";
 
 // 청약 핵심 로직 (잔액·재고 검증 → DB 트랜잭션).
 // - /api/subscribe: 세션 유저로 호출 (본인인증·연간한도 게이트 포함)
@@ -140,6 +141,17 @@ export async function executeSubscription(params: {
     });
 
     return txRecord;
+  });
+
+  await recordAudit({
+    actorId: userId,
+    actorRole: "investor",
+    action: "subscription.created",
+    entityType: "project",
+    entityId: projectId,
+    projectId,
+    summary: `${user.name} 청약 ${tokenAmount.toLocaleString("ko-KR")}구좌 (${totalCost.toLocaleString("ko-KR")}원)`,
+    detail: { tokenAmount, amount: Number(totalCost), transactionId: transaction.id },
   });
 
   return {

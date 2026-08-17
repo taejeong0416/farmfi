@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { serializeBigInt as serialize } from "@/lib/serialize";
 import { requireRole } from "@/lib/auth";
+import { recordAudit } from "@/lib/audit";
 import { triggerTimeoutFailureOnChain } from "@/lib/onchain";
 
 // POST /api/milestones/[id]/timeout — 마일스톤 기한 초과 → 프로젝트 실패 전환.
@@ -18,8 +19,9 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  let session;
   try {
-    await requireRole("admin");
+    session = await requireRole("admin");
   } catch (err) {
     if (err instanceof Response) return err;
     throw err;
@@ -125,6 +127,17 @@ export async function POST(
       onchainError = raw.split("\n")[0].slice(0, 200);
       console.error("triggerTimeoutFailureOnChain failed:", e);
     }
+
+    await recordAudit({
+      actorId: session.userId,
+      actorRole: "admin",
+      action: "milestone.timeout",
+      entityType: "milestone",
+      entityId: id,
+      projectId: milestone.projectId,
+      summary: `마일스톤 ${milestone.seq} "${milestone.name}" 기한 초과 — 프로젝트 실패 전환`,
+      detail: { deadlineAt: milestone.deadlineAt.toISOString(), txHash, onchainError },
+    });
 
     return NextResponse.json(
       serialize({

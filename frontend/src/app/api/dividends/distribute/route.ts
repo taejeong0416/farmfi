@@ -2,11 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { serializeBigInt as serialize } from "@/lib/serialize";
 import { requireRole } from "@/lib/auth";
+import { recordAudit } from "@/lib/audit";
 import { calculateFeePool } from "@/lib/waterfall";
 
 export async function POST(request: NextRequest) {
+  let session;
   try {
-    await requireRole("admin");
+    session = await requireRole("admin");
   } catch (err) {
     if (err instanceof Response) return err;
     throw err;
@@ -91,6 +93,22 @@ export async function POST(request: NextRequest) {
 
       return dividend;
     }, { maxWait: 5000, timeout: 15000 }); // 보유자별 배당 쿼리 다수 — pooler 지연 대비 기본 5s 확장
+
+    await recordAudit({
+      actorId: session.userId,
+      actorRole: "admin",
+      action: "dividend.distributed",
+      entityType: "dividend",
+      entityId: result.id,
+      projectId,
+      summary: `${period} 배당 분배 — 총 ${feePool.investorDividend.toLocaleString("ko-KR")}원, 구좌당 ${perToken.toLocaleString("ko-KR")}원 (보유자 ${project.tokenHoldings.length}명)`,
+      detail: {
+        period,
+        perToken,
+        totalDividend: feePool.investorDividend,
+        holders: project.tokenHoldings.length,
+      },
+    });
 
     return NextResponse.json(
       serialize({

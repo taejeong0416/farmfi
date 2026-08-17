@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { serializeBigInt as serialize } from "@/lib/serialize";
 import { requireRole } from "@/lib/auth";
+import { recordAudit } from "@/lib/audit";
 import { releaseTrancheOnChain, MILESTONE_TIMEOUT_MS } from "@/lib/onchain";
 
 export async function POST(
@@ -11,8 +12,9 @@ export async function POST(
   // 에스크로 자금을 실제로 집행하는 라우트라 admin 전용이다. Project에 소유자
   // 필드가 없어 "내 프로젝트만" 검증이 불가하므로, 누구나 스스로 operator가 되어
   // 남의 프로젝트 트랜치를 집행하는 권한 자가상승을 admin 게이트로 차단한다.
+  let session;
   try {
-    await requireRole("admin");
+    session = await requireRole("admin");
   } catch (err) {
     if (err instanceof Response) return err;
     throw err;
@@ -156,6 +158,17 @@ export async function POST(
     } catch (e) {
       console.error("releaseTrancheOnChain failed:", e);
     }
+
+    await recordAudit({
+      actorId: session.userId,
+      actorRole: "admin",
+      action: "milestone.completed",
+      entityType: "milestone",
+      entityId: id,
+      projectId: milestone.projectId,
+      summary: `마일스톤 ${milestone.seq} "${milestone.name}" 집행 — 트랜치 ${Number(releaseAmount).toLocaleString("ko-KR")}원 해제`,
+      detail: { releaseAmount: Number(releaseAmount), txHash },
+    });
 
     return NextResponse.json(
       serialize({

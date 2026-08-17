@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { serializeBigInt as serialize } from "@/lib/serialize";
 import { requireRole } from "@/lib/auth";
+import { recordAudit } from "@/lib/audit";
 import { verifyMilestoneOnChain } from "@/lib/onchain";
 
 // 교차검증(receipt↔photo): 영수증 구매 항목과 사진 검출 객체가
@@ -33,8 +34,9 @@ export async function POST(
   // 에스크로 집행으로 이어지는 경로라 admin 전용이다. Project에 소유자 필드가 없어
   // "내 프로젝트만" 검증을 강제할 수 없으므로, 누구나 스스로 operator가 되어
   // 남의 프로젝트를 집행하는 권한 자가상승을 admin 게이트로 차단한다.
+  let session;
   try {
-    await requireRole("admin");
+    session = await requireRole("admin");
   } catch (err) {
     if (err instanceof Response) return err;
     throw err;
@@ -197,6 +199,17 @@ export async function POST(
         }
       }
 
+      await recordAudit({
+        actorId: session.userId,
+        actorRole: "admin",
+        action: "milestone.verified",
+        entityType: "milestone",
+        entityId: id,
+        projectId: milestone.projectId,
+        summary: `마일스톤 ${milestone.seq} "${milestone.name}" 검증 통과`,
+        detail: { signals, txHash },
+      });
+
       return NextResponse.json(
         serialize({
           passed: true,
@@ -234,6 +247,20 @@ export async function POST(
             ? `마일스톤 "${milestone.name}" AI 검증 2회 실패 — 수동 검토로 전환됨 (미통과 신호: ${failedSignals.join(", ")})`
             : `마일스톤 "${milestone.name}" AI 검증 실패 (${newRetryCount}회) — 미통과 신호: ${failedSignals.join(", ")}. 재검증 1회 가능.`,
       },
+    });
+
+    await recordAudit({
+      actorId: session.userId,
+      actorRole: "admin",
+      action: "milestone.rejected",
+      entityType: "milestone",
+      entityId: id,
+      projectId: milestone.projectId,
+      summary:
+        newRetryCount >= 2
+          ? `마일스톤 ${milestone.seq} "${milestone.name}" 검증 2회 실패 — 수동 검토 전환 (미통과: ${failedSignals.join(", ")})`
+          : `마일스톤 ${milestone.seq} "${milestone.name}" 검증 실패 ${newRetryCount}회 (미통과: ${failedSignals.join(", ")})`,
+      detail: { signals, failedSignals, retryCount: newRetryCount, status: newStatus },
     });
 
     return NextResponse.json(
