@@ -269,6 +269,8 @@ export function buildOptimizationReport(
       ? dliFeedback({
           cropKey,
           recentLux: readings.slice(-24).map((r) => r.lightIntensity),
+          // 판정 기준은 작물 기본값이 아니라 이 스케줄이 실제로 쓰는 목표다.
+          dliTarget: dli.dliTarget,
         })
       : null;
 

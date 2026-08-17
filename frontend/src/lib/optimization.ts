@@ -267,19 +267,22 @@ export interface DliFeedback {
 export function dliFeedback(opts: {
   cropKey?: string;
   recentLux: number[]; // 최근 24h 시간당 조도(lux)
+  /** 실제 운전 중인 목표 DLI. 스케줄이 목표를 상향/하향했으면 그 값을 넘긴다 */
+  dliTarget?: number;
 }): DliFeedback {
   const crop = getCrop(opts.cropKey);
+  const target = opts.dliTarget ?? crop.dliTarget;
   // lux → PPFD 근사(백색 LED ~0.015 μmol/m²/s per lux), 시간당 적산
   const dliPerLuxHour = (0.015 * 3600) / 1e6;
   const realizedDli =
     Math.round(opts.recentLux.reduce((s, l) => s + l * dliPerLuxHour, 0) * 10) /
     10;
-  const gapPct = Math.round(((realizedDli - crop.dliTarget) / crop.dliTarget) * 1000) / 10;
+  const gapPct = Math.round(((realizedDli - target) / target) * 1000) / 10;
   let action: string;
   if (gapPct < -10) action = `목표 대비 ${gapPct}% 부족 — 익일 광시간/광량 상향`;
   else if (gapPct > 10) action = `목표 대비 +${gapPct}% 초과 — 익일 광량 하향(전력 절감)`;
   else action = `목표 근접(${gapPct}%) — 현 스케줄 유지`;
-  return { realizedDli, targetDli: crop.dliTarget, gapPct, action };
+  return { realizedDli, targetDli: target, gapPct, action };
 }
 
 // ── ② 관리비: 예지보전 (드리프트 탐지) ────────────────────────────────────
