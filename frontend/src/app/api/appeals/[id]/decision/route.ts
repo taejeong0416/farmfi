@@ -7,8 +7,8 @@ import { APPEAL_TRANSITIONS, type AppealAction } from "@/lib/appeal";
 const ACTION_LABEL: Record<AppealAction, string> = {
   review: "운영팀 검토 착수",
   escalate: "외부 전문가 판정 의뢰",
-  approve: "이의제기 인정",
-  reject: "이의제기 기각",
+  approve: "인정",
+  reject: "기각",
 };
 
 // POST /api/appeals/[id]/decision — 단계적 재검증의 상태를 전이시킨다 (명세 1.3).

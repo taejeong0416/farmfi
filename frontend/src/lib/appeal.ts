@@ -27,8 +27,16 @@ export const APPEAL_TRANSITIONS = {
 
 export type AppealAction = keyof typeof APPEAL_TRANSITIONS;
 
-/** 이의제기를 접수할 수 있는 마일스톤 상태 — 보류·반려 건에만 허용한다. */
+/**
+ * 이의제기를 접수할 수 있는 마일스톤인지 — 보류·반려 건에만 허용한다.
+ *
+ * manual_review(2회 실패 → 수동 검토)와 failed(기한 초과)가 명시적 대상이고,
+ * 1회 실패로 재검증 대기 중인 건(retryCount > 0)도 반려 사유를 다툴 수 있다.
+ * 이미 통과·집행된 건은 다툴 대상이 없으므로 제외한다 — retryCount만 보면
+ * "1회 실패 후 재검증 통과"한 마일스톤까지 열려버린다.
+ */
 export function isAppealable(status: string, retryCount: number): boolean {
+  if (status === "verified" || status === "completed") return false;
   return status === "manual_review" || status === "failed" || retryCount > 0;
 }
 
