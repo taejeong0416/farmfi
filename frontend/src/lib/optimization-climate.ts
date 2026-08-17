@@ -94,8 +94,8 @@ export function co2LightCoOptimize(opts: {
   maxCo2Ppm?: number;
 }): Co2LightPlan {
   const crop = getCrop(opts.cropKey);
-  const area = opts.areaM2 ?? 60;
-  const height = opts.roomHeightM ?? 2.7;
+  const area = opts.areaM2 ?? PARAMS.growRoomAreaM2.value;
+  const height = opts.roomHeightM ?? PARAMS.growRoomHeightM.value;
   const volume = area * height;
   const price = opts.cropPricePerKg ?? PARAMS.cropPricePerKg.value;
   // 탄산과 전기의 교환비를 정하는 건 전기 단가다. 계약종이 바뀌면 대체 판정도 바뀌어야

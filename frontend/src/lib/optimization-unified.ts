@@ -69,7 +69,7 @@ export function unifiedCoOptimize(opts: {
   const crop = getCrop(opts.cropKey);
   const tariff = opts.tariff ?? TARIFF_TOU_GENERAL;
   const price = opts.cropPricePerKg ?? PARAMS.cropPricePerKg.value;
-  const area = opts.areaM2 ?? 60;
+  const area = opts.areaM2 ?? PARAMS.growRoomAreaM2.value;
   const vol = opts.priceVolatility ?? 0.35;
   const drWindows = opts.drWindowHours ?? [18, 19, 20]; // 저녁 피크 = DR 빈발
   const rand = mulberry32(opts.seed ?? 42);
@@ -101,9 +101,16 @@ export function unifiedCoOptimize(opts: {
   for (let n = 0; n < S; n++)
     scenarios.push(tariff.map((p) => Math.max(30, p * (1 + gauss() * vol * (p > 180 ? 1.5 : 1)))));
 
-  const TARGET_TEMP = 20;
+  const TARGET_TEMP = PARAMS.targetRoomTempC.value;
   const heatCoef = PARAMS.heatCreditPerKwh.value;
   const coolCoef = PARAMS.coolCostPerKwh.value;
+
+  // 보조부하 제원 — 공조는 LED와 동기, 펌프는 유연 부하로 본다.
+  const aux = PARAMS.auxLoads.value;
+  const hvacKw = aux.find((l) => l.name === "공조")?.kw ?? 0;
+  const pump = aux.find((l) => l.name === "양액펌프");
+  const pumpKw = pump?.kw ?? 0;
+  const pumpHours = pump?.hoursNeeded ?? 0;
 
   // 후보 평가: (dli, blockStart) → 통합 순가치
   const evalCandidate = (dli: number, start: number) => {
@@ -128,14 +135,14 @@ export function unifiedCoOptimize(opts: {
     const cvar = costs.slice(Math.floor(S * 0.95)).reduce((a, b, _, arr) => a + b / arr.length, 0);
 
     // 기본요금(피크): 시간별 부하 프로파일로 실제 피크 동적 계산 (peakStagger 방식)
-    // 공조(1.5kW)는 LED와 동기 가동(식물 환경 유지 필수), 펌프(0.7kW, 8h/일)는
-    // 유연 — 부하 가장 낮은 시간대에 배치해 피크 최소화.
+    // 공조는 LED와 동기 가동(식물 환경 유지 필수), 펌프는 유연 — 부하 가장 낮은
+    // 시간대에 배치해 피크 최소화. 부하 제원은 레지스트리에서 온다(리포트와 같은 값).
     const hourProfile = Array(24).fill(0);
-    for (const h of litHours) hourProfile[h] += kw + 1.5;
+    for (const h of litHours) hourProfile[h] += kw + hvacKw;
     const pumpSlots = [...Array(24).keys()]
       .sort((a, b) => hourProfile[a] - hourProfile[b])
-      .slice(0, 8);
-    for (const h of pumpSlots) hourProfile[h] += 0.7;
+      .slice(0, pumpHours);
+    for (const h of pumpSlots) hourProfile[h] += pumpKw;
     const peakKw = Math.max(...hourProfile);
     const demand = (peakKw * PARAMS.demandChargePerKw.value) / 30; // 일 환산
 

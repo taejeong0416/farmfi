@@ -68,7 +68,13 @@ import {
   type MultivariateDriftResult,
   type IntervalForecast,
 } from "./optimization-learning";
-import { paramTable, paramConfidence, type ParamRow, type ParamBasis } from "./optimization-params";
+import {
+  paramTable,
+  paramConfidence,
+  PARAMS,
+  type ParamRow,
+  type ParamBasis,
+} from "./optimization-params";
 import { mulberry32 } from "./prng";
 import {
   cropMeanVariance,
@@ -81,10 +87,7 @@ import { getCrop, type CropProfile } from "./crop-profiles";
 import type { IoTReading } from "./iot-health";
 
 // 공조·양액펌프는 LED와 함께 피크를 만드는 상시 부하다. 설비 사양 확정 시 교체.
-const AUX_LOADS = [
-  { name: "공조", kw: 1.5, hoursNeeded: 10 },
-  { name: "양액펌프", kw: 0.7, hoursNeeded: 6 },
-];
+const AUX_LOADS = PARAMS.auxLoads.value.map((l) => ({ ...l }));
 
 // 외기 계열이 없을 때 쓰는 중립 가정. 실내 목표온도와 같게 두면 열 항이 0이 되어
 // 계절 이득/부담을 어느 쪽으로도 주장하지 않는다.
@@ -358,13 +361,7 @@ export function buildOptimizationReport(
 
   // ── 중간: 사이트 간 품목 배분 — 마코위츠 평균-분산 ──
   // 배분 결정은 이 한 곳에서만 낸다. 밴딧(recipeMix)은 사이트 안의 품종·레시피 탐색용.
-  const portfolio = cropMeanVariance({
-    assets: [
-      { name: "엽채류(상추)", expectedMargin: 7000, volatility: 1800 },
-      { name: "바질(허브)", expectedMargin: 11000, volatility: 3500 },
-      { name: "방울토마토", expectedMargin: 14000, volatility: 6000 },
-    ],
-  });
+  const portfolio = cropMeanVariance({ assets: [...PARAMS.cropPortfolioAssets.value] });
 
   // ── 중간: 문맥 밴딧 — 사이트마다 다른 답 ──
   // 마코위츠가 "플릿 전체를 어떤 비율로 섞을지"를 정한다면, 문맥 밴딧은 "이 사이트에는
@@ -377,11 +374,7 @@ export function buildOptimizationReport(
   }));
   const contextual = contextualCropAllocation({
     sites: siteContexts,
-    arms: [
-      { name: "엽채류(상추)", base: 7000, weights: [200, 500, 1500] },
-      { name: "바질(허브)", base: 9000, weights: [800, 4000, 500] },
-      { name: "방울토마토", base: 8000, weights: [6000, 3000, 1000] },
-    ],
+    arms: PARAMS.contextualArms.value.map((a) => ({ ...a, weights: [...a.weights] })),
   });
 
   // ── 검증 계층: 백테스트 · 실행 준수 ──

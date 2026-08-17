@@ -1303,11 +1303,7 @@ export function recipeOptimization(opts?: {
   rounds?: number;
   seed?: number;
 }): BanditAllocation {
-  const arms = opts?.arms ?? [
-    { name: "청상추", trueMeanMargin: 6500, trueStd: 1500 },
-    { name: "적상추", trueMeanMargin: 7200, trueStd: 1800 },
-    { name: "버터헤드", trueMeanMargin: 8800, trueStd: 3000 },
-  ];
+  const arms = opts?.arms ?? PARAMS.recipeArmMargins.value.map((a) => ({ ...a }));
   return thompsonAllocation({ arms, rounds: opts?.rounds ?? 200, seed: opts?.seed ?? 11 });
 }
 

@@ -301,7 +301,7 @@ export function profitOptimization(opts: {
   avgTariff?: number;
 }): ProfitPlan {
   const crop = getCrop(opts.cropKey);
-  const area = opts.areaM2 ?? 60;
+  const area = opts.areaM2 ?? PARAMS.growRoomAreaM2.value;
   const price = opts.cropPricePerKg ?? PARAMS.cropPricePerKg.value;
   const ymax = opts.yieldMaxKgM2 ?? PARAMS.yieldMaxKgM2.value;
   const k = opts.yieldK ?? PARAMS.yieldLightK.value;
