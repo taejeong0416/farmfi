@@ -52,6 +52,7 @@ export async function GET(
       projectId: project.id,
       projectName: project.name,
       readings,
+      sampleHours: iot.map((d) => d.recordedAt.getHours()),
       externalTempC: external.extTemp,
       externalInsolationWm2: external.extInsolation,
       salesUnits: sales.map((s) => s.units),

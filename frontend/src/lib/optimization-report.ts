@@ -91,6 +91,11 @@ export interface OptimizationReportInput {
   projectName: string;
   /** 시간 오름차순 IoT 계열 */
   readings: IoTReading[];
+  /**
+   * 각 표본의 측정 시각(0~23), readings와 같은 길이. 요금표·탄소집약도는 시계 시각으로
+   * 색인되므로 시간대별 계열을 만들 때 이 값이 필요하다. 없으면 외기 계열은 가정으로 떨어진다.
+   */
+  sampleHours?: number[];
   /** 실측 외기온도(℃). readings와 같은 길이·같은 시각으로 정렬해 넘긴다. 없으면 생략 */
   externalTempC?: (number | null | undefined)[];
   /** 실측 외부일사량(W/m²). 없으면 생략 */
@@ -173,11 +178,48 @@ export interface OptimizationReport {
   unified: UnifiedResult;
 }
 
-// 마지막 24개 표본을 뽑되, 짧으면 있는 만큼만. 시간대 인덱스가 필요한 계열용.
-function tail24(values: number[], fallback: number): number[] {
-  const t = values.slice(-24);
-  while (t.length < 24) t.unshift(fallback);
-  return t;
+// 시각별 평균 프로파일. 마지막 24개를 그대로 자르면 배열의 위치가 시계 시각이 되지
+// 못한다 — 표본 창이 23시에 끝나야만 맞는 우연에 기대게 된다. 요금표·탄소집약도는
+// 시각으로 색인되므로 측정 시각(hour)으로 버킷을 나눠 평균한다. 관측이 없는 시각은
+// fallback으로 채운다(외기온도는 목표온도 = 열 항 중립).
+function hourlyProfile(
+  values: (number | null | undefined)[],
+  hours: number[],
+  fallback: number
+): { profile: number[]; coveredHours: number } {
+  const sum = Array(24).fill(0);
+  const count = Array(24).fill(0);
+  for (let i = 0; i < values.length; i++) {
+    const v = values[i];
+    const h = hours[i];
+    if (typeof v !== "number" || !Number.isFinite(v)) continue;
+    if (!Number.isInteger(h) || h < 0 || h > 23) continue;
+    sum[h] += v;
+    count[h] += 1;
+  }
+  return {
+    profile: sum.map((s, h) => (count[h] > 0 ? s / count[h] : fallback)),
+    coveredHours: count.filter((c) => c > 0).length,
+  };
+}
+
+// 내외기 차분 관리도용 짝. 결측을 걸러낸 뒤 위치로 다시 짝지으면 남은 값들이 통째로
+// 밀려 서로 다른 시각을 비교하게 된다. 인덱스를 유지한 채 양쪽이 다 있는 표본만 남긴다.
+function pairInternalExternal(
+  internal: number[],
+  external: (number | null | undefined)[]
+): { internal: number[]; external: number[] } {
+  const a: number[] = [];
+  const b: number[] = [];
+  const n = Math.min(internal.length, external.length);
+  for (let i = 0; i < n; i++) {
+    const e = external[i];
+    if (typeof e !== "number" || !Number.isFinite(e)) continue;
+    if (!Number.isFinite(internal[i])) continue;
+    a.push(internal[i]);
+    b.push(e);
+  }
+  return { internal: a, external: b };
 }
 
 export function buildOptimizationReport(
@@ -192,19 +234,27 @@ export function buildOptimizationReport(
   const sites = input.sites ?? 20;
   const readings = input.readings;
 
-  // ── 실측 외기 계열 정리: 값이 하나라도 비면 가정으로 취급한다 ──
-  const extTempRaw = (input.externalTempC ?? []).filter(
-    (v): v is number => typeof v === "number" && Number.isFinite(v)
-  );
-  const hasExtTemp = extTempRaw.length >= 12;
-  const extInsolationRaw = (input.externalInsolationWm2 ?? []).filter(
-    (v): v is number => typeof v === "number" && Number.isFinite(v)
-  );
-  const hasExtInsolation = extInsolationRaw.length >= 24;
+  // ── 실측 외기 계열 정리 ──
+  // 시각을 모르면 시간대별 계열을 만들 수 없다. 위치를 시각인 척 쓰는 대신 가정으로 떨어뜨린다.
+  const sampleHours = input.sampleHours ?? [];
+  const hasHours = sampleHours.length === readings.length && readings.length > 0;
+  const extTempSeries = input.externalTempC ?? [];
+  const extInsolationSeries = input.externalInsolationWm2 ?? [];
+  const countFinite = (xs: (number | null | undefined)[]) =>
+    xs.filter((v) => typeof v === "number" && Number.isFinite(v)).length;
 
+  const extTempHourly = hasHours
+    ? hourlyProfile(extTempSeries, sampleHours, NEUTRAL_EXT_TEMP_C)
+    : { profile: Array(24).fill(NEUTRAL_EXT_TEMP_C) as number[], coveredHours: 0 };
+  const extInsolationHourly = hasHours
+    ? hourlyProfile(extInsolationSeries, sampleHours, 0)
+    : { profile: Array(24).fill(0) as number[], coveredHours: 0 };
+
+  const hasExtTemp = hasHours && countFinite(extTempSeries) >= 12;
+  const hasExtInsolation = hasHours && extInsolationHourly.coveredHours >= 24;
   const ext24 = hasExtTemp
-    ? tail24(extTempRaw, NEUTRAL_EXT_TEMP_C)
-    : Array(24).fill(NEUTRAL_EXT_TEMP_C);
+    ? extTempHourly.profile
+    : (Array(24).fill(NEUTRAL_EXT_TEMP_C) as number[]);
 
   // ── 미시 ① DLI 광주기 (광주기 안전 하드제약 + TOU + 탄소) ──
   const dli = dliSchedule({ cropKey, ledPowerKw, tariff });
@@ -268,12 +318,14 @@ export function buildOptimizationReport(
   // ── 중간: 예지보전 ──
   const maintenance = readings.length > 0 ? maintenanceRisk(readings) : null;
   const rawCusum = cusumDrift(readings, { lag: 24 });
+  const tempPair = pairInternalExternal(
+    readings.map((r) => r.temperature),
+    extTempSeries
+  );
   const weatherCusum = hasExtTemp
-    ? weatherCompensatedCusum(
-        readings.map((r) => r.temperature).slice(-extTempRaw.length),
-        extTempRaw.slice(-readings.length),
-        { fleetPrior: input.fleetPrior }
-      )
+    ? weatherCompensatedCusum(tempPair.internal, tempPair.external, {
+        fleetPrior: input.fleetPrior,
+      })
     : ({
         status: "insufficient-data",
         detected: false,
@@ -292,7 +344,9 @@ export function buildOptimizationReport(
   // ── 중간: 보광 트리거(실내 vs 온실 하이브리드) ──
   const supplemental = supplementalTrigger({
     cropKey,
-    hourlyInsolation: hasExtInsolation ? tail24(extInsolationRaw, 0) : Array(24).fill(0),
+    hourlyInsolation: hasExtInsolation
+      ? extInsolationHourly.profile
+      : Array(24).fill(0),
     indoor: indoor || !hasExtInsolation,
   });
 
