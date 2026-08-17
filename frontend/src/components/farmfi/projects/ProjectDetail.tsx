@@ -61,6 +61,7 @@ const STATUS_LABEL: Record<string, string> = {
   funded: "모집 완료",
   operating: "운영 중",
   paused: "중단",
+  rejected: "심사 반려",
   completed: "청산",
   failed: "기한 초과 · 실패",
 };

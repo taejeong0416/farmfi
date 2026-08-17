@@ -95,7 +95,7 @@ model Project {
   fundingStart    DateTime?
   fundingEnd      DateTime?
   contractAddress String?
-  status        String       @default("operating") // upcoming, funding, funded, operating, paused, completed, failed
+  status        String       @default("operating") // upcoming, funding, funded, operating, paused, rejected, completed, failed
   failedAt      DateTime?    // 마일스톤 기한 초과로 실패 전환된 시각 (status="failed"와 함께 기록)
   imageUrl      String?
   institutionId String?      // 도입 기관 (성과 리포트 집계 단위)
