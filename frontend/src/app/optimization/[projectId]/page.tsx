@@ -184,7 +184,10 @@ export default async function OptimizationPage({
         <div className="rounded bg-sky-50 p-3 text-sm">
           <div className="font-medium text-sky-800">② 피크 분산 + SA 통합</div>
           <p className="mt-1 text-sky-700">
-            동시가동 {peak.naivePeakKw}kW → {peak.optimizedPeakKw}kW, 기본요금 월 {fmt(peak.demandChargeSavingPerMonth)}원.
+            동시가동 {peak.naivePeakKw}kW → {peak.optimizedPeakKw}kW
+            {contractPower.demandMetered
+              ? `, 기본요금 월 ${fmt(peak.demandChargeSavingIfMeteredPerMonth)}원.`
+              : `. 계약전력 ${contractPower.currentKw}kW는 최대수요전력 계량 대상이 아니라 기본요금 절감은 0원 — 피크 분산은 설비 용량·광량 배분 제약으로만 쓴다.`}{" "}
             SA 전역탐색이 단계별 해 대비 월 {fmt(joint.improvementPerMonth)}원 추가 절감
             (전력량요금과 겹치므로 위 합계엔 넣지 않는다).
           </p>
@@ -297,15 +300,16 @@ export default async function OptimizationPage({
             </p>
           </div>
           <div className="rounded bg-white p-3">
-            <div className="font-medium">계약전력</div>
+            <div className="font-medium">계약전력 · 기본요금</div>
             <p className="mt-1 text-gray-600">
-              {contractPower.currentKw}kW → <b>{contractPower.recommendedKw}kW</b> 권고
-              (초과 확률 {Math.round(contractPower.exceedanceProbability * 100)}%), 월{" "}
-              <b className="text-emerald-700">{fmt(contractPower.savingPerMonth)}원</b>.
+              계약전력 {contractPower.currentKw}kW · 관측 피크 {contractPower.observedPeakKw}kW ·
+              기본요금 월 {fmt(contractPower.basicChargePerMonth)}원 · 피크 절감{" "}
+              <b className={contractPower.demandMetered ? "text-emerald-700" : "text-gray-500"}>
+                {fmt(contractPower.savingPerMonth)}원
+              </b>
+              .
             </p>
-            <p className="mt-1 text-xs text-gray-400">
-              피크를 낮췄으면 계약도 낮춰야 절감이 실현된다 — 초과 위약까지 넣은 균형점.
-            </p>
+            <p className="mt-1 text-xs text-gray-400">{contractPower.note}</p>
           </div>
           <div className="rounded bg-white p-3">
             <div className="font-medium">CO₂-광 대체</div>

@@ -71,13 +71,6 @@ export const PARAMS = {
     asOf: "2026-04",
     replaceWith: "확정 계약종의 고시 단가",
   }),
-  contractPenaltyMultiplier: p(1.5, {
-    basis: "가정",
-    label: "계약전력 초과 시 위약 배수",
-    source: "초과분에 대한 할증 관행을 배수로 단순화",
-    asOf: "2026-08",
-    replaceWith: "계약서상 초과 요금 조항",
-  }),
   gridEmissionFactor: p(0.459, {
     basis: "고시",
     label: "계통 전력 배출계수 (kg CO2/kWh)",

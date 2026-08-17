@@ -263,7 +263,7 @@ test("peakStagger: 피크는 관행보다 커지지 않고 필요 가동시간�
     { name: "양액펌프", kw: 0.7, hoursNeeded: 6 },
   ]);
   assert.ok(plan.optimizedPeakKw <= plan.naivePeakKw);
-  assert.ok(plan.demandChargeSavingPerMonth >= 0);
+  assert.ok(plan.demandChargeSavingIfMeteredPerMonth >= 0);
   assert.equal(plan.assignments.find((a) => a.name === "공조")!.hours.length, 10);
   assert.equal(plan.assignments.find((a) => a.name === "양액펌프")!.hours.length, 6);
 });

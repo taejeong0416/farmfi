@@ -150,15 +150,22 @@ export function allocateCycleDli(opts: {
   };
 }
 
-// ── ② 계약전력 최적화 ──────────────────────────────────────────────────────
-// 기본요금은 계약전력에 붙고, 최대수요가 계약을 넘으면 그 초과분에 할증이 붙는다.
-// 여기서 중요한 건 **기간 최대치**다 — 한 달에 하루만 넘겨도 그 달 기본요금이 오르므로,
-// 초과분의 평균으로 위약을 매기면 계약을 위험하게 낮게 잡는다(초과 확률 50%대의
-// 권고가 나온다). 기간 최대 초과분으로 매겨야 실제 청구서와 같은 방향이 된다.
+// ── ② 계약전력 ─────────────────────────────────────────────────────────────
+// 여기서 갈리는 건 **이 사이트가 최대수요전력 계량 대상인지**다. 한전은 계약전력
+// 20kW 이상부터 15분 단위 최대수요전력을 재고 그 값으로 기본요금을 매긴다. 20kW
+// 미만이면 기본요금은 계약전력 × 단가이고, 계약전력은 사용설비 용량 합계로 정해진다 —
+// 언제 켜든 변하지 않는다.
 //
-// 절감의 실체는 "위험을 감수해 계약을 깎는 것"이 아니라 **피크를 낮춰 필요한 계약이
-// 줄어든 것**이다. 그래서 관행 스케줄의 피크 분포와 최적화 후 피크 분포를 함께 받아
-// 두 계약전력의 차이로 절감을 낸다.
+// 1호점은 LED 4.75kW + 공조 1.5kW + 펌프 0.7kW로 피크가 7kW 남짓이다. 20kW 미만이므로
+// 피크를 분산해도 기본요금은 한 푼도 줄지 않는다. 이 계층은 그 경우 절감액을 만들지 않고
+// 왜 만들 수 없는지를 돌려준다. 피크 분산 자체는 여전히 쓸모가 있다 — 사용설비 용량을
+// 낮춰 계약전력을 작게 잡는 근거가 되고, 사이클 광량 배분의 전력 상한이 된다.
+//
+// 계량 대상(20kW 이상, 다지점 공동수전)일 때 요금적용전력은 월 최대치가 아니라 당월과
+// 직전 12개월 중 동·하계(12·1·2·7·8·9월) 최대수요전력의 최대값 래칫이다. 여름 한 번의
+// 피크가 이후 1년 기본요금을 정하므로, 절감은 그 래칫에 남는 최대치를 낮춘 몫으로만
+// 계산한다. 종전에는 위약 배수를 곱한 목적함수를 풀었는데, 배수가 1을 넘으면 최적해가
+// 항상 관측 피크에 붙어(초과 확률 0%로 고정) 최적화가 자명해로 붕괴했다.
 
 export interface ContractPowerPlan {
   recommendedKw: number;
@@ -171,25 +178,26 @@ export interface ContractPowerPlan {
   savingPerMonth: number;
   exceedanceProbability: number; // 권고 계약전력을 넘기는 날의 비율
   maxExceedanceKw: number; // 그 초과가 얼마나 큰지 — 비율만으로는 판단할 수 없다
+  /** 최대수요전력 계량 대상인가 — 아니면 기본요금이 피크와 무관하다 */
+  demandMetered: boolean;
   note: string;
 }
-
-/** 계약전력 판정 여유(kW). 반올림 수준의 초과를 위험으로 세지 않는다 */
-const CONTRACT_TOLERANCE_KW = 0.05;
 
 export function optimalContractPower(opts: {
   /** 최적화 후 일별 최대수요 kW */
   dailyPeaksKw: number[];
   /** 관행 스케줄의 일별 최대수요 kW. 주면 두 계약의 차이로 절감을 낸다 */
   baselinePeaksKw?: number[];
-  /** 현재 계약전력. baselinePeaksKw가 있으면 그쪽이 우선 */
+  /** 현재 계약전력. 없으면 관행 피크에서 올려 잡는다 */
   currentContractKw?: number;
   basicChargePerKw?: number;
-  penaltyMultiplier?: number;
+  /** 최대수요전력 계량 적용 하한(kW). 이 미만이면 기본요금이 피크와 무관하다 */
+  demandMeteringThresholdKw?: number;
 }): ContractPowerPlan {
   const peaks = opts.dailyPeaksKw.filter((p) => Number.isFinite(p) && p > 0);
   const basic = opts.basicChargePerKw ?? PARAMS.demandChargePerKw.value;
-  const penalty = opts.penaltyMultiplier ?? PARAMS.contractPenaltyMultiplier.value;
+  const threshold =
+    opts.demandMeteringThresholdKw ?? PARAMS.demandMeteringThresholdKw.value;
 
   if (peaks.length === 0) {
     const fallback = opts.currentContractKw ?? 0;
@@ -204,61 +212,69 @@ export function optimalContractPower(opts: {
       savingPerMonth: 0,
       exceedanceProbability: 0,
       maxExceedanceKw: 0,
+      demandMetered: false,
       note: "피크 이력 없음 — 계약전력 판단 보류",
     };
   }
 
-  // 총비용(C) = C × 단가 + max(0, 기간최대 − C) × 단가 × 위약배수
-  const costOf = (c: number, series: number[]) => {
-    const maxExceed = Math.max(0, Math.max(...series) - c);
-    return c * basic + maxExceed * basic * penalty;
-  };
-  const bestContractFor = (series: number[]) => {
-    const cap = Math.ceil(Math.max(...series)) + 1;
-    let bestKw = cap;
-    let bestCost = Infinity;
-    for (let c = 0.5; c <= cap; c += 0.5) {
-      const cost = costOf(c, series);
-      if (cost < bestCost - 1e-9) {
-        bestCost = cost;
-        bestKw = c;
-      }
-    }
-    return { kw: bestKw, cost: bestCost };
-  };
-
+  // 계약전력은 사용설비 용량 합계로 정해지므로 관측 피크보다 크다. 관측값에서 올려
+  // 잡는 것은 근사이고, 실제 값이 있으면 currentContractKw로 넘겨야 한다.
   const observedMax = Math.max(...peaks);
-  const best = bestContractFor(peaks);
   const baseline = opts.baselinePeaksKw?.filter((p) => Number.isFinite(p) && p > 0);
-  const current =
-    baseline && baseline.length > 0
-      ? bestContractFor(baseline)
-      : {
-          kw: opts.currentContractKw ?? Math.ceil(observedMax),
-          cost: costOf(opts.currentContractKw ?? Math.ceil(observedMax), peaks),
-        };
+  const baselineMax = baseline && baseline.length > 0 ? Math.max(...baseline) : observedMax;
+  const currentKw = opts.currentContractKw ?? Math.ceil(baselineMax);
+  const demandMetered = currentKw >= threshold;
 
-  const exceedProb =
-    peaks.filter((p) => p > best.kw + CONTRACT_TOLERANCE_KW).length / peaks.length;
-  const maxExceed = Math.max(0, observedMax - best.kw);
-  const basicCharge = best.kw * basic;
+  // 계량 대상이 아니면 기본요금 = 계약전력 × 단가. 피크 배치와 무관하므로 절감은 0이다.
+  if (!demandMetered) {
+    const charge = Math.round(currentKw * basic);
+    return {
+      recommendedKw: Math.round(currentKw * 10) / 10,
+      currentKw: Math.round(currentKw * 10) / 10,
+      observedPeakKw: Math.round(observedMax * 10) / 10,
+      basicChargePerMonth: charge,
+      penaltyPerMonth: 0,
+      totalPerMonth: charge,
+      currentTotalPerMonth: charge,
+      savingPerMonth: 0,
+      exceedanceProbability: 0,
+      maxExceedanceKw: 0,
+      demandMetered: false,
+      note: `계약전력 ${Math.round(currentKw * 10) / 10}kW — 최대수요전력 계량 하한(${threshold}kW) 미만이라 기본요금은 계약전력 × 단가로 고정된다. 피크를 ${
+        Math.round(baselineMax * 10) / 10
+      }kW에서 ${
+        Math.round(observedMax * 10) / 10
+      }kW로 낮춰도 기본요금 절감은 없다(월 ${charge.toLocaleString("ko-KR")}원 그대로). 피크 분산은 사용설비 용량을 줄여 계약전력을 작게 잡는 근거이자 사이클 광량 배분의 전력 상한으로 쓴다. 요금 절감은 20kW 이상 다지점 공동수전에서 성립한다.`,
+    };
+  }
+
+  // 계량 대상: 요금적용전력은 당월과 직전 12개월 중 동·하계 최대수요전력의 최대값
+  // 래칫이다. 관측 창에서 그에 대응하는 값은 기간 최대치다.
+  const billable = observedMax;
+  const baselineBillable = baselineMax;
+  const totalPerMonth = Math.round(billable * basic);
+  const currentTotalPerMonth = Math.round(baselineBillable * basic);
 
   return {
-    recommendedKw: Math.round(best.kw * 10) / 10,
-    currentKw: Math.round(current.kw * 10) / 10,
+    recommendedKw: Math.round(billable * 10) / 10,
+    currentKw: Math.round(baselineBillable * 10) / 10,
     observedPeakKw: Math.round(observedMax * 10) / 10,
-    basicChargePerMonth: Math.round(basicCharge),
-    penaltyPerMonth: Math.round(best.cost - basicCharge),
-    totalPerMonth: Math.round(best.cost),
-    currentTotalPerMonth: Math.round(current.cost),
-    savingPerMonth: Math.max(0, Math.round(current.cost - best.cost)),
-    exceedanceProbability: Math.round(exceedProb * 100) / 100,
-    maxExceedanceKw: Math.round(maxExceed * 100) / 100,
-    note: `관측 피크 ${Math.round(observedMax * 10) / 10}kW → 계약전력 ${
-      Math.round(current.kw * 10) / 10
-    }kW에서 ${Math.round(best.kw * 10) / 10}kW로 (초과 확률 ${Math.round(
-      exceedProb * 100
-    )}%), 월 ${Math.max(0, Math.round(current.cost - best.cost))}원. 한 달에 하루만 넘겨도 그 달 기본요금이 오르므로 기간 최대치를 기준으로 잡는다.`,
+    basicChargePerMonth: totalPerMonth,
+    penaltyPerMonth: 0,
+    totalPerMonth,
+    currentTotalPerMonth,
+    savingPerMonth: Math.max(0, currentTotalPerMonth - totalPerMonth),
+    exceedanceProbability: 0,
+    maxExceedanceKw: 0,
+    demandMetered: true,
+    note: `최대수요전력 계량 대상 — 요금적용전력은 당월과 직전 12개월 중 동·하계(12·1·2·7·8·9월) 최대수요전력의 최대값이다. 관행 ${
+      Math.round(baselineBillable * 10) / 10
+    }kW → 최적화 ${
+      Math.round(billable * 10) / 10
+    }kW로 래칫에 남는 최대치가 낮아져 월 ${Math.max(
+      0,
+      currentTotalPerMonth - totalPerMonth
+    ).toLocaleString("ko-KR")}원. 여름 한 번의 피크가 이후 1년 기본요금을 정하므로 평균이 아니라 최대치로 계산한다.`,
   };
 }
 

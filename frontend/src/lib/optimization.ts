@@ -1126,9 +1126,17 @@ export function operationsSavingsReport(opts: {
   // 합산은 비중복 레버만: 전력량요금(DLI) + 기본요금(피크)은 요금 축이 달라 중복 없음.
   // SA는 이 둘을 동시에 푸는 전역탐색이라 LED 이동분이 DLI와 겹친다 → 합산 제외,
   // "통합 검증치"로만 표기(정직성).
+  // 기본요금 레버는 최대수요전력 계량 대상일 때만 금액이 붙는다. 20kW 미만 저압
+  // 사이트는 기본요금이 계약전력에 고정돼 0원이 들어오며, 그 사실이 화면에 남아야 한다.
   const breakdown = [
     { lever: "DLI 광주기(전력량요금)", wonPerMonth: opts.dliSavingPerMonth },
-    { lever: "피크 분산(기본요금)", wonPerMonth: opts.peakSavingPerMonth },
+    {
+      lever:
+        opts.peakSavingPerMonth > 0
+          ? "피크 분산(기본요금)"
+          : "피크 분산(기본요금) — 20kW 미만이라 미실현",
+      wonPerMonth: opts.peakSavingPerMonth,
+    },
     { lever: "수요연동 파종(폐기 변동비)", wonPerMonth: wasteWon },
   ];
   const monthlyWonSaved = breakdown.reduce((s, b) => s + b.wonPerMonth, 0);
@@ -1222,7 +1230,12 @@ export interface PeakPlan {
   naivePeakKw: number; // 전 부하 08시 동시 시작 관행
   optimizedPeakKw: number;
   assignments: { name: string; hours: number[] }[];
-  demandChargeSavingPerMonth: number; // 원 — (피크 절감 kW) × 기본요금 단가
+  /**
+   * (피크 절감 kW) × 기본요금 단가. **최대수요전력 계량 대상일 때만 실현되는 금액**이라
+   * 이름에 조건을 남긴다 — 계약전력 20kW 미만이면 기본요금이 계약전력에 붙어 피크를
+   * 낮춰도 청구서가 그대로다. 실현 여부 판정은 optimalContractPower가 한다.
+   */
+  demandChargeSavingIfMeteredPerMonth: number;
 }
 
 const DEMAND_CHARGE_PER_KW = PARAMS.demandChargePerKw.value;
@@ -1264,7 +1277,7 @@ export function peakStagger(loads: LoadSpec[]): PeakPlan {
     naivePeakKw: Math.round(naivePeakKw * 10) / 10,
     optimizedPeakKw: Math.round(optimizedPeakKw * 10) / 10,
     assignments,
-    demandChargeSavingPerMonth: Math.round(
+    demandChargeSavingIfMeteredPerMonth: Math.round(
       Math.max(0, naivePeakKw - optimizedPeakKw) * DEMAND_CHARGE_PER_KW
     ),
   };
