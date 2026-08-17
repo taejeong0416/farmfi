@@ -48,19 +48,38 @@ export interface Co2LightPlan {
   note: string;
 }
 
-// 목표 농도를 유지하는 데 드는 CO2 주입량(kg/일).
-// 재배실이 시간당 lossRate만큼 공기를 갈아치운다고 보고, 그때마다 (목표−대기) 농도차를
-// 다시 채운다. 시비는 명기에만 한다(암기엔 광합성이 없어 시비 가치가 없다).
+// 목표 농도를 유지하는 데 드는 CO2 주입량(kg/일). 두 항의 합이다.
+//
+//  ① 환기·누기 손실 — 시간당 lossRate만큼 공기가 갈리고, 그때마다 (목표−대기) 농도차를
+//     다시 채운다. 목표가 대기 농도면 0이다.
+//  ② 작물 흡수 — 광합성으로 고정되는 몫. 밀폐 재배실에서는 이 항이 환기 손실보다 크다.
+//     환기 없이 두면 재배실 농도가 대기(400ppm)에서 100ppm까지 떨어지는 게 그 증거다.
+//     농도를 올리면 광합성이 빨라져 흡수도 함께 늘기 때문에 co2YieldFactor로 스케일한다 —
+//     "농도를 올리면 그만큼 더 먹는다"가 빠지면 시비가 공짜에 가까워져, 탄산이 전기를
+//     대체한다는 판정이 실제보다 유리하게 나온다.
+//
+// 두 항 모두 명기에만 발생한다(암기엔 광합성이 없어 시비 가치가 없고 흡수도 없다).
 export function co2InjectionKgPerDay(opts: {
   targetPpm: number;
   roomVolumeM3: number;
   litHours: number;
+  /** 재배 면적(㎡) — 작물 흡수량의 기준. 없으면 흡수항을 빼고 환기 손실만 센다 */
+  areaM2?: number;
   lossRatePerHour?: number;
+  assimilationGPerM2H?: number;
 }): number {
   const loss = opts.lossRatePerHour ?? PARAMS.co2LossRatePerHour.value;
   const deltaPpm = Math.max(0, opts.targetPpm - CO2_AMBIENT_PPM);
   const kgPerAirChange = deltaPpm * 1e-6 * opts.roomVolumeM3 * CO2_DENSITY;
-  return kgPerAirChange * loss * opts.litHours;
+  const ventilationKg = kgPerAirChange * loss * opts.litHours;
+
+  const assimRate = opts.assimilationGPerM2H ?? PARAMS.co2AssimilationGPerM2H.value;
+  const uptakeKg =
+    opts.areaM2 != null
+      ? (assimRate * opts.areaM2 * co2YieldFactor(opts.targetPpm) * opts.litHours) / 1000
+      : 0;
+
+  return ventilationKg + uptakeKg;
 }
 
 export function co2LightCoOptimize(opts: {
@@ -103,6 +122,7 @@ export function co2LightCoOptimize(opts: {
       targetPpm: ppm,
       roomVolumeM3: volume,
       litHours: light.hours,
+      areaM2: area,
     });
     const co2CostPerDay = co2Kg * co2Cost;
     const revenue = (yieldKgM2 * area * price) / crop.cycleDays;
@@ -176,6 +196,7 @@ export function co2LightCoOptimize(opts: {
     targetPpm: best.co2Ppm,
     roomVolumeM3: volume,
     litHours: chosenLight.hours,
+    areaM2: area,
   });
 
   return {
