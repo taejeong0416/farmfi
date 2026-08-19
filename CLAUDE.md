@@ -4,6 +4,10 @@ FarmFi — 토큰증권(STO) 활용 미니팜 자금집행 웹플랫폼 (PNU 창
 도심 유휴공실을 스마트팜 매장으로 전환하는 자금을 STO로 조달하고, AI 검증에 연동된 에스크로가 단계 집행한다.
 사람용 가이드는 `CONTRIBUTING.md`, 문서 작성 규칙은 `docs/README.md` 참고.
 
+## 진행 중인 작업
+`docs/build-plan.md` — Figma 화면 98개(웹 62 · 앱 36) + 기능 개발. **체크박스가 진행 상황의 정본이다.**
+작업을 이어받을 때는 이 파일에서 체크 안 된 첫 항목부터 시작하고, 단위를 끝내면 체크·커밋한다.
+
 ## 구조
 - `frontend/` — Next.js 14 (App Router) + Prisma + API Routes (웹 + 백엔드)
 - `app/` — Expo React Native 운영자 앱
