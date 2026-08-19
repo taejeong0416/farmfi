@@ -8,6 +8,20 @@ FarmFi — 토큰증권(STO) 활용 미니팜 자금집행 웹플랫폼 (PNU 창
 `docs/build-plan.md` — Figma 화면 98개(웹 62 · 앱 36) + 기능 개발. **체크박스가 진행 상황의 정본이다.**
 작업을 이어받을 때는 이 파일에서 체크 안 된 첫 항목부터 시작하고, 단위를 끝내면 체크·커밋한다.
 
+## 디자인
+Figma가 기준이다. 원본은 `design/*.fig`, 화면별 좌표·색·폰트 덤프는 `design/screens/`.
+
+색은 아래를 기본으로 쓴다.
+```
+ink #1A1A1A · body #4A4A4A · muted #8A8A8A
+line #E5E5E3 · line-soft #EDEDEB · surface #F2F2F0
+brand #14542E · brand-soft #EAF6EE · danger #A34A3D
+```
+- Figma에 남아있는 노랑·파랑과 연한 틴트 배경은 쓰지 않는다. 치환표는 `docs/figma-color-map.md`.
+- 상태를 여러 색으로 등급 매기지 않는다. 글자로 말한다.
+- 제3자 브랜드 로고(B-05 결제수단)는 원본 색을 쓴다.
+- 웹과 앱이 같은 색을 쓴다.
+
 ## 구조
 - `frontend/` — Next.js 14 (App Router) + Prisma + API Routes (웹 + 백엔드)
 - `app/` — Expo React Native 운영자 앱
