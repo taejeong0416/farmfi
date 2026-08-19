@@ -1,0 +1,24 @@
+FRAME "C-I01 · 투자자 준비 / 본인확인 방법 선택"  @3540,220 465x725  fill=#FCFCFB
+  TEXT "투자 준비 1 / 3"  @3573,248 76x15  text='투자 준비 1 / 3'  Inter Regular 12px  #0E6340
+  TEXT "먼저 본인확인 방법을 선택해 주세요"  @3573,286 354x29  text='먼저 본인확인 방법을 선택해 주세요'  Inter Bold 24px  #171A14
+  TEXT "로그인은 간편인증도 가능하지만, 첫 투자 전에는 모바일 신분증 확인이 필요해요."  @3573,328 399x32  text='로그인은 간편인증도 가능하지만, 첫 투자 전에는 모바일 신분증 확인이 필요해요.'  Inter Regular 13px  #6B6B61
+  ROUNDED_RECTANGLE "Rectangle"  @3573,380 399x142  fill=#0A422B  r=14
+  ROUNDED_RECTANGLE "Rectangle"  @3597,410 72x72  fill=#FFFFFF  r=18
+  TEXT "F"  @3624,428 17x34  text='F'  Inter Bold 28px  #0E6340
+  TEXT "첫 투자 전에 필요한 확인"  @3691,406 174x21  text='첫 투자 전에 필요한 확인'  Inter Semi Bold 17px  #FFFFFF
+  TEXT "모바일 신분증이 있으면 바로 진행할 수 있어요"  @3691,434 211x13  text='모바일 신분증이 있으면 바로 진행할 수 있어요'  Inter Regular 11px  #B2D4BF
+  TEXT "필요한 것 · 본인 명의 휴대폰"  @3691,464 142x15  text='필요한 것 · 본인 명의 휴대폰'  Inter Regular 12px  #FFFFFF
+  TEXT "본인확인 방법"  @3573,555 200x20  text='본인확인 방법'  Inter Bold 17px  #141F1C
+  ROUNDED_RECTANGLE "Option/Mobile ID"  @3573,592 399x82  fill=#F0F9F6  stroke=#0F6E56/1  r=12
+  ELLIPSE "Radio/Selected"  @3591,620 22x22  fill=#0F6E56
+  ELLIPSE "Ellipse"  @3598,627 8x8  fill=#FFFFFF
+  TEXT "모바일 신분증으로 확인"  @3628,609 310x20  text='모바일 신분증으로 확인'  Inter Semi Bold 15px  #141F1C
+  TEXT "첫 투자까지 한 번에 준비 · 권장"  @3628,637 310x20  text='첫 투자까지 한 번에 준비 · 권장'  Inter Regular 12px  #616E69
+  ROUNDED_RECTANGLE "Option/Simple Auth"  @3573,688 399x82  fill=#FFFFFF  stroke=#D6DED9/1  r=12
+  ELLIPSE "Radio/Default"  @3591,716 22x22  fill=#FFFFFF  stroke=#9EA8A3/1
+  TEXT "간편인증으로 로그인"  @3628,705 310x20  text='간편인증으로 로그인'  Inter Semi Bold 15px  #141F1C
+  TEXT "둘러보기 가능 · 투자 전 모바일 신분증 확인"  @3628,733 310x20  text='둘러보기 가능 · 투자 전 모바일 신분증 확인'  Inter Regular 12px  #616E69
+  ROUNDED_RECTANGLE "Button/Continue"  @3573,804 399x48  fill=#0F6E56  r=10
+  TEXT "모바일 신분증으로 계속"  @3696,819 220x20  text='모바일 신분증으로 계속'  Inter Semi Bold 14px  #FFFFFF
+  TEXT "나중에 확인하고 프로젝트 둘러보기"  @3673,870 260x20  text='나중에 확인하고 프로젝트 둘러보기'  Inter Semi Bold 13px  #0F6E56
+  TEXT "선택한 방법은 다음 화면에서 변경할 수 있어요."  @3644,905 300x20  text='선택한 방법은 다음 화면에서 변경할 수 있어요.'  Inter Regular 11px  #616E69

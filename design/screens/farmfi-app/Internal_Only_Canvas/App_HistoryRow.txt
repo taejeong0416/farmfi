@@ -1,0 +1,6 @@
+SYMBOL "App/HistoryRow"  @1968,3370 345x33
+  FRAME "Frame 6"  @1968,3377 345x19
+    TEXT "07.29"  @1968,3377 57x19  text='07.29'  Inter Regular 16px  #1D1E1C
+    TEXT "방울토마토"  @2024,3377 140x19  text='방울토마토'  Inter Regular 16px  #1D1E1C
+    TEXT "34봉"  @2164,3377 46x19  text='34봉'  Inter Regular 16px  #1D1E1C
+    TEXT "204,000원"  @2211,3377 95x19  text='204,000원'  Inter Semi Bold 16px  #1D1E1C

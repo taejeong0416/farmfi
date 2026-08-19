@@ -1,0 +1,112 @@
+FRAME "08 실시간 생육 모니터링 — 로딩"  @95,3430 402x874  fill=#FFFFFF
+  FRAME "Body"  @95,3533 402x709
+    FRAME "App/BedCard"  @111,3549 370x157  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      FRAME "Head"  @123,3561 345x41
+        INSTANCE "App/SkeletonBlock"  @123,3561 60x41  fill=#F0F0ED  r=6
+        FRAME "Copy"  @193,3563 225x37
+          INSTANCE "App/SkeletonBlock"  @193,3563 45x19  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @193,3585 88x15  fill=#F0F0ED  r=6
+        INSTANCE "App/SkeletonBlock"  @429,3570 39x23  fill=#F0F0ED  r=6
+      FRAME "Readings"  @123,3613 345x56  stroke=#C9CEC9/1
+        FRAME "온도"  @123,3622 86x37
+          INSTANCE "App/SkeletonBlock"  @155,3622 23x15  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @143,3642 48x17  fill=#F0F0ED  r=6
+        FRAME "습도"  @210,3622 86x37
+          INSTANCE "App/SkeletonBlock"  @241,3622 23x15  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @238,3642 30x17  fill=#F0F0ED  r=6
+        FRAME "CO₂"  @296,3622 86x37
+          INSTANCE "App/SkeletonBlock"  @328,3622 23x15  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @311,3642 57x17  fill=#F0F0ED  r=6
+        FRAME "EC"  @382,3622 86x37
+          INSTANCE "App/SkeletonBlock"  @417,3622 16x15  fill=#F0F0ED  r=8
+          INSTANCE "App/SkeletonBlock"  @416,3642 19x17  fill=#F0F0ED  r=8
+      FRAME "Footer"  @123,3679 345x15
+        INSTANCE "App/SkeletonBlock"  @123,3679 71x15  fill=#F0F0ED  r=6
+        FRAME "ProgressBar"  @204,3683 190x7  fill=#F0EEEA  r=51
+          INSTANCE "App/SkeletonBlock"  @204,3683 142x8  fill=#F0F0ED  r=6
+        INSTANCE "App/SkeletonBlock"  @403,3679 66x15  fill=#F0F0ED  r=6
+    FRAME "App/BedCard"  @111,3722 370x157  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      FRAME "Head"  @123,3734 345x41
+        INSTANCE "App/SkeletonBlock"  @123,3734 60x41  fill=#F0F0ED  r=6
+        FRAME "Copy"  @193,3737 225x37
+          INSTANCE "App/SkeletonBlock"  @193,3737 45x19  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @193,3759 88x15  fill=#F0F0ED  r=6
+        INSTANCE "App/SkeletonBlock"  @429,3743 39x23  fill=#F0F0ED  r=6
+      FRAME "Readings"  @123,3786 345x56  stroke=#C9CEC9/1
+        FRAME "온도"  @123,3795 86x37
+          INSTANCE "App/SkeletonBlock"  @155,3795 23x15  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @143,3815 48x17  fill=#F0F0ED  r=6
+        FRAME "습도"  @210,3795 86x37
+          INSTANCE "App/SkeletonBlock"  @241,3795 23x15  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @238,3815 30x17  fill=#F0F0ED  r=6
+        FRAME "CO₂"  @296,3795 86x37
+          INSTANCE "App/SkeletonBlock"  @328,3795 23x15  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @311,3815 57x17  fill=#F0F0ED  r=6
+        FRAME "EC"  @382,3795 86x37
+          INSTANCE "App/SkeletonBlock"  @417,3795 16x15  fill=#F0F0ED  r=8
+          INSTANCE "App/SkeletonBlock"  @416,3815 19x17  fill=#F0F0ED  r=8
+      FRAME "Footer"  @123,3852 345x15
+        INSTANCE "App/SkeletonBlock"  @123,3852 71x15  fill=#F0F0ED  r=6
+        FRAME "ProgressBar"  @204,3856 190x7  fill=#F0EEEA  r=51
+          INSTANCE "App/SkeletonBlock"  @204,3856 142x8  fill=#F0F0ED  r=6
+        INSTANCE "App/SkeletonBlock"  @403,3852 66x15  fill=#F0F0ED  r=6
+    FRAME "App/BedCard"  @111,3895 370x157  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      FRAME "Head"  @123,3908 345x41
+        INSTANCE "App/SkeletonBlock"  @123,3908 60x41  fill=#F0F0ED  r=6
+        FRAME "Copy"  @193,3910 225x37
+          INSTANCE "App/SkeletonBlock"  @193,3910 45x19  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @193,3932 88x15  fill=#F0F0ED  r=6
+        INSTANCE "App/SkeletonBlock"  @429,3917 39x23  fill=#F0F0ED  r=6
+      FRAME "Readings"  @123,3959 345x56  stroke=#C9CEC9/1
+        FRAME "온도"  @123,3969 86x37
+          INSTANCE "App/SkeletonBlock"  @155,3969 23x15  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @143,3989 48x17  fill=#F0F0ED  r=6
+        FRAME "습도"  @210,3969 86x37
+          INSTANCE "App/SkeletonBlock"  @241,3969 23x15  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @238,3989 30x17  fill=#F0F0ED  r=6
+        FRAME "CO₂"  @296,3969 86x37
+          INSTANCE "App/SkeletonBlock"  @328,3969 23x15  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @311,3989 57x17  fill=#F0F0ED  r=6
+        FRAME "EC"  @382,3969 86x37
+          INSTANCE "App/SkeletonBlock"  @417,3969 16x15  fill=#F0F0ED  r=8
+          INSTANCE "App/SkeletonBlock"  @416,3989 19x17  fill=#F0F0ED  r=8
+      FRAME "Footer"  @123,4025 345x15
+        INSTANCE "App/SkeletonBlock"  @123,4025 71x15  fill=#F0F0ED  r=6
+        FRAME "ProgressBar"  @204,4029 190x7  fill=#F0EEEA  r=51
+          INSTANCE "App/SkeletonBlock"  @204,4029 142x8  fill=#F0F0ED  r=6
+        INSTANCE "App/SkeletonBlock"  @403,4025 66x15  fill=#F0F0ED  r=6
+    FRAME "App/BedCard"  @111,4069 370x157  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      FRAME "Head"  @123,4081 345x41
+        INSTANCE "App/SkeletonBlock"  @123,4081 60x41  fill=#F0F0ED  r=6
+        FRAME "Copy"  @193,4083 225x37
+          INSTANCE "App/SkeletonBlock"  @193,4083 45x19  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @193,4105 88x15  fill=#F0F0ED  r=6
+        INSTANCE "App/SkeletonBlock"  @429,4090 39x23  fill=#F0F0ED  r=6
+      FRAME "Readings"  @123,4133 345x56  stroke=#C9CEC9/1
+        FRAME "온도"  @123,4142 86x37
+          INSTANCE "App/SkeletonBlock"  @155,4142 23x15  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @143,4162 48x17  fill=#F0F0ED  r=6
+        FRAME "습도"  @210,4142 86x37
+          INSTANCE "App/SkeletonBlock"  @241,4142 23x15  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @238,4162 30x17  fill=#F0F0ED  r=6
+        FRAME "CO₂"  @296,4142 86x37
+          INSTANCE "App/SkeletonBlock"  @328,4142 23x15  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @311,4162 57x17  fill=#F0F0ED  r=6
+        FRAME "EC"  @382,4142 86x37
+          INSTANCE "App/SkeletonBlock"  @417,4142 16x15  fill=#F0F0ED  r=8
+          INSTANCE "App/SkeletonBlock"  @416,4162 19x17  fill=#F0F0ED  r=8
+      FRAME "Footer"  @123,4199 345x15
+        INSTANCE "App/SkeletonBlock"  @123,4199 71x15  fill=#F0F0ED  r=6
+        FRAME "ProgressBar"  @204,4203 190x7  fill=#F0EEEA  r=51
+          INSTANCE "App/SkeletonBlock"  @204,4203 142x8  fill=#F0F0ED  r=6
+        INSTANCE "App/SkeletonBlock"  @403,4199 66x15  fill=#F0F0ED  r=6
+  FRAME "Status Bar"  @95,3430 402x103
+    INSTANCE "Status Bar"  @95,3430 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+    INSTANCE "App/DetailHeader2"  @95,3477 402x56
+  FRAME "Frame 2121453045"  @95,4203 402x101
+    INSTANCE "App/BottomNav"  @95,4203 402x64  fill=#FFFFFF  stroke=#F1F1F1/1
+    FRAME "Group 828"  @95,4268 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @95,4268 402x36  fill=#FFFFFF  stroke=#FFFFFF/1
+      FRAME "Group 819"  @225,4290 144x5
+        FRAME "Group 665"  @225,4290 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @225,4290 144x5  fill=#070428  r=107

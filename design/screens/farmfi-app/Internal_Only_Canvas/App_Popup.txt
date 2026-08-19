@@ -1,0 +1,10 @@
+SYMBOL "App/Popup"  @958,2257 330x211  fill=#FFFFFF  stroke=#C9CEC9/1  r=14
+  FRAME "Icon"  @1096,2280 54x54  fill=#EEF4EA  r=51
+    TEXT "Glyph"  @1111,2295 24x24  text='✓'  Inter Regular 22px  #1B5E3F
+  TEXT "제어 명령이 처리됐어요"  @1035,2342 176x22  text='제어 명령이 처리됐어요'  Inter Regular 18px  #1D1E1C
+  TEXT "순환팬 — 가동 상태로 변경됐습니다."  @979,2372 289x15  text='순환팬 — 가동 상태로 변경됐습니다.'  Inter Regular 12px  #4D504B
+  FRAME "Actions"  @979,2395 289x57
+    FRAME "취소"  @979,2407 140x45  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+      TEXT "취소"  @1036,2421 26x17  text='취소'  Inter Regular 14px  #4D504B
+    FRAME "확인"  @1127,2407 140x45  fill=#1B5E3F  r=8
+      TEXT "확인"  @1184,2421 26x17  text='확인'  Inter Regular 14px  #FFFFFF

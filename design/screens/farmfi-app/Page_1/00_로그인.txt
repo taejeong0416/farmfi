@@ -1,0 +1,33 @@
+  FRAME "Frame 2121453046"  @1020,0 402x559  fill=#FFFFFF
+    FRAME "Body"  @1020,0 402x559
+      FRAME "Spacer"  @1066,13 310x242
+      FRAME "Logo"  @1066,265 310x63
+        FRAME "logo"  @1153,265 136x31
+          VECTOR "Vector"  @1153,265 136x31  fill=#217248
+        TEXT "도심 스마트팜 운영지원 서비스"  @1142,312 157x16  text='도심 스마트팜 운영지원 서비스'  Pretendard Regular 13px  #6B7280
+      FRAME "Gap"  @1066,339 310x19
+      FRAME "Frame 2121453049"  @1066,367 310x170
+        FRAME "Frame 2121453048"  @1066,367 310x99
+          FRAME "Input"  @1066,367 310x45  fill=#FFFFFF  stroke=#D1D5DB/1  r=36
+            FRAME "Frame 2121453050"  @1087,381 276x17
+              FRAME "mail"  @1087,382 16x16
+                VECTOR "Vector"  @1088,384 13x11  stroke=#9CA3AF/1
+                VECTOR "Vector"  @1088,386 13x5  stroke=#9CA3AF/1
+              TEXT "이메일"  @1110,381 253x17  text='이메일'  Pretendard Regular 14px  #9CA3AF
+          FRAME "Input"  @1066,422 310x45  fill=#FFFFFF  stroke=#D1D5DB/1  r=36
+            FRAME "Frame 2121453051"  @1087,436 276x17
+              FRAME "lock"  @1087,436 16x16
+                VECTOR "Vector"  @1089,444 12x7  stroke=#9CA3AF/1
+                VECTOR "Vector"  @1092,438 7x6  stroke=#9CA3AF/1
+              TEXT "비밀번호"  @1110,436 253x17  text='비밀번호'  Pretendard Regular 14px  #9CA3AF
+        FRAME "Frame 2121453047"  @1066,485 310x52
+          FRAME "LoginButton"  @1066,485 310x52  fill=#1B5E3F  r=9
+            TEXT "로그인"  @1202,502 37x17  text='로그인'  Pretendard SemiBold 14px  #FFFFFF
+  FRAME "Frame 2121453045"  @1020,838 402x36
+    FRAME "Group 828"  @1020,838 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @1020,838 402x36
+      FRAME "Group 819"  @1150,860 144x5
+        FRAME "Group 665"  @1150,860 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @1150,860 144x5  fill=#070428  r=107
+  FRAME "Status Bar"  @1020,0 402x47
+    INSTANCE "Status Bar"  @1020,0 402x47  fill=#FFFFFF  stroke=#FFFFFF/1

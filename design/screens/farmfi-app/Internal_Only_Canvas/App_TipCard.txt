@@ -1,0 +1,5 @@
+SYMBOL "App/TipCard"  @858,2540 418x89  fill=#FBFDF9  r=9
+  FRAME "PixelGlyph bulb"  @870,2553 24x24  fill=#FDF6EA  r=4
+  FRAME "Copy"  @902,2553 361x64
+    TEXT "TIP"  @902,2553 25x19  text='TIP'  Inter Regular 16px  #1B5E3F
+    TEXT "매장을 선택하면 운영, 모니터링, 리포트 정보를 확인할 수 있어요."  @902,2577 361x40  text='매장을 선택하면 운영, 모니터링, 리포트 정보를 확인할 수 있어요.'  Inter Regular 14px  #454844

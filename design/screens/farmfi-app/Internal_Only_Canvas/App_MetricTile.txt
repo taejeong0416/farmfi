@@ -1,0 +1,6 @@
+SYMBOL "App/MetricTile"  @1475,2907 127x71  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+  FRAME "Label"  @1506,2918 67x17
+    TEXT "센서 가동률"  @1506,2918 67x17  text='센서 가동률'  Inter Regular 14px  #333333
+  FRAME "Value"  @1521,2943 37x24
+    TEXT "97"  @1521,2943 25x24  text='97'  Inter Bold 20px  #1B5E3F
+    TEXT "%"  @1548,2947 10x15  text='%'  Inter Regular 12px  #151715

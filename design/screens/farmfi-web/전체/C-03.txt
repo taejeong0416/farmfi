@@ -1,0 +1,33 @@
+FRAME "C-03 · 공통 / 회원가입"  @2065,120 465x649  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "선"  @2066,177 463x1  fill=#EDEDEB
+  TEXT "FarmFi"  @2090,139 52x19  text='FarmFi'  Pretendard Bold 16px  #14542E
+  TEXT "회원가입"  @2098,211 70x24  text='회원가입'  Pretendard Bold 20px  #1A1A1A
+  TEXT "이메일"  @2098,292 33x15  text='이메일'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @2098,315 399x46  stroke=#E5E5E3/1  r=8
+  TEXT "이메일 주소를 입력하세요"  @2113,331 131x15  text='이메일 주소를 입력하세요'  Pretendard Regular 13px  #B5B5B5
+  TEXT "비밀번호"  @2098,375 44x15  text='비밀번호'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @2098,399 399x46  stroke=#E5E5E3/1  r=8
+  TEXT "영문 · 숫자 · 특수문자 포함 10자 이상"  @2113,414 190x15  text='영문 · 숫자 · 특수문자 포함 10자 이상'  Pretendard Regular 13px  #B5B5B5
+  TEXT "비밀번호 확인"  @2098,459 69x15  text='비밀번호 확인'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @2098,482 399x46  stroke=#E5E5E3/1  r=8
+  TEXT "한 번 더 입력하세요"  @2113,498 101x15  text='한 번 더 입력하세요'  Pretendard Regular 13px  #B5B5B5
+  ROUNDED_RECTANGLE "선"  @2098,548 399x1  fill=#EDEDEB
+  ROUNDED_RECTANGLE "선"  @2098,588 399x1  fill=#F2F2F0
+  ROUNDED_RECTANGLE "면"  @2098,561 15x15  fill=#14542E  r=4
+  FRAME "아이콘"  @2101,564 9x9
+    VECTOR "Vector"  @2102,566 6x4  stroke=#FFFFFF/1
+  TEXT "서비스 이용약관 동의"  @2122,560 105x15  text='서비스 이용약관 동의'  Pretendard Regular 12px  #1A1A1A
+  TEXT "필수"  @2477,561 21x14  text='필수'  Pretendard Medium 12px  #14542E
+  ROUNDED_RECTANGLE "선"  @2098,628 399x1  fill=#F2F2F0
+  ROUNDED_RECTANGLE "면"  @2098,601 15x15  fill=#14542E  r=4
+  FRAME "아이콘"  @2101,604 9x9
+    VECTOR "Vector"  @2102,606 6x4  stroke=#FFFFFF/1
+  TEXT "개인정보 수집 · 이용 동의"  @2122,600 125x15  text='개인정보 수집 · 이용 동의'  Pretendard Regular 12px  #1A1A1A
+  TEXT "필수"  @2477,601 21x14  text='필수'  Pretendard Medium 12px  #14542E
+  ROUNDED_RECTANGLE "면"  @2098,641 15x15  stroke=#CFCFCC/1  r=4
+  TEXT "마케팅 정보 수신 동의"  @2122,640 108x15  text='마케팅 정보 수신 동의'  Pretendard Regular 12px  #4A4A4A
+  TEXT "선택"  @2477,641 21x14  text='선택'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @2098,688 399x46  fill=#14542E  r=6
+  TEXT "가입하고 신원 확인하기"  @2234,703 128x16  text='가입하고 신원 확인하기'  Pretendard Medium 14px  #FFFFFF
+  FRAME "Frame"  @2092,238 410x34  fill=#FFFFFF  stroke=#FFFFFF/1
+  TEXT "가입 후 투자자 또는 구매자로 이용할 서비스를 선택할 수 있어요."  @2098,248 348x16  text='가입 후 투자자 또는 구매자로 이용할 서비스를 선택할 수 있어요.'  Inter Regular 13px  #757575

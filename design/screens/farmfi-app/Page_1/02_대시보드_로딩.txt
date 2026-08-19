@@ -1,0 +1,95 @@
+FRAME "02 대시보드 — 로딩"  @75,919 402x874  fill=#FFFFFF
+  FRAME "Body"  @75,1022 402x949
+    FRAME "OperatorProfile"  @91,1038 370x42
+      FRAME "Frame 2121453055"  @91,1038 240x42
+        INSTANCE "App/SkeletonBlock"  @91,1041 36x36  fill=#F0F0ED  r=18
+        FRAME "TextCol"  @137,1038 127x42
+          INSTANCE "App/SkeletonBlock"  @137,1038 104x22  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @137,1064 127x16  fill=#F0F0ED  r=6
+      FRAME "StoreSelector"  @405,1050 56x18
+        INSTANCE "App/SkeletonBlock"  @405,1050 42x18  fill=#F0F0ED  r=6
+        INSTANCE "App/SkeletonBlock"  @451,1054 10x11  fill=#F0F0ED  r=5
+    FRAME "KpiGrid"  @91,1104 370x154
+      FRAME "Row"  @91,1104 370x71
+        FRAME "App/MetricTile"  @91,1104 179x71  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+          FRAME "Label"  @153,1115 55x17
+            INSTANCE "App/SkeletonBlock"  @153,1115 55x17  fill=#F0F0ED  r=6
+          FRAME "Value"  @162,1140 37x24
+            INSTANCE "App/SkeletonBlock"  @162,1140 37x24  fill=#F0F0ED  r=6
+        FRAME "App/MetricTile"  @282,1104 179x71  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+          FRAME "Label"  @344,1115 55x17
+            INSTANCE "App/SkeletonBlock"  @344,1115 55x17  fill=#F0F0ED  r=6
+          FRAME "Value"  @353,1140 37x24
+            INSTANCE "App/SkeletonBlock"  @353,1140 37x24  fill=#F0F0ED  r=6
+      FRAME "Row"  @91,1187 370x71
+        FRAME "App/MetricTile"  @91,1187 179x71  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+          FRAME "Label"  @153,1198 55x17
+            INSTANCE "App/SkeletonBlock"  @153,1198 55x17  fill=#F0F0ED  r=6
+          FRAME "Value"  @168,1223 24x24
+            INSTANCE "App/SkeletonBlock"  @168,1223 10x24  fill=#F0F0ED  r=6
+            INSTANCE "App/SkeletonBlock"  @181,1228 12x15  fill=#F0F0ED  r=6
+        FRAME "App/MetricTile"  @282,1187 179x71  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+          FRAME "Label"  @344,1198 55x17
+            INSTANCE "App/SkeletonBlock"  @344,1198 55x17  fill=#F0F0ED  r=6
+          FRAME "Value"  @359,1223 24x24
+            INSTANCE "App/SkeletonBlock"  @359,1223 10x24  fill=#F0F0ED  r=6
+            INSTANCE "App/SkeletonBlock"  @372,1228 12x15  fill=#F0F0ED  r=6
+    FRAME "AlertsSection"  @91,1282 370x207
+      FRAME "HeaderRow"  @91,1282 370x19
+        FRAME "App/SectionTitle"  @91,1282 310x19
+          INSTANCE "App/SkeletonBlock"  @91,1282 310x19  fill=#F0F0ED  r=6
+        INSTANCE "App/SkeletonBlock"  @401,1284 60x16  fill=#F0F0ED  r=6
+      FRAME "App/AlertCard"  @91,1313 370x82  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+        FRAME "Head"  @107,1329 338x23
+          INSTANCE "App/SkeletonBlock"  @107,1329 39x23  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @154,1331 247x19  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @409,1334 36x13  fill=#F0F0ED  r=6
+        INSTANCE "App/SkeletonBlock"  @107,1362 338x17  fill=#F0F0ED  r=6
+      FRAME "App/AlertCard"  @91,1407 370x82  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+        FRAME "Head"  @107,1423 338x23
+          INSTANCE "App/SkeletonBlock"  @107,1423 39x23  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @154,1426 247x19  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @409,1429 36x13  fill=#F0F0ED  r=6
+        INSTANCE "App/SkeletonBlock"  @107,1457 338x17  fill=#F0F0ED  r=6
+    FRAME "TasksSection"  @91,1514 370x150
+      FRAME "App/SectionTitle"  @91,1514 370x19
+        INSTANCE "App/SkeletonBlock"  @91,1514 370x19  fill=#F0F0ED  r=6
+      FRAME "App/TaskRow"  @91,1545 370x54  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+        INSTANCE "App/SkeletonBlock"  @103,1559 25x25  fill=#F0F0ED  r=12
+        INSTANCE "App/SkeletonBlock"  @137,1562 258x18  fill=#F0F0ED  r=6
+        FRAME "Action"  @405,1560 44x23  fill=#EEF4EA  r=6
+          INSTANCE "App/SkeletonBlock"  @415,1564 23x15  fill=#F0F0ED  r=6
+      FRAME "App/TaskRow"  @91,1610 370x54  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+        INSTANCE "App/SkeletonBlock"  @103,1625 25x25  fill=#F0F0ED  r=12
+        INSTANCE "App/SkeletonBlock"  @137,1628 258x18  fill=#F0F0ED  r=6
+        FRAME "Action"  @405,1625 44x23  fill=#EEF4EA  r=6
+          INSTANCE "App/SkeletonBlock"  @415,1630 23x15  fill=#F0F0ED  r=6
+    FRAME "StoreStatusSection"  @91,1688 370x251
+      FRAME "App/SectionTitle"  @91,1688 370x19
+        INSTANCE "App/SkeletonBlock"  @91,1688 370x19  fill=#F0F0ED  r=6
+      FRAME "Card"  @91,1719 370x220  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+        FRAME "FloorPlanPlaceholder"  @91,1719 370x220  fill=#F0F0ED
+          INSTANCE "App/SkeletonBlock"  @199,1821 154x16  fill=#F0F0ED  r=6
+          FRAME "BedPill"  @107,1735 54x27  fill=#FFFFFF  r=99
+            INSTANCE "App/SkeletonBlock"  @117,1741 34x15  fill=#F0F0ED  r=6
+          FRAME "BedPill"  @373,1735 53x27  fill=#FFFFFF  r=99
+            INSTANCE "App/SkeletonBlock"  @383,1741 33x15  fill=#F0F0ED  r=6
+          FRAME "BedPill"  @107,1893 54x27  fill=#FFFFFF  r=99
+            INSTANCE "App/SkeletonBlock"  @117,1899 34x15  fill=#F0F0ED  r=6
+          FRAME "BedPill"  @373,1893 54x27  fill=#FFFFFF  r=99
+            INSTANCE "App/SkeletonBlock"  @383,1899 34x15  fill=#F0F0ED  r=6
+  FRAME "Frame 2121453045"  @75,1692 402x101
+    INSTANCE "App/BottomNav"  @75,1692 402x64  fill=#FFFFFF  stroke=#F1F1F1/1
+    FRAME "Group 828"  @75,1757 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @75,1757 402x36  fill=#070428  stroke=#FFFFFF/1
+      FRAME "Group 819"  @205,1779 144x5
+        FRAME "Group 665"  @205,1779 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @205,1779 144x5  fill=#070428  r=107
+  FRAME "Status Bar"  @75,919 402x103
+    INSTANCE "Status Bar"  @75,919 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+    FRAME "Frame 2121452728"  @75,966 402x56  fill=#FFFFFF  stroke=#C9CEC9@0.50/1
+      FRAME "Frame 1171276457"  @91,985 370x18
+        FRAME "logo"  @91,985 78x18
+          INSTANCE "shimmer-bone"  @91,985 78x18  r=9
+        FRAME "settings"  @443,985 18x18
+          INSTANCE "shimmer-bone"  @444,986 16x16  r=8

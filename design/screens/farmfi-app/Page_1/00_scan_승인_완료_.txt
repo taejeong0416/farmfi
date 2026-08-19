@@ -1,0 +1,12 @@
+FRAME "00 scan (승인 완료)"  @1019,-1037 402x874
+  FRAME "Body"  @1019,-684 402x167
+    ROUNDED_RECTANGLE "image 2"  @1163,-670 114x76
+    TEXT "승인 완료"  @1110,-567 221x29  text='승인 완료'  Pretendard Bold 24px  #FFFFFF
+  FRAME "Frame 2121453045"  @1019,-199 402x36
+    FRAME "Group 828"  @1019,-199 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @1019,-199 402x36
+      FRAME "Group 819"  @1149,-177 144x5
+        FRAME "Group 665"  @1149,-177 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @1149,-177 144x5  fill=#070428  r=107
+  FRAME "Status Bar"  @1019,-1037 402x47
+    INSTANCE "Status Bar"  @1019,-1037 402x47

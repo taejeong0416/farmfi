@@ -1,0 +1,156 @@
+FRAME "I-01 · 투자자 / 프로젝트 상세"  @120,1800 1440x1274  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "선"  @121,1861 1438x1  fill=#EDEDEB
+  TEXT "FarmFi"  @153,1820 55x20  text='FarmFi'  Pretendard Bold 17px  #14542E
+  TEXT "프로젝트"  @241,1824 46x15  text='프로젝트'  Pretendard Medium 13px  #14542E
+  TEXT "내 투자"  @312,1824 38x15  text='내 투자'  Pretendard Regular 13px  #4A4A4A
+  TEXT "알림"  @375,1824 23x15  text='알림'  Pretendard Regular 13px  #4A4A4A
+  FRAME "아이콘"  @1469,1823 16x16
+    VECTOR "Vector"  @1475,1826 5x5  stroke=#8A8A8A/1
+    VECTOR "Vector"  @1473,1832 9x4  stroke=#8A8A8A/1
+  TEXT "김투자"  @1493,1824 35x15  text='김동일'  Pretendard Regular 13px  #4A4A4A
+  TEXT "프로젝트"  @153,1885 42x14  text='프로젝트'  Pretendard Regular 12px  #8A8A8A
+  TEXT "/"  @201,1885 5x14  text='/'  Pretendard Regular 12px  #C9C9C7
+  TEXT "부산 전포동 미니팜 1호"  @212,1885 109x14  text='부산 전포동 미니팜 1호'  Pretendard Regular 12px  #4A4A4A
+  TEXT "부산 전포동 미니팜 1호"  @153,1916 226x31  text='부산 전포동 미니팜 1호'  Pretendard Bold 26px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @390,1919 56x26  stroke=#14542E/1  r=4
+  TEXT "모집 중"  @401,1925 35x14  text='모집 중'  Pretendard Medium 12px  #14542E
+  TEXT "부산 부산진구 전포대로 · 운영 그린테이블 …"  @153,1958 341x15  text='부산 부산진구 전포대로 · 운영 그린테이블 · 모집 마감 2026.04.30'  Pretendard Regular 13px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @153,1994 936x149  stroke=#E5E5E3/1  r=10
+  TEXT "목표 금액"  @174,2012 49x15  text='목표 금액'  Pretendard Regular 13px  #8A8A8A
+  TEXT "원"  @322,2042 14x18  text='원'  Pretendard Regular 15px  #4A4A4A
+  ROUNDED_RECTANGLE "선"  @465,1994 1x83  fill=#EDEDEB
+  TEXT "현재 모금액"  @486,2012 60x15  text='현재 모금액'  Pretendard Regular 13px  #8A8A8A
+  TEXT "원"  @618,2042 14x18  text='원'  Pretendard Regular 15px  #4A4A4A
+  ROUNDED_RECTANGLE "선"  @777,1994 1x83  fill=#EDEDEB
+  TEXT "달성률"  @798,2012 35x15  text='달성률'  Pretendard Regular 13px  #8A8A8A
+  TEXT "68.0"  @798,2032 53x29  text='68.0'  Pretendard Medium 24px  #14542E
+  TEXT "%"  @850,2042 14x18  text='%'  Pretendard Regular 15px  #4A4A4A
+  ROUNDED_RECTANGLE "선"  @154,2078 934x1  fill=#EDEDEB
+  TEXT "참여자 수"  @174,2092 49x15  text='참여자 수'  Pretendard Regular 13px  #8A8A8A
+  ROUNDED_RECTANGLE "선"  @465,2078 1x63  fill=#EDEDEB
+  ROUNDED_RECTANGLE "선"  @777,2078 1x63  fill=#EDEDEB
+  TEXT "모집 마감일"  @798,2092 60x15  text='모집 마감일'  Pretendard Regular 13px  #8A8A8A
+  TEXT "2026.04.30"  @798,2112 76x16  text='2026.04.30'  Pretendard Medium 14px  #1A1A1A
+  ROUNDED_RECTANGLE "선"  @156,2214 1x130  fill=#E5E5E3
+  ELLIPSE "점"  @153,2206 8x8  fill=#14542E
+  TEXT "1단계 계약 체결"  @177,2202 87x16  text='1단계 계약 체결'  Pretendard Regular 14px  #1A1A1A
+  TEXT "통과"  @727,2203 23x15  text='통과'  Pretendard Medium 13px  #14542E
+  TEXT "2026.02.20"  @875,2203 69x15  text='2026.02.20'  Pretendard Regular 13px  #8A8A8A
+  TEXT "12,000,000원"  @1004,2202 86x16  text='12,000,000원'  Pretendard Medium 14px  #1A1A1A
+  ELLIPSE "점"  @153,2240 8x8  fill=#14542E
+  TEXT "2단계 설비 발주"  @177,2236 89x16  text='2단계 설비 발주'  Pretendard Regular 14px  #1A1A1A
+  TEXT "통과"  @727,2237 23x15  text='통과'  Pretendard Medium 13px  #14542E
+  TEXT "2026.03.14"  @878,2237 66x15  text='2026.03.14'  Pretendard Regular 13px  #8A8A8A
+  TEXT "8,200,000원"  @1010,2236 80x16  text='8,200,000원'  Pretendard Medium 14px  #1A1A1A
+  ELLIPSE "점"  @153,2274 8x8  fill=#FFFFFF  stroke=#99A39C/1
+  TEXT "3단계 설비 설치"  @177,2270 89x16  text='3단계 설비 설치'  Pretendard Regular 14px  #1A1A1A
+  TEXT "검증중"  @727,2271 35x15  text='검증중'  Pretendard Regular 13px  #4A4A4A
+  TEXT "—"  @931,2271 13x15  text='—'  Pretendard Regular 13px  #C4C4C2
+  TEXT "18,000,000원"  @1004,2270 86x16  text='18,000,000원'  Pretendard Medium 14px  #1A1A1A
+  ELLIPSE "점"  @153,2308 8x8  fill=#FFFFFF  stroke=#CFCFCC/1
+  TEXT "4단계 시운전 및 검수"  @177,2304 117x16  text='4단계 시운전 및 검수'  Pretendard Regular 14px  #4A4A4A
+  TEXT "예정"  @727,2305 23x15  text='예정'  Pretendard Regular 13px  #8A8A8A
+  TEXT "—"  @931,2305 13x15  text='—'  Pretendard Regular 13px  #C4C4C2
+  TEXT "6,000,000원"  @1010,2304 80x16  text='6,000,000원'  Pretendard Medium 14px  #1A1A1A
+  ELLIPSE "점"  @153,2342 8x8  fill=#FFFFFF  stroke=#CFCFCC/1
+  TEXT "5단계 영업 개시"  @177,2338 89x16  text='5단계 영업 개시'  Pretendard Regular 14px  #4A4A4A
+  TEXT "예정"  @727,2339 23x15  text='예정'  Pretendard Regular 13px  #8A8A8A
+  TEXT "—"  @931,2339 13x15  text='—'  Pretendard Regular 13px  #C4C4C2
+  TEXT "6,000,000원"  @1010,2338 80x16  text='6,000,000원'  Pretendard Medium 14px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @153,2384 304x45  stroke=#E5E5E3/1  r=8
+  TEXT "프로젝트 개요"  @172,2398 72x15  text='프로젝트 개요'  Pretendard Regular 13px  #1A1A1A
+  FRAME "아이콘"  @425,2400 13x13
+    VECTOR "Vector"  @430,2403 3x6  stroke=#B6B6B4/1
+  ROUNDED_RECTANGLE "면"  @469,2384 304x45  stroke=#E5E5E3/1  r=8
+  TEXT "공간 · 운영자 정보"  @488,2398 93x15  text='공간 · 운영자 정보'  Pretendard Regular 13px  #1A1A1A
+  FRAME "아이콘"  @741,2400 13x13
+    VECTOR "Vector"  @746,2403 3x6  stroke=#B6B6B4/1
+  ROUNDED_RECTANGLE "면"  @785,2384 304x45  stroke=#E5E5E3/1  r=8
+  FRAME "아이콘"  @1057,2400 13x13
+    VECTOR "Vector"  @1062,2403 3x6  stroke=#B6B6B4/1
+  ROUNDED_RECTANGLE "면"  @153,2488 936x321  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "선"  @154,2552 934x1  fill=#EDEDEB
+  TEXT "목표 금액"  @174,2502 49x15  text='목표 금액'  Pretendard Regular 13px  #8A8A8A
+  ROUNDED_RECTANGLE "선"  @465,2488 1x63  fill=#EDEDEB
+  TEXT "모집 기간"  @486,2502 49x15  text='모집 기간'  Pretendard Regular 13px  #8A8A8A
+  TEXT "2026.03.01 ~ 04.30"  @486,2522 127x16  text='2026.03.01 ~ 04.30'  Pretendard Medium 14px  #1A1A1A
+  ROUNDED_RECTANGLE "선"  @777,2488 1x63  fill=#EDEDEB
+  TEXT "수익 구조"  @798,2502 49x15  text='회수 구조'  Inter Regular 13px  #8A8A8A
+  ROUNDED_RECTANGLE "선"  @154,2603 934x1  fill=#F2F2F0
+  TEXT "원금 손실"  @174,2566 49x15  text='원금 손실'  Pretendard Regular 13px  #8A8A8A
+  ROUNDED_RECTANGLE "선"  @154,2654 934x1  fill=#F2F2F0
+  TEXT "집행 지연"  @174,2617 49x15  text='집행 지연'  Pretendard Regular 13px  #8A8A8A
+  TEXT "마일스톤 검증이 보류되면 해당 단계의 집행이…"  @304,2621 433x15  text='마일스톤 검증이 보류되면 해당 단계의 집행이 멈추고 영업 개시가 늦어질 수 있습니다.'  Pretendard Regular 13px  #4A4A4A
+  ROUNDED_RECTANGLE "선"  @154,2705 934x1  fill=#F2F2F0
+  TEXT "환금성 제한"  @174,2668 60x15  text='환금성 제한'  Pretendard Regular 13px  #8A8A8A
+  TEXT "토큰은 등록된 지갑 주소 사이에서만 이전할 …"  @304,2672 426x15  text='프로젝트 운영 중에는 투자금의 중도 회수가 제한될 수 있습니다.'  Inter Regular 13px  #4A4A4A
+  ROUNDED_RECTANGLE "선"  @154,2756 934x1  fill=#F2F2F0
+  TEXT "모집 마감 전까지만 취소할 수 있으며, 마감…"  @304,2723 440x15  text='모집 마감 전까지만 취소할 수 있으며, 마감 이후에는 취소나 환불을 요청할 수 없습니다.'  Pretendard Regular 13px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @154,2757 934x51  fill=#FCFCFA
+  TEXT "이 화면의 정보는 투자 판단을 돕기 위한 것…"  @174,2774 566x14  text='이 화면의 정보는 투자 판단을 돕기 위한 것이며 투자 권유가 아닙니다. 투자 결과에 대한 책임은 투자자 본인에게 있습니다.'  Pretendard Regular 12px  #8A8A8A
+  TEXT "공개 문서"  @153,2837 56x18  text='공개 문서'  Pretendard Bold 15px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @153,2868 936x169  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "선"  @154,2910 934x1  fill=#F2F2F0
+  TEXT "증권신고 요약서.pdf"  @174,2882 106x15  text='프로젝트 핵심 안내서.pdf'  Inter Regular 13px  #1A1A1A
+  TEXT "2026.02.28"  @976,2882 64x14  text='2026.02.28'  Pretendard Regular 12px  #8A8A8A
+  FRAME "아이콘"  @1055,2883 13x13
+    VECTOR "Vector"  @1060,2886 3x6  stroke=#B6B6B4/1
+  ROUNDED_RECTANGLE "선"  @154,2952 934x1  fill=#F2F2F0
+  TEXT "임대차 계약서 요약본.pdf"  @174,2924 132x15  text='임대차 계약서 요약본.pdf'  Pretendard Regular 13px  #1A1A1A
+  TEXT "2026.02.20"  @977,2924 63x14  text='2026.02.20'  Pretendard Regular 12px  #8A8A8A
+  FRAME "아이콘"  @1055,2925 13x13
+    VECTOR "Vector"  @1060,2928 3x6  stroke=#B6B6B4/1
+  ROUNDED_RECTANGLE "선"  @154,2994 934x1  fill=#F2F2F0
+  TEXT "마일스톤 · 집행 계획서.pdf"  @174,2966 138x15  text='마일스톤 · 집행 계획서.pdf'  Pretendard Regular 13px  #1A1A1A
+  TEXT "2026.02.28"  @976,2966 64x14  text='2026.02.28'  Pretendard Regular 12px  #8A8A8A
+  FRAME "아이콘"  @1055,2967 13x13
+    VECTOR "Vector"  @1060,2970 3x6  stroke=#B6B6B4/1
+  TEXT "운영사 소개 · 재배 계획.pdf"  @174,3008 141x15  text='운영사 소개 · 재배 계획.pdf'  Pretendard Regular 13px  #1A1A1A
+  TEXT "2026.03.02"  @977,3008 63x14  text='2026.03.02'  Pretendard Regular 12px  #8A8A8A
+  FRAME "아이콘"  @1055,3009 13x13
+    VECTOR "Vector"  @1060,3012 3x6  stroke=#B6B6B4/1
+  ROUNDED_RECTANGLE "면"  @1121,1916 406x489  stroke=#E5E5E3/1  r=10
+  TEXT "입력 금액"  @1144,2005 49x15  text='입력 금액'  Pretendard Regular 13px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @1144,2029 360x56  stroke=#99A39C/1  r=8
+  TEXT "원"  @1474,2051 14x18  text='원'  Pretendard Regular 15px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @1144,2095 84x32  stroke=#E5E5E3/1  r=6
+  ROUNDED_RECTANGLE "면"  @1236,2095 84x32  stroke=#E5E5E3/1  r=6
+  TEXT "+50만"  @1262,2104 33x14  text='+50만'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @1328,2095 84x32  stroke=#E5E5E3/1  r=6
+  TEXT "+100만"  @1351,2104 38x14  text='+100만'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @1420,2095 84x32  stroke=#E5E5E3/1  r=6
+  TEXT "초기화"  @1446,2104 32x14  text='초기화'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "선"  @1144,2168 360x1  fill=#EDEDEB
+  TEXT "신원 확인"  @1144,2188 49x15  text='신원 확인'  Pretendard Regular 13px  #8A8A8A
+  TEXT "확인 완료"  @1456,2188 49x15  text='확인 완료'  Pretendard Medium 13px  #14542E
+  TEXT "예상 배정 상태"  @1144,2215 75x15  text='예상 배정 상태'  Pretendard Regular 13px  #8A8A8A
+  TEXT "배정 가능"  @1456,2215 49x15  text='배정 가능'  Pretendard Medium 13px  #14542E
+  TEXT "신청 전"  @1467,2242 38x15  text='신청 전'  Pretendard Medium 13px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @1144,2278 360x46  fill=#14542E  r=6
+  TEXT "FRIENDLY COPY / 10:159"  @486,2092 80x16  text='최소 투자 금액'  Inter Regular 13px  #8A8A8A
+  TEXT "FRIENDLY COPY / 10:164"  @153,2170 104x18  text='투자금 사용 과정'  Inter Bold 15px  #1A1A1A
+  TEXT "FRIENDLY COPY / 10:203"  @153,2456 152x18  text='투자 전 꼭 확인해 주세요'  Inter Bold 15px  #1A1A1A
+  TEXT "FRIENDLY COPY / 10:224"  @174,2719 52x16  text='신청 취소'  Inter Regular 13px  #8A8A8A
+  TEXT "FRIENDLY COPY / 10:250"  @1144,1937 59x18  text='투자 신청'  Inter Bold 15px  #1A1A1A
+  TEXT "FRIENDLY COPY / 10:251"  @1144,1972 80x16  text='최소 투자 금액'  Inter Regular 13px  #8A8A8A
+  TEXT "FRIENDLY COPY / 10:271"  @1144,2242 52x16  text='신청 상태'  Inter Regular 13px  #8A8A8A
+  TEXT "FRIENDLY COPY / 10:274"  @1286,2293 81x17  text='투자 신청하기'  Inter Medium 14px  #FFFFFF
+  TEXT "FRIENDLY COPY / 10:275"  @1144,2341 543x15  text='투자금 사용 내역은 프로젝트 진행과 함께 공개돼요. 운영 결과에 따라 회수 금액과 기간이 달라질 수 있습니다.'  Inter Regular 12px  #8A8A8A
+  FRAME "Frame"  @620,1919 101x28  fill=#FAF0ED  stroke=#E5BDB5/1  r=14
+  TEXT "원금 비보장"  @634,1927 54x13  text='원금 비보장'  Inter Medium 11px  #9E3D33
+  FRAME "Frame"  @733,1919 125x28  fill=#F1F4F2  stroke=#D6E3D9/1  r=14
+  TEXT "회수기간 변동 가능"  @747,1927 87x13  text='회수기간 변동 가능'  Inter Medium 11px  #14542E
+  FRAME "Frame"  @870,1919 139x28  fill=#FFFFFF  stroke=#DBDBD9/1  r=14
+  TEXT "단계별 집행 공개"  @884,1927 77x13  text='단계별 집행 공개'  Inter Medium 11px  #4A4A4A
+  TEXT "예상 수익률 산출 근거 · updated"  @804,2398 180x18  text='수익 구조와 회수 기준'  Inter Regular 13px  #1A1A1A
+  TEXT "임대료 우선 · 배당 60% · updated"  @798,2524 221x14  text='기준 시나리오 · 지점별 예상 회수 범위'  Inter Regular 14px  #1A1A1A
+  TEXT "예상 수익률은 보장되지 않으며, 운영 성과에… · updated"  @304,2566 620x23  text='예상 회수액은 지점의 판매량과 운영비를 바탕으로 계산하며 실제 결과는 달라질 수 있습니다.'  Inter Regular 13px  #4A4A4A
+  TEXT "120,000,000 · updated"  @174,2032 127x24  text='17,500,000'  Inter Medium 24px  #1A1A1A
+  TEXT "81,600,000 · updated"  @486,2032 127x24  text='11,900,000'  Inter Medium 24px  #1A1A1A
+  TEXT "238명 · updated"  @174,2112 21x14  text='7명'  Inter Medium 14px  #1A1A1A
+  TEXT "100,000원 · updated"  @486,2112 79x14  text='1,750,000원'  Inter Medium 14px  #1A1A1A
+  TEXT "100,000원 · updated"  @1439,1971 79x14  text='1,750,000원'  Inter Medium 14px  #1A1A1A
+  TEXT "1,000,000 · updated"  @1357,2042 116x24  text='1,750,000'  Inter Semi Bold 24px  #1A1A1A
+  TEXT "+10만 · updated"  @1171,2104 34x12  text='+25만'  Inter Regular 12px  #4A4A4A
+  TEXT "100,000원 단위 · updated"  @1144,2135 84x12  text='250,000원 단위'  Inter Regular 12px  #8A8A8A
+  TEXT "17,500,000원"  @174,2522 85x17  text='17,500,000원'  Inter Regular 14px  #1A1A1A

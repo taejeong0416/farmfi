@@ -1,0 +1,5 @@
+SYMBOL "App/Field"  @164,1917 361x73
+  TEXT "조정 수량 *"  @164,1917 76x19  text='조정 수량 *'  Inter Regular 16px  #3C3F3A
+  FRAME "Input"  @164,1942 361x47  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+    TEXT "입고 +, 출고 -"  @177,1957 318x17  text='입고 +, 출고 -'  Inter Regular 14px  #A5A89F
+    TEXT "팩"  @501,1958 12x15  text='팩'  Inter Regular 12px  #656863

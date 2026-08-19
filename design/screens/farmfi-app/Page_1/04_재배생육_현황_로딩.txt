@@ -1,0 +1,65 @@
+FRAME "04 재배생육 현황 — 로딩"  @95,2356 402x874  fill=#FFFFFF
+  FRAME "Body"  @95,2459 402x477
+    FRAME "KpiRow"  @111,2475 370x71
+      FRAME "App/MetricTile"  @111,2475 115x71  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+        FRAME "Label"  @135,2486 67x17
+          INSTANCE "App/SkeletonBlock"  @135,2486 67x17  fill=#F0F0ED  r=6
+        FRAME "Value"  @149,2511 39x24
+          INSTANCE "App/SkeletonBlock"  @149,2511 27x24  fill=#F0F0ED  r=12
+          INSTANCE "App/SkeletonBlock"  @178,2515 10x15  fill=#F0F0ED  r=6
+      FRAME "App/MetricTile"  @238,2475 115x71  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+        FRAME "Label"  @262,2486 67x17
+          INSTANCE "App/SkeletonBlock"  @262,2486 67x17  fill=#F0F0ED  r=6
+        FRAME "Value"  @276,2511 39x24
+          INSTANCE "App/SkeletonBlock"  @276,2511 27x24  fill=#F0F0ED  r=12
+          INSTANCE "App/SkeletonBlock"  @306,2515 10x15  fill=#F0F0ED  r=6
+      FRAME "App/MetricTile"  @366,2475 115x71  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+        FRAME "Label"  @390,2486 67x17
+          INSTANCE "App/SkeletonBlock"  @390,2486 67x17  fill=#F0F0ED  r=6
+        FRAME "Value"  @404,2511 39x24
+          INSTANCE "App/SkeletonBlock"  @404,2511 27x24  fill=#F0F0ED  r=12
+          INSTANCE "App/SkeletonBlock"  @433,2515 10x15  fill=#F0F0ED  r=6
+    INSTANCE "App/SkeletonBlock"  @111,2562 370x42  fill=#F0F0ED  r=6
+    FRAME "Card"  @111,2620 370x84  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      FRAME "App/CropProgressRow"  @123,2632 345x60
+        INSTANCE "App/SkeletonBlock"  @123,2642 40x40  fill=#F0F0ED  r=20
+        FRAME "Frame"  @175,2643 293x39
+          FRAME "Frame"  @175,2643 293x17
+            INSTANCE "App/SkeletonBlock"  @175,2643 216x17  fill=#F0F0ED  r=6
+            INSTANCE "App/SkeletonBlock"  @398,2647 71x13  fill=#F0F0ED  r=6
+          FRAME "Frame"  @175,2666 293x16
+            FRAME "Frame"  @175,2671 257x6  fill=#F0EEEA  r=3
+              INSTANCE "App/SkeletonBlock"  @175,2671 144x6  fill=#F0F0ED  r=6
+            INSTANCE "App/SkeletonBlock"  @441,2666 28x16  fill=#F0F0ED  r=6
+    FRAME "Card"  @111,2720 370x84  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      FRAME "App/CropProgressRow"  @123,2732 345x60
+        INSTANCE "App/SkeletonBlock"  @123,2742 40x40  fill=#F0F0ED  r=20
+        FRAME "Frame"  @175,2743 293x39
+          FRAME "Frame"  @175,2743 293x17
+            INSTANCE "App/SkeletonBlock"  @175,2743 216x17  fill=#F0F0ED  r=6
+            INSTANCE "App/SkeletonBlock"  @398,2747 71x13  fill=#F0F0ED  r=6
+          FRAME "Frame"  @175,2766 293x16
+            FRAME "Frame"  @175,2771 256x6  fill=#F0EEEA  r=3
+              INSTANCE "App/SkeletonBlock"  @175,2771 144x6  fill=#F0F0ED  r=6
+            INSTANCE "App/SkeletonBlock"  @440,2766 29x16  fill=#F0F0ED  r=6
+    FRAME "Card"  @111,2820 370x84  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      FRAME "App/CropProgressRow"  @123,2832 345x60
+        INSTANCE "App/SkeletonBlock"  @123,2842 40x40  fill=#F0F0ED  r=20
+        FRAME "Frame"  @175,2843 293x39
+          FRAME "Frame"  @175,2843 293x17
+            INSTANCE "App/SkeletonBlock"  @175,2843 216x17  fill=#F0F0ED  r=6
+            INSTANCE "App/SkeletonBlock"  @398,2847 71x13  fill=#F0F0ED  r=6
+          FRAME "Frame"  @175,2866 293x16
+            FRAME "Frame"  @175,2871 258x6  fill=#F0EEEA  r=3
+              INSTANCE "App/SkeletonBlock"  @175,2871 144x6  fill=#F0F0ED  r=6
+            INSTANCE "App/SkeletonBlock"  @442,2866 27x16  fill=#F0F0ED  r=6
+  FRAME "Frame 2121453045"  @95,3129 402x101
+    INSTANCE "App/BottomNav"  @95,3129 402x64  fill=#FFFFFF  stroke=#F1F1F1/1
+    FRAME "Group 828"  @95,3194 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @95,3194 402x36  fill=#FFFFFF  stroke=#FFFFFF/1
+      FRAME "Group 819"  @225,3216 144x5
+        FRAME "Group 665"  @225,3216 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @225,3216 144x5  fill=#070428  r=107
+  FRAME "Status Bar"  @95,2356 402x103
+    INSTANCE "Status Bar"  @95,2356 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+    INSTANCE "App/DetailHeader2"  @95,2403 402x56

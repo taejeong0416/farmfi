@@ -1,0 +1,19 @@
+FRAME "Splash"  @-257,-1037 402x874
+  FRAME "Body"  @-257,-990 402x788
+    FRAME "Spacer"  @-211,-977 310x316
+    FRAME "Logo"  @-211,-651 310x77
+      FRAME "logo"  @-154,-651 196x45
+        VECTOR "Vector"  @-154,-651 196x45  fill=#FFFFFF
+      TEXT "도심 속 신선한 내일을 심다"  @-125,-590 137x16  text='도심 속 신선한 내일을 심다'  Pretendard Regular 13px  #FFFFFF
+    FRAME "Spacer"  @-211,-564 310x285
+    FRAME "Input"  @-211,-268 310x45  stroke=#FFFFFF/1  r=36
+      VECTOR "Vector"  @-125,-255 18x18  stroke=#FFFFFF/2
+      TEXT "QR로 바로 시작하기"  @-98,-255 111x17  text='QR로 바로 시작하기'  Pretendard SemiBold 14px  #FFFFFF
+  FRAME "Frame 2121453045"  @-257,-199 402x36
+    FRAME "Group 828"  @-257,-199 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @-257,-199 402x36
+      FRAME "Group 819"  @-127,-177 144x5
+        FRAME "Group 665"  @-127,-177 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @-127,-177 144x5  fill=#070428  r=107
+  FRAME "Status Bar"  @-257,-1037 402x47
+    INSTANCE "Status Bar"  @-257,-1037 402x47

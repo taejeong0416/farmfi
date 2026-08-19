@@ -1,0 +1,88 @@
+FRAME "15 판매 데이터 리포트 — 로딩"  @95,5830 402x874  fill=#FFFFFF
+  FRAME "Body"  @95,5933 402x874
+    FRAME "Card"  @111,5949 370x116  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      FRAME "App/CardTitle"  @123,5969 345x21
+        INSTANCE "App/SkeletonBlock"  @123,5970 345x19  fill=#F0F0ED  r=6
+      FRAME "Summary"  @123,6001 345x43
+        FRAME "Item"  @123,6001 115x43
+          INSTANCE "App/SkeletonBlock"  @123,6001 42x15  fill=#F0F0ED  r=6
+          FRAME "V"  @123,6020 105x24
+            INSTANCE "App/SkeletonBlock"  @123,6020 105x24  fill=#F0F0ED  r=6
+        FRAME "Item"  @238,6001 115x43
+          INSTANCE "App/SkeletonBlock"  @238,6001 34x15  fill=#F0F0ED  r=6
+          FRAME "V"  @238,6020 68x24
+            INSTANCE "App/SkeletonBlock"  @238,6020 56x24  fill=#F0F0ED  r=6
+            INSTANCE "App/SkeletonBlock"  @294,6029 12x15  fill=#F0F0ED  r=6
+        FRAME "Item"  @354,6001 115x43
+          INSTANCE "App/SkeletonBlock"  @354,6001 34x15  fill=#F0F0ED  r=6
+          FRAME "V"  @354,6020 48x24
+            INSTANCE "App/SkeletonBlock"  @354,6020 36x24  fill=#F0F0ED  r=6
+            INSTANCE "App/SkeletonBlock"  @390,6029 12x15  fill=#F0F0ED  r=6
+    FRAME "Card"  @111,6080 370x226  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      FRAME "App/CardTitle"  @123,6100 345x21
+        INSTANCE "App/SkeletonBlock"  @123,6101 345x19  fill=#F0F0ED  r=6
+      INSTANCE "App/SkeletonBlock"  @123,6133 345x153  fill=#F0F0ED  r=6
+    FRAME "Card"  @111,6322 370x171  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      FRAME "App/CardTitle"  @123,6342 345x21
+        INSTANCE "App/SkeletonBlock"  @123,6343 345x19  fill=#F0F0ED  r=6
+      FRAME "App/RankRow"  @123,6375 345x25
+        INSTANCE "App/SkeletonBlock"  @123,6375 25x25  fill=#F0F0ED  r=12
+        INSTANCE "App/SkeletonBlock"  @154,6378 77x19  fill=#F0F0ED  r=6
+        FRAME "ProgressBar"  @238,6383 185x7  fill=#F0EEEA  r=51
+          INSTANCE "App/SkeletonBlock"  @238,6383 255x7  fill=#F0F0ED  r=6
+        INSTANCE "App/SkeletonBlock"  @429,6379 40x17  fill=#F0F0ED  r=6
+      FRAME "App/RankRow"  @123,6411 345x25
+        INSTANCE "App/SkeletonBlock"  @123,6411 25x25  fill=#F0F0ED  r=12
+        INSTANCE "App/SkeletonBlock"  @154,6414 77x19  fill=#F0F0ED  r=6
+        FRAME "ProgressBar"  @238,6420 185x7  fill=#F0EEEA  r=51
+          INSTANCE "App/SkeletonBlock"  @238,6420 255x7  fill=#F0F0ED  r=6
+        INSTANCE "App/SkeletonBlock"  @429,6415 40x17  fill=#F0F0ED  r=6
+      FRAME "App/RankRow"  @123,6448 345x25
+        INSTANCE "App/SkeletonBlock"  @123,6448 25x25  fill=#F0F0ED  r=12
+        INSTANCE "App/SkeletonBlock"  @154,6451 77x19  fill=#F0F0ED  r=6
+        FRAME "ProgressBar"  @238,6457 185x7  fill=#F0EEEA  r=51
+          INSTANCE "App/SkeletonBlock"  @238,6457 255x7  fill=#F0F0ED  r=6
+        INSTANCE "App/SkeletonBlock"  @429,6452 40x17  fill=#F0F0ED  r=6
+    FRAME "Card"  @111,6509 370x266  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      FRAME "App/CardTitle"  @123,6529 345x21
+        INSTANCE "App/SkeletonBlock"  @123,6530 345x19  fill=#F0F0ED  r=6
+      FRAME "App/HistoryRow"  @123,6558 345x33
+        FRAME "Frame 6"  @123,6564 345x19
+          INSTANCE "App/SkeletonBlock"  @123,6564 57x19  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @180,6564 140x19  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @320,6564 46x19  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @366,6564 95x19  fill=#F0F0ED  r=6
+      FRAME "App/HistoryRow"  @123,6598 345x33
+        FRAME "Frame 6"  @123,6605 345x19
+          INSTANCE "App/SkeletonBlock"  @123,6605 57x19  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @180,6605 140x19  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @320,6605 46x19  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @366,6605 95x19  fill=#F0F0ED  r=6
+      FRAME "App/HistoryRow"  @123,6639 345x33
+        FRAME "Frame 6"  @123,6646 345x19
+          INSTANCE "App/SkeletonBlock"  @123,6646 57x19  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @180,6646 140x19  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @320,6646 46x19  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @366,6646 95x19  fill=#F0F0ED  r=6
+      FRAME "App/HistoryRow"  @123,6680 345x33
+        FRAME "Frame 6"  @123,6687 345x19
+          INSTANCE "App/SkeletonBlock"  @123,6687 57x19  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @180,6687 140x19  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @320,6687 46x19  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @366,6687 95x19  fill=#F0F0ED  r=6
+      FRAME "App/HistoryRow"  @123,6721 345x33
+        FRAME "Frame 6"  @123,6728 345x19
+          INSTANCE "App/SkeletonBlock"  @123,6728 57x19  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @180,6728 140x19  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @320,6728 46x19  fill=#F0F0ED  r=6
+          INSTANCE "App/SkeletonBlock"  @366,6728 95x19  fill=#F0F0ED  r=6
+  FRAME "Status Bar"  @95,5830 402x103
+    INSTANCE "Status Bar"  @95,5830 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+    INSTANCE "App/DetailHeader2"  @95,5877 402x56
+  FRAME "Frame 2121453045"  @95,6603 402x101
+    INSTANCE "App/BottomNav"  @95,6603 402x64  fill=#FFFFFF  stroke=#F1F1F1/1
+    FRAME "Group 828"  @95,6668 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @95,6668 402x36  fill=#FFFFFF  stroke=#FFFFFF/1
+      FRAME "Group 819"  @225,6690 144x5
+        FRAME "Group 665"  @225,6690 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @225,6690 144x5  fill=#070428  r=107

@@ -1,0 +1,88 @@
+FRAME "B-03 · 구매자 / 지점 재고 기반 구성"  @3160,3300 1440x920  fill=#FCFCFB
+  ROUNDED_RECTANGLE "Rectangle"  @3160,3300 1440x64  fill=#FFFFFF  stroke=#E0E0D6/1
+  TEXT "FarmFi"  @3192,3321 57x21  text='FarmFi'  Inter Bold 17px  #0E6340
+  TEXT "정기구독"  @3281,3323 48x16  text='정기구독'  Inter Medium 13px  #0E6340
+  TEXT "내 구독"  @3353,3323 40x16  text='내 구독'  Inter Regular 13px  #171A14
+  TEXT "알림"  @3415,3323 24x16  text='알림'  Inter Regular 13px  #171A14
+  TEXT "1 픽업 지점"  @3192,3392 60x15  text='1  픽업 지점'  Inter Medium 12px  #6B6B61
+  TEXT "2 팩 크기"  @3288,3392 50x15  text='2  팩 크기'  Inter Semi Bold 12px  #0E6340
+  TEXT "3 구성 선택"  @3392,3392 62x15  text='3  구성 선택'  Inter Medium 12px  #6B6B61
+  TEXT "4 주문·결제"  @3498,3392 62x15  text='4  주문·결제'  Inter Medium 12px  #6B6B61
+  TEXT "전포 1호에서 이번 믹스팩을 구성해보세요"  @3192,3432 478x34  text='전포 1호에서 이번 믹스팩을 구성해보세요'  Inter Bold 28px  #171A14
+  TEXT "이 지점에서 이번 주 수확·보유 중인 작물 5개와 드레싱 2봉을 선택하세요."  @3192,3474 425x17  text='이 지점에서 이번 주 수확·보유 중인 작물 5개와 드레싱 2봉을 선택하세요.'  Inter Regular 14px  #6B6B61
+  TEXT "작물 선택"  @3192,3526 71x22  text='작물 선택'  Inter Semi Bold 18px  #171A14
+  TEXT "5 / 5 선택"  @3964,3530 51x15  text='5 / 5 선택'  Inter Medium 12px  #0E6340
+  ROUNDED_RECTANGLE "Rectangle"  @3192,3570 196x66  fill=#EDF5ED  stroke=#0E6340/1  r=10
+  ROUNDED_RECTANGLE "Rectangle"  @3208,3587 32x32  fill=#BFE0BD  r=16
+  TEXT "버터헤드"  @3254,3592 48x16  text='버터헤드'  Inter Medium 13px  #171A14
+  TEXT "✓"  @3358,3592 12x16  text='✓'  Inter Bold 13px  #0E6340
+  ROUNDED_RECTANGLE "Rectangle"  @3408,3570 196x66  fill=#EDF5ED  stroke=#0E6340/1  r=10
+  ROUNDED_RECTANGLE "Rectangle"  @3424,3587 32x32  fill=#BFE0BD  r=16
+  TEXT "로메인"  @3470,3592 36x16  text='로메인'  Inter Medium 13px  #171A14
+  TEXT "✓"  @3574,3592 12x16  text='✓'  Inter Bold 13px  #0E6340
+  ROUNDED_RECTANGLE "Rectangle"  @3624,3570 196x66  fill=#EDF5ED  stroke=#0E6340/1  r=10
+  ROUNDED_RECTANGLE "Rectangle"  @3640,3587 32x32  fill=#BFE0BD  r=16
+  TEXT "바질"  @3686,3592 24x16  text='바질'  Inter Medium 13px  #171A14
+  TEXT "✓"  @3790,3592 12x16  text='✓'  Inter Bold 13px  #0E6340
+  ROUNDED_RECTANGLE "Rectangle"  @3840,3570 196x66  fill=#EDF5ED  stroke=#0E6340/1  r=10
+  ROUNDED_RECTANGLE "Rectangle"  @3856,3587 32x32  fill=#BFE0BD  r=16
+  TEXT "루꼴라"  @3902,3592 36x16  text='루꼴라'  Inter Medium 13px  #171A14
+  TEXT "✓"  @4006,3592 12x16  text='✓'  Inter Bold 13px  #0E6340
+  ROUNDED_RECTANGLE "Rectangle"  @3192,3656 196x66  fill=#EDF5ED  stroke=#0E6340/1  r=10
+  ROUNDED_RECTANGLE "Rectangle"  @3208,3673 32x32  fill=#BFE0BD  r=16
+  TEXT "적근대"  @3254,3678 36x16  text='적근대'  Inter Medium 13px  #171A14
+  TEXT "✓"  @3358,3678 12x16  text='✓'  Inter Bold 13px  #0E6340
+  ROUNDED_RECTANGLE "Rectangle"  @3408,3656 196x66  fill=#FFFFFF  stroke=#E0E0D6/1  r=10
+  ROUNDED_RECTANGLE "Rectangle"  @3424,3673 32x32  fill=#EDF0E8  r=16
+  TEXT "청경채 · 품절"  @3470,3678 71x16  text='청경채 · 품절'  Inter Medium 13px  #171A14
+  ROUNDED_RECTANGLE "Rectangle"  @3624,3656 196x66  fill=#FFFFFF  stroke=#E0E0D6/1  r=10
+  ROUNDED_RECTANGLE "Rectangle"  @3640,3673 32x32  fill=#EDF0E8  r=16
+  TEXT "케일"  @3686,3678 24x16  text='케일'  Inter Medium 13px  #171A14
+  ROUNDED_RECTANGLE "Rectangle"  @3840,3656 196x66  fill=#FFFFFF  stroke=#E0E0D6/1  r=10
+  ROUNDED_RECTANGLE "Rectangle"  @3856,3673 32x32  fill=#EDF0E8  r=16
+  TEXT "딜 · 8/26"  @3902,3678 52x16  text='딜 · 8/26'  Inter Medium 13px  #171A14
+  TEXT "드레싱 선택"  @3192,3770 88x22  text='드레싱 선택'  Inter Semi Bold 18px  #171A14
+  TEXT "2 / 2봉"  @3964,3774 37x15  text='2 / 2봉'  Inter Medium 12px  #0E6340
+  ROUNDED_RECTANGLE "Rectangle"  @3192,3814 196x62  fill=#EDF5ED  stroke=#0E6340/1  r=10
+  TEXT "참깨"  @3212,3835 24x16  text='참깨'  Inter Medium 13px  #171A14
+  TEXT "1봉"  @3327,3835 17x15  text='1봉'  Inter Semi Bold 12px  #0E6340
+  ROUNDED_RECTANGLE "Rectangle"  @3408,3814 196x62  fill=#EDF5ED  stroke=#0E6340/1  r=10
+  TEXT "유자"  @3428,3835 24x16  text='유자'  Inter Medium 13px  #171A14
+  TEXT "1봉"  @3543,3835 17x15  text='1봉'  Inter Semi Bold 12px  #0E6340
+  ROUNDED_RECTANGLE "Rectangle"  @3624,3814 196x62  fill=#FFFFFF  stroke=#E0E0D6/1  r=10
+  TEXT "발사믹 · 3봉"  @3644,3835 67x16  text='발사믹 · 3봉'  Inter Medium 13px  #171A14
+  TEXT "+ 담기"  @3759,3835 34x15  text='+ 담기'  Inter Semi Bold 12px  #6B6B61
+  ROUNDED_RECTANGLE "Rectangle"  @3840,3814 196x62  fill=#FFFFFF  stroke=#E0E0D6/1  r=10
+  TEXT "레몬 허브 · 품절"  @3860,3835 86x16  text='레몬 허브 · 품절'  Inter Medium 13px  #171A14
+  TEXT "품절"  @3975,3835 23x15  text='품절'  Inter Semi Bold 12px  #6B6B61
+  TEXT "픽업 빈도"  @3192,3926 71x22  text='픽업 빈도'  Inter Semi Bold 18px  #171A14
+  ROUNDED_RECTANGLE "Rectangle"  @3192,3970 262x74  fill=#FFFFFF  stroke=#E0E0D6/1  r=10
+  TEXT "주 1회"  @3210,3987 36x17  text='주 1회'  Inter Semi Bold 14px  #171A14
+  TEXT "월 29,000원"  @3210,4013 66x15  text='월 29,000원'  Inter Regular 12px  #6B6B61
+  ROUNDED_RECTANGLE "Rectangle"  @3474,3970 262x74  fill=#EDF5ED  stroke=#0E6340/1  r=10
+  TEXT "주 2회"  @3492,3987 38x17  text='주 2회'  Inter Semi Bold 14px  #171A14
+  TEXT "월 49,000원"  @3492,4013 66x15  text='월 49,000원'  Inter Regular 12px  #0E6340
+  ROUNDED_RECTANGLE "Rectangle"  @3756,3970 262x74  fill=#FFFFFF  stroke=#E0E0D6/1  r=10
+  TEXT "격주"  @3774,3987 26x17  text='격주'  Inter Semi Bold 14px  #171A14
+  TEXT "월 19,000원"  @3774,4013 64x15  text='월 19,000원'  Inter Regular 12px  #6B6B61
+  ROUNDED_RECTANGLE "Rectangle"  @4092,3432 476x612  fill=#FFFFFF  stroke=#E0E0D6/1  r=14
+  TEXT "선택한 구성"  @4116,3458 88x22  text='선택한 구성'  Inter Semi Bold 18px  #171A14
+  TEXT "5종 믹스팩"  @4116,3502 92x24  text='5종 믹스팩'  Inter Bold 20px  #171A14
+  TEXT "버터헤드 · 로메인 · 바질 · 루꼴라 · 적근대"  @4116,3540 410x15  text='버터헤드 · 로메인 · 바질 · 루꼴라 · 적근대'  Inter Regular 12px  #6B6B61
+  TEXT "참깨 드레싱 1봉 · 유자 드레싱 1봉"  @4116,3588 168x15  text='참깨 드레싱 1봉 · 유자 드레싱 1봉'  Inter Regular 12px  #6B6B61
+  ROUNDED_RECTANGLE "Rectangle"  @4116,3628 428x1  fill=#E0E0D6
+  TEXT "픽업"  @4116,3652 23x15  text='픽업'  Inter Regular 12px  #6B6B61
+  TEXT "주 2회 · 화요일 / 금요일"  @4340,3652 130x16  text='주 2회 · 화요일 / 금요일'  Inter Medium 13px  #171A14
+  TEXT "월 구독료"  @4116,3700 48x15  text='월 구독료'  Inter Regular 12px  #6B6B61
+  TEXT "49,000원"  @4428,3695 83x22  text='49,000원'  Inter Bold 18px  #0E6340
+  ROUNDED_RECTANGLE "Rectangle"  @4116,3750 428x1  fill=#E0E0D6
+  TEXT "다음 단계에서 픽업 지점, 쿠폰과 결제수단을 확인해요."  @4116,3776 400x15  text='다음 단계에서 픽업 지점, 쿠폰과 결제수단을 확인해요.'  Inter Regular 12px  #6B6B61
+  ROUNDED_RECTANGLE "Rectangle"  @4116,3944 428x52  fill=#0E6340  r=9
+  TEXT "이 구성으로 주문하기"  @4250,3960 123x17  text='이 구성으로 주문하기'  Inter Semi Bold 14px  #FFFFFF
+  TEXT "매주 결제 전날까지 작물과 드레싱을 바꿀 수 있어요."  @4172,4012 238x13  text='매주 결제 전날까지 작물과 드레싱을 바꿀 수 있어요.'  Inter Regular 11px  #6B6B61
+  TEXT "작물 수급에 따라 품절된 작물은 비슷한 품목으로 변경을 제안할 수 있어요."  @3192,4110 369x15  text='작물 수급에 따라 품절된 작물은 비슷한 품목으로 변경을 제안할 수 있어요.'  Inter Regular 12px  #6B6B61
+  TEXT "5 완료"  @3612,3392 36x15  text='5  완료'  Inter Medium 12px  #6B6B61
+  FRAME "Selected branch chip"  @4160,3432 390x42  fill=#F0F9F6  r=10
+    TEXT "선택 지점 · 부산 전포동 미니팜 1호"  @4176,3445 350x16  text='선택 지점 · 부산 전포동 미니팜 1호'  Inter Semi Bold 13px  #0F6E56
+  TEXT "현재 지점 재고 기준 · 품절 작물은 선택할 수 없고 다음 수확일을 확인할 수 있어요."  @3192,3738 850x18  text='현재 지점 재고 기준 · 품절 작물은 선택할 수 없고 다음 수확일을 확인할 수 있어요.'  Inter Regular 12px  #616E69
+  TEXT "지점 변경"  @4465,3445 70x16  text='지점 변경'  Inter Semi Bold 12px  #0F6E56

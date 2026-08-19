@@ -1,0 +1,121 @@
+FRAME "A-01 · 관리자 / 콘솔 홈"  @0,5800 1560x473  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "선"  @191,5801 1x471  fill=#EDEDEB
+  TEXT "FarmFi"  @19,5815 49x18  text='FarmFi'  Pretendard Bold 15px  #14542E
+  ROUNDED_RECTANGLE "선"  @13,5850 2x30  fill=#14542E
+  TEXT "콘솔 홈"  @45,5857 33x14  text='콘솔 홈'  Pretendard Medium 12px  #14542E
+  FRAME "아이콘"  @22,5858 14x14
+    VECTOR "Vector"  @24,5860 10x10  stroke=#14532D/1
+  TEXT "프로젝트 관리"  @45,5889 64x14  text='프로젝트 관리'  Pretendard Regular 12px  #4A4A4A
+  FRAME "아이콘"  @22,5890 14x14
+    VECTOR "Vector"  @24,5892 10x9  stroke=#8A8A8A/1
+    VECTOR "Vector"  @24,5895 10x0  stroke=#8A8A8A/1
+  TEXT "마일스톤 설정"  @45,5921 64x14  text='마일스톤 설정'  Pretendard Regular 12px  #4A4A4A
+  FRAME "아이콘"  @22,5922 14x14
+    VECTOR "Vector"  @25,5924 0x10  stroke=#8A8A8A/1
+    VECTOR "Vector"  @25,5925 8x5  stroke=#8A8A8A/1
+  TEXT "운영팀 재검증"  @45,5953 64x14  text='운영팀 재검증'  Pretendard Regular 12px  #4A4A4A
+  FRAME "아이콘"  @22,5954 14x14
+    VECTOR "Vector"  @24,5956 8x8  stroke=#8A8A8A/1
+    VECTOR "Vector"  @31,5963 2x2  stroke=#8A8A8A/1
+  TEXT "외부전문가 판정"  @45,5985 73x14  text='외부전문가 판정'  Pretendard Regular 12px  #4A4A4A
+  FRAME "아이콘"  @22,5986 14x14
+    VECTOR "Vector"  @24,5988 9x10  stroke=#8A8A8A/1
+  TEXT "정산 규칙 설정"  @45,6017 66x14  text='정산 규칙 설정'  Pretendard Regular 12px  #4A4A4A
+  FRAME "아이콘"  @22,6018 14x14
+    VECTOR "Vector"  @24,6020 10x10  stroke=#8A8A8A/1
+    VECTOR "Vector"  @28,6022 3x6  stroke=#8A8A8A/1
+  TEXT "정산 결과"  @45,6049 44x14  text='정산 결과'  Pretendard Regular 12px  #4A4A4A
+  FRAME "아이콘"  @22,6050 14x14
+    VECTOR "Vector"  @24,6052 10x9  stroke=#8A8A8A/1
+  TEXT "감사 로그 조회"  @45,6081 66x14  text='감사 로그 조회'  Pretendard Regular 12px  #4A4A4A
+  FRAME "아이콘"  @22,6082 14x14
+    VECTOR "Vector"  @26,6084 8x10  stroke=#8A8A8A/1
+    VECTOR "Vector"  @27,6089 4x2  stroke=#8A8A8A/1
+  TEXT "권한 관리"  @45,6113 44x14  text='권한 관리'  Pretendard Regular 12px  #4A4A4A
+  FRAME "아이콘"  @22,6114 14x14
+    VECTOR "Vector"  @27,6117 4x4  stroke=#8A8A8A/1
+    VECTOR "Vector"  @25,6122 8x4  stroke=#8A8A8A/1
+  TEXT "알림 발송"  @45,6145 44x14  text='알림 발송'  Pretendard Regular 12px  #4A4A4A
+  FRAME "아이콘"  @22,6146 14x14
+    VECTOR "Vector"  @24,6147 10x9  stroke=#8A8A8A/1
+    VECTOR "Vector"  @28,6158 2x1  stroke=#8A8A8A/1
+  TEXT "AML · 이상거래 관리"  @45,6177 96x14  text='AML · 이상거래 관리'  Pretendard Regular 12px  #4A4A4A
+  FRAME "아이콘"  @22,6178 14x14
+    VECTOR "Vector"  @24,6182 10x6  stroke=#8A8A8A/1
+  TEXT "로그아웃"  @45,6233 41x14  text='로그아웃'  Pretendard Regular 12px  #4A4A4A
+  FRAME "아이콘"  @22,6234 14x14
+    VECTOR "Vector"  @25,6236 3x9  stroke=#8A8A8A/1
+    VECTOR "Vector"  @31,6239 2x5  stroke=#8A8A8A/1
+    VECTOR "Vector"  @28,6241 6x0  stroke=#8A8A8A/1
+  ROUNDED_RECTANGLE "선"  @192,5847 1367x1  fill=#EDEDEB
+  TEXT "콘솔 홈"  @212,5814 46x19  text='콘솔 홈'  Pretendard Bold 16px  #1A1A1A
+  FRAME "아이콘"  @1430,5816 15x15
+    VECTOR "Vector"  @1435,5819 4x4  stroke=#8A8A8A/1
+    VECTOR "Vector"  @1433,5825 9x4  stroke=#8A8A8A/1
+  TEXT "운영자 박운영"  @1453,5817 66x14  text='운영자 박운영'  Pretendard Regular 12px  #4A4A4A
+  FRAME "아이콘"  @1526,5818 13x13
+    VECTOR "Vector"  @1529,5822 6x3  stroke=#B6B6B4/1
+  TEXT "처리 대기 26건"  @212,5861 82x15  text='처리 대기 26건'  Pretendard Medium 13px  #1A1A1A
+  TEXT "·"  @293,5861 4x15  text='·'  Pretendard Regular 13px  #C9C9C7
+  TEXT "이상거래 탐지 2건"  @300,5861 94x15  text='이상거래 탐지 2건'  Pretendard Regular 13px  #4A4A4A
+  TEXT "처리 대기 목록"  @1348,5862 69x14  text='처리 대기 목록'  Pretendard Regular 12px  #4A4A4A
+  FRAME "아이콘"  @1422,5862 12x12
+    VECTOR "Vector"  @1426,5866 3x6  stroke=#B6B6B4/1
+  TEXT "이상거래 목록"  @1456,5862 66x14  text='이상거래 목록'  Pretendard Regular 12px  #4A4A4A
+  FRAME "아이콘"  @1527,5862 12x12
+    VECTOR "Vector"  @1532,5866 3x6  stroke=#B6B6B4/1
+  ROUNDED_RECTANGLE "면"  @212,5891 1327x295  stroke=#E5E5E3/1  r=8
+  ROUNDED_RECTANGLE "선"  @213,5931 1325x1  fill=#EDEDEB
+  TEXT "처리 대기 목록"  @229,5904 74x15  text='처리 대기 목록'  Pretendard Bold 13px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @213,5932 1325x32  fill=#FAFAF7
+  ROUNDED_RECTANGLE "선"  @213,5963 1325x1  fill=#EDEDEB
+  TEXT "유형"  @229,5941 20x13  text='유형'  Pretendard Regular 11px  #8A8A8A
+  TEXT "프로젝트명"  @317,5941 49x13  text='프로젝트명'  Pretendard Regular 11px  #8A8A8A
+  TEXT "내용"  @493,5941 20x13  text='내용'  Pretendard Regular 11px  #8A8A8A
+  TEXT "접수 시각"  @1250,5941 42x13  text='접수 시각'  Pretendard Regular 11px  #8A8A8A
+  TEXT "경과"  @1382,5941 20x13  text='경과'  Pretendard Regular 11px  #8A8A8A
+  TEXT "바로가기"  @1478,5941 39x13  text='바로가기'  Pretendard Regular 11px  #8A8A8A
+  ROUNDED_RECTANGLE "선"  @213,6000 1325x1  fill=#F2F2F0
+  TEXT "보완 요청"  @229,5975 46x14  text='보완 요청'  Pretendard Regular 12px  #1A1A1A
+  TEXT "부산 전포동 미니팜 1호"  @317,5975 109x14  text='부산 전포동 미니팜 1호'  Pretendard Regular 12px  #1A1A1A
+  TEXT "3단계 설비 설치 · 금액 불일치"  @493,5975 141x14  text='3단계 설비 설치 · 금액 불일치'  Pretendard Regular 12px  #4A4A4A
+  TEXT "2026.03.15 15:30"  @1250,5975 94x14  text='2026.03.15 15:30'  Pretendard Regular 12px  #4A4A4A
+  TEXT "2시간 35분"  @1382,5975 57x14  text='2시간 35분'  Pretendard Regular 12px  #1A1A1A
+  TEXT "이동"  @1478,5975 22x14  text='이동'  Pretendard Medium 12px  #14542E
+  ROUNDED_RECTANGLE "선"  @213,6037 1325x1  fill=#F2F2F0
+  TEXT "보완 요청"  @229,6012 46x14  text='보완 요청'  Pretendard Regular 12px  #1A1A1A
+  TEXT "대전 둔산동 미니팜 1호"  @317,6012 109x14  text='대전 둔산동 미니팜 1호'  Pretendard Regular 12px  #1A1A1A
+  TEXT "2단계 설비 발주 · 영수증 누락"  @493,6012 140x14  text='2단계 설비 발주 · 영수증 누락'  Pretendard Regular 12px  #4A4A4A
+  TEXT "2026.03.15 13:10"  @1250,6012 92x14  text='2026.03.15 13:10'  Pretendard Regular 12px  #4A4A4A
+  TEXT "4시간 55분"  @1382,6012 57x14  text='4시간 55분'  Pretendard Regular 12px  #A34A3D
+  TEXT "이동"  @1478,6012 22x14  text='이동'  Pretendard Medium 12px  #14542E
+  ROUNDED_RECTANGLE "선"  @213,6074 1325x1  fill=#F2F2F0
+  TEXT "재검증 요청"  @229,6049 56x14  text='재검증 요청'  Pretendard Regular 12px  #1A1A1A
+  TEXT "부산 전포동 미니팜 1호"  @317,6049 109x14  text='부산 전포동 미니팜 1호'  Pretendard Regular 12px  #1A1A1A
+  TEXT "3단계 설비 설치 · 재검증 요청"  @493,6049 141x14  text='3단계 설비 설치 · 재검증 요청'  Pretendard Regular 12px  #4A4A4A
+  TEXT "2026.03.15 11:20"  @1250,6049 91x14  text='2026.03.15 11:20'  Pretendard Regular 12px  #4A4A4A
+  TEXT "6시간 45분"  @1382,6049 57x14  text='6시간 45분'  Pretendard Regular 12px  #A34A3D
+  TEXT "이동"  @1478,6049 22x14  text='이동'  Pretendard Medium 12px  #14542E
+  ROUNDED_RECTANGLE "선"  @213,6111 1325x1  fill=#F2F2F0
+  TEXT "지급 대기"  @229,6086 46x14  text='지급 대기'  Pretendard Regular 12px  #1A1A1A
+  TEXT "서울 성수동 미니팜 2호"  @317,6086 110x14  text='서울 성수동 미니팜 2호'  Pretendard Regular 12px  #1A1A1A
+  TEXT "2단계 설비 발주 · 지급 준비"  @493,6086 130x14  text='2단계 설비 발주 · 지급 준비'  Pretendard Regular 12px  #4A4A4A
+  TEXT "2026.03.15 10:05"  @1250,6086 93x14  text='2026.03.15 10:05'  Pretendard Regular 12px  #4A4A4A
+  TEXT "8시간 00분"  @1382,6086 57x14  text='8시간 00분'  Pretendard Regular 12px  #A34A3D
+  TEXT "이동"  @1478,6086 22x14  text='이동'  Pretendard Medium 12px  #14542E
+  ROUNDED_RECTANGLE "선"  @213,6148 1325x1  fill=#F2F2F0
+  TEXT "승인 대기"  @229,6123 46x14  text='승인 대기'  Pretendard Regular 12px  #1A1A1A
+  TEXT "부산 전포동 미니팜 1호"  @317,6123 109x14  text='부산 전포동 미니팜 1호'  Pretendard Regular 12px  #1A1A1A
+  TEXT "4단계 시운전 및 검수 · 승인 대기"  @493,6123 154x14  text='4단계 시운전 및 검수 · 승인 대기'  Pretendard Regular 12px  #4A4A4A
+  TEXT "2026.03.14 17:40"  @1250,6123 93x14  text='2026.03.14 17:40'  Pretendard Regular 12px  #4A4A4A
+  TEXT "20시간 25분"  @1382,6123 64x14  text='20시간 25분'  Pretendard Regular 12px  #A34A3D
+  TEXT "이동"  @1478,6123 22x14  text='이동'  Pretendard Medium 12px  #14542E
+  TEXT "보완 요청"  @229,6160 46x14  text='보완 요청'  Pretendard Regular 12px  #1A1A1A
+  TEXT "대전 둔산동 미니팜 1호"  @317,6160 109x14  text='대전 둔산동 미니팜 1호'  Pretendard Regular 12px  #1A1A1A
+  TEXT "3단계 설비 설치 · 현장 사진 누락"  @493,6160 154x14  text='3단계 설비 설치 · 현장 사진 누락'  Pretendard Regular 12px  #4A4A4A
+  TEXT "2026.03.14 16:30"  @1250,6160 94x14  text='2026.03.14 16:30'  Pretendard Regular 12px  #4A4A4A
+  TEXT "21시간 35분"  @1382,6160 62x14  text='21시간 35분'  Pretendard Regular 12px  #A34A3D
+  TEXT "이동"  @1478,6160 22x14  text='이동'  Pretendard Medium 12px  #14542E
+  TEXT "더보기"  @1490,6199 32x14  text='더보기'  Pretendard Regular 12px  #4A4A4A
+  FRAME "아이콘"  @1527,6200 12x12
+    VECTOR "Vector"  @1532,6203 3x6  stroke=#B6B6B4/1

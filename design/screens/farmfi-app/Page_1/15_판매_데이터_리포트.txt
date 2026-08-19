@@ -1,0 +1,50 @@
+FRAME "15 판매 데이터 리포트"  @602,5863 402x1079  fill=#FFFFFF
+  FRAME "Body"  @602,5966 402x898
+    FRAME "Card"  @618,5982 370x115  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      INSTANCE "App/CardTitle"  @630,6002 345x21
+      FRAME "Summary"  @630,6034 345x42
+        FRAME "Item"  @630,6034 115x42
+          TEXT "매출(원)"  @630,6034 40x14  text='매출(원)'  Pretendard Regular 12px  #656563
+          FRAME "V"  @630,6052 101x24
+            TEXT "5,842,000"  @630,6052 101x24  text='5,842,000'  Pretendard Bold 20px  #1D1E1C
+        FRAME "Item"  @745,6034 115x42
+          TEXT "판매량"  @745,6034 32x14  text='판매량'  Pretendard Regular 12px  #656563
+          FRAME "V"  @745,6052 65x24
+            TEXT "1,486"  @745,6052 54x24  text='1,486'  Pretendard Bold 20px  #1D1E1C
+            TEXT "봉"  @799,6060 11x14  text='봉'  Pretendard Regular 12px  #656563
+        FRAME "Item"  @861,6034 115x42
+          TEXT "주문수"  @861,6034 32x14  text='주문수'  Pretendard Regular 12px  #656563
+          FRAME "V"  @861,6052 46x24
+            TEXT "412"  @861,6052 35x24  text='412'  Pretendard Bold 20px  #1D1E1C
+            TEXT "건"  @896,6060 11x14  text='건'  Pretendard Regular 12px  #656563
+    FRAME "Card"  @618,6112 370x251  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      INSTANCE "App/CardTitle"  @630,6132 345x21
+      INSTANCE "App/BarChart"  @630,6165 345x153  fill=#EAF6EE@0.40  r=8
+      FRAME "XLabels"  @630,6330 345x13
+        TEXT "6/30"  @630,6330 69x13  text='6/30'  Pretendard Regular 11px  #656563
+        TEXT "7/7"  @699,6330 69x13  text='7/7'  Pretendard Regular 11px  #656563
+        TEXT "7/14"  @768,6330 69x13  text='7/14'  Pretendard Regular 11px  #656563
+        TEXT "7/21"  @838,6330 69x13  text='7/21'  Pretendard Regular 11px  #656563
+        TEXT "7/29"  @907,6330 69x13  text='7/29'  Pretendard Regular 11px  #656563
+    FRAME "Card"  @618,6379 370x171  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      INSTANCE "App/CardTitle"  @630,6399 345x21
+      INSTANCE "App/RankRow"  @630,6432 345x25
+      INSTANCE "App/RankRow"  @630,6468 345x25
+      INSTANCE "App/RankRow"  @630,6505 345x25
+    FRAME "Card"  @618,6566 370x266  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      INSTANCE "App/CardTitle"  @630,6586 345x21
+      INSTANCE "App/HistoryRow"  @630,6615 345x33
+      INSTANCE "App/HistoryRow"  @630,6655 345x33
+      INSTANCE "App/HistoryRow"  @630,6696 345x33
+      INSTANCE "App/HistoryRow"  @630,6737 345x33
+      INSTANCE "App/HistoryRow"  @630,6778 345x33
+  FRAME "Status Bar"  @602,5863 402x103
+    INSTANCE "Status Bar"  @602,5863 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+    INSTANCE "App/DetailHeader2"  @602,5910 402x56
+  FRAME "Frame 2121453045"  @602,6841 402x101
+    INSTANCE "App/BottomNav"  @602,6841 402x64  fill=#FFFFFF  stroke=#F1F1F1/1
+    FRAME "Group 828"  @602,6906 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @602,6906 402x36  fill=#FFFFFF  stroke=#FFFFFF/1
+      FRAME "Group 819"  @732,6928 144x5
+        FRAME "Group 665"  @732,6928 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @732,6928 144x5  fill=#070428  r=107

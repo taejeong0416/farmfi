@@ -1,0 +1,4 @@
+SYMBOL "App/EmptyState"  @566,2257 340x124
+  FRAME "PixelGlyph (교체)"  @714,2269 45x45  fill=#EEF4EA  r=6
+  TEXT "확인할 알림이 없어요"  @657,2322 158x22  text='확인할 알림이 없어요'  Inter Semi Bold 18px  #1D1E1C
+  TEXT "새 설비 알림이 발생하면 여기에 표시됩니다."  @608,2353 256x17  text='새 설비 알림이 발생하면 여기에 표시됩니다.'  Inter Regular 14px  #656863

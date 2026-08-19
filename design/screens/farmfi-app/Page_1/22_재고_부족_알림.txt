@@ -1,0 +1,47 @@
+FRAME "22 재고 부족 알림"  @1469,8063 402x874  fill=#F0F0EE
+  FRAME "12 재고생육 연동"  @1469,8063 402x874  fill=#FFFFFF
+    FRAME "Body"  @1469,8166 402x617
+      FRAME "Card"  @1485,8182 370x220  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+        INSTANCE "App/CardTitle"  @1497,8202 345x21
+        INSTANCE "App/StockRow"  @1497,8234 345x41  r=6
+        INSTANCE "App/StockRow"  @1497,8288 345x41  r=6
+        INSTANCE "App/StockRow"  @1497,8341 345x41  r=6
+      FRAME "Card"  @1485,8418 370x333  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+        INSTANCE "App/CardTitle"  @1497,8438 345x21
+        INSTANCE "App/LinkedBedRow"  @1497,8471 345x79  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+        INSTANCE "App/LinkedBedRow"  @1497,8562 345x79  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+        INSTANCE "App/LinkedBedRow"  @1497,8652 345x79  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+    FRAME "Status Bar"  @1469,8063 402x103
+      INSTANCE "Status Bar"  @1469,8063 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+      INSTANCE "App/DetailHeader2"  @1469,8110 402x56
+    FRAME "Frame 2121453045"  @1469,8836 402x101
+      INSTANCE "App/BottomNav"  @1469,8836 402x64  fill=#FFFFFF  stroke=#F1F1F1/1
+      FRAME "Group 828"  @1469,8901 402x36
+        ROUNDED_RECTANGLE "Rectangle 375"  @1469,8901 402x36  fill=#FFFFFF  stroke=#FFFFFF/1
+        FRAME "Group 819"  @1599,8923 144x5
+          FRAME "Group 665"  @1599,8923 144x5
+            ROUNDED_RECTANGLE "Home Indicator"  @1599,8923 144x5  fill=#070428  r=107
+    ROUNDED_RECTANGLE "Rectangle"  @1469,8063 402x874  fill=#000000@0.35
+  FRAME "App/Popup"  @1505,8340 330x333  fill=#FFFFFF  stroke=#C9CEC9/1  r=14
+    FRAME "Icon"  @1643,8363 54x54  fill=#A33A2A@0.15  r=27
+      TEXT "!"  @1666,8375 8x29  text='!'  Pretendard Bold 24px  #A33A2A
+    TEXT "재고 부족"  @1636,8429 67x21  text='재고 부족'  Pretendard SemiBold 18px  #1D1E1C
+    TEXT "기준 수량 이하인 품목이 있어요."  @1526,8462 289x14  text='기준 수량 이하인 품목이 있어요.'  Pretendard Regular 12px  #4D504B
+    FRAME "Frame"  @1526,8488 289x100
+      FRAME "Frame"  @1526,8488 289x46  fill=#A33A2A@0.10  r=8
+        ELLIPSE "Ellipse"  @1536,8507 8x8  fill=#A33A2A
+        FRAME "Frame"  @1554,8496 213x30
+          TEXT "바질"  @1554,8496 23x16  text='바질'  Pretendard SemiBold 13px  #1D1E1C
+          TEXT "부족 기준 20단"  @1554,8513 67x13  text='부족 기준 20단'  Pretendard Regular 11px  #656863
+        TEXT "12단"  @1776,8502 28x17  text='12단'  Pretendard Bold 14px  #A33A2A
+      FRAME "Frame"  @1526,8542 289x46  fill=#A33A2A@0.10  r=8
+        ELLIPSE "Ellipse"  @1536,8561 8x8  fill=#A33A2A
+        FRAME "Frame"  @1554,8550 211x30
+          TEXT "로메인"  @1554,8550 34x16  text='로메인'  Pretendard SemiBold 13px  #1D1E1C
+          TEXT "부족 기준 30장"  @1554,8567 67x13  text='부족 기준 30장'  Pretendard Regular 11px  #656863
+        TEXT "28장"  @1774,8556 30x17  text='28장'  Pretendard Bold 14px  #A33A2A
+    FRAME "Actions"  @1526,8600 289x57
+      FRAME "취소"  @1526,8611 140x45  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+        TEXT "닫기"  @1583,8625 25x17  text='닫기'  Pretendard SemiBold 14px  #656863
+      FRAME "확인"  @1674,8611 140x45  fill=#1B5E3F  r=8
+        TEXT "재고 조정"  @1718,8625 52x17  text='재고 조정'  Pretendard SemiBold 14px  #FFFFFF

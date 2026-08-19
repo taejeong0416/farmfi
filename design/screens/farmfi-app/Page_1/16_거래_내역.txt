@@ -1,0 +1,56 @@
+FRAME "16 거래 내역"  @1043,5863 402x874  fill=#FFFFFF
+  FRAME "Body"  @1043,5966 402x612
+    FRAME "Frame"  @1059,5982 236x30
+      FRAME "Frame"  @1059,5982 45x30  fill=#EAF6EE  stroke=#1B5E3F/2  r=8
+        TEXT "전체"  @1071,5990 21x14  text='전체'  Pretendard SemiBold 12px  #1B5E3F
+      FRAME "Frame"  @1112,5982 66x30  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+        TEXT "버터헤드"  @1124,5990 42x14  text='버터헤드'  Pretendard Regular 12px  #656863
+      FRAME "Frame"  @1186,5982 56x30  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+        TEXT "로메인"  @1198,5990 32x14  text='로메인'  Pretendard Regular 12px  #656863
+      FRAME "Frame"  @1250,5982 45x30  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+        TEXT "바질"  @1262,5990 21x14  text='바질'  Pretendard Regular 12px  #656863
+    FRAME "Card"  @1059,6028 370x182  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      TEXT "집계"  @1071,6048 28x19  text='집계'  Pretendard SemiBold 16px  #1D1E1C
+      FRAME "Frame"  @1071,6079 345x29
+        TEXT "거래 건수"  @1071,6085 324x16  text='거래 건수'  Pretendard Regular 13px  #656863
+        TEXT "6건"  @1396,6085 21x17  text='6건'  Pretendard Regular 14px  #1D1E1C
+      FRAME "Frame"  @1071,6120 345x29
+        TEXT "판매 수량"  @1071,6126 318x16  text='판매 수량'  Pretendard Regular 13px  #656863
+        TEXT "13개"  @1390,6126 27x17  text='13개'  Pretendard Regular 14px  #1D1E1C
+      FRAME "Frame"  @1071,6161 345x29
+        TEXT "매출 집계"  @1071,6167 284x16  text='매출 집계'  Pretendard Regular 13px  #656863
+        TEXT "107,000원"  @1356,6167 61x17  text='107,000원'  Pretendard Regular 14px  #1B5E3F
+    FRAME "Card"  @1059,6226 370x161  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      FRAME "Frame"  @1071,6246 345x17
+        TEXT "08.13"  @1071,6246 34x17  text='08.13'  Pretendard Regular 14px  #1D1E1C
+        TEXT "90,000원"  @1355,6246 62x17  text='90,000원'  Pretendard Bold 14px  #1B5E3F
+      FRAME "Frame"  @1071,6275 345x14
+        TEXT "버터헤드 샐러드"  @1071,6275 76x14  text='버터헤드 샐러드'  Pretendard Regular 12px  #1D1E1C
+        TEXT "2개 · 18,000원"  @1343,6275 74x14  text='2개 · 18,000원'  Pretendard Regular 12px  #656863
+      FRAME "Frame"  @1071,6301 345x14
+        TEXT "로메인 샐러드"  @1071,6301 66x14  text='로메인 샐러드'  Pretendard Regular 12px  #1D1E1C
+        TEXT "1개 · 8,500원"  @1350,6301 67x14  text='1개 · 8,500원'  Pretendard Regular 12px  #656863
+      FRAME "Frame"  @1071,6327 345x14
+        TEXT "바질 샐러드"  @1071,6327 55x14  text='바질 샐러드'  Pretendard Regular 12px  #1D1E1C
+        TEXT "3개 · 18,000원"  @1343,6327 74x14  text='3개 · 18,000원'  Pretendard Regular 12px  #656863
+      FRAME "Frame"  @1071,6353 345x14
+        TEXT "버터헤드 샐러드"  @1071,6353 76x14  text='버터헤드 샐러드'  Pretendard Regular 12px  #1D1E1C
+        TEXT "4개 · 36,000원"  @1341,6353 76x14  text='4개 · 36,000원'  Pretendard Regular 12px  #656863
+    FRAME "Card"  @1059,6403 370x83  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      FRAME "Frame"  @1071,6423 345x17
+        TEXT "08.12"  @1071,6423 34x17  text='08.12'  Pretendard Regular 14px  #1D1E1C
+        TEXT "17,000원"  @1360,6423 57x17  text='17,000원'  Pretendard Bold 14px  #1B5E3F
+      FRAME "Frame"  @1071,6452 345x14
+        TEXT "로메인 샐러드"  @1071,6452 66x14  text='로메인 샐러드'  Pretendard Regular 12px  #1D1E1C
+        TEXT "2개 · 17,000원"  @1345,6452 72x14  text='2개 · 17,000원'  Pretendard Regular 12px  #656863
+    INSTANCE "App/GhostButton"  @1059,6502 370x44  fill=#1B5E3F@0.08  stroke=#1B5E3F@0.08/1  r=8
+  FRAME "TopBar"  @1043,5863 402x103
+    INSTANCE "Status Bar"  @1043,5863 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+    FRAME "HeaderRow"  @1043,5910 402x56
+      INSTANCE "App/DetailHeader"  @1043,5910 402x56  fill=#FFFFFF  stroke=#C9CEC9@0.50/1
+  FRAME "Frame 2121453045"  @1043,6701 402x36
+    FRAME "Group 828"  @1043,6701 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @1043,6701 402x36
+      FRAME "Group 819"  @1173,6724 144x5
+        FRAME "Group 665"  @1173,6724 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @1173,6724 144x5  fill=#070428  r=107

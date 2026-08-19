@@ -1,0 +1,6 @@
+SYMBOL "App/DeviceRow"  @164,3834 375x56
+  FRAME "device-led"  @164,3851 23x23
+  FRAME "Copy"  @197,3845 284x35
+    TEXT "LED 조명"  @197,3845 56x17  text='LED 조명'  Inter Regular 14px  #1D1E1C
+    TEXT "가동 중"  @197,3865 37x15  text='가동 중'  Inter Regular 12px  #656863
+  INSTANCE "App/Toggle"  @492,3848 47x28  fill=#1B5E3F  r=51

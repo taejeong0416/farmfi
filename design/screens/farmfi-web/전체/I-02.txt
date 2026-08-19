@@ -1,0 +1,19 @@
+FRAME "I-02 · 투자자 / 투자 적합성 확인"  @1520,1700 730x900  fill=#F9FAFA
+  TEXT "투자 전 확인"  @1554,1734 620x20  text='투자 전 확인'  Inter Semi Bold 13px  #0F6E56
+  TEXT "나에게 맞는 투자인지 먼저 확인해요"  @1554,1772 620x20  text='나에게 맞는 투자인지 먼저 확인해요'  Inter Bold 26px  #141F1C
+  TEXT "정답을 맞히는 절차가 아니라, 투자 구조와 위험을 충분히 이해했는지 함께 확인하는 과정입니다."  @1554,1810 620x20  text='정답을 맞히는 절차가 아니라, 투자 구조와 위험을 충분히 이해했는지 함께 확인하는 과정입니다.'  Inter Regular 14px  #616E69
+  FRAME "안내"  @1554,1848 662x86  fill=#F0F9F6  stroke=#F0F9F6/1  r=14
+    TEXT "약 2분이면 끝나요"  @1572,1866 560x20  text='약 2분이면 끝나요'  Inter Semi Bold 16px  #0C3127
+    TEXT "답변에 따라 투자 한도가 달라지거나 추가 안내가 필요할 수 있어요."  @1572,1896 560x20  text='답변에 따라 투자 한도가 달라지거나 추가 안내가 필요할 수 있어요.'  Inter Regular 13px  #616E69
+  FRAME "Question"  @1554,1952 662x86  fill=#FFFFFF  stroke=#DBE3E0/1  r=14
+    TEXT "1 이 투자금은 예금처럼 원금이 보장되나요?"  @1572,1970 560x20  text='1  이 투자금은 예금처럼 원금이 보장되나요?'  Inter Semi Bold 15px  #141F1C
+    TEXT "선택됨 · 아니요. 매출과 운영 상황에 따라 회수 기간과 금액이 달라질 수 있어요."  @1572,2000 560x20  text='선택됨 · 아니요. 매출과 운영 상황에 따라 회수 기간과 금액이 달라질 수 있어요.'  Inter Regular 13px  #0F6E56
+  FRAME "Question"  @1554,2056 662x86  fill=#FFFFFF  stroke=#DBE3E0/1  r=14
+    TEXT "2 투자한 뒤 필요할 때 바로 돌려받을 수 있나요?"  @1572,2074 560x20  text='2  투자한 뒤 필요할 때 바로 돌려받을 수 있나요?'  Inter Regular 15px  #141F1C
+    TEXT "선택됨 · 아니요. 중도 환금이 어렵고, 약정된 회수 구조를 따라요."  @1572,2104 560x20  text='선택됨 · 아니요. 중도 환금이 어렵고, 약정된 회수 구조를 따라요.'  Inter Regular 13px  #0F6E56
+  FRAME "Question"  @1554,2160 662x86  fill=#FFFFFF  stroke=#DBE3E0/1  r=14
+    TEXT "3 손실 가능성을 감당할 수 있는 금액인가요?"  @1572,2178 560x20  text='3  손실 가능성을 감당할 수 있는 금액인가요?'  Inter Semi Bold 15px  #141F1C
+    TEXT "선택됨 · 생활에 필요한 자금과 분리된 여유 자금으로만 참여해 주세요."  @1572,2208 560x20  text='선택됨 · 생활에 필요한 자금과 분리된 여유 자금으로만 참여해 주세요.'  Inter Regular 13px  #0F6E56
+  FRAME "Button"  @1554,2264 662x46  fill=#0F6E56  stroke=#0F6E56/1  r=10
+    TEXT "확인하고 다음으로"  @1745,2277 280x20  text='확인하고 다음으로'  Inter Semi Bold 14px  #FFFFFF
+  TEXT "투자 위험과 적합성 기준 자세히 보기"  @1554,2328 620x20  text='투자 위험과 적합성 기준 자세히 보기'  Inter Regular 12px  #616E69

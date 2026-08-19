@@ -1,0 +1,34 @@
+FRAME "O-06 · 운영자 / 공간 최종 확정"  @6890,4400 1440x1090  fill=#F9FAFA
+  FRAME "Autosave status"  @6944,4438 187x34  fill=#F0F9F6  r=999
+    TEXT "✓ 자동 저장됨"  @6956,4446 100x18  text='✓ 자동 저장됨'  Inter Semi Bold 12px  #0F6E56
+    TEXT "방금 전"  @7064,4446 55x18  text='방금 전'  Inter Regular 11px  #616E69
+  TEXT "운영 신청 5 / 7"  @6944,4490 1200x20  text='운영 신청 5 / 7'  Inter Semi Bold 13px  #0F6E56
+  TEXT "확인한 공간을 최종 배정받아요"  @6944,4528 1200x20  text='확인한 공간을 최종 배정받아요'  Inter Bold 30px  #141F1C
+  TEXT "현장 방문 결과와 교육 수료가 확인됐습니다. 계약서에 들어갈 공간과 운영 조건을 마지막으로 확인해 주세요."  @6944,4566 1200x20  text='현장 방문 결과와 교육 수료가 확인됐습니다. 계약서에 들어갈 공간과 운영 조건을 마지막으로 확인해 주세요.'  Inter Regular 15px  #616E69
+  FRAME "공간 요약"  @6944,4604 1332x120  fill=#F0F9F6  stroke=#DBE3E0/1  r=14
+    TEXT "성수 로컬팜 후보지 A"  @6964,4624 1200x20  text='성수 로컬팜 후보지 A'  Inter Bold 22px  #141F1C
+    TEXT "서울 성동구 연무장길 00 · 전용 82㎡"  @6964,4654 1200x20  text='서울 성동구 연무장길 00 · 전용 82㎡'  Inter Regular 14px  #141F1C
+    TEXT "현장 확인 완료 · 2026.08.25"  @6964,4684 1200x20  text='현장 확인 완료 · 2026.08.25'  Inter Semi Bold 13px  #0F6E56
+  FRAME "Details"  @6944,4742 1332x150  fill=#FFFFFF
+    FRAME "공간 조건"  @6944,4742 658x150  fill=#FFFFFF  stroke=#DBE3E0/1  r=14
+      TEXT "운영 시작 예정일"  @6964,4762 500x20  text='운영 시작 예정일'  Inter Regular 13px  #616E69
+      TEXT "2026년 9월 14일"  @6964,4792 500x20  text='2026년 9월 14일'  Inter Semi Bold 17px  #141F1C
+      TEXT "스마트팜 구역"  @6964,4822 500x20  text='스마트팜 구역'  Inter Regular 13px  #616E69
+      TEXT "재배존 3개 · 포장존 1개"  @6964,4852 500x20  text='재배존 3개 · 포장존 1개'  Inter Semi Bold 17px  #141F1C
+    FRAME "비용과 책임"  @7618,4742 658x150  fill=#FFFFFF  stroke=#DBE3E0/1  r=14
+      TEXT "운영 조건"  @7638,4762 500x20  text='운영 조건'  Inter Regular 13px  #616E69
+      TEXT "계약서에서 최종 확인"  @7638,4792 500x20  text='계약서에서 최종 확인'  Inter Semi Bold 17px  #141F1C
+      TEXT "시설 이상"  @7638,4822 500x20  text='시설 이상'  Inter Regular 13px  #616E69
+      TEXT "FarmFi 관리자에게 접수"  @7638,4852 500x20  text='FarmFi 관리자에게 접수'  Inter Semi Bold 17px  #141F1C
+  FRAME "확정 안내"  @6944,4910 1332x90  fill=#FFFFFF  stroke=#DBE3E0/1  r=14
+    TEXT "공간을 확정하면 7일 동안 다른 운영자에게 배정되지 않아요."  @6964,4930 1200x20  text='공간을 확정하면 7일 동안 다른 운영자에게 배정되지 않아요.'  Inter Semi Bold 15px  #0C3127
+    TEXT "그 안에 계약을 서명하지 않으면 담당자 확인 후 가배정 상태로 돌아갈 수 있습니다."  @6964,4960 1200x20  text='그 안에 계약을 서명하지 않으면 담당자 확인 후 가배정 상태로 돌아갈 수 있습니다.'  Inter Regular 13px  #616E69
+  FRAME "Button"  @6944,5018 1332x48  fill=#0F6E56  stroke=#0F6E56/1  r=10
+    TEXT "이 공간으로 최종 확정"  @7360,5032 500x20  text='이 공간으로 최종 확정'  Inter Semi Bold 14px  #FFFFFF
+  FRAME "Button"  @6944,5084 1332x48  fill=#FFFFFF  stroke=#DBE3E0/1  r=10
+    TEXT "다른 공간 상담하기"  @7360,5098 500x20  text='다른 공간 상담하기'  Inter Semi Bold 14px  #141F1C
+  FRAME "Step navigation"  @6944,5150 384x42  fill=#FFFFFF
+    FRAME "Button/secondary"  @6944,5150 186x42  fill=#FFFFFF  stroke=#DBE3E0/1  r=10
+      TEXT "← 이전 단계"  @6962,5162 150x18  text='← 이전 단계'  Inter Semi Bold 13px  #141F1C
+    FRAME "Button/ghost"  @7142,5150 186x42  fill=#F0F9F6  stroke=#F0F9F6/1  r=10
+      TEXT "저장하고 나가기"  @7160,5162 150x18  text='저장하고 나가기'  Inter Semi Bold 13px  #0F6E56

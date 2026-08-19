@@ -1,0 +1,30 @@
+FRAME "09 베드 상세 모니터링"  @1090,3526 402x1036  fill=#FFFFFF
+  FRAME "Body"  @1090,3629 402x933
+    FRAME "SceneCard"  @1106,3645 370x270  r=10
+    FRAME "Card"  @1106,3931 370x240  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      TEXT "환경 센서"  @1118,3943 60x19  text='환경 센서'  Pretendard SemiBold 16px  #1D1E1C
+      FRAME "Frame"  @1118,3972 345x76
+        INSTANCE "App/SensorTile"  @1118,3972 169x76  fill=#FDF6EA  r=9
+        INSTANCE "App/SensorTile"  @1295,3972 169x76  fill=#FFFFFF  stroke=#C9CEC9/1  r=9
+      FRAME "Frame"  @1118,4059 345x76
+        INSTANCE "App/SensorTile"  @1118,4059 169x76  fill=#FBF0EE  r=9
+        INSTANCE "App/SensorTile"  @1295,4059 169x76  fill=#FFFFFF  stroke=#C9CEC9/1  r=9
+      TEXT "기준 온도 18~26℃ · CO₂ 400~1000ppm"  @1118,4146 192x13  text='기준 온도 18~26℃ · CO₂ 400~1000ppm'  Pretendard Regular 11px  #656863
+    FRAME "Card"  @1106,4187 370x223  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      TEXT "설비 제어"  @1118,4199 60x19  text='설비 제어'  Pretendard SemiBold 16px  #1D1E1C
+      INSTANCE "App/DeviceRow"  @1118,4222 345x56
+      INSTANCE "App/DeviceRow"  @1118,4282 345x56
+      INSTANCE "App/DeviceRow"  @1118,4342 345x56
+    INSTANCE "App/GhostButton"  @1106,4426 370x44  fill=#1B5E3F@0.08  stroke=#1B5E3F@0.08/1  r=8
+    INSTANCE "App/GhostButton"  @1106,4486 370x44  fill=#1B5E3F@0.08  stroke=#1B5E3F@0.08/1  r=8
+  FRAME "TopBar"  @1090,3526 402x103
+    INSTANCE "Status Bar"  @1090,3526 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+    FRAME "HeaderRow"  @1090,3573 402x56
+      INSTANCE "App/DetailHeader"  @1090,3573 402x56  fill=#FFFFFF  stroke=#C9CEC9@0.50/1
+      INSTANCE "App/Badge"  @1437,3589 37x22  fill=#FBF0EE  r=5
+  FRAME "Frame 2121453045"  @1090,4525 402x36
+    FRAME "Group 828"  @1090,4525 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @1090,4525 402x36
+      FRAME "Group 819"  @1220,4548 144x5
+        FRAME "Group 665"  @1220,4548 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @1220,4548 144x5  fill=#070428  r=107

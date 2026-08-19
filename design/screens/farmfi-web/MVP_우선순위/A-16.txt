@@ -1,0 +1,73 @@
+FRAME "A-16 · 관리자 / 매출·비용 입력"  @23420,5900 730x801  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "선"  @23421,5965 728x1  fill=#EDEDEB
+  TEXT "매출 · 비용 입력"  @23441,5914 93x18  text='매출 · 비용 입력'  Pretendard Bold 15px  #1A1A1A
+  TEXT "부산 전포동 미니팜 1호 · 2026년 1분…"  @23441,5936 261x14  text='부산 전포동 미니팜 1호 · 2026년 1분기 · 임시 저장 09:41'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @23976,5916 72x34  stroke=#D6D6D4/1  r=6
+  TEXT "임시 저장"  @23990,5926 45x14  text='임시 저장'  Pretendard Medium 12px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @24057,5916 72x32  fill=#14542E  r=6
+  TEXT "정산 산출"  @24071,5925 45x14  text='정산 산출'  Pretendard Medium 12px  #FFFFFF
+  TEXT "기간 매출"  @23441,5991 53x16  text='기간 매출'  Pretendard Bold 14px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @24061,5984 68x30  stroke=#D6D6D4/1  r=5
+  TEXT "항목 추가"  @24074,5991 43x14  text='항목 추가'  Pretendard Medium 12px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @23421,6028 728x32  fill=#FAFAF7
+  ROUNDED_RECTANGLE "선"  @23421,6059 728x1  fill=#EDEDEB
+  TEXT "항목"  @23441,6037 20x13  text='항목'  Pretendard Regular 11px  #8A8A8A
+  TEXT "금액"  @24000,6037 20x13  text='금액'  Pretendard Regular 11px  #8A8A8A
+  TEXT "출처"  @24110,6037 20x13  text='출처'  Pretendard Regular 11px  #8A8A8A
+  ROUNDED_RECTANGLE "선"  @23421,6116 728x1  fill=#F2F2F0
+  TEXT "자체몰 판매"  @23441,6080 58x15  text='자체몰 판매'  Pretendard Regular 12px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @23879,6069 140x38  stroke=#E5E5E3/1  r=6
+  TEXT "9,400,000원"  @23927,6080 80x16  text='9,400,000원'  Pretendard Medium 14px  #1A1A1A
+  TEXT "연동"  @24108,6081 22x14  text='연동'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "선"  @23421,6173 728x1  fill=#F2F2F0
+  TEXT "B2B 납품"  @23441,6137 49x15  text='B2B 납품'  Pretendard Regular 12px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @23879,6126 140x38  stroke=#E5E5E3/1  r=6
+  TEXT "4,800,000원"  @23927,6137 80x16  text='4,800,000원'  Pretendard Medium 14px  #1A1A1A
+  TEXT "직접 입력"  @24084,6138 46x14  text='직접 입력'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @23421,6174 728x39  fill=#FCFCFA
+  ROUNDED_RECTANGLE "선"  @23421,6212 728x1  fill=#EDEDEB
+  TEXT "매출 합계"  @23441,6185 47x15  text='매출 합계'  Pretendard Medium 12px  #1A1A1A
+  TEXT "14,200,000원"  @23917,6185 91x16  text='14,200,000원'  Pretendard Medium 14px  #1A1A1A
+  TEXT "운영 비용"  @23441,6240 53x16  text='운영 비용'  Pretendard Bold 14px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @24061,6233 68x30  stroke=#D6D6D4/1  r=5
+  TEXT "항목 추가"  @24074,6240 43x14  text='항목 추가'  Pretendard Medium 12px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @23421,6277 728x32  fill=#FAFAF7
+  ROUNDED_RECTANGLE "선"  @23421,6308 728x1  fill=#EDEDEB
+  TEXT "항목"  @23441,6286 20x13  text='항목'  Pretendard Regular 11px  #8A8A8A
+  TEXT "금액"  @24000,6286 20x13  text='금액'  Pretendard Regular 11px  #8A8A8A
+  TEXT "출처"  @24110,6286 20x13  text='출처'  Pretendard Regular 11px  #8A8A8A
+  ROUNDED_RECTANGLE "선"  @23421,6365 728x1  fill=#F2F2F0
+  TEXT "인건비"  @23441,6329 33x15  text='인건비'  Pretendard Regular 12px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @23879,6318 140x38  stroke=#E5E5E3/1  r=6
+  TEXT "4,200,000원"  @23927,6329 80x16  text='4,200,000원'  Pretendard Medium 14px  #1A1A1A
+  TEXT "직접 입력"  @24084,6330 46x14  text='직접 입력'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "선"  @23421,6422 728x1  fill=#F2F2F0
+  TEXT "전력 · 수도"  @23441,6386 54x15  text='전력 · 수도'  Pretendard Regular 12px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @23879,6375 140x38  stroke=#E5E5E3/1  r=6
+  TEXT "2,600,000원"  @23927,6386 80x16  text='2,600,000원'  Pretendard Medium 14px  #1A1A1A
+  TEXT "연동"  @24108,6387 22x14  text='연동'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "선"  @23421,6479 728x1  fill=#F2F2F0
+  TEXT "자재 · 소모품"  @23441,6443 64x15  text='자재 · 소모품'  Pretendard Regular 12px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @23879,6432 140x38  stroke=#E5E5E3/1  r=6
+  TEXT "1,900,000원"  @23930,6443 77x16  text='1,900,000원'  Pretendard Medium 14px  #1A1A1A
+  TEXT "직접 입력"  @24084,6444 46x14  text='직접 입력'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "선"  @23421,6536 728x1  fill=#F2F2F0
+  TEXT "기타 운영비"  @23441,6500 58x15  text='기타 운영비'  Pretendard Regular 12px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @23879,6489 140x38  stroke=#E5E5E3/1  r=6
+  TEXT "700,000원"  @23940,6500 67x16  text='700,000원'  Pretendard Medium 14px  #1A1A1A
+  TEXT "직접 입력"  @24084,6501 46x14  text='직접 입력'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @23421,6537 728x39  fill=#FCFCFA
+  ROUNDED_RECTANGLE "선"  @23421,6575 728x1  fill=#EDEDEB
+  TEXT "비용 합계"  @23441,6548 47x15  text='비용 합계'  Pretendard Medium 12px  #1A1A1A
+  TEXT "9,400,000원"  @23924,6548 84x16  text='9,400,000원'  Pretendard Medium 14px  #1A1A1A
+  ROUNDED_RECTANGLE "선"  @23421,6650 728x1  fill=#EDEDEB
+  TEXT "분배 대상"  @23441,6590 47x15  text='분배 대상'  Pretendard Regular 12px  #8A8A8A
+  TEXT "4,800,000"  @23441,6612 103x24  text='4,800,000'  Pretendard Medium 20px  #14542E
+  TEXT "원"  @23543,6618 12x15  text='원'  Pretendard Regular 13px  #4A4A4A
+  ROUNDED_RECTANGLE "선"  @23664,6576 1x74  fill=#EDEDEB
+  TEXT "손익 구간"  @23685,6590 47x15  text='손익 구간'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "선"  @23906,6576 1x74  fill=#EDEDEB
+  TEXT "적용 규칙"  @23927,6590 47x15  text='적용 규칙'  Pretendard Regular 12px  #8A8A8A
+  TEXT "투자자 80 · 운영자 20"  @23927,6614 116x15  text='투자자 80 · 운영자 20'  Pretendard Regular 13px  #4A4A4A
+  TEXT "입력값을 저장하면 정산 규칙에 따라 정산 결…"  @23441,6666 490x14  text='입력값을 저장하면 정산 규칙에 따라 정산 결과가 자동 산출됩니다. 입력 · 수정 이력은 감사 로그에 기록됩니다.'  Pretendard Regular 12px  #8A8A8A
+  TEXT "적자 · updated"  @23685,6615 112x9  text='월 배분 가능액'  Inter Medium 14px  #4A4A4A

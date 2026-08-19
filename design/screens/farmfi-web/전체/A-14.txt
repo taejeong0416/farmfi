@@ -1,0 +1,48 @@
+FRAME "A-14 · 관리자 / 알림 발송"  @11360,5800 730x542  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "선"  @11361,5865 728x1  fill=#EDEDEB
+  TEXT "알림 발송"  @11381,5824 56x18  text='알림 발송'  Pretendard Bold 15px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @11995,5816 74x34  stroke=#D6D6D4/1  r=6
+  TEXT "발송 이력"  @12010,5826 45x14  text='발송 이력'  Pretendard Medium 12px  #1A1A1A
+  ROUNDED_RECTANGLE "선"  @11798,5866 1x476  fill=#EDEDEB
+  TEXT "수신 대상"  @11381,5883 46x14  text='수신 대상'  Pretendard Regular 12px  #757575
+  ROUNDED_RECTANGLE "면"  @11381,5905 56x30  fill=#14542E
+  TEXT "투자자"  @11394,5912 31x14  text='투자자'  Pretendard Medium 12px  #FFFFFF
+  ROUNDED_RECTANGLE "면"  @11445,5905 58x32  stroke=#E5E5E3/1  r=15
+  TEXT "운영자"  @11459,5913 31x14  text='운영자'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @11576,5905 48x32  stroke=#E5E5E3/1  r=15
+  TEXT "전체"  @11590,5913 21x14  text='전체'  Pretendard Regular 12px  #4A4A4A
+  TEXT "범위"  @11381,5952 22x14  text='범위'  Pretendard Regular 12px  #757575
+  ROUNDED_RECTANGLE "면"  @11381,5974 397x37  stroke=#E5E5E3/1  r=8
+  TEXT "부산 전포동 미니팜 1호 참여자 238명"  @11395,5984 185x15  text='부산 전포동 미니팜 1호 참여자 238명'  Pretendard Regular 12px  #1A1A1A
+  FRAME "아이콘"  @11751,5986 13x13
+    VECTOR "Vector"  @11754,5991 6x3  stroke=#B6B6B4/1
+  TEXT "채널"  @11381,6026 22x14  text='채널'  Pretendard Regular 12px  #757575
+  TEXT "앱 내 알림"  @11402,6049 50x15  text='앱 내 알림'  Pretendard Regular 12px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @11381,6050 14x14  fill=#14542E  r=3
+  TEXT "이메일"  @11488,6049 33x15  text='이메일'  Pretendard Regular 12px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @11468,6050 14x14  fill=#14542E  r=3
+  TEXT "SMS"  @11560,6049 27x15  text='SMS'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @11537,6049 16x16  stroke=#D6D6D4/1  r=3
+  TEXT "제목"  @11381,6080 22x14  text='제목'  Pretendard Regular 12px  #757575
+  ROUNDED_RECTANGLE "면"  @11381,6102 397x36  stroke=#E5E5E3/1  r=8
+  TEXT "3단계 설비 설치 검증 결과 안내"  @11395,6112 154x15  text='3단계 설비 설치 검증 결과 안내'  Pretendard Regular 12px  #1A1A1A
+  TEXT "내용"  @11381,6152 22x14  text='내용'  Pretendard Regular 12px  #757575
+  ROUNDED_RECTANGLE "면"  @11381,6174 397x96  stroke=#E5E5E3/1  r=8
+  TEXT "3단계 설비 설치 검증이 보류되어 재검증이 …"  @11395,6190 363x35  text='3단계 설비 설치 검증이 보류되어 재검증이 진행 중입니다. 진행 상황은 프로젝트 상세의 집행 레일에서 확인하실 수 있습니다.'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @11617,6284 91x38  stroke=#D6D6D4/1  r=6
+  TEXT "테스트 발송"  @11634,6294 58x15  text='테스트 발송'  Pretendard Medium 12px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @11716,6284 62x36  fill=#14542E  r=6
+  TEXT "발송"  @11736,6293 23x15  text='발송'  Pretendard Medium 12px  #FFFFFF
+  TEXT "미리보기"  @11819,5882 44x15  text='미리보기'  Pretendard Medium 12px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @11819,5908 250x88  stroke=#E5E5E3/1  r=8
+  ELLIPSE "점"  @11833,5928 6x6  fill=#14542E
+  TEXT "3단계 설비 설치 검증 결과 안내"  @11847,5924 141x14  text='3단계 설비 설치 검증 결과 안내'  Pretendard Medium 12px  #1A1A1A
+  TEXT "검증이 보류되어 재검증이 진행 중입니다."  @11847,5948 176x13  text='검증이 보류되어 재검증이 진행 중입니다.'  Pretendard Regular 11px  #757575
+  TEXT "지금 · 부산 전포동 1호"  @11847,5970 91x13  text='지금 · 부산 전포동 1호'  Pretendard Regular 10px  #8A8A8A
+  TEXT "발송 요약"  @11819,6010 47x15  text='발송 요약'  Pretendard Medium 12px  #1A1A1A
+  TEXT "예상 수신자"  @11819,6034 54x14  text='예상 수신자'  Pretendard Regular 12px  #757575
+  TEXT "238명"  @12037,6035 33x14  text='238명'  Pretendard Medium 12px  #1A1A1A
+  TEXT "채널"  @11819,6056 21x14  text='채널'  Pretendard Regular 12px  #757575
+  TEXT "앱 · 이메일"  @12018,6057 52x14  text='앱 · 이메일'  Pretendard Medium 12px  #1A1A1A
+  TEXT "발송 예정"  @11819,6078 44x14  text='발송 예정'  Pretendard Regular 12px  #757575
+  TEXT "즉시"  @12048,6079 22x14  text='즉시'  Pretendard Medium 12px  #1A1A1A

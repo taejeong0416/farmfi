@@ -1,0 +1,18 @@
+FRAME "B-00E · 구독 없음 / 빈 상태"  @14240,3300 1440x680  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "선"  @14241,3361 1438x1  fill=#EDEDEB
+  TEXT "FarmFi"  @14273,3320 55x20  text='FarmFi'  Pretendard Bold 17px  #14542E
+  TEXT "둘러보기"  @15522,3324 46x15  text='둘러보기'  Pretendard Regular 13px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @15577,3313 70x36  stroke=#D6D6D4/1  r=6
+  TEXT "로그인"  @15596,3323 33x15  text='로그인'  Pretendard Medium 12px  #1A1A1A
+  TEXT "내 구독"  @14272,3400 90x36  text='내 구독'  Inter Bold 30px  #1A1A1A
+  FRAME "Frame"  @14552,3492 816x356  fill=#F1F4F2  stroke=#D6E3D9/1  r=12
+  FRAME "Frame"  @14902,3538 116x116  fill=#FFFFFF  stroke=#D1E0D6/1  r=58
+  TEXT "F"  @14944,3569 25x51  text='F'  Inter Bold 42px  #14542E
+  TEXT "아직 이용 중인 구독이 없어요"  @14768,3687 288x29  text='아직 이용 중인 구독이 없어요'  Inter Bold 24px  #1A1A1A
+  TEXT "가까운 팜의 생산 슬롯을 확인하고, 필요한 만큼만 정기 픽업해보세요."  @14710,3730 400x17  text='가까운 팜의 생산 슬롯을 확인하고, 필요한 만큼만 정기 픽업해보세요.'  Inter Regular 14px  #757575
+  FRAME "Frame"  @14820,3780 280x50  fill=#14542E  stroke=#14542E/1  r=6
+  TEXT "정기구독 플랜 둘러보기"  @14888,3796 137x17  text='정기구독 플랜 둘러보기'  Inter Medium 14px  #FFFFFF
+  TEXT "배송 상품이 아니라 지정한 팜에서 직접 픽업하는 서비스입니다."  @14745,3874 314x15  text='배송 상품이 아니라 지정한 팜에서 직접 픽업하는 서비스입니다.'  Inter Regular 12px  #757575
+  TEXT "정기구독"  @14361,3323 48x16  text='정기구독'  Inter Medium 13px  #14542E
+  TEXT "내 구독"  @14433,3323 40x16  text='내 구독'  Inter Regular 13px  #4A4A4A
+  TEXT "알림"  @14495,3323 24x16  text='알림'  Inter Regular 13px  #4A4A4A

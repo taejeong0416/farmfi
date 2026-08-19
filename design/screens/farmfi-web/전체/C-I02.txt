@@ -1,0 +1,30 @@
+FRAME "C-I02 · 투자자 준비 / 모바일 신분증 확인"  @3965,120 465x725  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "면"  @3998,229 399x296  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "사진 자리"  @4114,254 166x174  fill=#F1F4F2  stroke=#E0E5E0/1  r=10
+  TEXT "일회성 QR"  @4174,408 48x12  text='일회성 QR'  Pretendard Regular 10px  #8A998F
+  TEXT "유효시간"  @4157,440 47x15  text='유효시간'  Pretendard Regular 12px  #8A8A8A
+  TEXT "04:32"  @4204,440 35x15  text='04:32'  Pretendard Medium 12px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @4149,466 98x34  stroke=#D6D6D4/1  r=6
+  TEXT "QR 새로 발급"  @4166,476 65x14  text='QR 새로 발급'  Pretendard Medium 12px  #1A1A1A
+  ROUNDED_RECTANGLE "선"  @4002,555 1x53  fill=#E5E5E3
+  ELLIPSE "점"  @3998,550 8x8  fill=#14542E
+  ELLIPSE "점"  @3998,579 8x8  fill=#FFFFFF  stroke=#99A39C/1
+  ELLIPSE "점"  @3998,608 8x8  fill=#FFFFFF  stroke=#CFCFCC/1
+  ROUNDED_RECTANGLE "선"  @3998,640 399x1  fill=#EDEDEB
+  ROUNDED_RECTANGLE "선"  @3998,678 399x1  fill=#F2F2F0
+  TEXT "실명 확인"  @3998,652 49x15  text='실명 확인'  Pretendard Regular 13px  #1A1A1A
+  TEXT "확인 전"  @4361,652 37x15  text='확인 전'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "선"  @3998,716 399x1  fill=#F2F2F0
+  TEXT "성인 여부"  @3998,690 49x15  text='성인 여부'  Pretendard Regular 13px  #1A1A1A
+  TEXT "확인 전"  @4361,690 37x15  text='확인 전'  Pretendard Regular 12px  #8A8A8A
+  TEXT "투자 한도"  @3998,728 49x15  text='투자 한도'  Pretendard Regular 13px  #1A1A1A
+  TEXT "확인 전"  @4361,728 37x15  text='확인 전'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "CX Header Cover"  @3989,140 417x78  fill=#FFFFFF
+  TEXT "투자 준비 2 / 3 · 모바일 신분증 확인"  @3998,150 399x20  text='투자 준비 2 / 3 · 모바일 신분증 확인'  Inter Regular 18px  #0F6E56
+  TEXT "휴대폰에서 모바일 신분증을 열고 요청된 정보를 확인해 주세요."  @3998,184 399x20  text='휴대폰에서 모바일 신분증을 열고 요청된 정보를 확인해 주세요.'  Inter Regular 13px  #616E69
+  ROUNDED_RECTANGLE "CX Steps Cover"  @4010,537 385x96  fill=#FFFFFF
+  TEXT "1 본인확인 요청 시작"  @4019,546 360x20  text='1  본인확인 요청 시작'  Inter Semi Bold 13px  #141F1C
+  TEXT "2 모바일 신분증 앱에서 확인"  @4019,575 360x20  text='2  모바일 신분증 앱에서 확인'  Inter Semi Bold 13px  #141F1C
+  TEXT "3 본인확인 결과 수신"  @4019,604 360x20  text='3  본인확인 결과 수신'  Inter Semi Bold 13px  #141F1C
+  ROUNDED_RECTANGLE "CX Privacy Cover"  @3989,760 417x62  fill=#FFFFFC  r=8
+  TEXT "FarmFi는 실명·성인 여부 등 필요한 확인값만 저장하고 신분증 원문은 보관하지 않아요."  @3998,773 390x20  text='FarmFi는 실명·성인 여부 등 필요한 확인값만 저장하고 신분증 원문은 보관하지 않아요.'  Inter Regular 12px  #616E69

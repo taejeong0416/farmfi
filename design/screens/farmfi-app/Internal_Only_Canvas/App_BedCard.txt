@@ -1,0 +1,25 @@
+SYMBOL "App/BedCard"  @608,3474 370x157  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+  FRAME "Head"  @620,3486 345x41
+    FRAME "Bed thumb (교체)"  @620,3486 60x41  fill=#F4F3EF  r=6
+    FRAME "Copy"  @690,3488 223x37
+      TEXT "베드 A"  @690,3488 45x19  text='베드 A'  Inter Semi Bold 16px  #1D1E1C
+      TEXT "버터헤드 · 수확기"  @690,3510 88x15  text='버터헤드 · 수확기'  Inter Regular 12px  #656863
+    INSTANCE "App/Badge"  @924,3495 41x23  fill=#FBF0EE  r=5
+  FRAME "Readings"  @620,3537 345x56  stroke=#C9CEC9/1
+    FRAME "온도"  @620,3547 86x37
+      TEXT "온도"  @652,3547 23x15  text='온도'  Inter Regular 12px  #656863
+      TEXT "22.4℃"  @639,3567 48x17  text='22.4℃'  Inter Semi Bold 14px  #1B5E3F
+    FRAME "습도"  @706,3547 86x37
+      TEXT "습도"  @738,3547 23x15  text='습도'  Inter Regular 12px  #656863
+      TEXT "92%"  @734,3567 30x17  text='92%'  Inter Semi Bold 14px  #A33A2A
+    FRAME "CO₂"  @793,3547 86x37
+      TEXT "CO₂"  @824,3547 23x15  text='CO₂'  Inter Regular 12px  #656863
+      TEXT "780ppm"  @807,3567 57x17  text='780ppm'  Inter Semi Bold 14px  #1B5E3F
+    FRAME "EC"  @879,3547 86x37
+      TEXT "EC"  @914,3547 16x15  text='EC'  Inter Regular 12px  #656863
+      TEXT "1.8"  @913,3567 19x17  text='1.8'  Inter Semi Bold 14px  #1B5E3F
+  FRAME "Footer"  @620,3603 345x15
+    TEXT "설비 2/3 가동"  @620,3603 71x15  text='설비 2/3 가동'  Inter Regular 12px  #656863
+    FRAME "ProgressBar"  @700,3607 190x7  fill=#F0EEEA  r=51
+      ROUNDED_RECTANGLE "Fill"  @700,3607 142x8  fill=#1B5E3F  r=51
+    TEXT "08.13 14:35"  @899,3603 66x15  text='08.13 14:35'  Inter Regular 12px  #9B9A94

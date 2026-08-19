@@ -1,0 +1,5 @@
+FRAME "Shimmer Bone"  @102,630 100x40  r=5
+  SYMBOL "State=A"  @102,630 100x40
+    ROUNDED_RECTANGLE "shimmer-bar"  @-98,630 300x40
+  SYMBOL "State=B"  @102,630 100x40
+    ROUNDED_RECTANGLE "shimmer-bar"  @102,630 300x40

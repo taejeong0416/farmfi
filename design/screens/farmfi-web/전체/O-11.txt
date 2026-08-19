@@ -1,0 +1,106 @@
+FRAME "O-11 · 운영자 / 증빙 제출"  @14490,4400 1440x820  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "선"  @14491,4461 1438x1  fill=#EDEDEB
+  TEXT "FarmFi"  @14523,4420 55x20  text='FarmFi'  Pretendard Bold 17px  #14542E
+  TEXT "프로젝트"  @14611,4424 46x15  text='프로젝트'  Pretendard Regular 13px  #4A4A4A
+  TEXT "내 투자"  @14682,4424 38x15  text='내 투자'  Pretendard Regular 13px  #4A4A4A
+  TEXT "알림"  @14745,4424 23x15  text='알림'  Pretendard Regular 13px  #4A4A4A
+  TEXT "운영자 포털"  @14794,4424 60x15  text='운영자 포털'  Pretendard Medium 13px  #14542E
+  FRAME "아이콘"  @15780,4423 16x16
+    VECTOR "Vector"  @15786,4426 5x5  stroke=#8A8A8A/1
+    VECTOR "Vector"  @15783,4432 9x4  stroke=#8A8A8A/1
+  TEXT "그린테이블 이운영"  @15804,4424 94x15  text='그린테이블 이운영'  Pretendard Regular 13px  #4A4A4A
+  TEXT "운영자 포털부산 전포동 미니팜 1호"  @14523,4485 182x14  text='운영자 포털부산 전포동 미니팜 1호'  Pretendard Regular 12px  #8A8A8A
+  TEXT "/"  @14585,4485 5x14  text='/'  Pretendard Regular 12px  #C9C9C7
+  TEXT "/"  @14711,4485 5x14  text='/'  Pretendard Regular 12px  #C9C9C7
+  TEXT "3단계 설비 설치"  @14722,4485 77x14  text='3단계 설비 설치'  Pretendard Regular 12px  #4A4A4A
+  TEXT "필수 증빙"  @14523,4514 56x18  text='필수 증빙'  Pretendard Bold 15px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @14523,4545 300x169  stroke=#E5E5E3/1  r=8
+  ROUNDED_RECTANGLE "선"  @14524,4587 298x1  fill=#F2F2F0
+  TEXT "설비 계약서"  @14540,4559 60x15  text='설비 계약서'  Pretendard Regular 13px  #1A1A1A
+  TEXT "제출완료"  @14763,4558 44x15  text='제출완료'  Pretendard Medium 12px  #14542E
+  ELLIPSE "점"  @14749,4563 7x7  fill=#14542E
+  ROUNDED_RECTANGLE "선"  @14524,4629 298x1  fill=#F2F2F0
+  TEXT "설비 영수증"  @14540,4601 60x15  text='설비 영수증'  Pretendard Regular 13px  #1A1A1A
+  TEXT "보완 요청"  @14760,4600 47x15  text='보완 요청'  Pretendard Medium 12px  #A34A3D
+  ELLIPSE "점"  @14746,4605 7x7  fill=#A34A3D
+  ROUNDED_RECTANGLE "선"  @14524,4671 298x1  fill=#F2F2F0
+  TEXT "현장 사진 2장"  @14540,4643 71x15  text='현장 사진 2장'  Pretendard Regular 13px  #1A1A1A
+  TEXT "제출완료"  @14763,4642 44x15  text='제출완료'  Pretendard Medium 12px  #14542E
+  ELLIPSE "점"  @14749,4647 7x7  fill=#14542E
+  TEXT "센서 데이터"  @14540,4685 60x15  text='센서 데이터'  Pretendard Regular 13px  #4A4A4A
+  TEXT "연동 대기"  @14760,4684 47x15  text='연동 대기'  Pretendard Regular 12px  #8A8A8A
+  ELLIPSE "점"  @14746,4689 7x7  fill=#B5B5B5
+  ROUNDED_RECTANGLE "면"  @14523,4730 300x114  fill=#FCFCFA  stroke=#EDEDEB/1  r=8
+  TEXT "보완 요청 사유"  @14540,4743 72x15  text='보완 요청 사유'  Pretendard Medium 12px  #A34A3D
+  TEXT "영수증 금액이 계약서와 다릅니다. 변경합의서…"  @14540,4770 258x36  text='영수증 금액이 계약서와 다릅니다. 변경합의서가 있다면 함께 올려주세요.'  Pretendard Regular 12px  #757575
+  TEXT "2026.03.15 15:30 · 박운영"  @14540,4816 128x14  text='2026.03.15 15:30 · 박운영'  Pretendard Regular 12px  #8A8A8A
+  TEXT "제출 이력"  @14523,4864 56x18  text='제출 이력'  Pretendard Bold 15px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @14523,4896 300x76  stroke=#E5E5E3/1  r=8
+  ROUNDED_RECTANGLE "선"  @14524,4933 298x1  fill=#F2F2F0
+  TEXT "1차 제출"  @14540,4906 42x15  text='1차 제출'  Pretendard Regular 12px  #1A1A1A
+  TEXT "03.14 18:20"  @14747,4907 60x14  text='03.14 18:20'  Pretendard Regular 12px  #8A8A8A
+  TEXT "보완 요청 접수"  @14540,4944 72x15  text='보완 요청 접수'  Pretendard Regular 12px  #4A4A4A
+  TEXT "03.15 15:30"  @14747,4944 60x14  text='03.15 15:30'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @14855,4516 1042x668  stroke=#E5E5E3/1  r=10
+  TEXT "부산 전포동 미니팜 1호"  @14880,4540 109x14  text='부산 전포동 미니팜 1호'  Pretendard Regular 12px  #8A8A8A
+  TEXT "3단계 설비 설치 증빙 제출"  @14880,4561 225x26  text='3단계 설비 설치 증빙 제출'  Pretendard Bold 22px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @15676,4541 92x44  fill=#FFFFFF  stroke=#D6D6D4/1  r=6
+  TEXT "임시 저장"  @15697,4554 51x16  text='임시 저장'  Pretendard Medium 14px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @15777,4541 95x42  fill=#14542E  r=6
+  TEXT "제출하기"  @15801,4553 48x16  text='제출하기'  Pretendard Medium 14px  #FFFFFF
+  TEXT "문서 · 영수증"  @14880,4609 77x18  text='문서 · 영수증'  Pretendard Bold 15px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @14880,4640 648x106  fill=#FCFCFC  stroke=#CFCFCC/1  r=10
+  TEXT "파일을 끌어다 놓거나 선택하세요"  @15121,4676 167x15  text='파일을 끌어다 놓거나 선택하세요'  Pretendard Medium 13px  #14542E
+  TEXT "PDF · JPG · PNG · 1건당 20…"  @15118,4695 174x14  text='PDF · JPG · PNG · 1건당 20MB 이하'  Pretendard Regular 12px  #8A8A8A
+  TEXT "문서 유형"  @14880,4760 47x15  text='문서 유형'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @14880,4784 59x34  stroke=#E5E5E3/1  r=6
+  TEXT "계약서"  @14894,4794 32x14  text='계약서'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @14947,4784 59x34  stroke=#E5E5E3/1  r=6
+  TEXT "견적서"  @14961,4794 32x14  text='견적서'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @15014,4784 59x34  stroke=#14542E/1  r=6
+  TEXT "영수증"  @15028,4794 32x14  text='영수증'  Pretendard Medium 12px  #14542E
+  ROUNDED_RECTANGLE "면"  @15081,4784 80x34  stroke=#E5E5E3/1  r=6
+  TEXT "세금계산서"  @15095,4794 53x14  text='세금계산서'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @15169,4784 80x34  stroke=#E5E5E3/1  r=6
+  TEXT "변경합의서"  @15183,4794 53x14  text='변경합의서'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @14880,4836 648x237  stroke=#E5E5E3/1  r=8
+  ROUNDED_RECTANGLE "선"  @14881,4894 646x1  fill=#F2F2F0
+  TEXT "금액"  @14897,4857 23x15  text='금액'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @15001,4846 510x40  stroke=#E5E5E3/1  r=6
+  TEXT "18,500,000원"  @15413,4858 86x16  text='18,500,000원'  Pretendard Medium 14px  #1A1A1A
+  ROUNDED_RECTANGLE "선"  @14881,4954 646x1  fill=#F2F2F0
+  TEXT "일자"  @14897,4916 23x15  text='일자'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @15001,4904 510x40  stroke=#E5E5E3/1  r=6
+  TEXT "2026.03.06"  @15423,4916 76x16  text='2026.03.06'  Pretendard Medium 14px  #1A1A1A
+  ROUNDED_RECTANGLE "선"  @14881,5012 646x1  fill=#F2F2F0
+  TEXT "상대방"  @14897,4975 33x15  text='상대방'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @15001,4964 510x40  stroke=#E5E5E3/1  r=6
+  TEXT "(주)그린테이블"  @15415,4976 84x16  text='(주)그린테이블'  Pretendard Medium 14px  #1A1A1A
+  TEXT "문서 번호"  @14897,5034 47x15  text='문서 번호'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @15001,5022 510x40  stroke=#E5E5E3/1  r=6
+  TEXT "선택 입력"  @15450,5035 49x15  text='선택 입력'  Pretendard Regular 13px  #B5B5B5
+  ROUNDED_RECTANGLE "면"  @14880,5084 648x72  stroke=#E5E5E3/1  r=8
+  ROUNDED_RECTANGLE "선"  @14881,5120 646x1  fill=#F2F2F0
+  TEXT "설비 계약서.pdf"  @14895,5094 80x15  text='설비 계약서.pdf'  Pretendard Regular 12px  #1A1A1A
+  TEXT "03.05 · 제출완료"  @15434,5095 80x14  text='03.05 · 제출완료'  Pretendard Regular 12px  #8A8A8A
+  TEXT "설비 영수증_수정.pdf"  @14895,5130 107x15  text='설비 영수증_수정.pdf'  Pretendard Regular 12px  #1A1A1A
+  TEXT "방금 첨부"  @15470,5130 44x14  text='방금 첨부'  Pretendard Regular 12px  #14542E
+  TEXT "현장 사진"  @15552,4609 56x18  text='현장 사진'  Pretendard Bold 15px  #1A1A1A
+  ROUNDED_RECTANGLE "사진 자리"  @15552,4640 155x122  fill=#F1F4F2  stroke=#E0E5E0/1  r=8
+  TEXT "현장 사진 1"  @15561,4742 58x12  text='현장 사진 1'  Pretendard Regular 10px  #8A998F
+  ROUNDED_RECTANGLE "사진 자리"  @15717,4640 155x122  fill=#F1F4F2  stroke=#E0E5E0/1  r=8
+  TEXT "현장 사진 2"  @15726,4742 58x12  text='현장 사진 2'  Pretendard Regular 10px  #8A998F
+  ROUNDED_RECTANGLE "면"  @15552,4772 155x106  fill=#FCFCFC  stroke=#CFCFCC/1  r=8
+  TEXT "사진 추가"  @15607,4818 45x14  text='사진 추가'  Pretendard Medium 12px  #14542E
+  ROUNDED_RECTANGLE "면"  @15717,4772 155x106  fill=#FCFCFA  stroke=#EDEDEB/1  r=8
+  TEXT "LED 점등재촬영 필요"  @15768,4809 54x32  text='LED 점등재촬영 필요'  Pretendard Regular 12px  #B5B5B5
+  ROUNDED_RECTANGLE "면"  @15552,4892 320x114  stroke=#E5E5E3/1  r=8
+  ROUNDED_RECTANGLE "선"  @15553,4930 318x1  fill=#F2F2F0
+  TEXT "촬영 시각"  @15567,4903 47x15  text='촬영 시각'  Pretendard Regular 12px  #8A8A8A
+  TEXT "2026.03.14 16:22"  @15758,4903 100x15  text='2026.03.14 16:22'  Pretendard Medium 12px  #1A1A1A
+  ROUNDED_RECTANGLE "선"  @15553,4967 318x1  fill=#F2F2F0
+  TEXT "촬영 위치"  @15567,4940 47x15  text='촬영 위치'  Pretendard Regular 12px  #8A8A8A
+  TEXT "부산 부산진구 전포대로"  @15743,4940 115x15  text='부산 부산진구 전포대로'  Pretendard Medium 12px  #1A1A1A
+  TEXT "위치 정보 제출"  @15567,4978 72x15  text='위치 정보 제출'  Pretendard Regular 12px  #8A8A8A
+  TEXT "포함"  @15835,4978 23x15  text='포함'  Pretendard Medium 12px  #14542E
+  TEXT "제출한 증빙은 검증 결과 확인 화면에서 판정…"  @15552,5022 301x35  text='제출한 증빙은 검증 결과 확인 화면에서 판정과 근거를 볼 수 있습니다.'  Pretendard Regular 12px  #8A8A8A

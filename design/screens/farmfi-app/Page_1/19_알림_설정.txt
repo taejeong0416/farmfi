@@ -1,0 +1,51 @@
+FRAME "19 알림 설정"  @1067,7038 402x874  fill=#FFFFFF
+  FRAME "Body"  @1067,7141 402x581
+    FRAME "Card"  @1083,7157 370x136  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      TEXT "수신 채널"  @1095,7177 60x19  text='수신 채널'  Pretendard SemiBold 16px  #1D1E1C
+      FRAME "Frame"  @1095,7210 345x36
+        FRAME "Frame"  @1095,7210 110x36  fill=#1B5E3F  stroke=#1B5E3F/1  r=8
+          TEXT "앱 푸시"  @1132,7220 37x16  text='앱 푸시'  Pretendard SemiBold 13px  #FFFFFF
+        FRAME "Frame"  @1213,7210 110x36  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+          TEXT "문자"  @1257,7220 23x16  text='문자'  Pretendard SemiBold 13px  #656863
+        FRAME "Frame"  @1331,7210 110x36  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+          TEXT "둘 다"  @1373,7220 26x16  text='둘 다'  Pretendard SemiBold 13px  #656863
+      TEXT "앱 푸시만 받습니다. 기기 알림 권한이 필요해요."  @1095,7260 203x13  text='앱 푸시만 받습니다. 기기 알림 권한이 필요해요.'  Pretendard Regular 11px  #656863
+    FRAME "Card"  @1083,7309 370x313  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      TEXT "알림 유형"  @1095,7329 60x19  text='알림 유형'  Pretendard SemiBold 16px  #1D1E1C
+      FRAME "Frame 2121453054"  @1095,7362 345x240
+        FRAME "Frame"  @1095,7362 345x32
+          FRAME "Frame"  @1095,7362 298x32
+            TEXT "설비 위험 알림"  @1095,7362 80x17  text='설비 위험 알림'  Pretendard Regular 14px  #1D1E1C
+            TEXT "임계값 초과·설비 정지 등 즉시 조치가 필요한 알림"  @1095,7381 213x13  text='임계값 초과·설비 정지 등 즉시 조치가 필요한 알림'  Pretendard Regular 11px  #656863
+          INSTANCE "App/Toggle"  @1393,7364 47x28  fill=#1B5E3F  r=51
+        FRAME "Frame"  @1095,7414 345x32
+          FRAME "Frame"  @1095,7414 298x32
+            TEXT "설비 주의 알림"  @1095,7414 80x17  text='설비 주의 알림'  Pretendard Regular 14px  #1D1E1C
+            TEXT "임계값 근접·스케줄 지연 등 확인이 필요한 알림"  @1095,7433 200x13  text='임계값 근접·스케줄 지연 등 확인이 필요한 알림'  Pretendard Regular 11px  #656863
+          INSTANCE "App/Toggle"  @1393,7416 47x28  fill=#1B5E3F  r=51
+        FRAME "Frame"  @1095,7466 345x32
+          FRAME "Frame"  @1095,7466 298x32
+            TEXT "재고 부족 알림"  @1095,7466 80x17  text='재고 부족 알림'  Pretendard Regular 14px  #1D1E1C
+            TEXT "품목 수량이 부족 기준 이하로 내려갈 때"  @1095,7485 169x13  text='품목 수량이 부족 기준 이하로 내려갈 때'  Pretendard Regular 11px  #656863
+          INSTANCE "App/Toggle"  @1393,7468 47x28  fill=#1B5E3F  r=51
+        FRAME "Frame"  @1095,7518 345x32
+          FRAME "Frame"  @1095,7518 298x32
+            TEXT "수확 예정 알림"  @1095,7518 80x17  text='수확 예정 알림'  Pretendard Regular 14px  #1D1E1C
+            TEXT "재배 일정의 수확 예정일 3일 전"  @1095,7537 135x13  text='재배 일정의 수확 예정일 3일 전'  Pretendard Regular 11px  #656863
+          INSTANCE "App/Toggle"  @1393,7520 47x28  fill=#C9CDC9  r=51
+        FRAME "Frame"  @1095,7570 345x32
+          FRAME "Frame"  @1095,7570 298x32
+            TEXT "주간 리포트"  @1095,7570 65x17  text='주간 리포트'  Pretendard Regular 14px  #1D1E1C
+            TEXT "매주 월요일 지난주 매출·판매 요약"  @1095,7589 147x13  text='매주 월요일 지난주 매출·판매 요약'  Pretendard Regular 11px  #656863
+          INSTANCE "App/Toggle"  @1393,7572 47x28  fill=#C9CDC9  r=51
+    INSTANCE "App/PrimaryButton"  @1083,7638 370x52  fill=#1B5E3F  r=8
+  FRAME "TopBar"  @1067,7038 402x103
+    INSTANCE "Status Bar"  @1067,7038 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+    FRAME "HeaderRow"  @1067,7085 402x56
+      INSTANCE "App/DetailHeader"  @1067,7085 402x56  fill=#FFFFFF  stroke=#C9CEC9@0.50/1
+  FRAME "Frame 2121453045"  @1067,7876 402x36
+    FRAME "Group 828"  @1067,7876 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @1067,7876 402x36
+      FRAME "Group 819"  @1197,7899 144x5
+        FRAME "Group 665"  @1197,7899 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @1197,7899 144x5  fill=#070428  r=107

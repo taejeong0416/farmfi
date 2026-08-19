@@ -1,0 +1,2 @@
+SYMBOL "App/DetailHeader2"  @164,1824 443x56
+  INSTANCE "App/DetailHeader"  @164,1824 443x56  fill=#FFFFFF  stroke=#C9CEC9@0.50/1

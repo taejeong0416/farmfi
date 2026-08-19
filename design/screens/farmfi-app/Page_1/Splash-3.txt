@@ -1,0 +1,14 @@
+  FRAME "Body"  @602,47 402x438
+    FRAME "Spacer"  @648,60 310x316
+    FRAME "Logo"  @648,386 310x77
+      FRAME "logo"  @705,386 196x45
+        VECTOR "Vector"  @705,386 196x45  fill=#FFFFFF
+      TEXT "도심 스마트팜 운영지원 서비스"  @724,447 157x16  text='도심 스마트팜 운영지원 서비스'  Pretendard Regular 13px  #FFFFFF
+  FRAME "Frame 2121453045"  @602,838 402x36
+    FRAME "Group 828"  @602,838 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @602,838 402x36
+      FRAME "Group 819"  @732,860 144x5
+        FRAME "Group 665"  @732,860 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @732,860 144x5  fill=#070428  r=107
+  FRAME "Status Bar"  @602,0 402x47
+    INSTANCE "Status Bar"  @602,0 402x47

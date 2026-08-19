@@ -1,0 +1,54 @@
+FRAME "06 재배 일정"  @1446,2335 402x1011  fill=#FFFFFF
+  FRAME "Body"  @1446,2438 402x844
+    FRAME "Card"  @1462,2454 370x365  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      INSTANCE "App/Calendar"  @1474,2474 345x298
+      FRAME "Frame"  @1474,2786 80x13
+        FRAME "Frame"  @1474,2786 32x13
+          ELLIPSE "Ellipse"  @1474,2789 6x6  fill=#1B5E3F
+          TEXT "파종"  @1486,2786 20x13  text='파종'  Pretendard Regular 11px  #656863
+        FRAME "Frame"  @1522,2786 32x13
+          ELLIPSE "Ellipse"  @1522,2789 6x6  fill=#A33A2A
+          TEXT "수확"  @1534,2786 20x13  text='수확'  Pretendard Regular 11px  #656863
+    TEXT "예정 일정"  @1462,2835 60x19  text='예정 일정'  Pretendard SemiBold 16px  #1D1E1C
+    FRAME "ScheduleRow"  @1462,2870 370x68  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      FRAME "Frame"  @1474,2882 44x44  fill=#EAF6EE  r=8
+        TEXT "08"  @1491,2889 11x11  text='08'  Pretendard Regular 9px  #1B5E3F
+        TEXT "19"  @1488,2900 17x18  text='19'  Pretendard Bold 15px  #1B5E3F
+      FRAME "Frame"  @1530,2888 256x32
+        TEXT "로메인 수확"  @1530,2888 64x17  text='로메인 수확'  Pretendard SemiBold 14px  #1D1E1C
+        TEXT "베드 B"  @1530,2907 29x13  text='베드 B'  Pretendard Regular 11px  #656863
+      TEXT "예정"  @1799,2897 21x14  text='예정'  Pretendard SemiBold 12px  #1B5E3F
+    FRAME "ScheduleRow"  @1462,2954 370x68  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      FRAME "Frame"  @1474,2966 44x44  fill=#EAF6EE  r=8
+        TEXT "08"  @1491,2973 11x11  text='08'  Pretendard Regular 9px  #1B5E3F
+        TEXT "22"  @1487,2984 19x18  text='22'  Pretendard Bold 15px  #1B5E3F
+      FRAME "Frame"  @1530,2972 256x32
+        TEXT "버터헤드 상추 파종"  @1530,2972 104x17  text='버터헤드 상추 파종'  Pretendard SemiBold 14px  #1D1E1C
+        TEXT "베드 A"  @1530,2991 29x13  text='베드 A'  Pretendard Regular 11px  #656863
+      TEXT "예정"  @1799,2981 21x14  text='예정'  Pretendard SemiBold 12px  #1B5E3F
+    FRAME "ScheduleRow"  @1462,3038 370x68  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      FRAME "Frame"  @1474,3050 44x44  fill=#EAF6EE  r=8
+        TEXT "08"  @1491,3057 11x11  text='08'  Pretendard Regular 9px  #1B5E3F
+        TEXT "29"  @1487,3068 19x18  text='29'  Pretendard Bold 15px  #1B5E3F
+      FRAME "Frame"  @1530,3056 256x32
+        TEXT "루꼴라 수확"  @1530,3056 64x17  text='루꼴라 수확'  Pretendard SemiBold 14px  #1D1E1C
+        TEXT "베드 D"  @1530,3075 30x13  text='베드 D'  Pretendard Regular 11px  #656863
+      TEXT "예정"  @1799,3065 21x14  text='예정'  Pretendard SemiBold 12px  #1B5E3F
+    FRAME "ScheduleRow"  @1462,3122 370x68  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      FRAME "Frame"  @1474,3134 44x44  fill=#A5A89F@0.23  r=8
+        TEXT "08"  @1491,3141 11x11  text='08'  Pretendard Regular 9px  #000000
+        TEXT "08"  @1486,3152 20x18  text='08'  Pretendard Bold 15px  #000000
+      FRAME "Frame"  @1530,3140 256x32
+        TEXT "바질 정식"  @1530,3140 52x17  text='바질 정식'  Pretendard SemiBold 14px  #1D1E1C
+        TEXT "베드 C"  @1530,3159 30x13  text='베드 C'  Pretendard Regular 11px  #656863
+      TEXT "완료"  @1799,3149 21x14  text='완료'  Pretendard SemiBold 12px  #656863
+    INSTANCE "App/GhostButton"  @1462,3206 370x44  fill=#1B5E3F@0.08  stroke=#1B5E3F@0.08/1  r=8
+  INSTANCE "App/DetailHeader"  @1446,2382 402x56  fill=#FFFFFF  stroke=#C9CEC9@0.50/1
+  FRAME "Status Bar"  @1446,2335 402x47
+    INSTANCE "Status Bar"  @1446,2335 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+  FRAME "Frame 2121453045"  @1446,3310 402x36
+    FRAME "Group 828"  @1446,3310 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @1446,3310 402x36
+      FRAME "Group 819"  @1576,3332 144x5
+        FRAME "Group 665"  @1576,3332 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @1576,3332 144x5  fill=#070428  r=107

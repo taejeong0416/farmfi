@@ -1,0 +1,16 @@
+FRAME "App/AlertCard"  @-1909,4300 780x162  r=5
+  SYMBOL "state=unconfirmed"  @-1909,4300 370x162  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+    FRAME "Head"  @-1893,4316 338x23
+      INSTANCE "App/Badge"  @-1893,4316 41x23  fill=#FBF0EE  r=5
+      TEXT "베드 D · 환기팬"  @-1844,4318 221x19  text='베드 D · 환기팬'  Inter Semi Bold 16px  #1D1E1C
+      TEXT "08.13 14:22"  @-1615,4321 60x13  text='08.13 14:22'  Inter Regular 11px  #656863
+    TEXT "CO₂ 농도가 상한 임계값을 15분 이상 초과했습니다."  @-1893,4349 338x17  text='CO₂ 농도가 상한 임계값을 15분 이상 초과했습니다.'  Inter Regular 14px  #1D1E1C
+    INSTANCE "App/AckedMark"  @-1893,4376 48x15
+    INSTANCE "App/GhostButton"  @-1893,4402 338x44  fill=#1B5E3F@0.08  stroke=#1B5E3F@0.08/1  r=8
+  SYMBOL "state=confirmed"  @-1499,4300 370x108  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+    FRAME "Head"  @-1483,4316 338x23
+      INSTANCE "App/Badge"  @-1483,4316 41x23  fill=#FDF6EA  r=5
+      TEXT "베드 B · LED 조명"  @-1434,4318 219x19  text='베드 B · LED 조명'  Inter Semi Bold 16px  #1D1E1C
+      TEXT "08.13 06:40"  @-1207,4321 62x13  text='08.13 06:40'  Inter Regular 11px  #656863
+    TEXT "점등 스케줄이 20분 지연되어 실행됐습니다."  @-1483,4349 338x17  text='점등 스케줄이 20분 지연되어 실행됐습니다.'  Inter Regular 14px  #1D1E1C
+    INSTANCE "App/AckedMark"  @-1483,4376 64x15

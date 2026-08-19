@@ -1,0 +1,3 @@
+SYMBOL "bar chart"  @526,3109 246x7
+  FRAME "ProgressBar"  @526,3109 246x7  fill=#F7F7F7  r=51
+    ROUNDED_RECTANGLE "Fill"  @526,3109 209x7  fill=#1B5E3F  r=51

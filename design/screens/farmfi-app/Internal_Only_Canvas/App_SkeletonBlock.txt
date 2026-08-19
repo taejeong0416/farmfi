@@ -1,0 +1,1 @@
+SYMBOL "App/SkeletonBlock"  @80,5500 120x20  fill=#F0F0ED  r=6

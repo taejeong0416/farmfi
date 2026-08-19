@@ -1,0 +1,50 @@
+FRAME "I-05 · 투자 신청·취소 내역"  @5305,1700 730x364  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "선"  @5306,1765 728x1  fill=#EDEDEB
+  TEXT "김투자 · 전체 5건"  @5326,1736 79x14  text='김투자 · 전체 5건'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @5755,1716 49x34  stroke=#14542E/1  r=6
+  TEXT "전체"  @5769,1726 22x14  text='전체'  Pretendard Medium 12px  #14542E
+  ROUNDED_RECTANGLE "면"  @5812,1716 49x34  stroke=#E5E5E3/1  r=6
+  TEXT "배정"  @5826,1726 22x14  text='배정'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @5868,1716 89x34  stroke=#E5E5E3/1  r=6
+  TEXT "미배정 · 환불"  @5882,1726 62x14  text='미배정 · 환불'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @5965,1716 49x34  stroke=#E5E5E3/1  r=6
+  TEXT "취소"  @5979,1726 22x14  text='취소'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @5306,1766 728x32  fill=#FAFAF7
+  ROUNDED_RECTANGLE "선"  @5306,1797 728x1  fill=#EDEDEB
+  TEXT "프로젝트"  @5326,1775 39x13  text='프로젝트'  Pretendard Regular 11px  #8A8A8A
+  TEXT "신청일"  @5755,1775 30x13  text='신청일'  Pretendard Regular 11px  #8A8A8A
+  TEXT "상태"  @5895,1775 20x13  text='상태'  Pretendard Regular 11px  #8A8A8A
+  TEXT "처리"  @5995,1775 20x13  text='처리'  Pretendard Regular 11px  #8A8A8A
+  ROUNDED_RECTANGLE "선"  @5306,1840 728x1  fill=#F2F2F0
+  TEXT "부산 전포동 미니팜 1호"  @5326,1811 113x15  text='부산 전포동 미니팜 1호'  Pretendard Regular 12px  #1A1A1A
+  TEXT "1,000,000원"  @5598,1811 77x16  text='1,000,000원'  Pretendard Medium 14px  #1A1A1A
+  TEXT "2026.03.09"  @5721,1812 64x14  text='2026.03.09'  Pretendard Regular 12px  #4A4A4A
+  TEXT "배정 완료"  @5870,1812 45x14  text='배정 완료'  Pretendard Medium 12px  #14542E
+  TEXT "상세"  @5993,1812 22x14  text='상세'  Pretendard Medium 12px  #14542E
+  ROUNDED_RECTANGLE "선"  @5306,1883 728x1  fill=#F2F2F0
+  TEXT "서울 성수동 미니팜 2호"  @5326,1854 115x15  text='서울 성수동 미니팜 2호'  Pretendard Regular 12px  #1A1A1A
+  TEXT "1,400,000원"  @5597,1854 78x16  text='1,400,000원'  Pretendard Medium 14px  #1A1A1A
+  TEXT "2026.03.02"  @5722,1855 63x14  text='2026.03.02'  Pretendard Regular 12px  #4A4A4A
+  TEXT "배정 대기"  @5869,1855 46x14  text='배정 대기'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "선"  @5306,1926 728x1  fill=#F2F2F0
+  TEXT "대전 둔산동 미니팜 1호"  @5326,1897 113x15  text='대전 둔산동 미니팜 1호'  Pretendard Regular 12px  #1A1A1A
+  TEXT "1,000,000원"  @5598,1897 77x16  text='1,000,000원'  Pretendard Medium 14px  #1A1A1A
+  TEXT "2026.01.15"  @5727,1898 58x14  text='2026.01.15'  Pretendard Regular 12px  #4A4A4A
+  TEXT "배정 완료"  @5870,1898 45x14  text='배정 완료'  Pretendard Medium 12px  #14542E
+  TEXT "상세"  @5993,1898 22x14  text='상세'  Pretendard Medium 12px  #14542E
+  ROUNDED_RECTANGLE "선"  @5306,1969 728x1  fill=#F2F2F0
+  TEXT "광주 충장로 미니팜 1호"  @5326,1940 113x15  text='광주 충장로 미니팜 1호'  Pretendard Regular 12px  #1A1A1A
+  TEXT "500,000원"  @5607,1940 68x16  text='500,000원'  Pretendard Medium 14px  #1A1A1A
+  TEXT "2026.02.20"  @5722,1941 63x14  text='2026.02.20'  Pretendard Regular 12px  #4A4A4A
+  TEXT "미배정 · 환불"  @5853,1941 62x14  text='미배정 · 환불'  Pretendard Regular 12px  #8A8A8A
+  TEXT "환불 내역"  @5969,1941 46x14  text='환불 내역'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "선"  @5306,2012 728x1  fill=#EDEDEB
+  TEXT "대구 동성로 미니팜 1호"  @5326,1983 113x15  text='대구 동성로 미니팜 1호'  Pretendard Regular 12px  #1A1A1A
+  TEXT "300,000원"  @5607,1983 68x16  text='300,000원'  Pretendard Medium 14px  #1A1A1A
+  TEXT "2026.02.11"  @5726,1984 59x14  text='2026.02.11'  Pretendard Regular 12px  #4A4A4A
+  TEXT "내역"  @5993,1984 22x14  text='내역'  Pretendard Regular 12px  #8A8A8A
+  TEXT "FRIENDLY COPY / 10:993"  @5326,1714 90x18  text='투자 신청 내역'  Inter Bold 15px  #1A1A1A
+  TEXT "FRIENDLY COPY / 10:1006"  @5633,1775 44x13  text='투자 금액'  Inter Regular 11px  #8A8A8A
+  TEXT "FRIENDLY COPY / 10:1021"  @5970,1855 48x15  text='신청 취소'  Inter Medium 12px  #14542E
+  TEXT "FRIENDLY COPY / 10:1038"  @5869,1984 48x15  text='신청 취소'  Inter Regular 12px  #8A8A8A
+  TEXT "FRIENDLY COPY / 10:1040"  @5326,2029 490x14  text='신청 취소는 모집 마감 전까지만 가능합니다. 미배정분은 마감 후 3영업일 이내 연결 계좌로 환불됩니다.'  Inter Regular 12px  #8A8A8A

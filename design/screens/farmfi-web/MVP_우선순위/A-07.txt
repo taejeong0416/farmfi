@@ -1,0 +1,47 @@
+FRAME "A-07 · 관리자 / 마일스톤 설정"  @5000,5900 730x347  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "선"  @5001,5965 728x1  fill=#EDEDEB
+  TEXT "마일스톤 설정"  @5021,5914 82x18  text='마일스톤 설정'  Pretendard Bold 15px  #1A1A1A
+  TEXT "부산 전포동 미니팜 1호 · 총 5단계 · …"  @5021,5936 276x14  text='부산 전포동 미니팜 1호 · 총 5단계 · 집행 합계 50,200,000원'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @5574,5916 74x34  stroke=#D6D6D4/1  r=6
+  TEXT "단계 추가"  @5589,5926 45x14  text='단계 추가'  Pretendard Medium 12px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @5656,5916 53x32  fill=#14542E  r=6
+  TEXT "저장"  @5672,5925 22x14  text='저장'  Pretendard Medium 12px  #FFFFFF
+  ROUNDED_RECTANGLE "면"  @5001,5966 728x43  fill=#FAFAF7
+  ROUNDED_RECTANGLE "선"  @5001,6008 728x1  fill=#EDEDEB
+  TEXT "순서"  @5021,5975 11x24  text='순서'  Pretendard Regular 11px  #8A8A8A
+  TEXT "단계명"  @5055,5975 30x13  text='단계명'  Pretendard Regular 11px  #8A8A8A
+  TEXT "집행 금액"  @5386,5975 42x13  text='집행 금액'  Pretendard Regular 11px  #8A8A8A
+  TEXT "필수 증빙"  @5453,5975 42x13  text='필수 증빙'  Pretendard Regular 11px  #8A8A8A
+  TEXT "상태"  @5649,5975 20x13  text='상태'  Pretendard Regular 11px  #8A8A8A
+  ROUNDED_RECTANGLE "선"  @5001,6046 728x1  fill=#F2F2F0
+  TEXT "1"  @5021,6020 6x14  text='1'  Pretendard Regular 12px  #8A8A8A
+  TEXT "계약 체결"  @5055,6019 47x15  text='계약 체결'  Pretendard Regular 12px  #1A1A1A
+  TEXT "12,000,000원"  @5351,6019 77x15  text='12,000,000원'  Pretendard Medium 12px  #1A1A1A
+  TEXT "임대차 계약서"  @5453,6020 64x14  text='임대차 계약서'  Pretendard Regular 12px  #4A4A4A
+  TEXT "통과"  @5649,6020 22x14  text='통과'  Pretendard Medium 12px  #14542E
+  ROUNDED_RECTANGLE "선"  @5001,6083 728x1  fill=#F2F2F0
+  TEXT "2"  @5021,6058 8x14  text='2'  Pretendard Regular 12px  #8A8A8A
+  TEXT "설비 발주"  @5055,6056 47x15  text='설비 발주'  Pretendard Regular 12px  #1A1A1A
+  TEXT "8,200,000원"  @5357,6056 71x15  text='8,200,000원'  Pretendard Medium 12px  #1A1A1A
+  TEXT "발주서 · 세금계산서"  @5453,6057 89x14  text='발주서 · 세금계산서'  Pretendard Regular 12px  #4A4A4A
+  TEXT "통과"  @5649,6058 22x14  text='통과'  Pretendard Medium 12px  #14542E
+  ROUNDED_RECTANGLE "면"  @5001,6084 728x38  fill=#FCFCFC
+  ROUNDED_RECTANGLE "선"  @5001,6120 728x1  fill=#F2F2F0
+  TEXT "3"  @5021,6095 8x14  text='3'  Pretendard Regular 12px  #8A8A8A
+  TEXT "설비 설치"  @5055,6094 47x15  text='설비 설치'  Pretendard Regular 12px  #1A1A1A
+  TEXT "18,000,000원"  @5351,6094 77x15  text='18,000,000원'  Pretendard Medium 12px  #1A1A1A
+  TEXT "영수증 · 현장사진 · 센서"  @5453,6094 108x14  text='영수증 · 현장사진 · 센서'  Pretendard Regular 12px  #4A4A4A
+  TEXT "검증중"  @5649,6095 32x14  text='검증중'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "선"  @5001,6158 728x1  fill=#F2F2F0
+  TEXT "4"  @5021,6133 8x14  text='4'  Pretendard Regular 12px  #8A8A8A
+  TEXT "시운전 및 검수"  @5055,6132 72x15  text='시운전 및 검수'  Pretendard Regular 12px  #1A1A1A
+  TEXT "6,000,000원"  @5357,6132 71x15  text='6,000,000원'  Pretendard Medium 12px  #1A1A1A
+  TEXT "검수확인서 · 센서"  @5453,6132 79x14  text='검수확인서 · 센서'  Pretendard Regular 12px  #4A4A4A
+  TEXT "예정"  @5649,6133 22x14  text='예정'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "선"  @5001,6196 728x1  fill=#EDEDEB
+  TEXT "5"  @5021,6170 8x14  text='5'  Pretendard Regular 12px  #8A8A8A
+  TEXT "영업 개시"  @5055,6169 47x15  text='영업 개시'  Pretendard Regular 12px  #1A1A1A
+  TEXT "6,000,000원"  @5357,6169 71x15  text='6,000,000원'  Pretendard Medium 12px  #1A1A1A
+  TEXT "영업신고증 · 매출자료"  @5453,6170 99x14  text='영업신고증 · 매출자료'  Pretendard Regular 12px  #4A4A4A
+  TEXT "예정"  @5649,6170 22x14  text='예정'  Pretendard Regular 12px  #8A8A8A
+  TEXT "단계 순서를 바꾸거나 금액을 수정하면 모집 …"  @5021,6212 361x14  text='단계 순서를 바꾸거나 금액을 수정하면 모집 중 프로젝트는 재공시 대상이 됩니다.'  Pretendard Regular 12px  #8A8A8A

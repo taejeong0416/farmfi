@@ -1,0 +1,15 @@
+FRAME "00 scan (인식 성공)"  @585,-1037 402x874
+  FRAME "Frame 2121453064"  @615,-772 343x343
+    ROUNDED_RECTANGLE "Scanner Container"  @615,-772 343x343  stroke=#217248/6  r=16
+  BOOLEAN_OPERATION "Subtract"  @585,-1037 402x874  fill=#000000@0.50
+    ROUNDED_RECTANGLE "Rectangle 376"  @585,-1037 402x874  fill=#000000@0.50
+    ROUNDED_RECTANGLE "Scanner Container"  @615,-772 343x343  fill=#D9D9D9  r=16
+  FRAME "Frame 2121453065"  @676,-886 221x58
+    TEXT "QR을 스캔해주세요."  @676,-886 221x29  text='QR을 스캔해주세요.'  Pretendard Bold 24px  #FFFFFF
+    TEXT "FarmFi 웹 > 보증서 > 운영자 보증서"  @676,-847 221x17  text='FarmFi 웹 > 보증서 > 운영자 보증서'  Pretendard Regular 14px  #FFFFFF@0.60
+  FRAME "Frame 2121453045"  @585,-199 402x36
+    FRAME "Group 828"  @585,-199 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @585,-199 402x36
+      FRAME "Group 819"  @715,-177 144x5
+        FRAME "Group 665"  @715,-177 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @715,-177 144x5  fill=#070428  r=107

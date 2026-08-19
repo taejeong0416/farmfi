@@ -1,0 +1,51 @@
+FRAME "17 리포트 내보내기"  @1505,5863 402x874  fill=#FFFFFF
+  FRAME "Body"  @1505,5966 402x691
+    FRAME "Card"  @1521,5982 370x131  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      TEXT "기간"  @1533,6002 28x19  text='기간'  Pretendard SemiBold 16px  #1D1E1C
+      FRAME "Frame"  @1533,6033 345x34
+        FRAME "Frame"  @1533,6033 110x34  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+          TEXT "이번 주"  @1571,6043 35x14  text='이번 주'  Pretendard Regular 12px  #656863
+        FRAME "Frame"  @1651,6033 110x34  fill=#EAF6EE  stroke=#1B5E3F/2  r=8
+          TEXT "이번 달"  @1689,6043 34x14  text='이번 달'  Pretendard SemiBold 12px  #1B5E3F
+        FRAME "Frame"  @1769,6033 110x34  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+          TEXT "최근 3개월"  @1798,6043 52x14  text='최근 3개월'  Pretendard Regular 12px  #656863
+      TEXT "2026-08-01 ~ 2026-08-13"  @1533,6079 146x14  text='2026-08-01 ~ 2026-08-13'  Pretendard Regular 12px  #656863
+    FRAME "Card"  @1521,6129 370x263  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      TEXT "파일 형식"  @1533,6149 60x19  text='파일 형식'  Pretendard SemiBold 16px  #1D1E1C
+      FRAME "Frame"  @1533,6180 345x56  fill=#EAF6EE  stroke=#1B5E3F/2  r=8
+        INSTANCE "App/Radio"  @1543,6200 16x16  fill=#FFFFFF  stroke=#1B5E3F/2  r=8
+        FRAME "Frame"  @1569,6192 299x32
+          TEXT "CSV"  @1569,6192 29x17  text='CSV'  Pretendard SemiBold 14px  #1D1E1C
+          TEXT "엑셀·구글시트에서 바로 열 수 있는 표 형식"  @1569,6211 181x13  text='엑셀·구글시트에서 바로 열 수 있는 표 형식'  Pretendard Regular 11px  #656863
+      FRAME "Frame"  @1533,6248 345x56  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+        INSTANCE "App/Radio"  @1543,6268 16x16  fill=#FFFFFF  stroke=#C9CEC9/2  r=8
+        FRAME "Frame"  @1569,6260 299x32
+          TEXT "Excel"  @1569,6260 35x17  text='Excel'  Pretendard SemiBold 14px  #1D1E1C
+          TEXT "서식이 적용된 .xlsx 파일"  @1569,6279 107x13  text='서식이 적용된 .xlsx 파일'  Pretendard Regular 11px  #656863
+      FRAME "Frame"  @1533,6316 345x56  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+        INSTANCE "App/Radio"  @1543,6336 16x16  fill=#FFFFFF  stroke=#C9CEC9/2  r=8
+        FRAME "Frame"  @1569,6328 299x32
+          TEXT "PDF"  @1569,6328 27x17  text='PDF'  Pretendard SemiBold 14px  #1D1E1C
+          TEXT "인쇄·공유용 리포트 문서"  @1569,6347 104x13  text='인쇄·공유용 리포트 문서'  Pretendard Regular 11px  #656863
+    FRAME "Card"  @1521,6408 370x149  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      TEXT "포함 내용"  @1533,6428 60x19  text='포함 내용'  Pretendard SemiBold 16px  #1D1E1C
+      FRAME "Frame"  @1533,6459 112x18
+        INSTANCE "App/Checkbox"  @1533,6459 18x18  fill=#1B5E3F  r=4
+        TEXT "기간별 매출 집계"  @1559,6460 86x16  text='기간별 매출 집계'  Pretendard Regular 13px  #1D1E1C
+      FRAME "Frame"  @1533,6489 97x18
+        INSTANCE "App/Checkbox"  @1533,6489 18x18  fill=#1B5E3F  r=4
+        TEXT "품목별 판매량"  @1559,6490 71x16  text='품목별 판매량'  Pretendard Regular 13px  #1D1E1C
+      FRAME "Frame"  @1533,6519 100x18
+        INSTANCE "App/Checkbox"  @1533,6519 18x18  fill=#1B5E3F  r=4
+        TEXT "거래 건별 내역"  @1559,6520 74x16  text='거래 건별 내역'  Pretendard Regular 13px  #1D1E1C
+    INSTANCE "App/PrimaryButton"  @1521,6573 370x52  fill=#1B5E3F  r=8
+  FRAME "TopBar"  @1505,5863 402x103
+    INSTANCE "Status Bar"  @1505,5863 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+    FRAME "HeaderRow"  @1505,5910 402x56
+      INSTANCE "App/DetailHeader"  @1505,5910 402x56  fill=#FFFFFF  stroke=#C9CEC9@0.50/1
+  FRAME "Frame 2121453045"  @1505,6701 402x36
+    FRAME "Group 828"  @1505,6701 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @1505,6701 402x36
+      FRAME "Group 819"  @1635,6724 144x5
+        FRAME "Group 665"  @1635,6724 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @1635,6724 144x5  fill=#070428  r=107

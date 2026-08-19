@@ -1,0 +1,9 @@
+SYMBOL "App/StockRow"  @164,3370 369x41  r=6
+  FRAME "CropPixel"  @168,3377 29x29  r=4
+  FRAME "Mid"  @206,3376 290x30
+    TEXT "상추"  @206,3376 26x17  text='상추'  Inter Regular 14px  #1D1E1C
+    FRAME "ProgressBar"  @206,3399 290x7  fill=#F7F7F7  r=51
+      ROUNDED_RECTANGLE "Fill"  @206,3399 110x7  fill=#1B5E3F  r=51
+  FRAME "Qty"  @504,3382 25x19
+    TEXT "4"  @504,3382 11x19  text='4'  Inter Regular 16px  #1D1E1C
+    TEXT "봉"  @517,3384 12x15  text='봉'  Inter Regular 12px  #1D1E1C
