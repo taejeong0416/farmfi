@@ -27,8 +27,8 @@ Figma 확정 화면을 옮기면서, 그 화면이 실제로 도는 데 필요�
 
 | 항목 | 결정 |
 |---|---|
-| 화면 목록 | Figma 57개 |
-| 생김새 | Figma가 절대 기준 (좌표·색·폰트·radius) |
+| 화면 목록 | Figma 62개(웹) + 36개(앱) |
+| 생김새 | Figma가 절대 기준 (좌표·색·폰트·radius) — 아래 그라운드 룰이 이기는 경우만 예외 |
 | 데이터 층 | 기존 `components/farmfi/**/api.ts` 재사용. 없는 것만 신규 |
 | 기존 API route 47개 | 무수정 (신규 추가는 함) |
 | 스타일링 | Tailwind + `tailwind.config.ts` 토큰 |
@@ -45,29 +45,61 @@ Figma가 v2.1 용어 패치 이전 버전이라 금지 용어가 남아있다. �
 2. **O-11·A-08은 P0** — Figma는 Phase 2 존에 그렸지만 `team-handoff-v2.1.md` 2-D가 "존 위치와 무관하게 MVP"로 명시
 3. **I-07 보유 표기** — `보유 수량·토큰` → `투자 금액 / 보유 구좌 / 계약 상태`
 
+## 그라운드 룰
+
+전 화면에 걸리는 규칙이다. Figma와 어긋나면 이쪽을 따른다.
+
+### 색은 브랜드 초록·빨강·회색 계열만 쓴다
+
+Figma에는 상태를 여러 색으로 나눈 흔적과 틴트가 남아있다 — 웹에 노랑 계열 6종(`#D1A84D` `#F2D680` `#FAE8B8` `#FCF5E0` `#9E7324` `#D9941F`), 파랑 2종(`#296BAD` `#BFE0EB`), 연한 빨강 배경(`#FCF0F0` `#FAF0ED`). 앱에는 황색 2종과 `#9747FF`(Figma 기본값 잔재)가 있다. 전부 쓰지 않는다.
+
+**쓸 수 있는 색은 이것뿐이다.**
+
+| 역할 | 값 | 어디에 |
+|---|---|---|
+| ink | `#1A1A1A` | 본문·제목 |
+| body | `#4A4A4A` | 보조 본문 |
+| muted | `#8A8A8A` | 라벨·비활성 |
+| line | `#E5E5E3` | 테두리 |
+| line-soft | `#EDEDEB` | 구분선 |
+| surface | `#F2F2F0` | 면 |
+| brand | `#14542E` | 제한 없음 — 버튼·링크·활성 탭·통과·강조 |
+| danger | `#A34A3D` | 실패·거부·삭제 |
+| brand-soft | `#EAF6EE` | 브랜드 강조의 옅은 배경 |
+
+- 한 화면에서 색을 세 단계 이상으로 갈라 등급을 표시하지 않는다. 등급이 필요하면 텍스트 라벨과 테두리·채움 유무로 말한다.
+- danger는 한 값뿐이다. 연한 빨강 배경을 따로 만들지 않는다.
+- 차트·진행률은 brand green의 명도 단계와 회색 농담으로 구분한다. 시리즈가 많으면 색 대신 라벨·패턴을 쓴다.
+
+### 웹과 앱은 같은 팔레트를 쓴다
+
+Figma는 웹 `#14542E`, 앱 `#1B5E3F`로 초록이 다르다. **웹 값으로 통일한다.** ink·muted·line도 웹 값을 앱에 적용한다.
+
+### 데스크톱 먼저, 구조는 유동적으로
+
+반응형은 나중에 붙인다. 지금은 데스크톱(1440)만 확인한다. 다만 **절대좌표로 짜지 않는다** — `max-width` + flex/grid + `rem`으로 짜야 나중에 브레이크포인트만 추가하면 된다. 고정 px 좌표로 짜면 반응형은 재작성이 된다.
+
+Figma 덤프의 좌표는 **간격을 읽는 용도**지 그대로 옮길 값이 아니다. `@33,442`와 `@207,442`는 "왼쪽 여백 33px, 두 버튼 사이 10px"로 읽는다.
+
+### 글자 크기는 스케일 한 곳에서 조절한다
+
+웹 텍스트의 40%가 12px이라 빔프로젝터 발표에서 읽기 어렵다. 모든 치수를 `rem`으로 쓰고 루트 폰트 크기 하나로 전체를 키울 수 있게 둔다. 기본값은 Figma 그대로(1.0), 발표 직전에 필요하면 1.2로 올린다.
+
 ## 디자인 토큰
 
-`.fig`에서 추출한 실제 값. 웹과 앱은 팔레트가 다르므로 토큰을 공유하지 않는다.
+`.fig`에서 추출한 실제 값에 그라운드 룰을 적용한 것. 웹과 앱이 같은 색을 쓴다.
 
-**웹**
 ```
-색  ink #1A1A1A · body #4A4A4A · muted #8A8A8A · brand #14542E
-    brand-alt #0E6340 · line #E5E5E3 · line-soft #EDEDEB · surface #F2F2F0
-폰트 Pretendard(한글) + Inter(숫자·영문) — Regular / Medium / Semi Bold / Bold
-크기 11 12 13 14 15 · 강조 20 22 24 28 (12px이 전체의 40%)
+색     ink #1A1A1A · body #4A4A4A · muted #8A8A8A
+       line #E5E5E3 · line-soft #EDEDEB · surface #F2F2F0
+       brand #14542E · brand-soft #EAF6EE
+       danger #A34A3D (실패·거부·삭제)
+폰트   Pretendard(한글) + Inter(숫자·영문)
+크기   11 12 13 14 15 · 강조 20 22 24 28 — rem으로 쓰고 루트에서 일괄 조절
 radius 6 · 8 · 10 · 12 · 14 · 999
-폭   본문 1440 / 패널·폼 730 / 모달 465
 ```
 
-**앱**
-```
-색  ink #1D1E1C · muted #656863 · brand #1B5E3F · brand-soft #EAF6EE
-    line #C9CEC9 · line-strong #A5A89F · surface #F0F0ED · danger #A33A2A
-폰트 Pretendard(한글) + Inter(숫자·영문) — Regular / SemiBold / Bold
-크기 11 12 13 14 16 · 강조 18 20 22 24
-radius 6 · 8 · 10 · 14
-폭   402 (iPhone 기준) · 높이 874~1265
-```
+굵기는 웹이 Regular/Medium/SemiBold/Bold, 앱이 Regular/SemiBold/Bold를 쓴다. 폭은 웹 본문 1440·패널 730·모달 465, 앱 402(높이 874~1265)다.
 
 ## 백엔드 현황
 
@@ -123,7 +155,7 @@ Figma에 우선순위 표시가 없다. 화면 번호(`00`~`25`)가 흐름 순�
   `design/farmfi-{web,app}.fig` 원본 · `tools/figma/kiwi.py`(kiwi 디코더) · `tools/figma/extract.py`(화면 트리 생성) · 결과물 `design/screens/`도 커밋
   검증: `python tools/figma/extract.py` → 웹 129 · 앱 73개 재생성
 - [ ] **A2** 웹 디자인 토큰 + 라우트 매핑표
-  `frontend/tailwind.config.ts`에 색·폰트·radius 등록 · `layout.tsx`에 Inter 추가 · `docs/figma-route-map.md`에 57행 매핑표 + 금지 용어 치환표
+  `frontend/tailwind.config.ts`에 색·폰트·radius 등록 · `layout.tsx`에 Inter 추가 · `docs/figma-route-map.md`에 62행 매핑표 + 금지 용어 치환표 + 등급색 치환표
 - [ ] **A3** 웹 공용 UI 컴포넌트 11종
   `frontend/src/components/ui/` — `Button` `Card` `Badge` `ProgressBar` `StatRow` `DataTable` `Field` `Modal` `StepLine` `EmptyState` `AppHeader`
   기존 `components/farmfi/**`는 무수정(구 디자인 전용으로 남김)
@@ -214,10 +246,10 @@ Figma에 원본이 없으므로 A2 토큰과 A3 컴포넌트로 새로 그린다
 
 ## Phase L · 앱 기반
 
-앱은 `app/` (Expo RN). 웹과 팔레트가 다르므로 토큰을 따로 만든다. 데이터는 웹과 같은 API를 쓴다.
+앱은 `app/` (Expo RN). 그라운드 룰대로 웹과 같은 팔레트를 쓴다. 데이터도 웹과 같은 API를 쓴다.
 
 - [ ] **L1** 앱 디자인 토큰
-  `app/src/farmfi/theme.ts` — 위 앱 토큰(색·크기·radius) 상수화. 기존 `src/farmfi/components.tsx`가 쓰는 값과 대조해 하나로 합침
+  `app/src/farmfi/theme.ts` — 웹과 같은 토큰(색·크기·radius) 상수화. 기존 `src/farmfi/components.tsx`가 쓰는 값과 대조해 하나로 합침
 - [ ] **L2** `App/*` 컴포넌트 30종 중 화면이 실제로 쓰는 것부터
   `MetricTile` `SectionTitle` `AlertCard` `BedCard` `CropProgressRow` `StockRow` `SensorTile` `DeviceRow` `LineChart` `BarChart` `Field` `PrimaryButton` `GhostButton` `BottomNav` `EmptyState` `Popup` `Calendar` `SkeletonBlock`
   정의는 `design/screens/farmfi-app/Internal_Only_Canvas/`
