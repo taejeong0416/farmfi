@@ -10,15 +10,14 @@
 // GB는 깊이2 트리(2단 분할)로 상호작용 포착 — SHAP이 주효과 이상을 반영.
 
 import { getCrop } from "./crop-profiles";
-import { GrowthObservation, analyzeGrowthRecipe } from "./growth-recipe";
-
-const FEATURES: (keyof Omit<GrowthObservation, "yield">)[] = [
-  "temp", "humidity", "co2", "ec", "ph", "dli",
-];
-const FEATURE_LABEL: Record<string, string> = {
-  temp: "온도", humidity: "습도", co2: "CO₂", ec: "양액EC", ph: "양액pH", dli: "광량(DLI)",
-};
-const UNIT: Record<string, string> = { temp: "℃", humidity: "%", co2: "ppm", ec: "dS/m", ph: "", dli: "mol" };
+import {
+  GrowthObservation,
+  analyzeGrowthRecipe,
+  FEATURES,
+  FEATURE_LABEL,
+  UNIT,
+} from "./growth-recipe";
+import { LEAFY_SPEC, generateObservations } from "./growth-recipe-synth";
 
 // crop-profiles의 농학 지식을 사전분포로 — 각 변수의 "알려진 최적 중앙값·허용폭"
 function agronomicPrior(cropKey?: string): Record<string, { mu: number; sd: number }> {
@@ -420,10 +419,10 @@ export function activeLearningSuggest(obs: GrowthObservation[], cropKey?: string
   };
 }
 
-// ── 통합 오케스트레이터 + 결정론적 데모 데이터 ───────────────────────────────
-// 합성 데이터: 실 환경 분포 위에 농학 반응으로 수율 합성(재현 시드).
-// 상호작용항 추가(temp×co2, ec×dli)로 독립 최적화 한계 시험.
-// — 실 수율 라벨은 1호점 수확 기록에서 확정.
+// ── 통합 오케스트레이터 ──────────────────────────────────────────────────────
+// 관측은 growth-recipe-synth의 테스트 베드에서 온다. 그쪽이 오목성을 자체 검사하므로
+// 여기서 나오는 최적점은 "알려진 정답을 되찾은 값"이다 — 실 수율 라벨은 1호점
+// 수확 기록에서 확정한다.
 export interface RecipeReport {
   samples: number;
   shap: ShapResult[];
@@ -433,42 +432,8 @@ export interface RecipeReport {
   suggestNote: string;
 }
 
-function seededRand(seed: number) {
-  let s = seed >>> 0;
-  return () => {
-    s = (s + 0x6d2b79f5) | 0;
-    let t = Math.imul(s ^ (s >>> 15), 1 | s);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
 export function growthRecipeDemo(cropKey = "leafy"): RecipeReport {
-  const rand = seededRand(7);
-  const OPT = { temp: 22, humidity: 70, co2: 900, ec: 1.5, ph: 6.0, dli: 16 };
-  const obs: GrowthObservation[] = [];
-  for (let i = 0; i < 120; i++) {
-    const env = {
-      temp: 16 + rand() * 12, humidity: 55 + rand() * 30, co2: 400 + rand() * 800,
-      ec: 0.8 + rand() * 2, ph: 5.3 + rand() * 1.6, dli: 8 + rand() * 16,
-    };
-    // 주효과(이차 페널티) + 쌍상호작용항 — 독립 1D 최적화로는 포착 못 하는 결합 효과
-    const y = Math.max(
-      0.3,
-      5 - (
-        0.03 * (env.temp - OPT.temp) ** 2 +
-        8e-6 * (env.co2 - OPT.co2) ** 2 +
-        0.02 * (env.dli - OPT.dli) ** 2 +
-        0.8 * (env.ec - OPT.ec) ** 2 +
-        0.6 * (env.ph - OPT.ph) ** 2 +
-        0.004 * (env.humidity - OPT.humidity) ** 2
-      )
-      + 0.01 * (env.temp - OPT.temp) * (env.co2 - OPT.co2)   // temp×CO₂ 시너지
-      + 0.005 * (env.ec - OPT.ec) * (env.dli - OPT.dli)      // EC×DLI 시너지
-      + (rand() - 0.5) * 0.3
-    );
-    obs.push({ ...env, yield: y });
-  }
+  const { observations: obs } = generateObservations(LEAFY_SPEC, 120, 7, cropKey);
   const hybrid = agronomyInformedRecipe(obs, cropKey);
   const active = activeLearningSuggest(obs, cropKey);
   return {

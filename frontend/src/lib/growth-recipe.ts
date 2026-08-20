@@ -22,18 +22,14 @@ export interface GrowthObservation {
   ph: number;
   dli: number; // mol/m²/day
   yield: number; // kg/㎡ (사이클 수확량)
+  /** 어느 품종의 사이클인가. 품종을 가로지르는 이전 강도를 이 값으로 정한다 */
+  cropKey?: string;
 }
 
-const FEATURES: (keyof Omit<GrowthObservation, "yield">)[] = [
-  "temp",
-  "humidity",
-  "co2",
-  "ec",
-  "ph",
-  "dli",
-];
+export const FEATURES = ["temp", "humidity", "co2", "ec", "ph", "dli"] as const;
+export type GrowthFeature = (typeof FEATURES)[number];
 
-const FEATURE_LABEL: Record<string, string> = {
+export const FEATURE_LABEL: Record<string, string> = {
   temp: "온도",
   humidity: "습도",
   co2: "CO₂",
@@ -104,7 +100,7 @@ export interface GrowthRecipe {
   _beta?: number[]; // 다변량 반응표면 계수 (갭분석 모델 기반 수율 상방 산출용)
 }
 
-const UNIT: Record<string, string> = { temp: "℃", humidity: "%", co2: "ppm", ec: "dS/m", ph: "", dli: "mol" };
+export const UNIT: Record<string, string> = { temp: "℃", humidity: "%", co2: "ppm", ec: "dS/m", ph: "", dli: "mol" };
 
 // ── 다변량 반응표면 설계행렬 (16열) ─────────────────────────────────────────
 // FEATURES 순서: [temp(0), humidity(1), co2(2), ec(3), ph(4), dli(5)]
@@ -348,7 +344,7 @@ export interface RecipeGapReport {
 
 export function recipeGapAnalysis(
   recipe: GrowthRecipe,
-  current: Partial<Record<keyof Omit<GrowthObservation, "yield">, number>>
+  current: Partial<Record<GrowthFeature, number>>
 ): RecipeGapReport {
   const impMap = new Map(recipe.importance.map((i) => [i.feature, i.importance]));
   const spMap = new Map(recipe.recipe.map((sp) => [sp.feature, sp]));
@@ -366,7 +362,7 @@ export function recipeGapAnalysis(
   const yHatOptimal = beta ? predictRS(beta, optimalX) : null;
 
   const actions: RecipeAction[] = recipe.recipe.map((sp, idx): RecipeAction => {
-    const fi = FEATURES.indexOf(sp.feature as keyof Omit<GrowthObservation, "yield">);
+    const fi = FEATURES.indexOf(sp.feature as GrowthFeature);
     const cur = currentX[fi];
     const gap = sp.optimum - cur;
     const imp = impMap.get(sp.feature) ?? 0;
