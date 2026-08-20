@@ -410,6 +410,46 @@ export default async function OptimizationPage({
           </p>
         </div>
 
+        {/* 수익 최적 레시피 — 목표를 정하는 층과 비용을 아는 층을 한 목적함수로 */}
+        <div className="rounded bg-white p-3 text-sm">
+          <div className="font-medium">수익 최적 레시피 · 목표에 비용을 넣으면</div>
+          <table className="mt-2 w-full text-xs">
+            <thead className="text-muted">
+              <tr className="border-b border-line-soft text-left">
+                <th className="py-1 font-normal">요인</th>
+                <th className="py-1 font-normal">수율 최적</th>
+                <th className="py-1 font-normal">수익 최적</th>
+                <th className="py-1 font-normal">비용 대상</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recipe.profit.setpoints.map((s) => (
+                <tr key={s.feature} className="border-b border-line-soft last:border-0">
+                  <td className="py-1">{s.label}</td>
+                  <td className="py-1">{s.yieldOptimum}{s.unit}</td>
+                  <td className="py-1">
+                    <strong>{s.profitOptimum}{s.unit}</strong>
+                  </td>
+                  <td className="py-1 text-muted">{s.costed ? "전력·시비·공조" : "없음"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="mt-2 grid gap-2 sm:grid-cols-2 text-xs text-body">
+            <div className="rounded bg-surface p-2">
+              수율 최적점 — 수율 {recipe.profit.atYieldOptimum.yieldKgM2}kg/㎡ · 운전비{" "}
+              {fmt(recipe.profit.atYieldOptimum.cost.total)}원/일 · 수익{" "}
+              {fmt(recipe.profit.atYieldOptimum.profitPerDay)}원/일
+            </div>
+            <div className="rounded bg-brand-soft p-2 text-brand">
+              수익 최적점 — 수율 {recipe.profit.atProfitOptimum.yieldKgM2}kg/㎡ · 운전비{" "}
+              {fmt(recipe.profit.atProfitOptimum.cost.total)}원/일 · 수익{" "}
+              {fmt(recipe.profit.atProfitOptimum.profitPerDay)}원/일
+            </div>
+          </div>
+          <p className="mt-1 text-xs text-muted">{recipe.profit.note}</p>
+        </div>
+
         <div className="rounded bg-surface p-3 text-sm text-body">
           <span className="font-medium">다음 실험 제안</span>
           {recipe.suggestions.length > 0 ? (

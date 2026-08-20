@@ -29,6 +29,7 @@ import {
 } from "./growth-recipe";
 import { toNormalized, fromNormalized, transferWeight } from "./crop-normalize";
 import { LEAFY_SPEC, generateObservations } from "./growth-recipe-synth";
+import { profitOptimalRecipe, type ProfitRecipe } from "./growth-recipe-profit";
 
 // 정규화 좌표에서 농학 사전은 언제나 N(0, PRIOR_SD²)이다 — z=0이 문헌 최적,
 // z=±1이 정상범위 경계라는 정의에서 바로 나온다. 폭을 0.5로 두는 건 "정상범위"를
@@ -487,9 +488,11 @@ export interface RecipeReport {
   surface: SurfaceVerdict;
   modelR2: number | null;
   gap: RecipeGapReport;
+  /** 같은 표면 위에서 수율이 아니라 수익을 최대화한 설정점 */
+  profit: ProfitRecipe;
 }
 
-export function growthRecipeDemo(cropKey = "leafy"): RecipeReport {
+export function growthRecipeDemo(cropKey = "leafy", ledPowerKw = 4): RecipeReport {
   const { observations: obs } = generateObservations(LEAFY_SPEC, 120, 7, cropKey);
   const fit = analyzeGrowthRecipe(obs, { cropKey });
   const hybrid = agronomyInformedRecipe(obs, cropKey);
@@ -508,5 +511,6 @@ export function growthRecipeDemo(cropKey = "leafy"): RecipeReport {
     surface: fit.surface,
     modelR2: fit.modelR2,
     gap: recipeGapAnalysis(fit, current),
+    profit: profitOptimalRecipe(obs, fit, { cropKey, ledPowerKw }),
   };
 }
