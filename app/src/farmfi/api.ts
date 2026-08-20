@@ -4,6 +4,8 @@ import type { CropKind, RackId } from "./data";
 
 // ─── GET /api/inventory ───
 export type InventoryItem = {
+  // 재고 조정 API 가 이 행을 가리킨다. 화면이 고칠 리소스의 id 를 알아야 한다.
+  inventoryId: string;
   productId: string;
   productName: string;
   category: string;

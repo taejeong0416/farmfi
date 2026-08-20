@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 
+import { apiFetch } from "@/lib/api";
 import { useFarmProjects } from "@/farmfi/branch";
 import { useApiResource } from "@/farmfi/useApiResource";
 import {
@@ -42,8 +43,11 @@ export default function InventoryDetailScreen() {
   const [delta, setDelta] = useState("0");
   const [reason, setReason] = useState("");
   const [saved, setSaved] = useState(false);
-  // 재고 조정을 쓰는 API가 아직 없다. 조정 이력은 이 화면에 머무는 동안만 쌓인다.
+  // 조정은 서버에 쓴다. 서버가 최종 수량을 돌려주므로 그 값을 정본으로 삼는다 —
+  // 동시 조정이 있으면 화면이 계산한 값과 달라질 수 있다.
   const [log, setLog] = useState<Adjustment[]>([]);
+  const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState<string | null>(null);
 
   const items = inv.data?.projects[0]?.items ?? [];
   const item = items.find((i) => i.productId === itemId) ?? null;
@@ -76,15 +80,28 @@ export default function InventoryDetailScreen() {
 
   const bump = (step: number) => setDelta(String(num + step));
 
-  const save = () => {
-    if (num === 0 || !reason.trim()) return;
-    setLog((prev) => [
-      { at: new Date().toISOString(), delta: num, after: current + num, reason: reason.trim() },
-      ...prev,
-    ]);
-    setDelta("0");
-    setReason("");
-    setSaved(true);
+  const save = async () => {
+    if (num === 0 || !reason.trim() || busy) return;
+    setBusy(true);
+    setFailed(null);
+    try {
+      const res = await apiFetch<{ inStock: number }>(
+        `/api/inventory/${item.inventoryId}/adjust`,
+        { method: "POST", body: JSON.stringify({ delta: num, reason: reason.trim() }) }
+      );
+      setLog((prev) => [
+        { at: new Date().toISOString(), delta: num, after: res.inStock, reason: reason.trim() },
+        ...prev,
+      ]);
+      setDelta("0");
+      setReason("");
+      setSaved(true);
+    } catch (e) {
+      // 음수 차단(409)·권한(401) 등 서버 판단을 그대로 보여준다. 저장된 척하지 않는다.
+      setFailed(e instanceof Error ? e.message : "재고 조정에 실패했습니다.");
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -136,7 +153,12 @@ export default function InventoryDetailScreen() {
           onChangeText={setReason}
           multiline
         />
-        <PrimaryButton label="조정 저장" onPress={save} disabled={num === 0 || !reason.trim()} />
+        <PrimaryButton
+          label={busy ? "저장 중…" : "조정 저장"}
+          onPress={save}
+          disabled={num === 0 || !reason.trim() || busy}
+        />
+        {failed ? <StateNotice tone="error" message={failed} /> : null}
       </Card>
 
       {/* 조정 이력 */}

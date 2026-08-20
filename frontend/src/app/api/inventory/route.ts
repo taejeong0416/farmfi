@@ -69,7 +69,8 @@ export async function GET(request: NextRequest) {
     );
 
     type Item = {
-      productId: string;
+      inventoryId: string;
+    productId: string;
       productName: string;
       category: string;
       unit: string;
@@ -103,6 +104,7 @@ export async function GET(request: NextRequest) {
           : null);
 
       const item: Item = {
+        inventoryId: inv.id,
         productId: inv.productId,
         productName: inv.product.name,
         category: inv.product.category,
