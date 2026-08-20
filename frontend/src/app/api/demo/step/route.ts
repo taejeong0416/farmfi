@@ -4,7 +4,7 @@ import path from "path";
 import { prisma } from "@/lib/db";
 import { requireRole, signSession } from "@/lib/auth";
 import { getDemoMode, getCachedResult, saveCacheResult } from "@/lib/demo-mode";
-import { issueVirtualAccount } from "@/lib/deposit";
+import { confirmBankDeposit, issueVirtualAccount } from "@/lib/deposit";
 
 function serialize(obj: any): any {
   return JSON.parse(
@@ -75,19 +75,18 @@ async function subscribe(
     return { error: issued.error, step: "virtual-account" };
   }
 
-  // 3) 은행 입금 통지. 실제 서비스에서는 지급사가 이 웹훅을 쏜다.
+  // 3) 입금 확정. 실서비스에서는 지급사가 웹훅을 쏘고 그 라우트가 이 함수를 부른다.
+  //    데모는 실제 입금이 없으므로 같은 함수를 서버 내부에서 직접 부른다 —
+  //    웹훅 라우트의 일은 서명 검증과 페이로드 번역이고, 시연이 보여줄 것은
+  //    그 뒤의 입금 확인 → 청약 → 발행이다.
+  //    (웹훅 경로 자체는 Mock 어댑터로 따로 검증했다: 같은 통지 3회 → 발행 1건)
   //    거래번호를 신청 id로 고정해 재실행해도 같은 건이 두 번 반영되지 않는다.
-  const webhookRes = await fetch(`${baseUrl}/api/webhooks/bank/deposits`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: authHeader },
-    body: JSON.stringify({
-      providerAccountId: issued.account.providerAccountId,
-      providerTransactionId: `demo_tx_${investment.id}`,
-      amount: Number(amount),
-      payerName: user.name,
-    }),
+  const deposit = await confirmBankDeposit({
+    providerAccountId: issued.account.providerAccountId,
+    providerTransactionId: `demo_tx_${investment.id}`,
+    amount,
+    payerName: user.name,
   });
-  const deposit = await webhookRes.json();
 
   // 4) 결과 확인 — 청약 반영과 발행 상태를 함께 읽는다.
   const settled = await prisma.investment.findUnique({
@@ -281,7 +280,42 @@ async function distributeDividends(baseUrl: string, authHeader: string) {
   });
   const distributed = await res.json();
 
-  return { records: saved, confirm: confirmed, ...distributed };
+  // 회수금이 계정 잔액으로만 늘면 "지급"이 시연에 안 나온다. 지급 계획을 세우고
+  // 어댑터로 실제 이체까지 태운다 — 지금 어댑터는 Mock이고 화면에 그렇게 뜬다.
+  const planRes = await fetch(`${baseUrl}/api/payouts`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ projectId: project.id, period }),
+  });
+  const planned = await planRes.json();
+
+  const pending = await prisma.payout.findMany({
+    where: { projectId: project.id, period, status: { in: ["scheduled", "failed"] } },
+    select: { id: true, payeeName: true, amount: true, category: true },
+  });
+
+  const transfers: unknown[] = [];
+  for (const row of pending) {
+    const execRes = await fetch(`${baseUrl}/api/payouts/${row.id}/execute`, {
+      method: "POST",
+      headers,
+    });
+    const body = await execRes.json();
+    transfers.push({
+      payee: row.payeeName,
+      category: row.category,
+      amount: Number(row.amount),
+      ok: body?.ok ?? false,
+      reason: body?.error ?? null,
+    });
+  }
+
+  return {
+    records: saved,
+    confirm: confirmed,
+    ...distributed,
+    payouts: { planned, transfers },
+  };
 }
 
 type StepExecutor = () => Promise<any>;

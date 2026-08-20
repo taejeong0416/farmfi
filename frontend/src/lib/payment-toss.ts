@@ -79,6 +79,12 @@ type TossPayment = {
 
 type TossError = { code?: string; message?: string };
 
+/** 지금부터 만료까지 남은 시간(정수, 최소 1). 토스 `validHours`가 정수만 받는다. */
+function hoursUntil(expiresAt: Date): number {
+  const ms = expiresAt.getTime() - Date.now();
+  return Math.max(1, Math.ceil(ms / (60 * 60 * 1000)));
+}
+
 export class TossPaymentsAdapter implements InvestmentPaymentAdapter {
   constructor(
     private readonly secretKey: string,
@@ -128,7 +134,9 @@ export class TossPaymentsAdapter implements InvestmentPaymentAdapter {
           orderName: "FarmFi 프로젝트 투자금",
           customerName: this.holderName,
           bank: this.bankCode,
-          dueDate: expiresAt.toISOString(),
+          // dueDate는 ISO 8601 오프셋 표기를 요구해 `Z`(UTC)와 밀리초가 붙으면
+          // INVALID_DATE로 거부된다. 같은 뜻을 정수 시간으로 보내면 형식 문제가 없다.
+          validHours: hoursUntil(expiresAt),
         }),
       });
     } catch {

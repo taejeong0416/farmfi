@@ -104,12 +104,21 @@ export function canRunVerification(m: {
  * 트랜치를 집행해도 되는지. 자금이 나가는 마지막 관문이라 상태값 하나만 믿지 않고
  * 증빙 존재와 판정 기록까지 함께 본다.
  */
-export function canRelease(m: {
-  status: string;
-  evidenceSubmittedAt: Date | null;
-  reviewedAt: Date | null;
-  aiVerificationResult: unknown;
-}): GateResult {
+export function canRelease(
+  m: {
+    seq: number;
+    status: string;
+    evidenceSubmittedAt: Date | null;
+    reviewedAt: Date | null;
+    aiVerificationResult: unknown;
+  },
+  /**
+   * 같은 프로젝트의 모든 단계. 앞 단계가 끝나지 않았는데 뒤 단계를 집행하면
+   * 트랜치가 순서를 건너뛰고 나간다 — 자금 계획이 무너진다.
+   * 넘기지 않으면 순서 검사를 건너뛴다(호출부가 이미 확인한 경우).
+   */
+  siblings?: { seq: number; status: string }[],
+): GateResult {
   if (m.status === "completed") {
     return { ok: false, error: "이미 집행이 끝난 단계입니다." };
   }
@@ -134,6 +143,17 @@ export function canRelease(m: {
       ok: false,
       error: "증빙 판정 기록이 없습니다. AI 검증 또는 관리자 승인을 먼저 거쳐야 합니다.",
     };
+  }
+  if (siblings) {
+    const unfinished = siblings
+      .filter((s) => s.seq < m.seq && s.status !== "completed")
+      .sort((a, b) => a.seq - b.seq);
+    if (unfinished.length > 0) {
+      return {
+        ok: false,
+        error: `${unfinished[0].seq}단계가 아직 집행되지 않았습니다. 단계는 순서대로 집행합니다.`,
+      };
+    }
   }
   return { ok: true };
 }

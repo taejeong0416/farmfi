@@ -456,6 +456,7 @@ export type PayoutItem = {
 };
 
 export const PAYOUT_STATUS_LABEL: Record<string, string> = {
+  processing: "이체 중",
   scheduled: "회수예정",
   paid: "지급완료",
   failed: "지급실패",

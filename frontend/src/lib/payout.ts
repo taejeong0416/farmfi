@@ -17,7 +17,9 @@ export const PAYOUT_CATEGORY_LABEL: Record<PayoutCategory, string> = {
   operator_settlement: "운영자 정산",
 };
 
-export const PAYOUT_STATUSES = ["scheduled", "paid", "failed"] as const;
+// processing = 어댑터에 이체를 넘긴 상태. 이 값이 있어야 동시 요청 둘이 같은 건을
+// 두 번 보내는 것을 상태 전이로 막을 수 있다.
+export const PAYOUT_STATUSES = ["scheduled", "processing", "paid", "failed"] as const;
 export type PayoutStatus = (typeof PAYOUT_STATUSES)[number];
 
 /** YYYY-MM 형식 검사 + 해당 월의 [시작, 다음달 시작) 경계 산출. */

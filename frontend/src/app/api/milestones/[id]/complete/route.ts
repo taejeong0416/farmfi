@@ -37,7 +37,7 @@ export async function POST(
 
     // 자금이 나가는 관문. 상태값 하나가 아니라 "증빙이 있고 그 증빙에 판정이 있었는가"
     // 까지 확인한다. 증빙 없이 집행되는 경로를 남기면 조건부 집행이 이름뿐이 된다.
-    const gate = canRelease(milestone);
+    const gate = canRelease(milestone, milestone.project.milestones);
     if (!gate.ok) {
       return NextResponse.json({ error: gate.error }, { status: 400 });
     }
@@ -110,8 +110,11 @@ export async function POST(
         // 다음 단계의 180일 시계를 지금 시작한다 —
         // Escrow.releaseTranche가 `milestoneDeadline = block.timestamp + MILESTONE_TIMEOUT`
         // 로 기한을 갱신하는 것과 같은 규칙(직전 완료 시각 + 180일).
-        await tx.milestone.update({
-          where: { id: nextMilestone.id },
+        //
+        // pending인 단계만 연다. 무조건 덮어쓰면 이미 증빙을 낸 단계가
+        // 제출 전으로 되돌아가고, 이미 집행된 단계까지 in_progress로 되살아난다.
+        await tx.milestone.updateMany({
+          where: { id: nextMilestone.id, status: "pending" },
           data: {
             status: "in_progress",
             deadlineAt: new Date(Date.now() + MILESTONE_TIMEOUT_MS),

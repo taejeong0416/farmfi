@@ -96,6 +96,28 @@ export async function seedScenario(prisma: PrismaClient) {
   const investor2 = await prisma.user.create({ data: verifiedInvestor("이서연", "investor2@farmfi.test") });
   const investor3 = await prisma.user.create({ data: verifiedInvestor("박준혁", "investor3@farmfi.test") });
 
+  // ─── 회수 계좌 (C-I03에서 확인한 본인 명의 계좌) ───
+  // 없으면 지급 어댑터가 이체를 거부한다 — 실제로 그게 맞는 동작이지만,
+  // 시연에서 모든 지급이 "계좌 없음"으로 실패하면 정산 흐름을 보여줄 수 없다.
+  // 계좌번호 원문은 저장하지 않는다. 표시용 마스킹과 지급사 토큰만 둔다.
+  const bankFor = (u: { id: string; name: string }, bankName: string, tail: string) => ({
+    userId: u.id,
+    bankName,
+    maskedNumber: `123-****-${tail}`,
+    accountToken: `seed_token_${u.id}`,
+    holderName: u.name,
+    verifiedAt: now,
+  });
+  await prisma.bankAccount.createMany({
+    data: [
+      bankFor(investor1, "부산은행", "1001"),
+      bankFor(investor2, "국민은행", "1002"),
+      bankFor(investor3, "신한은행", "1003"),
+      bankFor(operator, "농협은행", "2001"),
+      bankFor(landlord, "우리은행", "3001"),
+    ],
+  });
+
   // ─── 공간 ───
   await prisma.space.create({
     data: {
