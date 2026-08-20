@@ -35,6 +35,7 @@ export const AUDIT_ACTIONS = [
   "payout.scheduled",
   "payout.processed",
   "project.status_changed",
+  "pickup.completed",
   "user.role_changed",
   "project.refunded",
   "notification.sent",
@@ -53,6 +54,7 @@ export interface AuditEntry {
     | "payout"
     | "appeal"
     | "settlement_rule"
+    | "pickup"
     | "user";
   entityId?: string | null;
   projectId?: string | null;

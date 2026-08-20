@@ -6,7 +6,7 @@ import {
   isPackSize,
   monthlyPrice,
   nextPaymentDate,
-  pickupCode,
+  createPickupOrders,
   upcomingPickups,
 } from "@/lib/pickup-subscription";
 
@@ -102,13 +102,7 @@ export async function POST(request: NextRequest) {
 
   // 앞으로 4회차를 미리 만들어 둔다. 매장에서 보여줄 확인번호가 회차마다 필요하다.
   const dates = upcomingPickups(perWeek, 4);
-  await prisma.pickupOrder.createMany({
-    data: dates.map((at) => ({
-      subscriptionId: subscription.id,
-      scheduledAt: at,
-      code: pickupCode(subscription.id, at),
-    })),
-  });
+  await createPickupOrders(prisma, subscription.id, dates);
 
   const created = await prisma.subscription.findUnique({
     where: { id: subscription.id },

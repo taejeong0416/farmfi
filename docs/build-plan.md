@@ -270,8 +270,8 @@ Phase A~K는 화면과 그 화면이 도는 데 필요한 최소 API를 만들�
   지수 백오프(30초부터 5회) 후 `CHAIN_FAILED` + 운영 알림. 체인이 실패해도 입금·청약은 되돌리지 않는다. 청약이 `DEPOSIT_FAILED`로 끝난 건은 발행을 `CANCELLED`로 닫는다 — 환불 대상에 구좌를 발행하지 않는다
 - [x] **P4** 발행 콘솔 — `GET/POST /api/admin/issuances`
   계획의 `chain-jobs` 대신 `issuances`로 냈다. 잡 큐가 따로 없고 발행 행이 곧 큐라 이름을 실체에 맞췄다. POST에 `id`를 주면 그 건만 재시도(`CHAIN_FAILED`도 되살린다), 안 주면 전체 드레인
-- [ ] **P5** 대사
-  10분 주기로 `PENDING`·`SENT` 영수증 재조회, 하루 한 번 DB↔체인 건수 대조. 불일치는 자동 수정하지 않고 감사 큐로(`GET /api/admin/reconciliation`)
+- [x] **P5** 대사 — `lib/reconcile.ts` · `GET /api/admin/reconciliation` · `GET|POST /api/cron/reconcile`
+  Vercel Cron이 10분마다 `/api/cron/reconcile`을 부른다(`CRON_SECRET` 없으면 503으로 닫힘 — 열어 두면 아무나 가스를 태우는 버튼이 된다). 밀린 발행을 다시 태우고 지갑별 `balanceOf`와 DB 수량을 대조한다. **불일치는 고치지 않는다** — 어느 쪽이 정본인지 모르는 상태에서 한쪽에 맞추면 틀린 쪽을 정본으로 만든다. 알림만 남긴다
 
 **컨트랙트 매핑 (P2 결정)** — 명세의 `HoldingLedger`를 새로 배포하지 않고 이미 배포된 `FarmToken`이 그 역할을 한다. `mintHolding` → `FarmToken.mint(address,uint256)`. 근거: `decimals() == 0`이라 1구좌 = 정수 1로 그대로 맞고, `_update`의 화이트리스트 게이트가 `from == address(0)`(발행)을 예외로 두어 신원 등록 전에도 발행이 된다. 2차 이전(`transferHolding`)은 송·수신 지갑 모두 `registerIdentity`가 필요하므로 그때 별도 단위로 뺀다.
 
@@ -287,11 +287,15 @@ Phase A~K는 화면과 그 화면이 도는 데 필요한 최소 API를 만들�
 
 ## Phase R · 픽업 바코드
 
-B-09가 지금 `patchSubscription`으로 대신하고 있다. `PickupOrder` 모델은 이미 있다.
-
-- [ ] **R1** 바코드 발급·조회
-  `GET /api/pickups/[id]/barcode`. 같은 회차는 같은 바코드를 돌려주고, 이미 수령한 회차는 발급하지 않는다
-  스캔·수령 완료 처리는 앱 담당이다. 발급 쪽에서 재사용을 막아 두면 스캔 쪽 중복 처리 방지와 짝이 맞는다
+- [x] **R1** 바코드 발급·조회·수령 처리
+  `GET /api/pickups?projectId=&date=` (오늘 예정 + 준비 요약) · `GET /api/pickups/[code]` (확인번호 조회) · `POST /api/pickups/[code]/complete` (수령) · `POST /api/pickups/[code]/prepare` (팩 준비 체크).
+  `PickupOrder.code`에 unique를 걸었다 — 스캔도 수동입력도 이 값 하나로 찾으므로 중복이 있으면 어느 픽업인지가 결정되지 않는다. 그 대가로 확인번호 생성이 충돌할 수 있어 `createPickupOrders`가 후보를 밀며 재시도한다(`createMany`는 4건 중 하나만 부딪혀도 구독 생성이 통째로 깨진다).
+  중복 처리는 조건부 `updateMany`로 막는다. 사전 조회로 막으면 동시 스캔 둘이 다 통과한다. 이미 처리된 건은 409에 처리 시각과 처리자를 실어 보낸다.
+  명세의 네 분기를 `verdict`로 내려준다 — `OK` · `ALREADY_USED` · `OTHER_STORE` · `NOT_TODAY`(+ `SKIPPED`). 다른 지점 건은 구매자·구성을 아예 응답에 싣지 않는다.
+- [x] **R2** B-09 바코드 이미지 저장
+  캔버스로 그려 PNG로 내린다. 막대만 저장하면 스캔 실패 시 번호를 부를 수가 없어 확인번호·지점·일시를 이미지 안에 함께 그린다.
+- [x] **R3** 배정 매장 게이트 — `lib/operator-scope.ts`
+  인수 기준 "배정되지 않은 매장의 데이터는 어떤 화면에서도 보이지 않는다". 역할 검사만으로는 아무 운영자나 남의 매장을 연다. 소유 검사를 한 곳에 모아 픽업 라우트에 걸었다. 나머지 운영 라우트(재고·모니터링·매출)에도 같은 게이트를 붙이는 것이 남았다.
 
 ## Phase S · 정산 입력과 지급
 

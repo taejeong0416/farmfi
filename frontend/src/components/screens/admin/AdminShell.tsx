@@ -11,6 +11,7 @@ const NAV = [
   { label: "보증서 관리", href: "/admin/certificates" },
   { label: "공간 · 설비", href: "/admin/spaces" },
   { label: "증빙 재검토", href: "/admin/evidence" },
+  { label: "발행 현황", href: "/admin/issuances" },
 ];
 
 /** 관리자 화면 공통 좌측 메뉴. 콘솔 안에서만 쓴다. */

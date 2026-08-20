@@ -44,6 +44,7 @@ const ACTION_LABEL: Record<string, string> = {
   "payout.scheduled": "지급 등록",
   "payout.processed": "지급 처리",
   "project.status_changed": "프로젝트 상태 변경",
+  "pickup.completed": "픽업 수령 완료",
   "project.refunded": "환불",
   "user.role_changed": "권한 변경",
   "notification.sent": "알림 발송",

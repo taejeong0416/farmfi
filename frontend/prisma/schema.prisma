@@ -716,12 +716,19 @@ model PickupOrder {
   subscriptionId String
   subscription   Subscription @relation(fields: [subscriptionId], references: [id])
   scheduledAt    DateTime
-  status         String       @default("scheduled") // scheduled · picked · skipped
-  code           String       // 매장 확인번호
+  // scheduled(예정) · ready(준비 완료) · picked(수령 완료) · skipped(건너뜀) · missed(미수령)
+  // 앱 명세의 SCHEDULED→PREPARING→READY→COMPLETED를 이 값들에 맞춘다.
+  // PREPARING은 운영자가 체크하는 순간이 곧 ready라 따로 두지 않는다.
+  status         String       @default("scheduled")
+  // 매장 확인번호. 스캔·수동입력 모두 이 값으로 찾으므로 전역 유일해야 한다.
+  code           String       @unique
+  preparedAt     DateTime?    // 운영자가 팩 준비를 마친 시각
   pickedAt       DateTime?
+  pickedById     String?      // 수령 처리한 운영자 User.id — 중복 스캔 안내에 쓴다
   createdAt      DateTime     @default(now())
 
   @@index([subscriptionId, scheduledAt])
+  @@index([status, scheduledAt])
 }
 
 // ─── 수탁 지갑 (v2.1) ───

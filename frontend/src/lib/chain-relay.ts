@@ -34,7 +34,16 @@ const FARM_TOKEN_ABI = [
     outputs: [],
     stateMutability: "nonpayable",
   },
+  {
+    type: "function",
+    name: "balanceOf",
+    inputs: [{ name: "account", type: "address" }],
+    outputs: [{ name: "", type: "uint256" }],
+    stateMutability: "view",
+  },
 ] as const;
+
+export { FARM_TOKEN_ABI, FARM_TOKEN_ADDRESS };
 
 export function isRelayEnabled(): boolean {
   return (

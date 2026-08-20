@@ -48,11 +48,54 @@ export function upcomingPickups(perWeek: number, count: number, from: Date = new
   return out;
 }
 
-/** 매장에서 보여줄 확인번호 — 구독 id와 날짜로 정해져 재발급해도 같은 값이 나온다. */
-export function pickupCode(subscriptionId: string, at: Date): string {
+/**
+ * 매장에서 보여줄 확인번호 — `구독뒤4-검증3-MMDD`.
+ *
+ * 운영자가 스캔 실패 시 손으로 치는 값이라 짧고 읽기 쉬워야 하고, `code`에
+ * unique가 걸려 있으므로 충돌하면 안 된다. 구독 id + 날짜만으로 만들면
+ * 뒤 4자와 해시가 같은 두 구독이 같은 날 겹칠 수 있어, `attempt`로 값을 흔든다.
+ * 0번째 시도는 예전과 같은 값이 나온다(기존 데이터와 형태 유지).
+ */
+export function pickupCode(subscriptionId: string, at: Date, attempt = 0): string {
   const tail = subscriptionId.slice(-4).toUpperCase();
   const mmdd = `${String(at.getMonth() + 1).padStart(2, "0")}${String(at.getDate()).padStart(2, "0")}`;
   let sum = 0;
   for (const ch of subscriptionId) sum = (sum * 31 + ch.charCodeAt(0)) % 1000;
-  return `${tail}-${String(sum).padStart(3, "0")}-${mmdd}`;
+  // 시도마다 겹치지 않는 구간으로 밀어 두 번째 후보가 다시 부딪힐 확률을 줄인다.
+  const shifted = (sum + attempt * 137) % 1000;
+  return `${tail}-${String(shifted).padStart(3, "0")}-${mmdd}`;
+}
+
+const CODE_ATTEMPTS = 12;
+
+/**
+ * 회차를 만든다. 확인번호가 겹치면 다음 후보로 넘어간다.
+ *
+ * `createMany`를 쓰지 않는다 — 4건 중 하나가 충돌하면 전부 실패해서 구독 생성이
+ * 통째로 깨진다. 한 건씩 넣고 그 건만 다시 시도한다.
+ */
+export async function createPickupOrders(
+  client: { pickupOrder: { create: (args: { data: { subscriptionId: string; scheduledAt: Date; code: string } }) => Promise<unknown> } },
+  subscriptionId: string,
+  dates: Date[],
+): Promise<void> {
+  for (const at of dates) {
+    let placed = false;
+    for (let attempt = 0; attempt < CODE_ATTEMPTS; attempt++) {
+      try {
+        await client.pickupOrder.create({
+          data: { subscriptionId, scheduledAt: at, code: pickupCode(subscriptionId, at, attempt) },
+        });
+        placed = true;
+        break;
+      } catch (e) {
+        // unique 위반만 다시 시도한다. 다른 오류는 그대로 올린다.
+        const code = (e as { code?: string } | null)?.code;
+        if (code !== "P2002") throw e;
+      }
+    }
+    if (!placed) {
+      throw new Error("픽업 확인번호를 만들지 못했습니다. 잠시 후 다시 시도해 주세요.");
+    }
+  }
 }

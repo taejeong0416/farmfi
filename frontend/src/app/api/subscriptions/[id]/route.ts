@@ -4,7 +4,7 @@ import { getServerSession } from "@/lib/auth";
 import {
   DRESSING_COUNT,
   monthlyPrice,
-  pickupCode,
+  createPickupOrders,
   upcomingPickups,
   type PackSize,
 } from "@/lib/pickup-subscription";
@@ -117,13 +117,7 @@ export async function PATCH(
         where: { subscriptionId: id, status: "scheduled" },
       });
       const dates = upcomingPickups(perWeek, 4);
-      await prisma.pickupOrder.createMany({
-        data: dates.map((at) => ({
-          subscriptionId: id,
-          scheduledAt: at,
-          code: pickupCode(id, at),
-        })),
-      });
+      await createPickupOrders(prisma, id, dates);
       const updated = await prisma.subscription.update({
         where: { id },
         data: { perWeek, monthlyPrice: price },
