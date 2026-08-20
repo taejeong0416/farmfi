@@ -3,6 +3,8 @@
 Figma 화면 ID를 Next.js 라우트와 짝지은 표. 화면을 만들 때 이 표의 라우트를 쓴다.
 덤프 원본은 `design/screens/farmfi-web/전체/<ID>.txt`.
 
+이 표는 잠정본 `.fig` 기준이다. 디자인 최종본이 오면 화면이 늘거나 빠지거나 ID가 바뀔 수 있고, 그때 이 표를 갱신한다(`build-plan.md` Phase N).
+
 ## 공통·인증 (C)
 
 | ID | 화면 | 라우트 | 티어 |
