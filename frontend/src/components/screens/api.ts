@@ -225,6 +225,56 @@ export function useInvestments() {
   });
 }
 
+// ─── 회수·환불 계좌 (C-I03) ───
+
+export type BankAccountInfo = {
+  bankName: string;
+  maskedNumber: string;
+  holderName: string;
+  verifiedAt: string;
+};
+
+export function useBankAccount() {
+  return useQuery({
+    queryKey: ["bank-account"],
+    queryFn: () =>
+      getJson<{ bankAccount: BankAccountInfo | null }>("/api/me/bank-account"),
+    select: (d) => d.bankAccount,
+    retry: false,
+  });
+}
+
+/** 예금주 확인. 통과하면 확인된 예금주 이름을 돌려준다. */
+export async function verifyAccountHolder(
+  bankName: string,
+  accountNumber: string,
+): Promise<string> {
+  const data = await postJson<{ holderName: string }>(
+    "/api/bank-accounts/verify-holder",
+    { bankName, accountNumber },
+  );
+  return data.holderName;
+}
+
+export async function registerBankAccount(
+  bankName: string,
+  accountNumber: string,
+): Promise<BankAccountInfo> {
+  const res = await fetch("/api/me/bank-account", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ bankName, accountNumber }),
+  });
+  const data = (await res.json().catch(() => null)) as
+    | { bankAccount?: BankAccountInfo; error?: string }
+    | null;
+  if (!res.ok || !data?.bankAccount) {
+    throw new Error(data?.error ?? "요청에 실패했습니다.");
+  }
+  return data.bankAccount;
+}
+
 export type SpaceItem = {
   id: string;
   spaceType: string;
