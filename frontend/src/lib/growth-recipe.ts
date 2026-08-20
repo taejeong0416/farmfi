@@ -12,7 +12,7 @@
 // crop-profiles의 하드코딩 목표(DLI·정상범위)를 데이터가 대체하고, 그 학습된
 // 목표를 최적화 스택이 효율적으로 달성한다 — 두 시스템이 맞물린다.
 
-import { getCrop, CropProfile } from "./crop-profiles";
+import { fromNormalized, toNormalized } from "./crop-normalize";
 
 export interface GrowthObservation {
   temp: number; // ℃
@@ -89,15 +89,29 @@ export interface RecipeSetpoint {
   optimum: number; // 다변량 반응표면 결합 최적점
   current: number; // 현 사이트 평균
   unit: string;
+  /**
+   * 최적점이 탐색범위 끝에 붙었나. 붙었다면 반응표면이 그 방향으로 계속 올라간다는
+   * 뜻이고, 표시된 값은 "여기가 최적"이 아니라 "여기까지밖에 못 본다"는 뜻이다.
+   */
+  atBoundary: boolean;
 }
+
+/**
+ * 적합된 반응표면이 실제로 최대점을 갖는가. 이차형식이 안장이면 좌표상승은 상자
+ * 모서리를 답으로 내놓는데, 그 값은 최적점이 아니라 관측범위의 끝일 뿐이다.
+ */
+export type SurfaceVerdict = "최대점" | "안장점" | "판정불가";
 
 export interface GrowthRecipe {
   samples: number;
   importance: RecipeImportance[];
   recipe: RecipeSetpoint[];
-  modelR2: number; // 5-fold CV R²
+  /** 5-fold CV R². 표본이 파라미터 수에 못 미치면 null — 0은 "설명력 없음"이라 뜻이 다르다 */
+  modelR2: number | null;
+  surface: SurfaceVerdict;
   note: string;
-  _beta?: number[]; // 다변량 반응표면 계수 (갭분석 모델 기반 수율 상방 산출용)
+  _beta?: number[]; // 정규화 좌표에서의 반응표면 계수 (갭 분석이 다시 쓴다)
+  _cropKey?: string; // _beta가 어느 품종의 좌표계인지
 }
 
 export const UNIT: Record<string, string> = { temp: "℃", humidity: "%", co2: "ppm", ec: "dS/m", ph: "", dli: "mol" };
@@ -199,10 +213,47 @@ function coordinateAscent(beta: number[], bounds: [number, number][], maxIter = 
   return x;
 }
 
+// ── 표면 진단: 이 이차형식이 최대점을 갖는가 ────────────────────────────────
+// 헤시안 H가 음정부호여야 정류점이 최대다. 안장이면 좌표상승이 상자 모서리를
+// 답으로 내는데, 화면에는 그것도 "최적 22.3℃"로 똑같이 보인다. 둘을 구분한다.
+// 비대각 성분은 설계행렬에 넣은 세 쌍뿐이다 — 13:temp×co2, 14:ec×dli, 15:temp×hum.
+function surfaceVerdict(beta: number[]): SurfaceVerdict {
+  const n = 6;
+  const H: number[][] = Array.from({ length: n }, () => Array(n).fill(0));
+  for (let i = 0; i < n; i++) H[i][i] = 2 * beta[7 + i];
+  const setPair = (i: number, j: number, v: number) => {
+    H[i][j] = v;
+    H[j][i] = v;
+  };
+  setPair(0, 2, beta[13]);
+  setPair(3, 5, beta[14]);
+  setPair(0, 1, beta[15]);
+
+  // −H의 촐레스키가 성공하면 H는 음정부호 = 최대점
+  // 곡률이 통째로 사라진 적합(랭크 부족·표본 부족)은 안장이 아니라 판정불가다
+  if (H.every((row, i) => Math.abs(row[i]) < 1e-9)) return "판정불가";
+
+  const M = H.map((row) => row.map((v) => -v));
+  const L: number[][] = Array.from({ length: n }, () => Array(n).fill(0));
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j <= i; j++) {
+      let s = M[i][j];
+      for (let k = 0; k < j; k++) s -= L[i][k] * L[j][k];
+      if (i === j) {
+        if (s <= 1e-12) return "안장점";
+        L[i][i] = Math.sqrt(s);
+      } else {
+        L[i][j] = s / L[j][j];
+      }
+    }
+  }
+  return "최대점";
+}
+
 // 5-fold 교차검증 R² (훈련 R² 대신 — 과적합 제어)
-function cvR2(X: number[][], y: number[], nFolds = 5): number {
+function cvR2(X: number[][], y: number[], nFolds = 5): number | null {
   const n = X.length;
-  if (n < NPARAMS * 2) return 0; // 표본 부족 시 신뢰 불가
+  if (n < NPARAMS * 2) return null; // 표본이 파라미터의 2배 미만 — 판정 자체가 불가
   const yMean = y.reduce((a, b) => a + b, 0) / n;
   const foldSize = Math.floor(n / nFolds);
   let ssRes = 0, ssTot = 0;
@@ -230,7 +281,12 @@ export function analyzeGrowthRecipe(obs: GrowthObservation[], opts?: {
   cropKey?: string; // 농학 정상범위와 관측범위 교집합으로 외삽 방지
 }): GrowthRecipe {
   const n = obs.length;
-  const X = obs.map((o) => FEATURES.map((f) => o[f]));
+  const cropKey = opts?.cropKey ?? obs.find((o) => o.cropKey)?.cropKey;
+  // 학습은 정규화 좌표에서 한다. 원시 단위로 적합하면 co2² 열이 1e6 규모가 되어
+  // 설계행렬 조건수가 무너지고, 무엇보다 품종이 섞인 관측을 한 표면에 올릴 수 없다.
+  // z는 관측마다 그 관측의 품종 기준으로 잡으므로 상추 사이클과 바질 사이클이
+  // 같은 좌표계에서 만난다.
+  const X = obs.map((o) => toNormalized(o, o.cropKey ?? cropKey));
   const y = obs.map((o) => o.yield);
   const rounds = opts?.rounds ?? 40;
   const lr = opts?.learningRate ?? 0.2;
@@ -256,34 +312,29 @@ export function analyzeGrowthRecipe(obs: GrowthObservation[], opts?: {
   // 5-fold CV R²
   const r2 = cvR2(X, y);
 
-  // 좌표 상승 탐색 범위: 관측범위와 농학 정상범위(healthyRanges)의 교집합으로 클램프
-  // 교집합만 허용 → 다항식 외삽(temp 14.8℃, CO2 324ppm 등 비현실값) 방지
-  const agroCrop: CropProfile | null = opts?.cropKey ? getCrop(opts.cropKey) : null;
-  const featureAgroBound = (f: string): [number, number] => {
-    if (!agroCrop) return [-Infinity, Infinity];
-    switch (f) {
-      case "temp":     return agroCrop.healthyRanges.temperature as [number, number];
-      case "humidity": return agroCrop.healthyRanges.humidity as [number, number];
-      case "co2":      return agroCrop.healthyRanges.co2Level as [number, number];
-      case "ec":       return agroCrop.ecTarget as [number, number];
-      case "ph":       return agroCrop.healthyRanges.phLevel as [number, number];
-      case "dli":      return [Math.max(0, agroCrop.dliTarget - 10), agroCrop.dliTarget + 10];
-      default:         return [-Infinity, Infinity];
-    }
-  };
-  const bounds: [number, number][] = FEATURES.map((f, fi) => {
+  // 좌표 상승 탐색 범위: 관측범위 ∩ 농학 정상범위. 다항식 외삽(temp 14.8℃ 같은
+  // 비현실값)을 막는다. z 좌표에서 농학 정상범위는 정의상 [-1, 1]이라, 클램프가
+  // 따로 표를 들고 있을 필요가 없다.
+  const AGRO_Z: [number, number] = [-1, 1];
+  const bounds: [number, number][] = FEATURES.map((_, fi) => {
     const vals = X.map((x) => x[fi]);
     const obsLo = Math.min(...vals);
     const obsHi = Math.max(...vals);
-    const [agLo, agHi] = featureAgroBound(f);
-    const cLo = Math.max(obsLo, agLo);
-    const cHi = Math.min(obsHi, agHi);
-    // 교집합이 유효하면 사용, 아니면 관측범위(외삽 없이) fallback
+    if (!cropKey) return [obsLo, obsHi];
+    const cLo = Math.max(obsLo, AGRO_Z[0]);
+    const cHi = Math.min(obsHi, AGRO_Z[1]);
+    // 교집합이 비면 관측범위로 물러선다 — 외삽하느니 못 봤다고 하는 편이 낫다
     return (cLo < cHi ? [cLo, cHi] : [obsLo, obsHi]) as [number, number];
   });
 
   // 6D 결합 최적점 (좌표 상승 — 독립 1D 최적 ≠ 결합 최적)
-  const optX = coordinateAscent(beta, bounds);
+  const optZ = coordinateAscent(beta, bounds);
+  const optPhysical = fromNormalized(optZ, cropKey);
+  // 끝에 붙은 요인은 "여기가 최적"이 아니라 "여기까지밖에 못 봤다"는 뜻이다
+  const boundaryTol = 1e-4;
+  const atBoundary = optZ.map(
+    (z, i) => Math.abs(z - bounds[i][0]) < boundaryTol || Math.abs(z - bounds[i][1]) < boundaryTol
+  );
 
   // 특성 중요도 정규화 + 상관
   const gainSum = importanceGain.reduce((a, b) => a + b, 0) || 1;
@@ -305,35 +356,61 @@ export function analyzeGrowthRecipe(obs: GrowthObservation[], opts?: {
     correlation: Math.round(corr(i) * 100) / 100,
   })).sort((a, b) => b.importance - a.importance);
 
+  // 현 사이트 평균은 물리 단위 그대로 — 운영자가 계기에서 읽는 값이다
   const recipe: RecipeSetpoint[] = FEATURES.map((f, i) => ({
     feature: f,
     label: FEATURE_LABEL[f],
-    optimum: Math.round(optX[i] * 100) / 100,
-    current: Math.round((X.map((x) => x[i]).reduce((a, b) => a + b, 0) / n) * 100) / 100,
+    optimum: Math.round(optPhysical[f] * 100) / 100,
+    current: Math.round((obs.reduce((s, o) => s + o[f], 0) / n) * 100) / 100,
     unit: UNIT[f],
+    atBoundary: atBoundary[i],
   }));
 
   const top = importance[0];
+  const surface = surfaceVerdict(beta);
+  const bounded = recipe.filter((r) => r.atBoundary).map((r) => r.label);
+
+  const fitPart =
+    r2 === null
+      ? `${n}개 사이클 학습 — 파라미터 ${NPARAMS}개에 비해 표본이 적어 설명력 판정 불가`
+      : `${n}개 사이클 학습(5-fold CV R²=${Math.round(r2 * 100) / 100})`;
+  const surfacePart =
+    surface === "최대점"
+      ? "반응표면이 내부 최대점을 갖는다"
+      : surface === "안장점"
+        ? "반응표면이 안장이라 표시된 값은 최적점이 아니라 탐색범위의 끝이다"
+        : "곡률이 잡히지 않아 최적점을 판정할 수 없다";
+  const boundPart = bounded.length ? ` 탐색범위 끝에 붙은 요인: ${bounded.join("·")}.` : "";
+
   return {
     samples: n,
     importance,
     recipe,
-    modelR2: Math.round(r2 * 100) / 100,
-    note: `${n}개 사이클 학습(5-fold CV R²=${Math.round(r2 * 100) / 100}). 수율 최대 요인: ${top.label}(중요도 ${Math.round(
+    modelR2: r2 === null ? null : Math.round(r2 * 100) / 100,
+    surface,
+    note: `${fitPart}. 수율 최대 요인: ${top.label}(중요도 ${Math.round(
       top.importance * 100
-    )}%). 주효과+이차항+쌍상호작용(온도×CO₂·EC×DLI·온도×습도) 다변량 반응표면의 6D 결합 최적점 도출.`,
+    )}%). 주효과+이차항+쌍상호작용(온도×CO₂·EC×DLI·온도×습도) 다변량 반응표면의 6D 결합 최적점 — ${surfacePart}.${boundPart}`,
     _beta: beta,
+    _cropKey: cropKey,
   };
 }
 
 // ── ③ 갭 분석: 현재 조건 vs 최적 레시피 → 실행 권고 ──────────────────────────
+// 요인별 상방을 "이 요인만 옮겼을 때의 차이"로 재면 상호작용 때문에 부분의 합이
+// 전체와 맞지 않는다. 화면은 그 둘을 나란히 놓으므로 어긋나면 바로 들킨다.
+// 섀플리 분해를 쓰면 Σφ_i = f(전부 최적) − f(전부 현재)가 항등식으로 성립한다.
+// 여기서 연합은 "그 요인들만 최적으로 옮긴 상태"이고, 요인 6개라 2^6=64로 정확계산.
 export interface RecipeAction {
   label: string;
   current: number;
   target: number;
   direction: "상향" | "하향" | "유지";
   importance: number;
-  predictedYieldUpliftPct: number; // 모델 기반 — 이 요인만 최적화 시 예상 수율 상방
+  /** 섀플리 배분 상방(%). 음수면 그 요인만 따로 옮기는 것이 오히려 손해라는 뜻 */
+  predictedYieldUpliftPct: number;
+  /** 최적점이 탐색범위 끝이라 권고의 근거가 약한 요인 */
+  atBoundary: boolean;
 }
 
 export interface RecipeGapReport {
@@ -348,65 +425,91 @@ export function recipeGapAnalysis(
 ): RecipeGapReport {
   const impMap = new Map(recipe.importance.map((i) => [i.feature, i.importance]));
   const spMap = new Map(recipe.recipe.map((sp) => [sp.feature, sp]));
+  const nF = FEATURES.length;
 
-  // 현재 조건 벡터 (feature 순서대로)
-  const currentX = FEATURES.map((f) => {
-    const sp = spMap.get(f);
-    return current[f as keyof typeof current] ?? sp?.current ?? 0;
-  });
-  const optimalX = FEATURES.map((f) => spMap.get(f)?.optimum ?? currentX[FEATURES.indexOf(f)]);
+  // 물리 단위로 받아 학습 좌표계로 옮긴다 — _beta는 정규화 좌표의 계수다
+  const asObs = (pick: (f: GrowthFeature) => number): GrowthObservation =>
+    ({
+      ...(Object.fromEntries(FEATURES.map((f) => [f, pick(f)])) as Record<GrowthFeature, number>),
+      yield: 0,
+    });
+  const currentPhys = (f: GrowthFeature) => current[f] ?? spMap.get(f)?.current ?? 0;
+  const optimalPhys = (f: GrowthFeature) => spMap.get(f)?.optimum ?? currentPhys(f);
+  const curZ = toNormalized(asObs(currentPhys), recipe._cropKey);
+  const optZ = toNormalized(asObs(optimalPhys), recipe._cropKey);
 
-  // 모델 기반 수율 예측 (beta 존재 시)
   const beta = recipe._beta;
-  const yHatCurrent = beta ? predictRS(beta, currentX) : null;
-  const yHatOptimal = beta ? predictRS(beta, optimalX) : null;
+  const yHatCurrent = beta ? predictRS(beta, curZ) : null;
+  const yHatOptimal = beta ? predictRS(beta, optZ) : null;
+  // 예측 수율이 0 이하면 비율 자체가 뜻을 잃는다 — 상방을 말하지 않는다
+  const scalable = beta && yHatCurrent !== null && yHatCurrent > 0.01;
 
-  const actions: RecipeAction[] = recipe.recipe.map((sp, idx): RecipeAction => {
-    const fi = FEATURES.indexOf(sp.feature as GrowthFeature);
-    const cur = currentX[fi];
-    const gap = sp.optimum - cur;
-    const imp = impMap.get(sp.feature) ?? 0;
-
-    let uplift: number;
-    if (beta && yHatCurrent !== null && Math.abs(yHatCurrent) > 0.01) {
-      // 이 요인만 최적으로 이동했을 때 모델 예측 수율 차이 (상호작용 반영)
-      const modX = [...currentX];
-      modX[fi] = sp.optimum;
-      const yHatMod = predictRS(beta, modX);
-      uplift = Math.round(Math.max(0, (yHatMod - yHatCurrent) / Math.abs(yHatCurrent) * 1000)) / 10;
-    } else {
-      // 베타 없을 때 근사 (레거시 폴백)
-      const relGap = sp.optimum !== 0 ? Math.abs(gap) / Math.abs(sp.optimum) : 0;
-      uplift = Math.round(imp * relGap * 100 * 10) / 10;
-    }
-
-    const direction: RecipeAction["direction"] =
-      Math.abs(gap) < 0.01 * Math.abs(sp.optimum || 1) ? "유지" : gap > 0 ? "상향" : "하향";
-    return {
-      label: sp.label,
-      current: Math.round(cur * 100) / 100,
-      target: sp.optimum,
-      direction,
-      importance: imp,
-      predictedYieldUpliftPct: uplift,
+  // 섀플리 배분: 연합 S = "S에 든 요인만 최적으로 옮긴 상태"
+  const shapleyPct = (): number[] => {
+    if (!beta || !scalable || yHatCurrent === null) return Array(nF).fill(0);
+    const cache = new Map<number, number>();
+    const v = (mask: number) => {
+      const hit = cache.get(mask);
+      if (hit !== undefined) return hit;
+      const z = FEATURES.map((_, i) => ((mask >> i) & 1 ? optZ[i] : curZ[i]));
+      const val = predictRS(beta, z);
+      cache.set(mask, val);
+      return val;
     };
-  }).sort((a, b) => b.predictedYieldUpliftPct - a.predictedYieldUpliftPct);
+    const fact = (k: number) => {
+      let r = 1;
+      for (let i = 2; i <= k; i++) r *= i;
+      return r;
+    };
+    const nFact = fact(nF);
+    const phi = Array(nF).fill(0);
+    for (let i = 0; i < nF; i++) {
+      for (let mask = 0; mask < 1 << nF; mask++) {
+        if ((mask >> i) & 1) continue;
+        let s = 0;
+        for (let b = mask; b; b >>= 1) s += b & 1;
+        phi[i] += ((fact(s) * fact(nF - s - 1)) / nFact) * (v(mask | (1 << i)) - v(mask));
+      }
+    }
+    return phi.map((p) => Math.round((p / yHatCurrent) * 1000) / 10);
+  };
+  const phiPct = shapleyPct();
 
-  // 전체 상방 = 현재 → 모든 요인 최적화 시 모델 예측 수율 차이
-  let total: number;
-  if (beta && yHatCurrent !== null && yHatOptimal !== null && Math.abs(yHatCurrent) > 0.01) {
-    total = Math.round(Math.max(0, (yHatOptimal - yHatCurrent) / Math.abs(yHatCurrent) * 1000)) / 10;
-  } else {
-    total = Math.round(actions.reduce((s, a) => s + a.predictedYieldUpliftPct, 0) * 10) / 10;
-  }
+  const actions: RecipeAction[] = recipe.recipe
+    .map((sp): RecipeAction => {
+      const fi = FEATURES.indexOf(sp.feature as GrowthFeature);
+      const cur = currentPhys(sp.feature as GrowthFeature);
+      const gap = sp.optimum - cur;
+      // 계측 잡음 안에서 흔들리는 차이를 조작 지시로 바꾸지 않는다 — 범위폭의 2%
+      const half = Math.abs(sp.optimum - sp.current) || Math.abs(sp.optimum) || 1;
+      const deadband = 0.02 * half;
+      return {
+        label: sp.label,
+        current: Math.round(cur * 100) / 100,
+        target: sp.optimum,
+        direction: Math.abs(gap) < deadband ? "유지" : gap > 0 ? "상향" : "하향",
+        importance: impMap.get(sp.feature) ?? 0,
+        predictedYieldUpliftPct: phiPct[fi],
+        atBoundary: sp.atBoundary,
+      };
+    })
+    .sort((a, b) => b.predictedYieldUpliftPct - a.predictedYieldUpliftPct);
+
+  // 전체 상방 = 현재 → 전부 최적. 섀플리 분해라 부분의 합과 항등으로 맞는다.
+  const total =
+    scalable && yHatOptimal !== null && yHatCurrent !== null
+      ? Math.round(((yHatOptimal - yHatCurrent) / yHatCurrent) * 1000) / 10
+      : 0;
 
   const top = actions[0];
   return {
     actions,
     totalPotentialUpliftPct: total,
     headline:
-      top && top.direction !== "유지"
-        ? `${top.label}을(를) ${top.current}${recipe.recipe.find((r) => r.label === top.label)?.unit ?? ""} → ${top.target} ${top.direction}이 최우선 (모델 예측 수율 +${top.predictedYieldUpliftPct}%). 전체 최적화 시 +${total}% 상방.`
-        : `현재 조건이 최적 레시피에 근접 — 유지 권장.`,
+      recipe.surface !== "최대점"
+        ? `반응표면이 ${recipe.surface}이라 권고를 내지 않는다 — 표시된 값은 최적점이 아니라 탐색범위의 끝이다.`
+        : top && top.direction !== "유지"
+          ? `${top.label}을(를) ${top.current}${recipe.recipe.find((r) => r.label === top.label)?.unit ?? ""} → ${top.target} ${top.direction}이 최우선 (모델 예측 수율 ${top.predictedYieldUpliftPct >= 0 ? "+" : ""}${top.predictedYieldUpliftPct}%). 전체 최적화 시 ${total >= 0 ? "+" : ""}${total}% 상방.${top.atBoundary ? " 다만 이 요인은 탐색범위 끝이라 더 올릴 여지가 확인되지 않았다." : ""}`
+          : `현재 조건이 최적 레시피에 근접 — 유지 권장.`,
   };
 }

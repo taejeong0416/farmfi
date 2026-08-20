@@ -18,9 +18,30 @@ import {
   assertConcave,
   generateObservations,
   trueOptimum,
+  trueYield,
   type SynthSpec,
+  type SynthFeature,
 } from "./growth-recipe-synth";
-import { analyzeGrowthRecipe } from "./growth-recipe";
+import { analyzeGrowthRecipe, recipeGapAnalysis, FEATURES } from "./growth-recipe";
+import type { GrowthObservation } from "./growth-recipe";
+
+// 오목성 검사를 건너뛰고 관측을 만든다 — 안장 반응면을 파이프라인에 먹여
+// 진단이 켜지는지 보려면 검사를 우회해야 한다.
+function rawObservations(spec: SynthSpec, n: number, seed = 3): GrowthObservation[] {
+  let s = seed >>> 0;
+  const rand = () => {
+    s = (s * 1664525 + 1013904223) >>> 0;
+    return s / 4294967296;
+  };
+  return Array.from({ length: n }, () => {
+    const env = {} as Record<SynthFeature, number>;
+    for (const f of SYNTH_FEATURES) {
+      const [lo, hi] = spec.bounds[f];
+      env[f] = lo + rand() * (hi - lo);
+    }
+    return { ...env, cropKey: "leafy", yield: trueYield(spec, env) };
+  });
+}
 
 test("테스트 베드가 오목하다 — 최대점이 존재한다", () => {
   const c = concavityCheck(LEAFY_SPEC);
@@ -66,6 +87,58 @@ test("파이프라인이 알려진 최적점을 되찾는다", () => {
       `${f}: 최적점 ${got.optimum} vs 정답 ${truth[f]} — 탐색범위의 ${Math.round(errRatio * 100)}% 빗나감`
     );
   }
+});
+
+test("안장 반응면을 최대점이라 말하지 않는다", () => {
+  const saddle: SynthSpec = { ...LEAFY_SPEC, cross: [["temp", "co2", 0.01]] };
+  const { surface, note } = analyzeGrowthRecipe(rawObservations(saddle, 200), {
+    cropKey: "leafy",
+  });
+  assert.equal(surface, "안장점");
+  assert.match(note, /안장/);
+
+  // 그리고 갭 분석이 그 위에서 조작 권고를 내지 않는다
+  const fit = analyzeGrowthRecipe(rawObservations(saddle, 200), { cropKey: "leafy" });
+  const gap = recipeGapAnalysis(fit, {});
+  assert.match(gap.headline, /권고를 내지 않는다/);
+});
+
+test("표본이 파라미터에 못 미치면 R²는 0이 아니라 판정불가다", () => {
+  const { observations } = generateObservations(LEAFY_SPEC, 20);
+  const { modelR2, note } = analyzeGrowthRecipe(observations, { cropKey: "leafy" });
+  assert.equal(modelR2, null);
+  assert.match(note, /판정 불가/);
+});
+
+test("최적점이 관측 밖이면 경계해로 표시한다", () => {
+  // 온도를 16~20℃에서만 관측했는데 진짜 최적은 22℃다. 파이프라인은 20℃를
+  // 답으로 낼 수밖에 없고, 그건 "여기가 최적"이 아니라 "여기까지 봤다"는 뜻이다.
+  const narrow: SynthSpec = {
+    ...LEAFY_SPEC,
+    bounds: { ...LEAFY_SPEC.bounds, temp: [16, 20] },
+  };
+  const { observations } = generateObservations(narrow, 200);
+  const { recipe } = analyzeGrowthRecipe(observations, { cropKey: "leafy" });
+  const temp = recipe.find((r) => r.feature === "temp")!;
+  assert.equal(temp.atBoundary, true, `온도 최적 ${temp.optimum} — 경계해로 잡히지 않았다`);
+  assert.ok(temp.optimum <= 20.01, "관측하지 않은 구간으로 외삽했다");
+  // 관측이 최적점을 담은 요인은 경계해가 아니다
+  assert.equal(recipe.find((r) => r.feature === "ph")!.atBoundary, false);
+});
+
+test("요인별 상방의 합이 전체 상방과 맞는다", () => {
+  const { observations } = generateObservations(LEAFY_SPEC, 200);
+  const fit = analyzeGrowthRecipe(observations, { cropKey: "leafy" });
+  // 현재 조건을 최적에서 일부러 떨어뜨려 상방이 생기게 한다
+  const gap = recipeGapAnalysis(fit, { temp: 19, co2: 650, ec: 2.1, dli: 12 });
+  const sum = gap.actions.reduce((s, a) => s + a.predictedYieldUpliftPct, 0);
+  // 항목마다 0.1%로 반올림하므로 요인 6개면 최대 0.3% 어긋난다
+  assert.ok(
+    Math.abs(sum - gap.totalPotentialUpliftPct) < 0.35,
+    `부분합 ${sum.toFixed(1)}% vs 전체 ${gap.totalPotentialUpliftPct}%`
+  );
+  assert.ok(gap.totalPotentialUpliftPct > 0, "떨어진 조건인데 상방이 없다");
+  assert.equal(gap.actions.length, FEATURES.length);
 });
 
 test("농학 클램프가 최적점을 대신 찍어주지 않는다", () => {
