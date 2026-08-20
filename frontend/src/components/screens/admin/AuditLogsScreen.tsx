@@ -46,6 +46,7 @@ const ACTION_LABEL: Record<string, string> = {
   "project.status_changed": "프로젝트 상태 변경",
   "pickup.completed": "픽업 수령 완료",
   "period_record.confirmed": "매출·비용 확정",
+  "setpoint.applied": "설정점 적용",
   "project.refunded": "환불",
   "user.role_changed": "권한 변경",
   "notification.sent": "알림 발송",

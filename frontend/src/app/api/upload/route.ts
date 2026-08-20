@@ -1,3 +1,4 @@
+import { createHash } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { uploadImage } from "@/lib/storage";
 import { getServerSession } from "@/lib/auth";
@@ -73,9 +74,20 @@ export async function POST(request: NextRequest) {
 
     const filename =
       "name" in file && typeof file.name === "string" ? file.name : "upload";
+    // 파일 해시 — 원본은 저장소에 두고 체인에는 이 값만 올린다(명세 9.2).
+    // 업로드 시점에 계산해야 "올린 파일"과 "기록한 해시"가 같은 바이트임이 보장된다.
+    // 나중에 URL로 다시 받아 계산하면 그 사이 파일이 바뀌었는지 알 수 없다.
+    const sha256 = createHash("sha256").update(buffer).digest("hex");
+
     const result = await uploadImage(buffer, filename, mime);
 
-    return NextResponse.json({ url: result.url, stub: result.stub ?? false });
+    return NextResponse.json({
+      url: result.url,
+      sha256,
+      bytes: buffer.length,
+      mime,
+      stub: result.stub ?? false,
+    });
   } catch (error) {
     console.error("POST /api/upload error:", error);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });

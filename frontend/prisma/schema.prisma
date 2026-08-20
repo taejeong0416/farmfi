@@ -148,6 +148,7 @@ model Project {
   investments    Investment[]
   subscriptions  Subscription[]
   periodRecords      PeriodRecord[]
+  setpointApplications SetpointApplication[]
 }
 
 // ─── 에스크로 ───
@@ -184,6 +185,9 @@ model Milestone {
   // status: pending → evidence_submitted → in_progress(검증) → verified(승인)
   //         → completed(집행). 보완이 필요하면 revision_required로 되돌린다.
   evidenceUrls         String[]  // 운영자가 올린 증빙 파일들
+  // 파일별 sha256(업로드 시점 계산). 원본은 저장소에, 체인에는 이 해시만 올린다.
+  // evidenceUrls와 같은 순서다. 원본이 바뀌면 해시가 어긋나 위·변조가 드러난다.
+  evidenceHashes       String[]
   evidenceNote         String?   // 제출 시 남긴 설명
   evidenceSubmittedAt  DateTime?
   reviewNote           String?   // 관리자 재검토 의견
@@ -805,4 +809,27 @@ model PeriodRecord {
 
   @@unique([projectId, period])
   @@index([status, period])
+}
+
+// ─── 설정점 적용 기록 (Phase W2) ───
+// 레시피 산출값과 실제 적용값을 **둘 다** 남긴다. 하나만 남기면 "모델이 뭐라 했고
+// 우리가 뭘 했나"를 대조할 수 없고, 그러면 모델을 고칠 근거도 사라진다.
+// 정산·마일스톤 판정에는 적용값을 쓴다 — 설비가 실제로 돈 값이 그쪽이다.
+model SetpointApplication {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id])
+  cropKey   String
+  // [{ feature, label, unit, proposed, applied, baseline, verdict, reason, bounds }]
+  decisions Json
+  /** 규칙이 산출을 손댄 요인 수. 0이면 학습 산출이 그대로 나갔다는 뜻 */
+  adjusted  Int      @default(0)
+  /** 반응면 판정 — 최대점이 아니면 산출을 채택하지 않는다 */
+  surface   String
+  samples   Int      @default(0)
+  note      String?
+  appliedById String?
+  appliedAt DateTime @default(now())
+
+  @@index([projectId, appliedAt])
 }

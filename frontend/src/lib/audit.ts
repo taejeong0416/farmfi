@@ -37,6 +37,7 @@ export const AUDIT_ACTIONS = [
   "project.status_changed",
   "pickup.completed",
   "period_record.confirmed",
+  "setpoint.applied",
   "user.role_changed",
   "project.refunded",
   "notification.sent",

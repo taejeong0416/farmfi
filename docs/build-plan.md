@@ -321,8 +321,10 @@ Phase A~K는 화면과 그 화면이 도는 데 필요한 최소 API를 만들�
   `GET /api/spaces/[id]/recipe` · `POST .../recipe/apply`. 학습 스택(`lib/growth-recipe*.ts`)과 `/optimization/[projectId]` 표시는 되어 있고, API와 적용 경로가 없다. 그래서 9.2 최적대 판정과 9.5 목표 DLI는 여전히 `crop-profiles`의 문헌값을 본다 — 이 항목이 그 둘을 학습값에 연결한다. 적용은 운영자가 누를 때만 하고, 산출값과 적용값을 함께 남긴다
 - [ ] **W1a** 레시피 관측을 실데이터로
   지금 학습 입력은 `growth-recipe-synth.ts`의 합성 관측이다. `HarvestRecord`(수확량)와 `IotData`(사이클 환경 평균)를 조인해 실 관측으로 바꾼다. 6요인 원천은 `IotData`에 다 있다(`ecLevel`은 nullable — 공개데이터 온실 계열처럼 EC를 안 재는 원천이 섞인다). 관측을 만들 때 `ecLevel`이 null인 사이클을 **뺄지 작물 프로파일 `ecTarget` 중앙으로 채울지**가 이 항목의 결정이다. 채우면 EC 방향 학습이 죽고, 빼면 표본이 준다
-- [ ] **W2** 최적화 적용
-  `POST /api/spaces/[id]/optimization/apply`. 산출값과 실제 적용값을 함께 기록하고, 정산·판정에는 적용값을 쓴다
+- [x] **W2** 최적화 적용 — `lib/setpoint-envelope.ts` · `GET|POST /api/projects/[id]/setpoints`
+  **결정론적 봉투**를 세웠다. 학습 산출을 그대로 설비에 넘기지 않고 규칙이 먼저 판단한다 — 반응면이 안장·판정불가거나 최적점이 관측 경계에 붙으면 채택하지 않고, 통과한 값만 농학 범위·설비 정격(LED 최대 DLI)·하루 변화폭으로 좁힌다. **학습은 좁힐 수만 있고 규칙이 허용한 폭을 넓히지 못한다.** 이 설정점이 IoT 가동률 → 마일스톤 2·4단계 판정 → 트랜치 집행으로 이어지므로 마지막 결정은 규칙이 갖는다.
+  거부·조정 사유를 값으로 남긴다(`APPLIED` · `CLAMPED_AGRONOMIC` · `CLAMPED_EQUIPMENT` · `CLAMPED_RATE` · `REJECTED_SURFACE` · `REJECTED_BOUNDARY` · `REJECTED_INVALID`). 산출값과 적용값을 `SetpointApplication`에 **둘 다** 저장한다 — 하나만 남기면 모델을 고칠 근거가 사라진다. 정산·판정에는 적용값을 쓴다.
+  변화폭은 요인마다 다르다. pH가 가장 좁다(구간의 8%) — 과보정이 회복을 더 어렵게 한다.
 - [ ] **W3** 기관 성과 리포트 화면
   API(`reports/institution`)는 있고 화면이 없다. CSV 내보내기 포함
 - [ ] **W4** 구독 상세 변경
