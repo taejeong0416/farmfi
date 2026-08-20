@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 import { canAccessProject } from "@/lib/operator-scope";
-import { maskName } from "../route";
+import { maskName } from "@/lib/mask";
 
 /**
  * GET /api/pickups/[code] — 확인번호로 픽업 한 건 조회 (앱 M-12 스캔·수동입력).

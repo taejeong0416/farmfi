@@ -147,6 +147,7 @@ model Project {
   payouts        Payout[]
   investments    Investment[]
   subscriptions  Subscription[]
+  periodRecords      PeriodRecord[]
 }
 
 // ─── 에스크로 ───
@@ -775,4 +776,30 @@ model HoldingIssuance {
 
   @@index([status, nextAttemptAt])
   @@index([investmentId])
+}
+
+// ─── 기간 정산 입력 (A-16 · Phase S1) ───
+// 인수 기준: "관리자가 매출·비용을 확정해야 정산 계산이 돈다. 확정 전 값은
+// 계산에 들어가지 않는다." 그래서 배당 라우트는 이 표에서 confirmed인 행만 읽는다.
+// 화면이 들고 있던 비용 입력이 여기 저장된다 — 전에는 새로고침하면 사라졌다.
+model PeriodRecord {
+  id            String    @id @default(cuid())
+  projectId     String
+  project       Project   @relation(fields: [projectId], references: [id])
+  period        String    // YYYY-MM
+  // 매출은 SalesRecord 합계를 담당자가 확인해 확정한다. 자동 합계를 그대로
+  // 쓰지 않는 이유: 반품·현장 판매 보정이 들어간다.
+  revenue       BigInt    @default(0)
+  // [{ label, amount }] — 항목 수가 지점마다 달라 Json으로 둔다
+  costs         Json      @default("[]")
+  totalCost     BigInt    @default(0)
+  status        String    @default("draft") // draft · confirmed
+  confirmNote   String?   // 확정 사유. 확정 시 필수 — 숫자만 남으면 왜 그 값인지 사라진다
+  confirmedById String?
+  confirmedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([projectId, period])
+  @@index([status, period])
 }

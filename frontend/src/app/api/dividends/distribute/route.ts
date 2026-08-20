@@ -14,15 +14,51 @@ export async function POST(request: NextRequest) {
     throw err;
   }
   try {
-    const { projectId, totalRevenue, experienceRevenue, b2bIncrementalRevenue } =
+    const { projectId, period: periodInput, experienceRevenue, b2bIncrementalRevenue } =
       await request.json();
 
-    if (!projectId || totalRevenue == null) {
+    if (!projectId) {
+      return NextResponse.json({ error: "projectId가 필요합니다." }, { status: 400 });
+    }
+
+    const now = new Date();
+    const period =
+      typeof periodInput === "string" && /^\d{4}-(0[1-9]|1[0-2])$/.test(periodInput)
+        ? periodInput
+        : `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+
+    // 인수 기준: "관리자가 매출·비용을 확정해야 정산 계산이 돈다. 확정 전 값은
+    // 계산에 들어가지 않는다." 매출을 요청 본문에서 받으면 이 문장이 성립하지
+    // 않는다 — 부르는 쪽이 숫자를 정하게 된다. 확정된 기간 기록에서만 읽는다.
+    const record = await prisma.periodRecord.findUnique({
+      where: { projectId_period: { projectId, period } },
+    });
+    if (!record) {
       return NextResponse.json(
-        { error: "projectId and totalRevenue are required" },
+        { error: `${period} 매출·비용이 입력되지 않았습니다. 매출·비용 입력(A-16)에서 먼저 저장해 주세요.` },
         { status: 400 }
       );
     }
+    if (record.status !== "confirmed") {
+      return NextResponse.json(
+        { error: `${period} 매출·비용이 확정되지 않았습니다. 확정해야 정산이 돕니다.` },
+        { status: 400 }
+      );
+    }
+
+    // 같은 기간을 두 번 분배하면 회수금이 이중 지급된다.
+    const already = await prisma.dividend.findFirst({
+      where: { projectId, period },
+      select: { id: true },
+    });
+    if (already) {
+      return NextResponse.json(
+        { error: `${period}은 이미 분배됐습니다.` },
+        { status: 409 }
+      );
+    }
+
+    const totalRevenue = Number(record.revenue);
 
     // 배당 재원은 운영자 매출이 아니라 FarmFi 수수료 풀 (기획안 v18 §2 설계 원칙 2).
     // totalRevenue는 차감 대상이 아니라 체험 수수료 추정 입력값으로만 쓰인다.
@@ -45,9 +81,6 @@ export async function POST(request: NextRequest) {
       totalTokensHeld > 0
         ? Math.floor(feePool.investorDividend / totalTokensHeld)
         : 0;
-
-    const now = new Date();
-    const period = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
     const result = await prisma.$transaction(async (tx) => {
       const dividend = await tx.dividend.create({

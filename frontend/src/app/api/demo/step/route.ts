@@ -183,20 +183,48 @@ async function verifyAndCompleteMilestone(
 
 async function distributeDividends(baseUrl: string, authHeader: string) {
   const project = await findDemoProject();
+  const now = new Date();
+  const period = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+
+  // 정산은 확정된 기간 기록에서만 매출을 읽는다. 데모도 같은 문으로 들어간다 —
+  // 저장 → 확정 → 분배. 예전에는 매출을 요청 본문에 실어 보냈다.
+  // v18 §4 중립 시나리오의 사이트당 월 작물 매출. 배당 재원이 아니라 체험 매출
+  // 추정 입력값이다(calculateFeePool): 체험 60만 → 수수료 풀 38만 → 투자자 배당 22.8만.
+  // 4,400구좌 기준 1좌당 51원/월 = 연 612원 → 발행가 1만원 대비 6.1%(v18 공표 6.2%).
+  const headers = { "Content-Type": "application/json", Authorization: authHeader };
+
+  const saveRes = await fetch(`${baseUrl}/api/admin/projects/${project.id}/records`, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({
+      period,
+      revenue: 1_400_000,
+      costs: [
+        { label: "임대료", amount: 400_000 },
+        { label: "전기 · 수도", amount: 180_000 },
+      ],
+    }),
+  });
+  const saved = await saveRes.json();
+
+  const confirmRes = await fetch(
+    `${baseUrl}/api/admin/projects/${project.id}/records/confirm`,
+    {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ period, note: `데모 ${period} 마감 확정` }),
+    },
+  );
+  const confirmed = await confirmRes.json();
 
   const res = await fetch(`${baseUrl}/api/dividends/distribute`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: authHeader },
-    body: JSON.stringify({
-      projectId: project.id,
-      // v18 §4 중립 시나리오의 사이트당 월 작물 매출. 배당 재원이 아니라 체험 매출
-      // 추정 입력값이다(calculateFeePool): 체험 60만 → 수수료 풀 38만 → 투자자 배당 22.8만.
-      // 4,400구좌 기준 1좌당 51원/월 = 연 612원 → 발행가 1만원 대비 6.1%(v18 공표 6.2%).
-      totalRevenue: 1_400_000,
-    }),
+    headers,
+    body: JSON.stringify({ projectId: project.id, period }),
   });
+  const distributed = await res.json();
 
-  return await res.json();
+  return { records: saved, confirm: confirmed, ...distributed };
 }
 
 type StepExecutor = () => Promise<any>;

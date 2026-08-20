@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Button,
   Card,
@@ -12,7 +12,7 @@ import {
   TextInput,
   type Column,
 } from "@/components/ui";
-import { getJson, num, shortDate, useProjects, won } from "../api";
+import { getJson, num, putJson, postJson, shortDate, useProjects, won } from "../api";
 import { AdminShell } from "./AdminShell";
 
 type SalesResponse = {
@@ -31,6 +31,29 @@ type SalesResponse = {
 };
 
 type CostLine = { id: string; label: string; amount: string };
+
+type PeriodRecord = {
+  id: string;
+  period: string;
+  revenue: number;
+  costs: { label: string; amount: number }[];
+  totalCost: number;
+  status: string;
+  confirmNote: string | null;
+  confirmedAt: string | null;
+};
+
+type RecordsResponse = {
+  period: string;
+  record: PeriodRecord | null;
+  salesTotal: number;
+  editable: boolean;
+};
+
+function thisPeriod(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
 
 const DEFAULT_COSTS: CostLine[] = [
   { id: "rent", label: "임대료", amount: "" },
@@ -55,14 +78,78 @@ export function LedgerScreen() {
     retry: false,
   });
 
+  const qc = useQueryClient();
+  const [period, setPeriod] = useState(thisPeriod());
   const [costs, setCosts] = useState<CostLine[]>(DEFAULT_COSTS);
+  const [revenueInput, setRevenueInput] = useState("");
+  const [note, setNote] = useState("");
+  const [msg, setMsg] = useState<string | null>(null);
 
-  const revenue = data?.summary.totalAmount ?? 0;
+  // 저장된 기간 입력값. 없으면 판매 기록 합계를 매출 초안으로 얹어 준다.
+  const { data: records } = useQuery({
+    queryKey: ["period-records", projectId, period],
+    queryFn: () =>
+      getJson<RecordsResponse>(
+        `/api/admin/projects/${projectId}/records?period=${period}`,
+      ),
+    enabled: Boolean(projectId),
+    retry: false,
+  });
+
+  // 기간이나 프로젝트가 바뀌면 서버 값으로 화면을 다시 채운다.
+  useEffect(() => {
+    if (!records) return;
+    const r = records.record;
+    setRevenueInput(String(r ? r.revenue : records.salesTotal));
+    setCosts(
+      r && r.costs.length > 0
+        ? r.costs.map((c, i) => ({ id: `c-${i}`, label: c.label, amount: String(c.amount) }))
+        : DEFAULT_COSTS,
+    );
+    setNote(r?.confirmNote ?? "");
+    setMsg(null);
+  }, [records]);
+
+  const confirmed = records?.record?.status === "confirmed";
+  const revenue = Number(revenueInput.replace(/\D/g, "") || 0);
   const totalCost = costs.reduce(
     (s, c) => s + Number(c.amount.replace(/\D/g, "") || 0),
     0,
   );
   const distributable = Math.max(0, revenue - totalCost);
+
+  const payload = () => ({
+    period,
+    revenue,
+    costs: costs
+      .filter((c) => c.label.trim())
+      .map((c) => ({ label: c.label, amount: Number(c.amount.replace(/\D/g, "") || 0) })),
+  });
+
+  const save = useMutation({
+    mutationFn: () => putJson(`/api/admin/projects/${projectId}/records`, payload()),
+    onSuccess: () => {
+      setMsg("저장했습니다. 확정해야 정산에 들어갑니다.");
+      qc.invalidateQueries({ queryKey: ["period-records"] });
+    },
+    onError: (e) => setMsg(e instanceof Error ? e.message : "저장에 실패했습니다."),
+  });
+
+  const confirm = useMutation({
+    mutationFn: async (undo?: boolean) => {
+      if (!undo) await putJson(`/api/admin/projects/${projectId}/records`, payload());
+      return postJson(`/api/admin/projects/${projectId}/records/confirm`, {
+        period,
+        note,
+        ...(undo ? { undo: true } : {}),
+      });
+    },
+    onSuccess: (_r, undo) => {
+      setMsg(undo ? "확정을 해제했습니다." : "확정했습니다. 이제 정산 계산에 들어갑니다.");
+      qc.invalidateQueries({ queryKey: ["period-records"] });
+    },
+    onError: (e) => setMsg(e instanceof Error ? e.message : "처리에 실패했습니다."),
+  });
 
   const salesColumns: Column<SalesResponse["recent"][number]>[] = [
     {
@@ -107,16 +194,27 @@ export function LedgerScreen() {
         </span>
       }
     >
-      <div className="mb-5 max-w-[320px]">
-        <Field label="프로젝트">
-          <Select value={projectId} onChange={(e) => setProjectId(e.target.value)}>
-            {(projects ?? []).map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </Select>
-        </Field>
+      <div className="mb-5 flex max-w-[640px] gap-4">
+        <div className="flex-1">
+          <Field label="프로젝트">
+            <Select value={projectId} onChange={(e) => setProjectId(e.target.value)}>
+              {(projects ?? []).map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </Select>
+          </Field>
+        </div>
+        <div className="w-[180px]">
+          <Field label="정산 기간">
+            <TextInput
+              placeholder="YYYY-MM"
+              value={period}
+              onChange={(e) => setPeriod(e.target.value)}
+            />
+          </Field>
+        </div>
       </div>
 
       {isLoading ? (
@@ -125,7 +223,7 @@ export function LedgerScreen() {
         <>
           <Card padded={false}>
             <div className="grid grid-cols-3">
-              <Stat label="기간 매출 (90일)" value={`${num(revenue)}원`} />
+              <Stat label={`${period} 확정 매출`} value={`${num(revenue)}원`} />
               <Stat label="운영 비용" value={`${num(totalCost)}원`} bordered />
               <Stat
                 label="분배 대상"
@@ -134,6 +232,35 @@ export function LedgerScreen() {
                 accent
               />
             </div>
+          </Card>
+
+          {confirmed ? (
+            <div className="mt-4 rounded-8 border border-line bg-brand-soft px-5 py-4">
+              <p className="text-13 font-medium text-brand">
+                {period} 확정됨 · {records?.record?.confirmedAt ? shortDate(records.record.confirmedAt) : "-"}
+              </p>
+              <p className="mt-1.5 text-12 text-body">{records?.record?.confirmNote}</p>
+            </div>
+          ) : null}
+
+          <h2 className="mt-8 text-15 font-bold text-ink">매출</h2>
+          <Card className="mt-4">
+            <div className="flex items-center gap-3">
+              <div className="flex-1">
+                <TextInput
+                  className="text-right"
+                  inputMode="numeric"
+                  placeholder="0"
+                  disabled={confirmed}
+                  value={revenueInput}
+                  onChange={(e) => setRevenueInput(e.target.value)}
+                />
+              </div>
+              <span className="shrink-0 text-12 text-muted">원</span>
+            </div>
+            <p className="mt-3 text-12 text-muted">
+              판매 기록 합계 {num(records?.salesTotal ?? 0)}원. 반품·현장 판매 보정을 넣어 확정합니다.
+            </p>
           </Card>
 
           <h2 className="mt-8 text-15 font-bold text-ink">운영 비용</h2>
@@ -153,6 +280,7 @@ export function LedgerScreen() {
                     className="text-right"
                     inputMode="numeric"
                     placeholder="0"
+                    disabled={confirmed}
                     value={c.amount}
                     onChange={(e) =>
                       setCosts((prev) =>
@@ -168,10 +296,11 @@ export function LedgerScreen() {
             ))}
           </Card>
 
-          <div className="mt-4 flex gap-2">
+          <div className="mt-4 flex flex-wrap items-center gap-2">
             <Button
               size="sm"
               variant="ghost"
+              disabled={confirmed}
               onClick={() =>
                 setCosts((prev) => [
                   ...prev,
@@ -186,6 +315,46 @@ export function LedgerScreen() {
             </Button>
           </div>
 
+          {/* 확정 — 사유가 없으면 왜 그 숫자인지가 사라진다. 그래서 필수다. */}
+          <Card className="mt-6">
+            <Field label="확정 사유">
+              <TextInput
+                placeholder="예: 8월 판매 마감, 반품 2건 차감 반영"
+                disabled={confirmed}
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+              />
+            </Field>
+            <div className="mt-4 flex gap-3">
+              {confirmed ? (
+                <Button
+                  variant="ghost"
+                  disabled={confirm.isPending}
+                  onClick={() => confirm.mutate(true)}
+                >
+                  확정 해제
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    variant="ghost"
+                    disabled={save.isPending || !projectId}
+                    onClick={() => save.mutate()}
+                  >
+                    저장
+                  </Button>
+                  <Button
+                    disabled={confirm.isPending || !note.trim() || !projectId}
+                    onClick={() => confirm.mutate(false)}
+                  >
+                    확정
+                  </Button>
+                </>
+              )}
+            </div>
+            {msg ? <p className="mt-3 text-12 text-body">{msg}</p> : null}
+          </Card>
+
           <h2 className="mt-8 text-15 font-bold text-ink">최근 판매 기록</h2>
           <div className="mt-4">
             <DataTable
@@ -197,7 +366,7 @@ export function LedgerScreen() {
           </div>
 
           <p className="mt-5 text-12 text-muted">
-            비용 입력값은 정산 산출에만 쓰이며, 확정 전에는 회수액에 반영되지 않습니다.
+확정하지 않은 기간은 회수금 분배가 거부됩니다. 확정 사유는 감사 로그에 남습니다.
           </p>
         </>
       )}
