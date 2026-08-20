@@ -107,7 +107,12 @@ async function createAccountRow(
   });
 }
 
-export type DepositOutcome = "CONFIRMED" | "AMOUNT_MISMATCH" | "LATE" | "DUPLICATE";
+export type DepositOutcome =
+  | "CONFIRMED"
+  | "AMOUNT_MISMATCH"
+  | "LATE"
+  | "REVIEW"
+  | "DUPLICATE";
 
 /**
  * 은행 입금 반영. 웹훅과 입금 조회가 같은 경로를 쓴다.
@@ -137,12 +142,15 @@ export async function confirmBankDeposit(input: {
 
   const investment = account.investment;
   const depositedAt = input.depositedAt ?? new Date();
+  // 취소된 신청으로 들어온 입금은 사람이 환불 판단을 한다.
   const outcome: Exclude<DepositOutcome, "DUPLICATE"> =
-    input.amount !== investment.amount
-      ? "AMOUNT_MISMATCH"
-      : depositedAt > account.expiresAt
-        ? "LATE"
-        : "CONFIRMED";
+    account.status === "CANCELLED" || investment.status === "CANCELLED"
+      ? "REVIEW"
+      : input.amount !== investment.amount
+        ? "AMOUNT_MISMATCH"
+        : depositedAt > account.expiresAt
+          ? "LATE"
+          : "CONFIRMED";
 
   await prisma.$transaction(async (tx) => {
     await tx.depositEvent.create({
@@ -163,19 +171,22 @@ export async function confirmBankDeposit(input: {
           outcome === "CONFIRMED" ? "PAID" : outcome === "LATE" ? "EXPIRED" : account.status,
       },
     });
-    await tx.investment.update({
-      where: { id: investment.id },
-      data:
+    if (outcome !== "REVIEW") {
+      const failureCode: DepositFailureCode | null =
         outcome === "CONFIRMED"
-          ? { status: "DEPOSIT_CONFIRMED", failureCode: null, failureReason: null }
-          : {
-              failureCode: outcome === "LATE" ? "DEPOSIT_EXPIRED" : "AMOUNT_MISMATCH",
-              failureReason:
-                outcome === "LATE"
-                  ? FAILURE_MESSAGE.DEPOSIT_EXPIRED
-                  : FAILURE_MESSAGE.AMOUNT_MISMATCH,
-            },
-    });
+          ? null
+          : outcome === "LATE"
+            ? "DEPOSIT_EXPIRED"
+            : "AMOUNT_MISMATCH";
+      await tx.investment.update({
+        where: { id: investment.id },
+        data: {
+          ...(outcome === "CONFIRMED" ? { status: "DEPOSIT_CONFIRMED" } : {}),
+          failureCode,
+          failureReason: failureCode ? FAILURE_MESSAGE[failureCode] : null,
+        },
+      });
+    }
   });
 
   if (outcome === "CONFIRMED") {
