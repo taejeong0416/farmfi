@@ -4,7 +4,7 @@ import path from "path";
 import { prisma } from "@/lib/db";
 import { requireRole, signSession } from "@/lib/auth";
 import { getDemoMode, getCachedResult, saveCacheResult } from "@/lib/demo-mode";
-import { executeSubscription } from "@/lib/subscription";
+import { issueVirtualAccount } from "@/lib/deposit";
 
 function serialize(obj: any): any {
   return JSON.parse(
@@ -35,28 +35,85 @@ async function getAdminBearer(): Promise<string> {
   return `Bearer ${token}`;
 }
 
-// 시드 투자자로 직접 실행하는 신뢰된 서버 내부 경로.
-// 세션·본인인증·한도 게이트는 사용자 경로(/api/subscribe)에만 적용된다.
-async function subscribe(userName: string, tokenAmount: number) {
+/**
+ * 청약 한 건을 **실제 납입 경로로** 실행한다.
+ *
+ *   신청 생성 → 가상계좌 발급 → 은행 입금 웹훅 → confirmDeposit
+ *            → 청약 반영 → 수탁 지갑 생성 → 보유 구좌 발행(mint)
+ *
+ * 예전에는 `executeSubscription`을 직접 불러 DB 원장(TokenHolding)만 갱신했다.
+ * 그러면 v2.1의 핵심인 수탁 지갑 발행이 시연에서 한 번도 돌지 않는다 —
+ * 만들어 놓고 못 보여주는 상태가 된다. 데모도 사용자와 같은 문으로 들어간다.
+ */
+async function subscribe(
+  userName: string,
+  tokenAmount: number,
+  baseUrl: string,
+  authHeader: string,
+) {
   const user = await findUserByName(userName);
   const project = await findDemoProject();
+  const unitPrice = project.tokenPrice ?? BigInt(10_000);
+  const amount = unitPrice * BigInt(tokenAmount);
 
-  const result = await executeSubscription({
-    userId: user.id,
-    projectId: project.id,
-    tokenAmount,
+  // 1) 신청 — 동의까지 마친 상태로 만든다. 화면 단계(적합성·서명)는 시연 범위 밖이다.
+  const investment = await prisma.investment.create({
+    data: {
+      userId: user.id,
+      projectId: project.id,
+      status: "AWAITING_DEPOSIT",
+      amount,
+      units: tokenAmount,
+      eligible: true,
+      consentedAt: new Date(),
+    },
   });
 
-  if (!result.ok) {
-    return { error: result.error };
+  // 2) 가상계좌 발급 — 지급사 어댑터를 그대로 탄다.
+  const issued = await issueVirtualAccount(investment.id);
+  if (!issued.ok) {
+    return { error: issued.error, step: "virtual-account" };
   }
+
+  // 3) 은행 입금 통지. 실제 서비스에서는 지급사가 이 웹훅을 쏜다.
+  //    거래번호를 신청 id로 고정해 재실행해도 같은 건이 두 번 반영되지 않는다.
+  const webhookRes = await fetch(`${baseUrl}/api/webhooks/bank/deposits`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: authHeader },
+    body: JSON.stringify({
+      providerAccountId: issued.account.providerAccountId,
+      providerTransactionId: `demo_tx_${investment.id}`,
+      amount: Number(amount),
+      payerName: user.name,
+    }),
+  });
+  const deposit = await webhookRes.json();
+
+  // 4) 결과 확인 — 청약 반영과 발행 상태를 함께 읽는다.
+  const settled = await prisma.investment.findUnique({
+    where: { id: investment.id },
+    select: { status: true, failureReason: true },
+  });
+  const issuance = await prisma.holdingIssuance.findFirst({
+    where: { investmentId: investment.id },
+    select: { status: true, units: true, chainTxHash: true, lastError: true },
+  });
+
+  if (settled?.status !== "COMPLETED") {
+    return { error: settled?.failureReason ?? "청약이 반영되지 않았습니다.", deposit };
+  }
+
   return {
     success: true,
-    transaction: {
-      txHash: result.transaction.txHash,
-      amount: Number(result.transaction.amount),
-      tokenAmount: result.transaction.tokenAmount,
+    virtualAccount: {
+      bankName: issued.account.bankName,
+      accountNumber: issued.account.accountNumber,
+      holderName: issued.account.holderName,
     },
+    deposit,
+    subscription: { units: tokenAmount, amount: Number(amount) },
+    // 발행은 체인이 닿아야 CONFIRMED가 된다. 안 닿으면 PENDING으로 남고 대사가 다시 태운다.
+    issuance,
   };
 }
 
@@ -233,9 +290,9 @@ type StepExecutor = () => Promise<any>;
 // 마일스톤 seq1~4 순차 집행(트랜치 합계 4,400만 = 잔여 정확히 0) + 스텝7 수수료 풀 배당.
 function buildStepExecutors(baseUrl: string, authHeader: string): Record<number, StepExecutor> {
   return {
-    1: () => subscribe("김투자", 300),
-    2: () => subscribe("이서연", 200),
-    3: () => subscribe("박준혁", 420),
+    1: () => subscribe("김투자", 300, baseUrl, authHeader),
+    2: () => subscribe("이서연", 200, baseUrl, authHeader),
+    3: () => subscribe("박준혁", 420, baseUrl, authHeader),
     4: () => verifyAndCompleteMilestone(1, baseUrl, authHeader),
     5: () => verifyAndCompleteMilestone(2, baseUrl, authHeader),
     6: () => verifyAndCompleteMilestone(3, baseUrl, authHeader),

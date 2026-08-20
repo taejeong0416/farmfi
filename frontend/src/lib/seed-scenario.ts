@@ -27,6 +27,23 @@ function milestoneDeadlines(fundingStart: Date, count: number): Date[] {
  */
 export async function seedScenario(prisma: PrismaClient) {
   // 재실행 가능하도록 기존 데이터 정리 (FK 자식 먼저)
+  // ─── 자식 → 부모 순서로 지운다. 하나라도 빠지면 project/user deleteMany가
+  //     FK 위반으로 죽고 데모 리셋 자체가 안 된다.
+  //     새 모델을 만들면 여기에 반드시 추가한다.
+  await prisma.holdingIssuance.deleteMany();
+  await prisma.custodyWallet.deleteMany();
+  await prisma.depositEvent.deleteMany();
+  await prisma.virtualAccount.deleteMany();
+  await prisma.investment.deleteMany();
+  await prisma.periodRecord.deleteMany();
+  await prisma.pickupOrder.deleteMany();
+  await prisma.subscription.deleteMany();
+  await prisma.bankAccount.deleteMany();
+  await prisma.stockAdjustment.deleteMany();
+  await prisma.deviceCommand.deleteMany();
+  await prisma.device.deleteMany();
+  await prisma.sensorThreshold.deleteMany();
+  await prisma.notificationPref.deleteMany();
   await prisma.salesRecord.deleteMany();
   await prisma.harvestRecord.deleteMany();
   await prisma.inventory.deleteMany();
