@@ -139,21 +139,29 @@ export function PrimaryButton({
 export function GhostButton({
   label,
   onPress,
+  disabled = false,
   icon,
   tone = "neutral",
   style,
 }: {
   label: string;
   onPress?: () => void;
+  disabled?: boolean;
   icon?: IconName;
   tone?: "neutral" | "brand" | "danger";
   style?: StyleProp<ViewStyle>;
 }) {
-  const fg = tone === "brand" ? C.brand : tone === "danger" ? C.danger : C.body;
+  const base = tone === "brand" ? C.brand : tone === "danger" ? C.danger : C.body;
+  const fg = disabled ? C.muted : base;
   return (
     <Pressable
-      onPress={onPress}
-      style={({ pressed }) => [s.ghostBtn, pressed && s.pressed, style]}
+      onPress={disabled ? undefined : onPress}
+      style={({ pressed }) => [
+        s.ghostBtn,
+        disabled && s.btnDisabled,
+        pressed && !disabled && s.pressed,
+        style,
+      ]}
     >
       {icon && <AppIcon name={icon} size={18} color={fg} />}
       <Text style={[s.ghostBtnText, { color: fg }]}>{label}</Text>

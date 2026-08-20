@@ -286,3 +286,86 @@ export function formatStamp(iso: string): string {
   const mi = String(d.getMinutes()).padStart(2, "0");
   return `${formatMonthDay(iso)} ${hh}:${mi}`;
 }
+
+// ── 마일스톤 증빙 (M-13) ─────────────────────────────────────────────────────
+// 매장 개점 여정. 단계는 순서대로만 열리고, 증빙이 승인돼야 그 단계 자금이 나간다.
+// 순서 게이트는 서버가 건다 — 화면은 그 상태를 그대로 그린다.
+
+export type MilestoneStatus =
+  | "pending"
+  | "in_progress"
+  | "evidence_submitted"
+  | "manual_review"
+  | "revision_required"
+  | "verified"
+  | "completed"
+  | "failed";
+
+export type Milestone = {
+  id: string;
+  seq: number;
+  name: string;
+  description: string | null;
+  status: string;
+  conditionText: string | null;
+  releaseAmount: number;
+  releasePct: number;
+  requiredSignals: string[];
+  evidenceUrls: string[];
+  evidenceHashes?: string[];
+  evidenceNote: string | null;
+  evidenceSubmittedAt: string | null;
+  reviewNote: string | null;
+  reviewedAt: string | null;
+  completedAt: string | null;
+  deadlineAt: string | null;
+  project: { id: string; name: string; location: string | null };
+};
+
+export type MilestonesResponse = { milestones: Milestone[] };
+
+/** 증빙 종류 — requiredSignals의 코드값이 그대로 온다. */
+export const SIGNAL_META: Record<string, { label: string; icon: string; capture: boolean }> = {
+  contract: { label: "계약서", icon: "file", capture: false },
+  receipt: { label: "영수증", icon: "file", capture: true },
+  photo: { label: "현장 사진", icon: "camera", capture: true },
+  iot: { label: "센서 데이터", icon: "monitor", capture: false },
+};
+
+/**
+ * 단계 진행 상태 — 게임의 스테이지와 같다.
+ *   done   이미 집행이 끝난 단계
+ *   active 지금 할 차례
+ *   locked 앞 단계가 안 끝나 열리지 않은 단계
+ */
+export type StageState = "done" | "active" | "locked";
+
+export function stageStateOf(m: Milestone, all: Milestone[]): StageState {
+  if (m.status === "completed") return "done";
+  // 앞 단계가 하나라도 안 끝났으면 잠긴다. 서버 집행 게이트와 같은 규칙이라
+  // 화면에서 열어 놓고 서버가 거절하는 어긋남이 생기지 않는다.
+  const blocked = all.some((o) => o.seq < m.seq && o.status !== "completed");
+  return blocked ? "locked" : "active";
+}
+
+export const MILESTONE_STAGE_LABEL: Record<string, string> = {
+  pending: "증빙 대기",
+  in_progress: "진행 중",
+  evidence_submitted: "검토 중",
+  manual_review: "보류",
+  revision_required: "보완 요청",
+  verified: "승인됨",
+  completed: "집행 완료",
+  failed: "실패",
+};
+
+/** 운영자가 지금 증빙을 낼 수 있는 상태인가. 서버 canSubmitEvidence와 같은 목록이다. */
+export function canSubmitEvidence(status: string): boolean {
+  return (
+    status === "pending" ||
+    status === "in_progress" ||
+    status === "revision_required" ||
+    status === "evidence_submitted" ||
+    status === "manual_review"
+  );
+}

@@ -1,5 +1,5 @@
 // 02 대시보드 (+ 로딩)
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { useAuth } from "@/lib/auth";
 import { useFarmProjects } from "@/farmfi/branch";
@@ -131,6 +131,29 @@ export default function DashboardScreen() {
         })}
       </View>
 
+      {/* 개점 여정 — 마일스톤 증빙(M-13)으로 들어가는 자리.
+          명세 0.2: 픽업 예정·증빙 제출·설비 연결은 대시보드의 "오늘 할 일"과
+          매장 메뉴에서 들어간다. */}
+      <View style={s.section}>
+        <SectionTitle action="단계 보기" onAction={() => go.push("/farm/evidence")}>
+          매장 개점 여정
+        </SectionTitle>
+        <Card>
+          <Pressable style={s.journeyRow} onPress={() => go.push("/farm/evidence")}>
+            <View style={s.journeyIcon}>
+              <AppIcon name="leaf" size={18} color={C.brand} />
+            </View>
+            <View style={s.journeyCol}>
+              <Text style={s.journeyTitle}>증빙 제출 · 단계 확인</Text>
+              <Text style={s.journeySub}>
+                증빙이 승인되면 그 단계 자금이 집행돼요
+              </Text>
+            </View>
+            <AppIcon name="chevron-right" size={18} color={C.muted} />
+          </Pressable>
+        </Card>
+      </View>
+
       {/* 오늘 할 일 */}
       <View style={s.section}>
         <SectionTitle>오늘 할 일</SectionTitle>
@@ -198,6 +221,14 @@ export default function DashboardScreen() {
 }
 
 const s = StyleSheet.create({
+  journeyRow: { flexDirection: "row", alignItems: "center", gap: SP.md },
+  journeyIcon: {
+    width: 34, height: 34, borderRadius: 17, backgroundColor: C.brandSoft,
+    alignItems: "center", justifyContent: "center",
+  },
+  journeyCol: { flex: 1, gap: 2 },
+  journeyTitle: { fontSize: FS.md, fontWeight: FW.semibold, color: C.ink },
+  journeySub: { fontSize: FS.sm, color: C.muted },
   profile: { flexDirection: "row", alignItems: "center", gap: SP.md },
   avatar: {
     width: 40,

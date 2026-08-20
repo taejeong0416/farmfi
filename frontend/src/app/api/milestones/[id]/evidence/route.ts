@@ -54,7 +54,11 @@ export async function POST(
   } catch {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
-  const { urls, note } = (body ?? {}) as { urls?: unknown; note?: unknown };
+  const { urls, note, hashes } = (body ?? {}) as {
+    urls?: unknown;
+    note?: unknown;
+    hashes?: unknown;
+  };
 
   const fileUrls = Array.isArray(urls)
     ? urls.filter((u): u is string => typeof u === "string" && u.length > 0)
@@ -65,6 +69,14 @@ export async function POST(
       { status: 400 },
     );
   }
+
+  // 업로드 시점에 계산된 파일 지문. urls와 같은 순서여야 짝이 맞는다.
+  // 개수가 어긋나면 어느 해시가 어느 파일 것인지 알 수 없으므로 저장하지 않는다 —
+  // 틀린 짝을 남기는 것보다 비워 두는 편이 낫다.
+  const rawHashes = Array.isArray(hashes)
+    ? hashes.filter((h): h is string => typeof h === "string" && /^[0-9a-f]{64}$/.test(h))
+    : [];
+  const fileHashes = rawHashes.length === fileUrls.length ? rawHashes : [];
 
   const milestone = await prisma.milestone.findUnique({
     where: { id },
@@ -95,6 +107,7 @@ export async function POST(
     where: { id },
     data: {
       evidenceUrls: fileUrls,
+      evidenceHashes: fileHashes,
       evidenceUrl: fileUrls[0],
       evidenceNote: typeof note === "string" ? note : null,
       evidenceSubmittedAt: new Date(),
@@ -111,7 +124,7 @@ export async function POST(
     entityId: id,
     projectId: milestone.projectId,
     summary: `${milestone.project.name} ${milestone.seq}단계 증빙 제출 (${fileUrls.length}건)`,
-    detail: { urls: fileUrls },
+    detail: { urls: fileUrls, hashes: fileHashes },
   });
 
   return NextResponse.json({ milestone: serializeBigInt(updated) });
