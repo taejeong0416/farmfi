@@ -57,6 +57,15 @@ export default function SettingsScreen() {
         />
       </Group>
 
+      {/* 계정 확인 */}
+      <Group title="본인확인">
+        <NavRow
+          label="본인인증"
+          value={user?.identityVerified ? user.realName ?? "인증 완료" : "미인증"}
+          onPress={() => go.push("/farm/settings/identity")}
+        />
+      </Group>
+
       {/* 알림 */}
       <Group title="알림">
         <NavRow

@@ -14,6 +14,10 @@ export type User = {
   name: string;
   email: string | null;
   role: Role;
+  // /api/auth/me 가 이미 내려주던 신원 필드. 본인인증 화면이 현재 상태를 읽는다.
+  identityVerified?: boolean;
+  realName?: string | null;
+  verifiedAt?: string | null;
 };
 
 type AuthState = {
