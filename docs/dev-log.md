@@ -5,6 +5,56 @@
 
 ---
 
+## 2026-08-20 — 우민성
+
+### 수탁 지갑과 보유 구좌 발행을 붙였다 (P0-8 · Phase P1~P4)
+
+명세 0장은 "Chain Relay·Outbox·eventId 멱등성이 v2.0에 이미 있으므로 파이프라인 신설은 없다"고 적었지만, 실제로는 셋 다 없었다. `confirmBankDeposit`은 팀원이 이번 주에 만들어 붙일 자리는 생겼고, 그 옆에 발행을 이어 붙였다.
+
+- **아웃박스를 따로 만들지 않았다** — `HoldingIssuance` 행이 곧 아웃박스다. 입금 확인과 **같은 트랜잭션**에서 PENDING으로 생기므로 "입금은 확정됐는데 발행 의도가 사라진" 상태가 없고, 프로세스가 중간에 죽어도 남은 행을 이어서 처리한다. 일반 Outbox 테이블을 두면 명세 10장의 데이터 모델과 두 벌이 된다.
+- **멱등은 DB가 건다** — `eventId = deposit:<거래번호>:mint`에 unique. 애플리케이션 검사만으로는 동시 웹훅 두 개를 못 막는다. 웹훅 3회를 쏴서 발행 행 1개·입금 이벤트 1개를 확인했다.
+- **체인 전송 전에 청약 결과를 본다** — 명세는 "confirmDeposit 성공 후 mint"라고만 적었는데, 우리 파이프라인에는 청약 반영(`settleInvestment`)이 한 단계 더 있고 그게 실패할 수 있다(잔여 물량 부족·한도 초과). 그대로 두면 **환불 대상에 구좌를 발행한다.** 실제로 테스트에서 그 상태가 나왔다. `DEPOSIT_FAILED`·`CANCELLED`면 발행을 `CANCELLED`로 닫고, `COMPLETED`가 아니면 기다린다.
+- **키는 봉해서 넣는다** — `CUSTODY_MASTER_KEY`(32바이트)로 AES-256-GCM. DB에는 `local:v1:<iv>:<tag>:<ct>` 형태의 `keyRef`만 든다. 마스터 키가 없으면 지갑을 아예 만들지 않는다 — 평문 저장으로 물러설 여지를 남기지 않았다. 운영은 `kms:` 접두로 갈아 끼운다.
+- **재전송 방지선을 하나 더 뒀다** — 해시를 받자마자 DB에 적고 그 다음에 영수증을 기다린다. 영수증 대기 중 죽으면 재시도가 같은 mint를 두 번 보낼 수 있는데, 해시가 이미 있으면 전송하지 않고 확정만 찍는다.
+- **`HoldingLedger`를 새로 배포하지 않았다** — 이미 배포된 `FarmToken`이 그 역할을 한다. `decimals() == 0`이라 1구좌 = 정수 1로 맞고, `_update`의 화이트리스트 게이트가 발행(`from == 0`)을 예외로 둬서 신원 등록 전에도 발행된다. 2차 이전은 양쪽 다 `registerIdentity`가 필요해 별도 단위로 남겼다.
+- **`FundCustodyAdapter`는 Mock이고 그렇게 말한다** — 화면에 "투자금 보관 · 분리보관 · 출시 시 신탁 적용"을 띄운다. 문구는 어댑터가 주므로 신탁사가 붙으면 화면 코드를 고치지 않아도 표시가 따라 바뀐다. "에스크로"라고 부르지 않는다.
+- **투자자 화면에는 아무것도 늘지 않았다** — 지갑·주소·토큰·발행 상태는 전부 admin 창구(`/api/admin/issuances`)로만 나간다. 원장 구조가 바뀐 것이지 화면 언어가 바뀐 게 아니다.
+
+**확인**: 임시 프로젝트·투자자를 만들어 웹훅 3회 → 신청 `COMPLETED`, 판매량 5구좌 반영, 입금 이벤트 1건, 발행 행 1건, 수탁 지갑 생성 후 복호하니 주소 일치, DB에 평문 키 없음. 청약 실패 건은 발행이 `CANCELLED`로 닫혔다. 테스트로 만든 데이터는 전부 지웠다.
+
+**확인하지 못한 것**: 실제 체인 전송. 이 환경에서 Amoy RPC(`rpc-amoy.polygon.technology`)에 도달하지 못한다(연결 자체가 안 된다). 그래서 발행 행이 `PENDING`으로 남고 재시도가 예약되는 것까지만 봤다 — 실패 처리 경로는 확인됐고, mint가 체인에서 성사되는지는 **RPC가 닿는 곳에서 다시 봐야 한다.** calldata selector가 `0x40c10f19`(`mint(address,uint256)`)인 것까지는 맞췄다.
+
+### 증빙 없이 자금이 나가는 구간을 막았다 (P0-9)
+
+v2.1 명세가 P0로 올린 "운영자 증빙 제출(O-11) · 관리자 승인(A-08) → 승인된 단계만 집행"에서, 화면 두 개와 API 세 개는 이미 있었는데 **게이트가 없었다.** 실제로 뚫려 있던 경로:
+
+```
+pending ─(admin이 /verify 호출, AI 통과)→ verified ─(/complete)→ 자금 집행
+```
+
+증빙 제출은 한 번도 거치지 않는다. 운영 DB에서 MF01 1단계가 `verified` · 증빙 0건 · 트랜치 1,540만원 집행 대기 상태로 실제로 남아 있었다. 옛 경로가 만든 상태다.
+
+- **집행 자격 판정을 `lib/milestone-gate.ts` 한 곳으로 모았다** — `canRelease`는 상태값만 보지 않는다. 증빙이 존재하는지(`evidenceSubmittedAt`), 그 증빙에 판정이 있었는지(`reviewedAt` 또는 `aiVerificationResult`)까지 본다. 상태값 하나만 믿으면 수동 조작·마이그레이션 잔재로 `verified`가 된 행이 그대로 통과한다.
+- **`/verify`도 증빙을 요구한다** — 검증은 제출된 증빙을 판정하는 일이다. 증빙이 없으면 판정할 대상이 없고, 여기서 통과시키면 `/complete`가 곧바로 자금을 내보낸다.
+- **`requiredSignals`가 빈 배열이면 거부한다** — `Object.values({}).every(...)`가 공허참으로 `true`가 되어 신호 0개짜리 단계가 무조건 통과하고 있었다.
+- **`canSubmitEvidence`에 `in_progress`를 넣었다** — `/complete`가 다음 단계를 `in_progress`로 여는데 그 상태가 제출 가능 목록에 없었다. 2단계부터는 운영자가 증빙을 낼 수 없었다는 뜻이다.
+- **`canReview`에 `verified`를 넣었다** — 증빙 없이 `verified`가 된 옛 행을 보완 요청으로 되돌릴 길이 없으면 그 단계는 집행도 회수도 못 하는 채로 남는다. 승인(`approve`)은 증빙을 요구하고, 되돌리는 방향인 보완 요청(`revise`)은 요구하지 않는다.
+- **데모도 같은 문으로 들어간다** — `demo/step`이 `/verify` 전에 `/evidence`를 먼저 호출한다. 시연이 "증빙 제출 → AI 검증 → 트랜치 집행"이라는 실제 순서를 그대로 보여주게 됐다. seq 2는 IoT만 보는 단계라 첨부 문서가 없어 가동 현장 사진 한 장으로 형식을 맞춘다.
+- **관리자 콘솔이 이유를 먼저 보여준다** — `MilestoneVerifyPanel`이 증빙 제출 여부를 표시하고, 없으면 검증 버튼을 잠근다. 눌러서 400을 보게 하지 않는다.
+- **상태 라벨 복사본을 없앴다** — `components/screens/api.ts`가 같은 표를 따로 들고 있어 상태 흐름을 고치면 한쪽만 바뀌었다. `milestone-gate.ts`를 원본으로 재수출한다. 그 김에 `in_progress` 라벨을 "검증중"에서 "진행중"으로 고쳤다 — 직전 단계 집행 직후 다음 단계가 들어오는 자리라 검증과 무관하다.
+
+**확인**: 로컬 dev + 운영 DB로 실행. ① `verified`·증빙 0건 단계 집행 → 400 ② `pending` 단계 검증 → 400 ③ 증빙 없는 승인 → 400 ④ 증빙 제출 → `evidence_submitted` ⑤ 승인 → `verified`+`reviewedAt` ⑥ 그 행에 `canRelease` → `{ok:true}`. 마지막 집행은 실행하지 않았다 — 온체인이 켜져 있어 데모 데이터에 실제 Amoy 트랜잭션이 나간다. 테스트로 바꾼 행과 감사 로그는 원상복구했다.
+
+### 스키마가 DB에 반영돼 있지 않았다 — 로그인 500
+
+`schema.prisma`에는 병합돼 있는데 운영 DB에는 없던 것: `User.ciHash` · `User.identityProvider`, 그리고 `SensorThreshold` · `Device` · `DeviceCommand` · `NotificationPref` · `StockAdjustment` 5개 테이블. User 조회가 전부 `P2022 ColumnNotFound`로 죽어 **로그인이 500이었다.**
+
+- `prisma db push`는 팀 테이블 40개를 드롭하려 해서 쓰지 않는다. `frontend/prisma/sql/001_phase_u_additive.sql`에 `ADD COLUMN IF NOT EXISTS` · `CREATE TABLE IF NOT EXISTS`만으로 적고 한 트랜잭션으로 적용했다. 재실행해도 안전하다.
+- **RLS는 켜지 않았다** — 이 스키마의 기존 33개 테이블이 전부 RLS 미사용이다. DB는 브라우저 anon 키가 아니라 Next 서버의 특권 커넥션으로만 닿고 Prisma 롤은 RLS를 우회한다. 5개만 켜면 일관성만 깨진다. 접근 통제는 라우트의 `requireRole`·세션 게이트가 맡는다.
+- 적용 후 스키마와 DB가 완전히 일치하고, 로그인·`/api/me/notification-settings`·`/api/devices`·`/api/products` 전부 200.
+
+---
+
 ## 2026-08-20 — 박태정
 
 ### 생육 레시피 — 검증 가능한 목표 학습으로

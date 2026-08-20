@@ -296,6 +296,11 @@ function DepositView({
             <p className="mt-2 text-12 text-muted">
               입금기한 {formatDate(account.expiresAt)}
             </p>
+            {deposit?.custody ? (
+              <p className="mt-3 border-t border-line-soft pt-3 text-12 text-muted">
+                투자금 보관 · {deposit.custody.label}
+              </p>
+            ) : null}
           </div>
         ) : (
           <p className="mt-4 text-13 text-muted">지금 쓸 수 있는 입금 계좌가 없어요.</p>

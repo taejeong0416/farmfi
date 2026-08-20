@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { MILESTONE_STATUS_LABEL as GATE_STATUS_LABEL } from "@/lib/milestone-gate";
 
 export type ProjectSummary = {
   id: string;
@@ -46,16 +47,10 @@ export const PROJECT_STATUS_LABEL: Record<string, string> = {
   failed: "모집 실패",
 };
 
-export const MILESTONE_STATUS_LABEL: Record<string, string> = {
-  pending: "예정",
-  evidence_submitted: "증빙 제출됨",
-  in_progress: "검증중",
-  manual_review: "보류",
-  revision_required: "보완 요청",
-  verified: "통과",
-  completed: "집행 완료",
-  failed: "실패",
-};
+// 라벨 원본은 lib/milestone-gate.ts 하나다. 여기 복사본을 두면 상태 흐름을 고칠 때
+// 한쪽만 바뀌어 화면과 서버가 다른 말을 하게 된다. 화면은 서버 status를 그대로
+// 문자열로 받으므로 인덱스 타입만 넓혀서 재수출한다.
+export const MILESTONE_STATUS_LABEL: Record<string, string> = GATE_STATUS_LABEL;
 
 /** 통과·집행만 강조하고, 나머지는 글자로만 구분한다. */
 export function milestoneTone(status: string): "pass" | "fail" | "plain" {
@@ -247,6 +242,12 @@ export type DepositState = {
     expectedAmount: number;
     status: string;
     receivedAt: string;
+  } | null;
+  custody: {
+    mode: "mock" | "trust";
+    label: string;
+    separated: boolean;
+    trustee: string | null;
   } | null;
 };
 

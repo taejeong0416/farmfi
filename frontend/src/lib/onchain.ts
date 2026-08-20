@@ -33,7 +33,7 @@ const CHAIN_NAME = process.env.ONCHAIN_NAME || "Polygon Amoy";
 // gas 0 체인(OmniOne Chain 등): true면 gasPrice 0 legacy 트랜잭션으로 보낸다.
 const GAS_ZERO = process.env.ONCHAIN_GAS_ZERO === "true";
 
-const chain = defineChain({
+export const chain = defineChain({
   id: CHAIN_ID,
   name: CHAIN_NAME,
   nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
@@ -96,7 +96,7 @@ const ESCROW_ABI = [
 export const MILESTONE_TIMEOUT_DAYS = 180;
 export const MILESTONE_TIMEOUT_MS = MILESTONE_TIMEOUT_DAYS * 24 * 60 * 60 * 1000;
 
-function getClients() {
+export function getClients() {
   const account = privateKeyToAccount(PRIVATE_KEY!);
   const wallet = createWalletClient({
     account,
@@ -112,7 +112,7 @@ function getClients() {
 
 // gas 0 체인이면 legacy(gasPrice 0)로 강제. 아니면 viem 기본 수수료 추정 사용.
 // tsconfig target es2017이라 BigInt 리터럴(0n) 대신 BigInt() 생성자를 쓴다.
-const GAS_OPTS = GAS_ZERO ? ({ gasPrice: BigInt(0) } as const) : ({} as const);
+export const GAS_OPTS = GAS_ZERO ? ({ gasPrice: BigInt(0) } as const) : ({} as const);
 
 // 마일스톤 검증 통과를 온체인에 기록 (VERIFIER_ROLE). 비활성·실패 시 null.
 export async function verifyMilestoneOnChain(

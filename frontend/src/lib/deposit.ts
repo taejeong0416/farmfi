@@ -1,4 +1,11 @@
 import { prisma } from "@/lib/db";
+import {
+  enqueueMintHolding,
+  ensureWalletForInvestor,
+  mintEventId,
+  processIssuance,
+} from "@/lib/chain-relay";
+import { getFundCustodyAdapter, fundCustodyStatus } from "@/lib/fund-custody";
 import { settleInvestment } from "@/lib/investment";
 import {
   depositDeadline,
@@ -152,6 +159,12 @@ export async function confirmBankDeposit(input: {
           ? "LATE"
           : "CONFIRMED";
 
+  // 발행 대상 지갑을 트랜잭션 밖에서 먼저 확보한다. 지갑 생성은 체인을 건드리지
+  // 않지만 DB 트랜잭션을 길게 잡을 이유가 없다. 수탁이 꺼져 있으면 null이고,
+  // 그때는 발행을 걸지 않는다 — 입금 기록은 그대로 남는다.
+  const custodyWallet =
+    outcome === "CONFIRMED" ? await ensureWalletForInvestor(investment.userId) : null;
+
   await prisma.$transaction(async (tx) => {
     await tx.depositEvent.create({
       data: {
@@ -187,11 +200,42 @@ export async function confirmBankDeposit(input: {
         },
       });
     }
+
+    // 입금 확인 바로 옆에서 보유 구좌 발행을 아웃박스에 건다 (명세 9.4).
+    // 같은 트랜잭션이라 "입금은 확정됐는데 발행 의도가 사라진" 상태가 생기지 않고,
+    // eventId가 입금 트랜잭션 ID에서 나오므로 웹훅이 두 번 와도 발행은 한 번이다.
+    if (outcome === "CONFIRMED" && custodyWallet && investment.units > 0) {
+      await enqueueMintHolding(tx, {
+        eventId: mintEventId(input.providerTransactionId),
+        investmentId: investment.id,
+        walletId: custodyWallet.id,
+        units: investment.units,
+      });
+    }
   });
 
   if (outcome === "CONFIRMED") {
+    // 분리보관 계정 기록. 데모는 Mock이고 출시 시 신탁사 어댑터로 교체된다.
+    await getFundCustodyAdapter()
+      .recordDeposit({ investmentId: investment.id, amount: input.amount })
+      .catch((e) => console.error("[deposit] 분리보관 기록 실패:", e));
+
     // 입금 확정과 청약 반영은 별개 이벤트다. 청약이 실패해도 입금 기록은 남는다.
     await settleInvestment(investment.id);
+
+    // 체인 전송은 실패해도 입금·청약을 되돌리지 않는다. 실패하면 아웃박스에 남아
+    // 재시도되고, 최대 횟수를 넘기면 CHAIN_FAILED로 운영 알림이 뜬다.
+    if (custodyWallet) {
+      const pending = await prisma.holdingIssuance.findUnique({
+        where: { eventId: mintEventId(input.providerTransactionId) },
+        select: { id: true, status: true },
+      });
+      if (pending && pending.status !== "CONFIRMED") {
+        await processIssuance(pending.id).catch((e) =>
+          console.error("[deposit] 보유 구좌 발행 전송 실패:", e),
+        );
+      }
+    }
   }
 
   return { ok: true, outcome, investmentId: investment.id };
@@ -284,5 +328,8 @@ export async function getDepositState(investmentId: string) {
           receivedAt: lastEvent.receivedAt,
         }
       : null,
+    // 투자금이 지금 어떻게 보관되는지 (명세 3.4). 문구는 어댑터가 정한다 —
+    // 신탁사 연동이 붙으면 화면 코드를 고치지 않아도 표시가 따라 바뀐다.
+    custody: fundCustodyStatus(),
   };
 }

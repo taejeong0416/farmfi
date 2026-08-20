@@ -64,6 +64,15 @@ export async function POST(
       { status: 400 },
     );
   }
+  // 승인은 집행 문을 여는 행위다. 증빙 없이 승인하면 조건부 집행이 무너진다.
+  // 보완 요청(revise)은 반대 방향이라 증빙이 없어도 낼 수 있다 — 증빙 없이
+  // verified가 된 옛 단계를 되돌리는 유일한 경로이기도 하다.
+  if (decision === "approve" && !milestone.evidenceSubmittedAt) {
+    return NextResponse.json(
+      { error: "운영자 증빙이 제출되지 않은 단계는 승인할 수 없습니다." },
+      { status: 400 },
+    );
+  }
 
   // 판정 시점의 상태를 조건으로 걸어 동시 판정 중 하나만 반영되게 한다.
   const result = await prisma.milestone.updateMany({

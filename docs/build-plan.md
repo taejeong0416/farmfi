@@ -262,18 +262,18 @@ Phase A~K는 화면과 그 화면이 도는 데 필요한 최소 API를 만들�
 
 명세 10.4의 순서를 그대로 구현한다. `lib/onchain.ts`는 지금 마일스톤 검증·집행만 호출한다.
 
-- [ ] **P1** 투자자 수탁 지갑
-  1인 1지갑을 서버가 생성. 키는 암호화 키스토어에 두고 DB에는 `keyRef`만. 주소·잔액은 응답과 화면에 내보내지 않는다
-- [ ] **P2** `ChainGateway` + Outbox 워커
-  DB commit 후 비동기로 체인 호출. `confirmDeposit`과 `mintHolding`을 같은 `eventId` 계열로 묶되 각각 멱등 처리 — 발행만 실패하면 발행만 재시도
-- [ ] **P3** 실패 처리
-  지수 백오프 재시도, 초과 시 `CHAIN_FAILED` 운영 알림. 은행 입금은 취소하지 않는다. 이 구간 화면 문구는 `입금 확인 완료 · 기록 처리 중`
-- [ ] **P4** 체인 잡 콘솔
-  `GET /api/admin/chain-jobs?status=` · `POST /api/admin/chain-jobs/[eventId]/retry`
+- [x] **P1** 투자자 수탁 지갑 — `lib/custody.ts`
+  1인 1지갑(`CustodyWallet.userId` unique)을 서버가 생성. 개인키는 AES-256-GCM으로 봉해 `keyRef`만 DB에 둔다. 마스터 키(`CUSTODY_MASTER_KEY`)가 없으면 지갑을 만들지 않는다 — 평문 저장으로 물러서지 않는다. 주소는 admin 응답에만 싣고 투자자 화면에는 내보내지 않는다
+- [x] **P2** Chain Relay + Outbox — `lib/chain-relay.ts`
+  `HoldingIssuance` 행이 곧 아웃박스다. 입금 확인과 **같은 트랜잭션**에서 PENDING으로 생기고(`eventId = deposit:<거래번호>:mint`, unique), 체인 전송은 그 뒤에 따라붙는다. 웹훅이 몇 번 와도 발행 행은 하나다
+- [x] **P3** 실패 처리
+  지수 백오프(30초부터 5회) 후 `CHAIN_FAILED` + 운영 알림. 체인이 실패해도 입금·청약은 되돌리지 않는다. 청약이 `DEPOSIT_FAILED`로 끝난 건은 발행을 `CANCELLED`로 닫는다 — 환불 대상에 구좌를 발행하지 않는다
+- [x] **P4** 발행 콘솔 — `GET/POST /api/admin/issuances`
+  계획의 `chain-jobs` 대신 `issuances`로 냈다. 잡 큐가 따로 없고 발행 행이 곧 큐라 이름을 실체에 맞췄다. POST에 `id`를 주면 그 건만 재시도(`CHAIN_FAILED`도 되살린다), 안 주면 전체 드레인
 - [ ] **P5** 대사
-  10분 주기로 `CHAIN_PENDING`·`SUBMITTED` 영수증 재조회, 하루 한 번 DB↔체인 건수 대조. 불일치는 자동 수정하지 않고 감사 큐로(`GET /api/admin/reconciliation`)
+  10분 주기로 `PENDING`·`SENT` 영수증 재조회, 하루 한 번 DB↔체인 건수 대조. 불일치는 자동 수정하지 않고 감사 큐로(`GET /api/admin/reconciliation`)
 
-명세 10.6의 함수 이름(`confirmDeposit` `mintHolding` `recordDisbursement` …)과 `contracts/`의 현재 함수가 다르다. P2에서 매핑표를 먼저 정하고, 컨트랙트 수정이 필요하면 별도 단위로 뺀다.
+**컨트랙트 매핑 (P2 결정)** — 명세의 `HoldingLedger`를 새로 배포하지 않고 이미 배포된 `FarmToken`이 그 역할을 한다. `mintHolding` → `FarmToken.mint(address,uint256)`. 근거: `decimals() == 0`이라 1구좌 = 정수 1로 그대로 맞고, `_update`의 화이트리스트 게이트가 `from == address(0)`(발행)을 예외로 두어 신원 등록 전에도 발행이 된다. 2차 이전(`transferHolding`)은 송·수신 지갑 모두 `registerIdentity`가 필요하므로 그때 별도 단위로 뺀다.
 
 ## Phase Q · 계약 동의·운영자 보증서
 
