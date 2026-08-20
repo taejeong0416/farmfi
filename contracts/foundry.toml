@@ -3,6 +3,9 @@ src = "src"
 out = "out"
 libs = ["lib"]
 solc = "0.8.24"
+# OmniOne Chain(Besu 25.5, chainId 1337)이 Shanghai 이전 EVM이라 PUSH0(0x5f)을
+# 모른다. solc 0.8.24 기본값(shanghai)으로 빌드하면 배포가 Invalid opcode로 죽는다.
+evm_version = "paris"
 remappings = [
     "@openzeppelin/=lib/openzeppelin-contracts/",
 ]

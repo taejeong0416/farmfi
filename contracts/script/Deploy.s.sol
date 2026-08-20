@@ -55,6 +55,13 @@ contract Deploy is Script {
         // 5. Grant MINTER_ROLE on FarmToken to Escrow
         farmToken.grantRole(keccak256("MINTER_ROLE"), address(escrow));
 
+        // 5-1. 배포자(=서버 지갑)에게도 MINTER_ROLE.
+        //      v2.1은 투자자 수탁 지갑 앞으로 Chain Relay가 직접 발행한다
+        //      (입금 확인 → mintHolding). Escrow.subscribe 경로를 타지 않으므로
+        //      Escrow에만 주면 서버가 mint를 못 한다 — Amoy 배포분이 그 상태였고
+        //      발행이 전부 PENDING으로 쌓였다.
+        farmToken.grantRole(keccak256("MINTER_ROLE"), deployer);
+
         // 6. Grant VERIFIER_ROLE on Escrow to deployer (server wallet)
         escrow.grantRole(keccak256("VERIFIER_ROLE"), deployer);
 
