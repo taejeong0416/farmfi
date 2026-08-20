@@ -4,12 +4,13 @@ import { serializeBigInt as serialize } from "@/lib/serialize";
 import { requireRole } from "@/lib/auth";
 import { recordAudit } from "@/lib/audit";
 import { releaseTrancheOnChain, MILESTONE_TIMEOUT_MS } from "@/lib/onchain";
+import { canRelease } from "@/lib/milestone-gate";
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  // 에스크로 자금을 실제로 집행하는 라우트라 admin 전용이다. Project에 소유자
+  // 신탁 자금을 실제로 집행하는 라우트라 admin 전용이다. Project에 소유자
   // 필드가 없어 "내 프로젝트만" 검증이 불가하므로, 누구나 스스로 operator가 되어
   // 남의 프로젝트 트랜치를 집행하는 권한 자가상승을 admin 게이트로 차단한다.
   let session;
@@ -29,51 +30,37 @@ export async function POST(
 
     if (!milestone) {
       return NextResponse.json(
-        { error: "Milestone not found" },
+        { error: "단계를 찾을 수 없습니다." },
         { status: 404 }
       );
     }
 
-    if (milestone.status === "completed") {
-      return NextResponse.json(
-        { error: "Milestone already completed" },
-        { status: 400 }
-      );
-    }
-
-    if (milestone.status === "manual_review") {
-      return NextResponse.json(
-        { error: "Requires admin approval" },
-        { status: 400 }
-      );
-    }
-
-    if (milestone.status !== "verified") {
-      return NextResponse.json(
-        { error: "Milestone must be verified first" },
-        { status: 400 }
-      );
+    // 자금이 나가는 관문. 상태값 하나가 아니라 "증빙이 있고 그 증빙에 판정이 있었는가"
+    // 까지 확인한다. 증빙 없이 집행되는 경로를 남기면 조건부 집행이 이름뿐이 된다.
+    const gate = canRelease(milestone);
+    if (!gate.ok) {
+      return NextResponse.json({ error: gate.error }, { status: 400 });
     }
 
     const escrow = milestone.project.escrow;
     if (!escrow) {
       return NextResponse.json(
-        { error: "Escrow not found" },
+        { error: "신탁 계정을 찾을 수 없습니다." },
         { status: 404 }
       );
     }
 
     const releaseAmount = milestone.releaseAmount;
 
-    // 에스크로 잔액을 초과하는 릴리즈 차단 (잔액 음수·NAV 왜곡 방지)
+    // 신탁 잔액을 초과하는 릴리즈 차단 (잔액 음수·NAV 왜곡 방지)
     if (releaseAmount > escrow.remaining) {
       return NextResponse.json(
-        { error: "Insufficient escrow balance for tranche release" },
+        { error: "신탁 잔액이 트랜치 금액보다 적습니다." },
         { status: 400 }
       );
     }
 
-    // 상태검사 → 에스크로 차감 → 완료 처리를 한 트랜잭션으로 원자화한다.
+    // 상태검사 → 신탁 잔액 차감 → 완료 처리를 한 트랜잭션으로 원자화한다.
     // 위의 사전 검사는 에러 메시지용일 뿐 TOCTOU를 막지 못하므로, 실제 차단은
     // 아래 조건부 updateMany(status: "verified")가 담당한다.
     const updatedMilestone = await prisma.$transaction(async (tx) => {
@@ -188,7 +175,7 @@ export async function POST(
     }
     if (message.includes("INSUFFICIENT_ESCROW")) {
       return NextResponse.json(
-        { error: "Insufficient escrow balance for tranche release" },
+        { error: "신탁 잔액이 트랜치 금액보다 적습니다." },
         { status: 400 }
       );
     }

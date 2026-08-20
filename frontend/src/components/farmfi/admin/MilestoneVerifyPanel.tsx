@@ -10,6 +10,10 @@ type Milestone = {
   releaseAmount: number;
   status: string;
   requiredSignals: string[];
+  // 증빙 게이트 — 운영자가 O-11로 제출하지 않은 단계는 검증도 집행도 못 한다.
+  evidenceUrls?: string[];
+  evidenceSubmittedAt?: string | null;
+  evidenceNote?: string | null;
 };
 type Project = {
   id: string;
@@ -279,10 +283,32 @@ export function MilestoneVerifyPanel() {
               ))
             )}
 
+            {/* 증빙 게이트 — 운영자 제출(O-11)이 없으면 서버가 검증을 400으로 막는다.
+                버튼을 눌러 에러를 보게 하지 말고 여기서 상태를 먼저 보여준다. */}
+            {milestone.evidenceSubmittedAt ? (
+              <p className="muted">
+                운영자 증빙 제출됨 ·{" "}
+                {new Date(milestone.evidenceSubmittedAt).toLocaleString("ko-KR")}
+                {milestone.evidenceUrls?.length
+                  ? ` · 첨부 ${milestone.evidenceUrls.length}건`
+                  : ""}
+                {milestone.evidenceNote ? ` · ${milestone.evidenceNote}` : ""}
+              </p>
+            ) : (
+              <p className="muted" style={{ color: "var(--danger, #A34A3D)" }}>
+                운영자 증빙이 아직 제출되지 않았습니다. 증빙 없이는 검증·집행할 수
+                없습니다 (O-11 제출 대기).
+              </p>
+            )}
+
             <button
               className="btn"
               type="button"
-              disabled={busy || imageSignals.some((s) => !images[s])}
+              disabled={
+                busy ||
+                !milestone.evidenceSubmittedAt ||
+                imageSignals.some((s) => !images[s])
+              }
               onClick={runVerify}
             >
               {busy ? "검증 중…" : "AI 검증 실행"}

@@ -4,6 +4,7 @@ import { serializeBigInt as serialize } from "@/lib/serialize";
 import { requireRole } from "@/lib/auth";
 import { recordAudit } from "@/lib/audit";
 import { verifyMilestoneOnChain } from "@/lib/onchain";
+import { canRunVerification } from "@/lib/milestone-gate";
 
 // 교차검증(receipt↔photo): 영수증 구매 항목과 사진 검출 객체가
 // 같은 설비 카테고리를 하나 이상 공유하는지 확인
@@ -31,7 +32,7 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  // 에스크로 집행으로 이어지는 경로라 admin 전용이다. Project에 소유자 필드가 없어
+  // 신탁 자금 집행으로 이어지는 경로라 admin 전용이다. Project에 소유자 필드가 없어
   // "내 프로젝트만" 검증을 강제할 수 없으므로, 누구나 스스로 operator가 되어
   // 남의 프로젝트를 집행하는 권한 자가상승을 admin 게이트로 차단한다.
   let session;
@@ -68,18 +69,17 @@ export async function POST(
 
     if (!milestone) {
       return NextResponse.json(
-        { error: "Milestone not found" },
+        { error: "단계를 찾을 수 없습니다." },
         { status: 404 }
       );
     }
 
-    // 이미 집행된 마일스톤을 다시 verified로 되돌려 complete를 재실행하는
-    // 트랜치 이중집행 경로를 차단한다.
-    if (milestone.status === "completed") {
-      return NextResponse.json(
-        { error: "Milestone already completed" },
-        { status: 400 }
-      );
+    // 검증은 "제출된 증빙을 판정하는 일"이다. 증빙이 없으면 판정할 대상이 없고,
+    // 여기서 통과시키면 complete가 곧바로 자금을 내보낸다 — 증빙 없는 집행 경로.
+    // 이미 집행된 단계를 다시 verified로 되돌리는 이중집행 경로도 같이 막는다.
+    const gate = canRunVerification(milestone);
+    if (!gate.ok) {
+      return NextResponse.json({ error: gate.error }, { status: 400 });
     }
 
     const signals: Record<string, boolean> = {};

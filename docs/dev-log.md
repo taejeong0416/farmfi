@@ -5,6 +5,39 @@
 
 ---
 
+## 2026-08-20 — 우민성
+
+### 증빙 없이 자금이 나가는 구간을 막았다 (P0-9)
+
+v2.1 명세가 P0로 올린 "운영자 증빙 제출(O-11) · 관리자 승인(A-08) → 승인된 단계만 집행"에서, 화면 두 개와 API 세 개는 이미 있었는데 **게이트가 없었다.** 실제로 뚫려 있던 경로:
+
+```
+pending ─(admin이 /verify 호출, AI 통과)→ verified ─(/complete)→ 자금 집행
+```
+
+증빙 제출은 한 번도 거치지 않는다. 운영 DB에서 MF01 1단계가 `verified` · 증빙 0건 · 트랜치 1,540만원 집행 대기 상태로 실제로 남아 있었다. 옛 경로가 만든 상태다.
+
+- **집행 자격 판정을 `lib/milestone-gate.ts` 한 곳으로 모았다** — `canRelease`는 상태값만 보지 않는다. 증빙이 존재하는지(`evidenceSubmittedAt`), 그 증빙에 판정이 있었는지(`reviewedAt` 또는 `aiVerificationResult`)까지 본다. 상태값 하나만 믿으면 수동 조작·마이그레이션 잔재로 `verified`가 된 행이 그대로 통과한다.
+- **`/verify`도 증빙을 요구한다** — 검증은 제출된 증빙을 판정하는 일이다. 증빙이 없으면 판정할 대상이 없고, 여기서 통과시키면 `/complete`가 곧바로 자금을 내보낸다.
+- **`requiredSignals`가 빈 배열이면 거부한다** — `Object.values({}).every(...)`가 공허참으로 `true`가 되어 신호 0개짜리 단계가 무조건 통과하고 있었다.
+- **`canSubmitEvidence`에 `in_progress`를 넣었다** — `/complete`가 다음 단계를 `in_progress`로 여는데 그 상태가 제출 가능 목록에 없었다. 2단계부터는 운영자가 증빙을 낼 수 없었다는 뜻이다.
+- **`canReview`에 `verified`를 넣었다** — 증빙 없이 `verified`가 된 옛 행을 보완 요청으로 되돌릴 길이 없으면 그 단계는 집행도 회수도 못 하는 채로 남는다. 승인(`approve`)은 증빙을 요구하고, 되돌리는 방향인 보완 요청(`revise`)은 요구하지 않는다.
+- **데모도 같은 문으로 들어간다** — `demo/step`이 `/verify` 전에 `/evidence`를 먼저 호출한다. 시연이 "증빙 제출 → AI 검증 → 트랜치 집행"이라는 실제 순서를 그대로 보여주게 됐다. seq 2는 IoT만 보는 단계라 첨부 문서가 없어 가동 현장 사진 한 장으로 형식을 맞춘다.
+- **관리자 콘솔이 이유를 먼저 보여준다** — `MilestoneVerifyPanel`이 증빙 제출 여부를 표시하고, 없으면 검증 버튼을 잠근다. 눌러서 400을 보게 하지 않는다.
+- **상태 라벨 복사본을 없앴다** — `components/screens/api.ts`가 같은 표를 따로 들고 있어 상태 흐름을 고치면 한쪽만 바뀌었다. `milestone-gate.ts`를 원본으로 재수출한다. 그 김에 `in_progress` 라벨을 "검증중"에서 "진행중"으로 고쳤다 — 직전 단계 집행 직후 다음 단계가 들어오는 자리라 검증과 무관하다.
+
+**확인**: 로컬 dev + 운영 DB로 실행. ① `verified`·증빙 0건 단계 집행 → 400 ② `pending` 단계 검증 → 400 ③ 증빙 없는 승인 → 400 ④ 증빙 제출 → `evidence_submitted` ⑤ 승인 → `verified`+`reviewedAt` ⑥ 그 행에 `canRelease` → `{ok:true}`. 마지막 집행은 실행하지 않았다 — 온체인이 켜져 있어 데모 데이터에 실제 Amoy 트랜잭션이 나간다. 테스트로 바꾼 행과 감사 로그는 원상복구했다.
+
+### 스키마가 DB에 반영돼 있지 않았다 — 로그인 500
+
+`schema.prisma`에는 병합돼 있는데 운영 DB에는 없던 것: `User.ciHash` · `User.identityProvider`, 그리고 `SensorThreshold` · `Device` · `DeviceCommand` · `NotificationPref` · `StockAdjustment` 5개 테이블. User 조회가 전부 `P2022 ColumnNotFound`로 죽어 **로그인이 500이었다.**
+
+- `prisma db push`는 팀 테이블 40개를 드롭하려 해서 쓰지 않는다. `frontend/prisma/sql/001_phase_u_additive.sql`에 `ADD COLUMN IF NOT EXISTS` · `CREATE TABLE IF NOT EXISTS`만으로 적고 한 트랜잭션으로 적용했다. 재실행해도 안전하다.
+- **RLS는 켜지 않았다** — 이 스키마의 기존 33개 테이블이 전부 RLS 미사용이다. DB는 브라우저 anon 키가 아니라 Next 서버의 특권 커넥션으로만 닿고 Prisma 롤은 RLS를 우회한다. 5개만 켜면 일관성만 깨진다. 접근 통제는 라우트의 `requireRole`·세션 게이트가 맡는다.
+- 적용 후 스키마와 DB가 완전히 일치하고, 로그인·`/api/me/notification-settings`·`/api/devices`·`/api/products` 전부 200.
+
+---
+
 ## 2026-08-20 — 박태정
 
 ### 잔여 기능 계획 — 기능명세서와 코드 대조

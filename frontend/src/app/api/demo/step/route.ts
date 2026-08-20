@@ -88,6 +88,33 @@ async function loadMockImageBase64(filename: string): Promise<string> {
   }
 }
 
+// 증빙 제출(O-11). 검증·집행 게이트가 증빙 없는 단계를 거부하므로 데모도 같은 문으로 들어간다.
+// 시연 흐름이 "증빙 제출 → AI 검증 → 트랜치 집행"이라는 실제 순서를 그대로 보여준다.
+async function submitDemoEvidence(
+  milestoneId: string,
+  seq: number,
+  baseUrl: string,
+  authHeader: string
+) {
+  const files = mockImagesBySeq[seq] ?? {};
+  const urls = [files.contract, files.receipt, files.photo]
+    .filter((f): f is string => !!f)
+    .map((f) => `/demo/${f}`);
+  // seq 2는 IoT 가동률만 본다 — 첨부할 문서가 없다. 가동 현장 사진 한 장으로 제출
+  // 형식을 맞춘다. 판정 근거는 어차피 센서 데이터다.
+  if (urls.length === 0) urls.push("/demo/mock-photo-1.jpg");
+
+  const res = await fetch(`${baseUrl}/api/milestones/${milestoneId}/evidence`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: authHeader },
+    body: JSON.stringify({
+      urls,
+      note: `데모 증빙 자동 제출 · ${seq}단계 (${urls.length}건)`,
+    }),
+  });
+  return await res.json();
+}
+
 async function verifyAndCompleteMilestone(
   seq: number,
   baseUrl: string,
@@ -116,6 +143,12 @@ async function verifyAndCompleteMilestone(
     body.photoImage = await loadMockImageBase64(mockImages.photo);
   }
 
+  // 증빙이 아직 없으면 먼저 제출한다 — 게이트가 증빙 없는 검증을 400으로 막는다.
+  let evidence: unknown = null;
+  if (!milestone.evidenceSubmittedAt) {
+    evidence = await submitDemoEvidence(milestone.id, seq, baseUrl, authHeader);
+  }
+
   // Verify (admin bearer 필요)
   const verifyRes = await fetch(
     `${baseUrl}/api/milestones/${milestone.id}/verify`,
@@ -130,7 +163,7 @@ async function verifyAndCompleteMilestone(
 
   // AI 검증 실패 시 트랜치 해제 없이 그대로 반환 (검증 명제 ① — 강제 통과 금지)
   if (!verifyData.passed) {
-    return { verify: verifyData, complete: null };
+    return { evidence, verify: verifyData, complete: null };
   }
 
   // Complete (tranche release)
@@ -145,7 +178,7 @@ async function verifyAndCompleteMilestone(
 
   const completeData = await completeRes.json();
 
-  return { verify: verifyData, complete: completeData };
+  return { evidence, verify: verifyData, complete: completeData };
 }
 
 async function distributeDividends(baseUrl: string, authHeader: string) {
@@ -168,7 +201,7 @@ async function distributeDividends(baseUrl: string, authHeader: string) {
 
 type StepExecutor = () => Promise<any>;
 
-// 3호점(모집중, 시드 3,480구좌) 잔여 920구좌 청약 → 4,400구좌 완납 · escrow 4,400만 →
+// 3호점(모집중, 시드 3,480구좌) 잔여 920구좌 청약 → 4,400구좌 완납 · 신탁 4,400만 →
 // 마일스톤 seq1~4 순차 집행(트랜치 합계 4,400만 = 잔여 정확히 0) + 스텝7 수수료 풀 배당.
 function buildStepExecutors(baseUrl: string, authHeader: string): Record<number, StepExecutor> {
   return {
