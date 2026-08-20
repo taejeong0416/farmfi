@@ -3,9 +3,13 @@
 이 문서는 FarmFi 웹플랫폼의 AI 운영최적화가 **무엇을 어떻게 계산하는지** 하나도 남기지 않고 설명한다.
 읽고 나면 화면에 뜬 숫자 하나하나가 어느 식에서 나왔고 어떤 가정에 서 있는지 말할 수 있어야 한다.
 
-대상 코드는 `frontend/src/lib/optimization*.ts` · `crop-profiles.ts` · `growth-recipe-advanced.ts`,
+대상 코드는 `frontend/src/lib/optimization*.ts` · `crop-profiles.ts`,
 표시 화면은 `frontend/src/app/optimization/[projectId]/page.tsx`, 같은 계산을 내는 API는
 `frontend/src/app/api/optimization/[projectId]/route.ts` 다.
+
+생육 레시피 계층(`growth-recipe*.ts` · `crop-normalize.ts`)은 `growth-recipe-rationale.md`가
+담당한다. 두 문서의 경계는 §3.8에 있다 — 여기가 "정해진 목표를 어떻게 싸게 달성하나", 그쪽이
+"그 목표를 무엇으로 정하나"이고, 목적함수는 공유한다.
 
 기능 명세는 `docs/feature-spec.md` 9장이 담당한다. 두 문서의 역할이 다르다 — 명세는 **무엇을 만들지**를,
 이 문서는 **그 계산이 어떤 식과 가정 위에 서 있는지**를 적는다. 명세 9.0의 설계 원칙 여섯과 9.10의 신뢰도
@@ -427,23 +431,24 @@ $$\text{점수} = \hat\theta^\top x + \alpha\sqrt{x^\top A^{-1} x},\qquad A = I 
 견주는 건 공정하지 않다 — 그건 상한(오라클)이며 `gapToOracleFixed`로 따로 표시한다. 음수면 "사이트 수가 적어
 탐색 비용을 아직 회수하지 못했다"는 뜻이다.
 
-### 3.8 `growth-recipe-advanced.ts` — 최적 목표를 데이터에서 학습
+### 3.8 생육 레시피 — 최적 목표를 데이터에서 학습
 
-지금까지는 목표 DLI·온도를 작물 프로파일에서 가져왔다. 이 모듈은 그 목표 자체를 관측에서 추정한다.
+지금까지는 목표 DLI·온도를 작물 프로파일에서 가져왔다. 레시피 계층은 그 목표 자체를 관측에서 추정한다.
+환경↔수율 반응표면을 정규화 좌표에서 적합하고, 문헌·다른 품종·자체 데이터를 정밀도로 합성해
+6개 설정점을 구간과 함께 낸다.
 
-- **깊이 2 그래디언트 부스팅** — 깊이 1 스텀프는 순수 가법모델이라 상호작용을 못 본다. 2단 분할로 조건부
-  상호작용을 잡는다.
-- **SHAP 섀플리 값** — gain 기반 중요도는 트리 분할 우연에 편향된다. 섀플리 값은 모든 연합 순열에서의 평균 기여로
-  협조게임이론의 유일 공정 배분이다. 특성 6개면 $2^6 = 64$ 연합을 **정확 계산**한다(근사 아님).
-- **농학사전 정규화 하이브리드** — 1D 2차 회귀로 정점(최적점)을 추정하고 델타법으로 그 표준오차를 구한 뒤,
-  작물학 사전분포와 정규-정규 켤레 업데이트로 합친다.
-  $$\tau_{post} = \tau_{prior} + \tau_{lik},\qquad \mu_{post} = \frac{\tau_{prior}\mu_0 + \tau_{lik}\hat\theta}{\tau_{post}}$$
-  데이터가 적으면 농학 지식 쪽으로, 쌓이면 데이터 쪽으로 **매끄럽게** 이동한다(이진 절벽 없음). 사전 정보는
-  약 20개 관측치 등가로 잡는다.
-- **UCB 능동학습** — 사후 표준편차가 사전의 50% 이상 남은 요인만 다음 실험으로 제안한다. 재배 사이클마다 실험이
-  비싸므로 표본효율이 최우선이다.
+**이 계층은 별도 문서가 담당한다 — `growth-recipe-rationale.md`.** 분량이 이 문서의 한 절에 담기지
+않고, 다루는 질문도 다르다. 여기가 "정해진 목표를 싸게"라면 그쪽은 "그 목표를 무엇으로".
 
-신경망도 미분방정식도 쓰지 않는다. 이름을 정직하게 유지하는 것도 설계의 일부다.
+운영최적화 쪽에서 알아야 할 접점은 둘이다.
+
+- **목적함수를 공유한다.** 레시피 계층의 수익 최적화(`growth-recipe-profit.ts`)가 `resolveLighting`(§1.2) ·
+  `ledThermalCostPerHour`(§1.4) · `co2InjectionKgPerDay`(§4.3)를 그대로 호출한다. 같은 물리에 사본을
+  만들지 않는다는 원칙(§7 ②)이 계층 경계를 넘어서도 지켜진다. 그 결과 레시피가 내는 목표 DLI는 수율 최대점이
+  아니라 **수익 최대점**이다 — 엽채류 기준 15.95 → 13.13으로 내려온다.
+- **아직 배선되지 않았다.** `GET /api/spaces/[id]/recipe`와 적용 경로가 없어(build-plan W1), §1.1의
+  `dliTarget` 15와 정상범위는 여전히 `crop-profiles.ts`의 문헌값이다. 학습 결과가 이 문서의 계산에
+  들어오는 것은 그 배선 이후다.
 
 ### 3.9 `growth-monitoring.ts` — 최적화가 모니터링의 판정 방식을 바꾼다
 
@@ -882,7 +887,7 @@ TOU 요금표(24시간 주기)에 대해 매일 3시간씩 밀리면서 싼 시�
 | `optimization-params.ts` | 파라미터 레지스트리(값 + 근거 등급) |
 | `optimization-report.ts` | 리포트 조립 — 유일한 계산 진입점 |
 | `crop-profiles.ts` | 작물별 농학 상수 |
-| `growth-recipe-advanced.ts` | SHAP · 농학사전 하이브리드 · UCB 능동학습 |
+| `growth-recipe*.ts` · `crop-normalize.ts` | 생육 레시피 학습 — 별도 문서(`growth-recipe-rationale.md`) |
 | `growth-monitoring.ts` | DLI 달성률 판정 · 생육일 버킷 · 일중앙값 CUSUM · GDD 수확 예측 |
 | `prng.ts` | 시드 고정 난수 (재현성) |
 
