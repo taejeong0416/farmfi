@@ -132,7 +132,7 @@ const s = StyleSheet.create({
     minHeight: 66,
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: C.cardLine,
+    borderColor: C.line,
     borderRadius: 9,
     backgroundColor: "#fff",
   },

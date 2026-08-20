@@ -489,33 +489,33 @@ export function TimelineRow({
 }
 
 const s = StyleSheet.create({
-  stage: { flex: 1, backgroundColor: C.stageBg },
+  stage: { flex: 1, backgroundColor: C.paper },
   frame: { flex: 1, width: "100%", maxWidth: FRAME_MAX_WIDTH, alignSelf: "center", backgroundColor: C.paper },
 
   detailHeader: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    minHeight: 54,
+    minHeight: 56,
     borderBottomWidth: 1,
-    borderBottomColor: "#eae5dc",
-    paddingHorizontal: 12,
+    borderBottomColor: "rgba(201,206,201,0.5)",
+    paddingHorizontal: 16,
   },
   backBtn: { width: 34, height: 34, alignItems: "center", justifyContent: "center" },
   backChevron: { fontSize: 33, fontWeight: "300", color: C.ink, marginTop: -4 },
   detailHeaderCopy: { flex: 1 },
   detailTitle: { fontSize: 17, letterSpacing: -0.6, color: C.ink, fontWeight: "700" },
   detailSubtitle: { marginTop: 2, fontSize: 11, color: C.muted },
-  detailContent: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 32, gap: 10 },
+  detailContent: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 32, gap: 12 },
 
-  card: { borderWidth: 1, borderColor: C.line, borderRadius: 10, backgroundColor: "#fff" },
-  cardPadded: { paddingHorizontal: 13, paddingTop: 13, paddingBottom: 12 },
+  card: { borderWidth: 1, borderColor: C.line, borderRadius: 10, backgroundColor: C.paper },
+  cardPadded: { padding: 16 },
   cardTitleRow: { flexDirection: "row", alignItems: "center", gap: 7 },
-  cardTitleText: { flex: 1, fontSize: 16, letterSpacing: -0.4, color: C.ink, fontWeight: "600" },
+  cardTitleText: { flex: 1, fontSize: 16, color: C.ink, fontWeight: "600" },
   cardTitleRight: { marginLeft: "auto" },
 
   badge: { alignSelf: "flex-start", borderRadius: 5, paddingHorizontal: 8, paddingVertical: 4 },
-  badgeText: { fontSize: 10, fontWeight: "700" },
+  badgeText: { fontSize: 12, fontWeight: "600" },
 
   bar: { flex: 1, height: 7, borderRadius: 99, backgroundColor: "#f0eeea", overflow: "hidden" },
   barFill: { height: "100%", borderRadius: 99 },
@@ -546,7 +546,7 @@ const s = StyleSheet.create({
     justifyContent: "center",
     gap: 6,
     borderWidth: 1,
-    borderColor: C.cardLine,
+    borderColor: C.line,
     borderRadius: 9,
     backgroundColor: "#fff",
     paddingHorizontal: 4,
