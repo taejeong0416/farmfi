@@ -34,6 +34,7 @@ model User {
   operatedProjects      Project[]              @relation("ProjectOperator")
   investments           Investment[]
   subscriptions         Subscription[]
+  bankAccount           BankAccount?
 }
 
 // ─── 운영자 지원 신청 ───
@@ -514,11 +515,70 @@ model Investment {
   // 납입 결과
   transactionId String?
   failureReason String?
+  // 납입 예외 구분 (I-03E 네 분기)
+  // VIRTUAL_ACCOUNT_FAILED · DEPOSIT_EXPIRED · AMOUNT_MISMATCH · DEPOSIT_INQUIRY
+  failureCode   String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  virtualAccounts VirtualAccount[]
+  depositEvents   DepositEvent[]
 
   @@index([userId, createdAt])
   @@index([projectId, status])
+}
+
+// ─── 회수·환불 계좌 (C-I03) ───
+// 계좌번호 원문은 두지 않는다. 지급사 토큰 자리(accountToken)와 마스킹값만 남긴다.
+model BankAccount {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id])
+  bankName     String
+  maskedNumber String   // 표시용 (앞 3자리 · 뒤 4자리)
+  accountToken String   // 지급사 토큰 자리 — 지금은 계좌 식별 해시
+  holderName   String   // 확인된 예금주
+  verifiedAt   DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt @default(now())
+}
+
+// ─── 건별 가상계좌 (I-03) ───
+// 동의를 마친 신청 한 건에 대해 발급한다. 기한이 지나면 EXPIRED로 두고 새로 발급한다.
+model VirtualAccount {
+  id                String     @id @default(cuid())
+  investmentId      String
+  investment        Investment @relation(fields: [investmentId], references: [id])
+  provider          String     // 지급사 식별자
+  providerAccountId String     @unique // 지급사가 준 가상계좌 식별자
+  bankName          String
+  accountNumber     String
+  holderName        String     // 입금 받는 쪽 예금주 (신탁 계정)
+  amount            BigInt     // 입금해야 할 금액
+  expiresAt         DateTime
+  status            String     @default("ISSUED") // ISSUED · PAID · EXPIRED · CANCELLED
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt @default(now())
+
+  @@index([investmentId, createdAt])
+}
+
+// ─── 은행 입금 이벤트 ───
+// 같은 거래번호는 한 번만 처리한다(providerTransactionId unique).
+// CONFIRMED가 아닌 건은 관리자 검토 큐에서 사람이 판단한다.
+model DepositEvent {
+  id                    String     @id @default(cuid())
+  investmentId          String
+  investment            Investment @relation(fields: [investmentId], references: [id])
+  providerTransactionId String     @unique
+  amount                BigInt     // 실제 입금액
+  expectedAmount        BigInt     // 신청 금액
+  payerName             String?
+  status                String     // CONFIRMED · AMOUNT_MISMATCH · LATE
+  reviewedAt            DateTime?
+  reviewNote            String?
+  receivedAt            DateTime   @default(now())
+
+  @@index([status, receivedAt])
 }
 
 // ─── 정기구독 (구매자) ───
