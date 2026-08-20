@@ -21,7 +21,7 @@ Figma 화면을 옮기면서, 그 화면이 실제로 도는 데 필요한 API·
 3. 그 단위만 커밋한다 (`feat:` / `fix:` / `docs:` 접두)
 4. 판단이 갈렸던 지점은 `dev-log.md` 맨 위에 한 줄 남긴다
 
-세션이 바뀌어도 이 파일의 체크 상태가 진행 상황의 정본이다. 남은 Phase N은 최종 `.fig`가 들어와야 시작할 수 있으므로, 파일이 아직 없으면 대기 상태다.
+세션이 바뀌어도 이 파일의 체크 상태가 진행 상황의 정본이다. Phase N은 최종 `.fig`가 들어와야 시작할 수 있으니, 파일이 오기 전에는 Phase O부터 잡는다.
 
 ## 원칙
 
@@ -107,12 +107,14 @@ radius 6 · 8 · 10 · 12 · 14 · 999
 
 | 영역 | 있는 것 | 없는 것 |
 |---|---|---|
-| 인증 | `auth/*`, `identity/*` | — |
-| 투자 | `projects`, `portfolio`, `payouts`, `subscribe`(단일 호출) | 다단계 신청 상태(`Investment` 모델), 적합성 판정 |
-| 마일스톤 | `milestones/[id]/verify·complete·timeout`, AI 검증 4종 | 증빙 제출·승인 게이트 (`submitEvidence` / `approveMilestone`) |
-| 운영자 | `operator-applications`, `spaces` | 방문 예약, 교육 이수, 계약 서명 |
-| 정기구독(구매자) | `Product`, `Inventory`, `HarvestRecord`, `SalesRecord` | **모델·API 전부** |
-| 관리자 | `admin/notify`, `audit-logs`, `appeals`, `reports/institution` | 증빙 재검토 |
+| 인증 | `auth/*`, `identity/*`(OpenDID 실연동) | 계좌 예금주 확인, 동의 문서 버전·전자서명 저장 |
+| 투자 | `projects`, `investments/*`(적합성·동의·납입), `portfolio`, `payouts` | 가상계좌·은행 입금 웹훅, 수탁 지갑·보유 구좌 발행, 체인 잡 큐·대사 |
+| 마일스톤 | `evidence`·`approve`·`verify`(AI 4종)·`complete`·`timeout`·`appeals` | 검증 근거 조회, 관리자 심사 큐, `manual_review` 경로 |
+| 운영자 | `operator-applications`(방문·교육·계약이 이 PATCH 하나에 얹혀 있다) | 단계별 도메인 분리, 보증서 모델·발급·검증 |
+| 정기구독(구매자) | `Subscription`·`PickupOrder` 모델, `subscriptions/*`, `catalog` | 픽업 바코드 발급·스캔·수령 완료, 건너뛰기·일시정지 |
+| 운영 데이터 | `monitoring`, `optimization`, `briefing`, `iot/generate`, `sales`, `inventory` | 임계값 저장, 설비 연결·제어, 레시피 적용, NAV 조회, 매출·비용 확정 |
+| 관리자 | `admin/*`, `audit-logs`, `appeals`, `reports/institution` | 체인 잡·대사 콘솔, 매출·비용 확정 게이트 |
+| 운영자 앱 | 웹 API 8종 읽기 | 쓰기 경로 전부(증빙 촬영·제어·재고·일정·픽업·설정) |
 
 v2.1에서 정리 대상인 모델: `Escrow`(→신탁), `TokenHolding`(→보유 구좌), `Dividend`(→회수금).
 
@@ -280,6 +282,137 @@ Figma에 원본이 없으므로 A2 토큰과 A3 컴포넌트로 새로 그린다
 
 ---
 
+# 잔여 기능 · 기능명세서 기준
+
+Phase A~M은 화면과 그 화면이 도는 데 필요한 최소 API를 만들었다. 여기서부터는 명세서에 있는데 코드에 없는 기능이다. 순서는 `feature-spec.md` 16장(P0 → P1 → P2)과 `app-feature-spec.md` 15장을 따른다.
+
+외부 사업자가 정해지지 않은 것은 전부 어댑터 뒤에 Mock으로 만든다(명세 17.2). 도메인 서비스와 화면은 어댑터 구현체가 바뀌어도 그대로여야 한다.
+
+## Phase O · 투자금 납입 실계
+
+지금은 `investments/[id]/deposit`이 입금을 즉시 확정한다. 명세 5.2·3.4의 가상계좌 경로로 바꾼다.
+
+- [ ] **O1** `InvestmentPaymentAdapter` + Mock
+  가상계좌 발급·입금 조회·웹훅 서명 검증을 인터페이스 뒤로. 도메인 코드는 어댑터만 호출한다
+- [ ] **O2** 본인 명의 계좌 확인
+  `POST /api/bank-accounts/verify-holder` · `GET·PATCH /api/me/bank-account`. C-I03이 화면만 있고 저장하는 곳이 없다
+- [ ] **O3** 가상계좌 발급·입금 상태
+  `POST /api/investments/[id]/virtual-account` · `GET .../deposit-status`. `AWAITING_DEPOSIT` + 입금기한
+- [ ] **O4** 은행 입금 웹훅
+  `POST /api/webhooks/bank/deposits`. 제공사 서명 검증, `providerTransactionId` unique로 중복 웹훅 1회 처리, 금액 불일치는 `AMOUNT_MISMATCH`로 관리자 큐
+- [ ] **O5** I-03E 네 분기
+  발급 실패 · 입금기한 만료 · 금액 불일치 · 확인 지연(`POST .../deposit-inquiry`)을 화면에서 구분
+
+## Phase P · 체인 기록·보유 구좌 발행
+
+명세 10.4의 순서를 그대로 구현한다. `lib/onchain.ts`는 지금 마일스톤 검증·집행만 호출한다.
+
+- [ ] **P1** 투자자 수탁 지갑
+  1인 1지갑을 서버가 생성. 키는 암호화 키스토어에 두고 DB에는 `keyRef`만. 주소·잔액은 응답과 화면에 내보내지 않는다
+- [ ] **P2** `ChainGateway` + Outbox 워커
+  DB commit 후 비동기로 체인 호출. `confirmDeposit`과 `mintHolding`을 같은 `eventId` 계열로 묶되 각각 멱등 처리 — 발행만 실패하면 발행만 재시도
+- [ ] **P3** 실패 처리
+  지수 백오프 재시도, 초과 시 `CHAIN_FAILED` 운영 알림. 은행 입금은 취소하지 않는다. 이 구간 화면 문구는 `입금 확인 완료 · 기록 처리 중`
+- [ ] **P4** 체인 잡 콘솔
+  `GET /api/admin/chain-jobs?status=` · `POST /api/admin/chain-jobs/[eventId]/retry`
+- [ ] **P5** 대사
+  10분 주기로 `CHAIN_PENDING`·`SUBMITTED` 영수증 재조회, 하루 한 번 DB↔체인 건수 대조. 불일치는 자동 수정하지 않고 감사 큐로(`GET /api/admin/reconciliation`)
+
+명세 10.6의 함수 이름(`confirmDeposit` `mintHolding` `recordDisbursement` …)과 `contracts/`의 현재 함수가 다르다. P2에서 매핑표를 먼저 정하고, 컨트랙트 수정이 필요하면 별도 단위로 뺀다.
+
+## Phase Q · 계약 동의·운영자 보증서
+
+- [ ] **Q1** 동의 문서
+  `GET /api/agreements/[id]` · `POST .../consent`. 문서 버전·동의 시각·전자서명값을 저장하고 문서 해시를 체인 기록 대상으로 넘긴다
+- [ ] **Q2** 신청 단계 도메인 분리
+  방문 예약·교육 이수·계약 서명이 `OperatorApplication` PATCH 하나에 얹혀 있다. `POST /api/operator/visits` · `/courses/[id]/progress` · `/contracts/[id]/signature-request`로 나누고 자동저장·이전 단계 이동을 살린다
+- [ ] **Q3** 보증서 모델
+  발급·정지·만료. 지점 운영계약 기간과 연동하고 교육·안전점검 만료 또는 중대 위반 시 정지(명세 17.1-8). `GET /api/operator/credential` · `POST /api/admin/operator-credentials` · `PATCH .../status`
+- [ ] **Q4** 앱 보증서 검증
+  `POST /api/operator/credential/verify`(QR·번호) · `GET /api/operator/stores`. 정지·만료면 앱 운영 기능을 막는다
+
+## Phase R · 픽업 완결
+
+B-09가 지금 `patchSubscription`으로 대신하고 있다. `PickupOrder` 모델은 이미 있다.
+
+- [ ] **R1** 바코드 발급·조회
+  `GET /api/pickups/[id]/barcode` · `GET /api/pickups/by-barcode/[token]`(앱 전용)
+- [ ] **R2** 수령 완료
+  `POST /api/pickups/[id]/complete`. 같은 바코드는 두 번 처리하지 않는다. 이미 사용 · 다른 지점 · 예정일 아님을 구분해 돌려준다
+- [ ] **R3** 오늘 픽업 예정
+  `GET /api/stores/[id]/pickups?date=` · `POST /api/pickups/[id]/prepared`. 팩 크기별 개수와 작물별 필요 수량 요약을 함께 준다
+
+## Phase S · 정산 입력과 지급
+
+- [ ] **S1** 매출·비용 입력·확정
+  `PUT /api/admin/projects/[id]/records` · `POST .../records/confirm`(사유 필수). 확정 전 값은 정산 계산에 들어가지 않는다
+- [ ] **S2** 지급 실패 처리
+  실패 사유별 재시도와 회수 계좌 수정 경로(I-08)
+- [ ] **S3** NAV 조회
+  `GET /api/projects/[id]/nav`. `lib/nav-calculator.ts`가 지금 `portfolio`에서만 쓰인다. 청약·집행 0건이면 표시하지 않는다
+
+## Phase T · 검증 근거와 심사 큐
+
+- [ ] **T1** 검증 근거 조회
+  `GET /api/milestones/[id]/verification`. 신호별 판정 초안·추출값·교차대조 결과·신뢰도
+- [ ] **T2** 관리자 심사 큐
+  `GET /api/admin/milestones/review-queue` · `POST .../review`(조건 항목별 판정 배열과 사유 필수)
+- [ ] **T3** `manual_review`
+  센서 결측·설비 무응답·자동 검증 실패는 자동 반려가 아니라 큐로 보낸다
+
+## Phase U · 앱 쓰기 경로
+
+앱은 지금 웹 API 8종을 읽기만 한다. 화면 안에서만 반영되는 동작을 서버에 붙인다.
+
+- [ ] **U1** 매장 컨텍스트
+  `GET /api/stores/[id]/summary` · `/alerts?type=&unreadOnly=` · `POST /api/alerts/[id]/acknowledge`
+- [ ] **U2** 생육 기록
+  `POST /api/crops/[id]/growth-records` · `/stores/[id]/schedules` · `/stores/[id]/harvests`
+- [ ] **U3** 재고
+  `POST /api/inventory/[id]/adjust` · `POST /api/stores/[id]/inventory`
+- [ ] **U4** 매출·설정
+  `GET /api/stores/[id]/sales/export?format=csv` · `PATCH /api/me` · `PUT /api/me/notification-settings`
+- [ ] **U5** 증빙 촬영 제출
+  앱 M-13이 증빙의 정본이다. 사진·영수증 다중 업로드(촬영 시각·위치 동봉, 서버가 파일 해시 계산), 보완 요청 사유 표시와 그 자리 재제출. 배정되지 않은 매장은 막는다
+
+## Phase V · 설비 연결과 제어 폐루프
+
+- [ ] **V1** 설비 배치·연결
+  `GET /api/stores/[id]/equipment` · `POST /api/equipment/[id]/link`(통신 테스트) · `DELETE .../link`(사유 필수). 필수 설비 100% 연결 + 통신 테스트 통과 + 센서 정상이 운영 가능 조건
+- [ ] **V2** 임계값 저장
+  `PUT /api/beds/[id]/thresholds`. 9.2 이상 판정과 같은 목표값을 본다
+- [ ] **V3** 제어 명령
+  `POST /api/beds/[id]/equipment/[id]/command`. 출력 상하한·변화율·최소 가동/정지 시간을 지키고, 목표에 못 미치면 원인과 함께 남긴다
+- [ ] **V4** 추종 기록
+  `lib/control-loop.ts`를 계획 → 제어 → 추종으로 닫는다. 이 루프가 열려 있으면 9.10 신뢰도가 `projected`를 벗어나지 못한다
+
+## Phase W · 운영 고도화
+
+- [ ] **W1** 생육 레시피
+  `GET /api/spaces/[id]/recipe` · `POST .../recipe/apply`. `lib/growth-recipe.ts`가 아직 어디에도 붙어 있지 않다. 관측 3사이클 미만이면 작물 프로파일 값을 쓰고, 적용은 운영자가 누를 때만 한다
+- [ ] **W2** 최적화 적용
+  `POST /api/spaces/[id]/optimization/apply`. 산출값과 실제 적용값을 함께 기록하고, 정산·판정에는 적용값을 쓴다
+- [ ] **W3** 기관 성과 리포트 화면
+  API(`reports/institution`)는 있고 화면이 없다. CSV 내보내기 포함
+- [ ] **W4** 구독 상세 변경
+  건너뛰기·일시정지·해지. 다음 결제일 전날까지 해지, 픽업 3시간 전까지 변경(명세 17.1-9)
+
+## 명세와 화면 목록이 어긋나는 곳
+
+화면 ID는 Figma와 명세가 서로 다른 것을 가리킨다. 기능을 붙일 때 ID가 아니라 이름으로 찾는다.
+
+| 명세 | Figma | 영향 |
+|---|---|---|
+| O-12 매장 운영 현황(조회) | O-12 마일스톤 집행 완료 | 웹에 운영 현황 화면이 없다. 앱 M-04와 범위가 겹쳐 어디에 둘지 결정이 필요하다 |
+| O-13 생육 레시피·환경 최적화 | O-13 정산·지급 내역 | W1·W2가 붙을 화면이 없다 |
+| A-10 매출·비용 입력 | A-16 매출·비용 입력 (`/admin/ledger`) | S1은 A-16에 붙인다 |
+| A-11 기관 성과 리포트 | A-11 정산 결과 | W3이 붙을 화면이 없다 |
+| 앱 M-15 설비 연결 · M-16 오늘 픽업 예정 | 앱 36개에 없음 | V1·R3이 붙을 화면이 없다 |
+
+화면이 없는 기능은 최종 `.fig`(Phase N)에 있는지 먼저 확인한다. 최종본에도 없으면 A2 토큰과 A3 컴포넌트로 새로 그린다(Phase J와 같은 방식).
+
+---
+
 ## 검증
 
 **웹**
@@ -294,10 +427,15 @@ Figma에 원본이 없으므로 A2 토큰과 A3 컴포넌트로 새로 그린다
 - 렌더: USB 안드로이드 기기에서 실행 (`docs/dev-log.md`의 Expo 실행 절차)
 - 대조: `design/screens/farmfi-app/Page_1/<번호>_<이름>.txt`
 
+**잔여 기능 (Phase O~W)**
+- 통과 기준은 `feature-spec.md` 18장의 역할별 인수 테스트를 쓴다 — 중복 은행 웹훅이 와도 투자금 1회 반영, 같은 `eventId`로 재시도해도 보유 구좌 이중 발행 없음, 같은 바코드 2회 처리 불가, 승인되지 않은 마일스톤은 집행 API가 거부, 배정되지 않은 매장 데이터는 앱 어디에서도 안 보임
+- 어댑터는 Mock 구현체로 흐름 전체가 도는 것까지 확인한다
+
 ## 범위 밖
 
-- `contracts/` — 변경 없음
-- 수탁 지갑 · `HoldingLedger` · `FundCustodyAdapter` — `team-handoff-v2.1.md` PART 1의 체인 작업. 화면에 노출되지 않으므로 이 계획에 포함하지 않는다
+- `contracts/` 컨트랙트 코드 — 함수 매핑만 Phase P2에서 정하고, 수정이 필요하면 별도 단위로 뺀다
+- 외부 사업자 실계약 — 은행·PG·신탁·모바일 신분증 실 API는 명세 17.3 게이트다. 전부 Mock 어댑터로 개발한다
+- 투자 모집 기능의 실제 활성화 — 법률 검토와 금융 파트너 승인 전까지 feature flag로 비활성(명세 17.1-5)
 
 ## 금지 용어 잔존 범위
 
