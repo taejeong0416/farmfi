@@ -243,6 +243,12 @@ export type DepositState = {
     status: string;
     receivedAt: string;
   } | null;
+  custody: {
+    mode: "mock" | "trust";
+    label: string;
+    separated: boolean;
+    trustee: string | null;
+  } | null;
 };
 
 /** 입금 대기 화면이 상태를 따라간다. 확정되면 polling을 끈다. */

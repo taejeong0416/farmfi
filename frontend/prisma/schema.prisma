@@ -42,6 +42,7 @@ model User {
   investments           Investment[]
   subscriptions         Subscription[]
   bankAccount           BankAccount?
+  custodyWallet         CustodyWallet?
 }
 
 // ─── 운영자 지원 신청 ───
@@ -617,6 +618,7 @@ model Investment {
   updatedAt  DateTime @updatedAt
   virtualAccounts VirtualAccount[]
   depositEvents   DepositEvent[]
+  issuances       HoldingIssuance[]
 
   @@index([userId, createdAt])
   @@index([projectId, status])
@@ -715,4 +717,50 @@ model PickupOrder {
   createdAt      DateTime     @default(now())
 
   @@index([subscriptionId, scheduledAt])
+}
+
+// ─── 수탁 지갑 (v2.1) ───
+// 투자자에게 주소·개인키·가스비를 보이지 않는다. 서버가 투자자 1인당 지갑 하나를
+// 만들어 들고 있고, 보유 구좌는 그 지갑 앞으로 발행된다.
+// Open DID의 Wallet SDK(신원·VC 보관)와는 완전히 다른 층이다. 섞지 않는다.
+model CustodyWallet {
+  id           String            @id @default(cuid())
+  userId       String            @unique
+  user         User              @relation(fields: [userId], references: [id])
+  chainAddress String            @unique
+  // 개인키 원문은 저장하지 않는다. 개발은 AES-256-GCM 암호화 키스토어(`local:` 접두),
+  // 운영은 KMS/HSM 참조값(`kms:` 접두)이 들어온다. 어느 쪽이든 이 값만으로는 키를
+  // 복원할 수 없다 — 마스터 키가 따로 있어야 한다.
+  keyRef       String
+  status       String            @default("ACTIVE") // ACTIVE · SUSPENDED
+  // 체인 신원 레지스트리 등록 시각. 등록돼야 2차 이전이 가능하다(발행은 게이트 밖).
+  registeredAt DateTime?
+  createdAt    DateTime          @default(now())
+  issuances    HoldingIssuance[]
+}
+
+// ─── 보유 구좌 발행 이력 (v2.1) ───
+// 입금 확인과 같은 트랜잭션에서 PENDING 행이 생기고(트랜잭셔널 아웃박스),
+// Chain Relay가 그 행을 집어 체인에 올린다. DB 커밋과 체인 전송을 한 트랜잭션에
+// 묶을 수 없으므로, 커밋된 의도를 남기고 전송은 재시도로 따라붙게 한다.
+model HoldingIssuance {
+  id            String        @id @default(cuid())
+  // 멱등 키. 은행 웹훅이 두 번 와도 같은 eventId면 발행은 한 번뿐이다.
+  eventId       String        @unique
+  investmentId  String
+  investment    Investment    @relation(fields: [investmentId], references: [id])
+  walletId      String
+  wallet        CustodyWallet @relation(fields: [walletId], references: [id])
+  units         Int
+  method        String        @default("mint") // mint · transfer · burn
+  status        String        @default("PENDING") // PENDING · SENT · CONFIRMED · CHAIN_FAILED · CANCELLED
+  chainTxHash   String?
+  attempts      Int           @default(0)
+  nextAttemptAt DateTime?
+  lastError     String?
+  occurredAt    DateTime      @default(now())
+  settledAt     DateTime?
+
+  @@index([status, nextAttemptAt])
+  @@index([investmentId])
 }
