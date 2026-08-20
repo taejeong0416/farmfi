@@ -1,0 +1,84 @@
+# 토스페이먼츠 가상계좌 연동 — 키 넣는 곳
+
+투자금 납입을 Mock에서 실제 토스페이먼츠로 바꾸는 절차. 코드는 다 붙어 있고 **키와 웹훅 주소만 넣으면 된다.**
+
+---
+
+## 1. 키를 넣는다
+
+`frontend/.env` (gitignore됨. 커밋하지 않는다)
+
+```bash
+PAYMENT_PROVIDER=toss
+TOSS_SECRET_KEY=<개발자센터 > API 키 > 시크릿 키>
+TOSS_VIRTUAL_ACCOUNT_BANK=20
+DEPOSIT_HOLDER_NAME=팜피 투자금 분리보관 계정
+```
+
+**시크릿 키만 필요하다.** 클라이언트 키는 결제창을 띄울 때 쓰는데, 우리는 서버에서
+`POST /v1/virtual-accounts`로 계좌를 직접 발급하므로 결제창을 거치지 않는다.
+구독 카드결제를 붙일 때가 되면 그때 클라이언트 키가 필요해진다.
+
+`TOSS_VIRTUAL_ACCOUNT_BANK`는 **상점에 열려 있는 은행**이어야 한다. 안 열린 은행을
+쓰면 발급이 거부된다.
+
+| 코드 | 은행 | 코드 | 은행 |
+|---|---|---|---|
+| 20 | 우리 | 88 | 신한 |
+| 04 | 국민 | 81 | 하나 |
+| 11 | 농협 | 32 | 부산 |
+| 03 | 기업 | 90 | 카카오뱅크 |
+
+Vercel 배포에도 같은 값을 넣는다: **Project Settings → Environment Variables**.
+
+---
+
+## 2. 웹훅을 등록한다
+
+개발자센터 → **웹훅** → 이벤트 `DEPOSIT_CALLBACK` 등록.
+
+```
+https://<배포 도메인>/api/webhooks/toss/deposits
+```
+
+로컬에서 시험하려면 ngrok 같은 터널이 필요하다. 토스가 localhost로는 못 쏜다.
+
+**`PAYMENT_STATUS_CHANGED`는 등록하지 않는다.** 둘 다 켜면 가상계좌 입금 때 웹훅이
+두 번 오는데, 우리 쪽은 `DEPOSIT_CALLBACK`만 처리한다.
+
+---
+
+## 3. 확인
+
+1. 투자 신청 → 가상계좌가 발급되면 화면에 은행·계좌번호가 뜬다
+2. 그 계좌로 신청 금액을 입금
+3. 토스가 웹훅을 쏘고 → 신청이 `COMPLETED`로 바뀐다
+4. 관리자 콘솔 **발행 현황**(`/admin/issuances`)에 보유 구좌 발행 건이 뜬다
+
+키가 틀리면 서버 로그에 이렇게 남는다:
+
+```
+[toss] 가상계좌 발급 실패 401 UNAUTHORIZED_KEY 인증되지 않은 시크릿 키...
+```
+
+사용자 화면에는 "입금 계좌를 만들지 못했어요"만 나간다. 지급사 원문은 노출하지 않는다.
+
+---
+
+## 우리 코드가 토스와 다르게 맞춘 두 가지
+
+**웹훅 검증이 HMAC이 아니다.** 토스는 계좌 발급 응답에 `secret`을 주고, 입금 웹훅
+본문의 `secret`과 대조하라고 한다. 계좌마다 값이 달라 전역 시크릿 하나로는 검증할 수
+없다. `VirtualAccount.providerSecret`에 저장해 두고 웹훅 라우트가 맞춰 본다.
+
+**웹훅에 금액이 없다.** 본문은 `{ createdAt, secret, status, transactionKey, orderId }`
+뿐이다. 입금액은 발급 때 지정한 금액이므로 저장된 계좌에서 읽는다.
+
+---
+
+## 되돌리기
+
+`PAYMENT_PROVIDER`를 비우면 즉시 Mock으로 돌아간다. 코드 수정 불필요.
+
+`MOCK_BANK_SCENARIO`로 실패 분기를 재현할 수 있다 —
+`issue_failed`(발급 실패) · `mismatch`(금액 불일치) · `delayed`(확인 지연).

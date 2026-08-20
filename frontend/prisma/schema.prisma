@@ -659,6 +659,9 @@ model VirtualAccount {
   amount            BigInt     // 입금해야 할 금액
   expiresAt         DateTime
   status            String     @default("ISSUED") // ISSUED · PAID · EXPIRED · CANCELLED
+  // 지급사가 웹훅 검증용으로 준 값. 토스페이먼츠는 HMAC 서명이 아니라 발급 때 받은
+  // secret을 웹훅 본문의 secret과 대조하는 방식이라 계좌마다 따로 들고 있어야 한다.
+  providerSecret    String?
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt @default(now())
 

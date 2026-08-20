@@ -93,6 +93,7 @@ async function createAccountRow(
     holderName: string;
     amount: bigint;
     expiresAt: Date;
+    providerSecret?: string | null;
   },
 ) {
   // 이전에 발급한 계좌는 닫는다. 유효한 계좌는 항상 한 건이다.
@@ -109,6 +110,7 @@ async function createAccountRow(
       holderName: issued.holderName,
       amount: issued.amount,
       expiresAt: issued.expiresAt,
+      providerSecret: issued.providerSecret ?? null,
       status: "ISSUED",
     },
   });

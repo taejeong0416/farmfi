@@ -1,4 +1,7 @@
 import { createHash, createHmac, timingSafeEqual } from "crypto";
+// 순환 import다(payment-toss가 이 파일의 타입·에러를 쓴다). 어댑터 클래스는
+// 모듈 로드 시점이 아니라 getPaymentAdapter 안에서만 생성하므로 안전하다.
+import { TossPaymentsAdapter } from "@/lib/payment-toss";
 
 /**
  * 투자금 납입 지급사 어댑터 (명세 17.2 · InvestmentPaymentAdapter).
@@ -21,6 +24,8 @@ export type VirtualAccountIssued = {
   holderName: string;
   amount: bigint;
   expiresAt: Date;
+  /** 지급사가 웹훅 검증용으로 준 값. 없는 제공사도 있어 선택이다. */
+  providerSecret?: string | null;
 };
 
 export type BankDeposit = {
@@ -168,8 +173,30 @@ function bigIntMax(a: bigint, b: bigint): bigint {
 
 let adapter: InvestmentPaymentAdapter | null = null;
 
+/**
+ * 쓸 어댑터를 고른다. `PAYMENT_PROVIDER=toss`면 토스페이먼츠,
+ * 아니면 Mock이다. 키가 없는 채로 toss를 켜면 조용히 Mock으로 내려가지 않고
+ * 바로 던진다 — 실서비스에서 Mock 계좌가 나가는 것이 최악이다.
+ */
 export function getPaymentAdapter(): InvestmentPaymentAdapter {
-  if (!adapter) adapter = new MockInvestmentPaymentAdapter();
+  if (adapter) return adapter;
+
+  if (process.env.PAYMENT_PROVIDER === "toss") {
+    const secretKey = process.env.TOSS_SECRET_KEY;
+    if (!secretKey) {
+      throw new Error(
+        "PAYMENT_PROVIDER=toss인데 TOSS_SECRET_KEY가 없습니다. 키를 넣거나 PAYMENT_PROVIDER를 비우세요.",
+      );
+    }
+    adapter = new TossPaymentsAdapter(
+      secretKey,
+      process.env.TOSS_VIRTUAL_ACCOUNT_BANK ?? "20",
+      process.env.DEPOSIT_HOLDER_NAME ?? "팜피 투자금 분리보관 계정",
+    );
+    return adapter;
+  }
+
+  adapter = new MockInvestmentPaymentAdapter();
   return adapter;
 }
 
