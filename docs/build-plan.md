@@ -316,7 +316,7 @@ B-09가 지금 `patchSubscription`으로 대신하고 있다. `PickupOrder` 모�
 - [ ] **W1** 생육 레시피
   `GET /api/spaces/[id]/recipe` · `POST .../recipe/apply`. 학습 스택(`lib/growth-recipe*.ts`)과 `/optimization/[projectId]` 표시는 되어 있고, API와 적용 경로가 없다. 그래서 9.2 최적대 판정과 9.5 목표 DLI는 여전히 `crop-profiles`의 문헌값을 본다 — 이 항목이 그 둘을 학습값에 연결한다. 적용은 운영자가 누를 때만 하고, 산출값과 적용값을 함께 남긴다
 - [ ] **W1a** 레시피 관측을 실데이터로
-  지금 학습 입력은 `growth-recipe-synth.ts`의 합성 관측이다. `HarvestRecord`(수확량)와 `IotData`(사이클 환경 평균)를 조인해 실 관측으로 바꾼다. **`IotData`에 EC 필드가 없어** 6요인 중 하나는 원천이 없다 — 스키마에 추가할지 작물 프로파일 값으로 고정할지 정하는 것이 이 항목의 첫 결정이다. 앱과 공유하는 스키마라 추가 시 `prisma/schema.prisma` 변경을 알린다
+  지금 학습 입력은 `growth-recipe-synth.ts`의 합성 관측이다. `HarvestRecord`(수확량)와 `IotData`(사이클 환경 평균)를 조인해 실 관측으로 바꾼다. 6요인 원천은 `IotData`에 다 있다(`ecLevel`은 nullable — 공개데이터 온실 계열처럼 EC를 안 재는 원천이 섞인다). 관측을 만들 때 `ecLevel`이 null인 사이클을 **뺄지 작물 프로파일 `ecTarget` 중앙으로 채울지**가 이 항목의 결정이다. 채우면 EC 방향 학습이 죽고, 빼면 표본이 준다
 - [ ] **W2** 최적화 적용
   `POST /api/spaces/[id]/optimization/apply`. 산출값과 실제 적용값을 함께 기록하고, 정산·판정에는 적용값을 쓴다
 - [ ] **W3** 기관 성과 리포트 화면

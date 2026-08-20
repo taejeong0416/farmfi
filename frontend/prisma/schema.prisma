@@ -266,6 +266,11 @@ model IotData {
   co2Level       Float
   lightIntensity Float
   phLevel        Float
+  // 양액 전기전도도 (dS/m). 양분 농도의 대리 지표로 pH와 한 쌍이다.
+  // nullable인 이유: EC를 재지 않는 원천(공개데이터 온실 계열)이 섞인다.
+  // 0을 기본값으로 두면 "안 쟀다"와 "0으로 쟀다"가 같은 값이 되어, 학습이
+  // 물리적으로 불가능한 EC 0을 실측으로 먹는다.
+  ecLevel        Float?
   growthRate     Float    @default(0)
   anomalyScore   Float    @default(0)
   isAnomaly      Boolean  @default(false)

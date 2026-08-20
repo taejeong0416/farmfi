@@ -75,6 +75,7 @@ export async function POST(request: NextRequest) {
     const [tLo, tHi] = crop.healthyRanges.temperature;
     const [hLo, hHi] = crop.healthyRanges.humidity;
     const [pLo, pHi] = crop.healthyRanges.phLevel;
+    const [ecLo, ecHi] = crop.ecTarget;
     const lit = hour >= 6 && hour < 22;
     const baseLux = (crop.dliTarget * 1e6) / (LUX_TO_PPFD * 3600 * 16);
 
@@ -90,6 +91,13 @@ export async function POST(request: NextRequest) {
     const co2Level = (lit ? 900 : 1050) + (Math.random() - 0.5) * 120;
     const lightIntensity = lit ? baseLux * (0.97 + Math.random() * 0.06) : 0;
     const phLevel = (pLo + pHi) / 2 + (Math.random() - 0.5) * 0.3;
+    // 작물이 양분보다 물을 빨리 가져가 EC는 하루에 걸쳐 오르고 아침 보충으로 되돌아온다.
+    // 점등 중에는 증산이 커져 상승이 빠르다 (iot-seed.ts와 같은 물리).
+    const ecLevel =
+      (ecLo + ecHi) / 2 +
+      (hour / 24) * (lit ? 0.16 : 0.06) -
+      0.05 +
+      (Math.random() - 0.5) * 0.06;
 
     // 생장 진행 — 이전 판독의 진행률에 그 스텝의 적산온도·광량 기여분을 더한다.
     const latest = await prisma.iotData.findFirst({
@@ -115,6 +123,7 @@ export async function POST(request: NextRequest) {
         co2Level: Math.round(co2Level),
         lightIntensity: Math.round(lightIntensity),
         phLevel: Math.round(phLevel * 100) / 100,
+        ecLevel: Math.round(ecLevel * 100) / 100,
         growthRate: Math.round(growthRate * 10) / 10,
       },
     });

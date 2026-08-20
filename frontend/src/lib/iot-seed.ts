@@ -29,6 +29,7 @@ export interface IotSeedRecord {
   co2Level: number;
   lightIntensity: number;
   phLevel: number;
+  ecLevel: number;
   growthRate: number;
   anomalyScore: number;
   isAnomaly: boolean;
@@ -85,6 +86,10 @@ export function buildIotRecords(
   const { cropKey, schedule = "conventional", scenario = true } = options;
   const crop = getCrop(cropKey);
   const rand = mulberry32(hashSeed(projectId));
+  // EC는 자기 난수 스트림을 쓴다. 같은 rand를 나눠 쓰면 채널을 하나 더할 때마다
+  // 뽑기 순서가 밀려 온도·습도 계열이 통째로 바뀐다 — 심어둔 고장 시나리오가
+  // 게이트 경계를 넘나들게 된다. 채널을 늘려도 기존 계열은 그대로여야 한다.
+  const randEc = mulberry32(hashSeed(`${projectId}:ec`));
 
   // 정상 운전점 — 최적대 중앙. 목표 DLI를 명기 16h로 채우는 조도를 역산한다.
   const [tLo, tHi] = crop.healthyRanges.temperature;
@@ -93,6 +98,8 @@ export function buildIotRecords(
   const humidityMid = (hLo + hHi) / 2;
   const [pLo, pHi] = crop.healthyRanges.phLevel;
   const phMid = (pLo + pHi) / 2;
+  const [ecLo, ecHi] = crop.ecTarget;
+  const ecMid = (ecLo + ecHi) / 2;
   const litHours = 16;
   const baseLux = (crop.dliTarget * 1e6) / (LUX_TO_PPFD * 3600 * litHours);
 
@@ -139,6 +146,10 @@ export function buildIotRecords(
         (lit ? 900 : 1050) + (rand() - 0.5) * 120;
       let lightIntensity = lit ? baseLux * ledFactor * (0.97 + rand() * 0.06) : 0;
       let phLevel = phMid + (rand() - 0.5) * 0.3;
+      // 작물이 양분보다 물을 빨리 가져가 EC는 하루에 걸쳐 올라가고, 아침 보충으로
+      // 되돌아온다. 점등 중에는 증산이 커져 상승이 빠르다. 톱니 모양이 되는 이유다.
+      const ecRise = (hour / 24) * (lit ? 0.16 : 0.06);
+      let ecLevel = ecMid + ecRise - 0.05 + (randEc() - 0.5) * 0.06;
 
       let isAnomaly = false;
       let anomalyScore = rand() * 1.5;
@@ -151,6 +162,8 @@ export function buildIotRecords(
         hour < PUMP_FAULT_HOURS[1]
       ) {
         phLevel = 4.2 + rand() * 0.2;
+        // 같은 고장이 EC도 끌어내린다 — 양액이 안 돌면 양분 보충이 멈춘다
+        ecLevel = ecLo - 0.25 + randEc() * 0.1;
         isAnomaly = true;
         anomalyScore = 4.2 + rand();
       } else if (rand() < 0.005) {
@@ -174,6 +187,7 @@ export function buildIotRecords(
         co2Level: Math.round(co2Level),
         lightIntensity: Math.round(lightIntensity),
         phLevel: Math.round(phLevel * 100) / 100,
+        ecLevel: Math.round(ecLevel * 100) / 100,
         growthRate: 0, // 그날 환경이 확정된 뒤 채운다
         anomalyScore: Math.round(anomalyScore * 100) / 100,
         isAnomaly,
