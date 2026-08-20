@@ -1,0 +1,63 @@
+FRAME "13 재고 상세·조정"  @1121,4743 402x1042  fill=#FFFFFF
+  FRAME "Body"  @1121,4846 402x924
+    FRAME "Card"  @1137,4862 370x215  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      FRAME "Frame"  @1149,4882 345x40
+        ROUNDED_RECTANGLE "image 1"  @1149,4882 40x40
+        FRAME "Frame"  @1203,4882 291x40
+          TEXT "12팩"  @1203,4882 47x29  text='12팩'  Pretendard Bold 24px  #1B5E3F
+          FRAME "Frame"  @1203,4915 200x7  fill=#EAF6EE  r=4
+            ROUNDED_RECTANGLE "Rectangle"  @1203,4915 200x7  fill=#1B5E3F  r=4
+      FRAME "Frame"  @1149,4934 345x33
+        TEXT "현재 수량"  @1149,4942 318x16  text='현재 수량'  Pretendard Regular 13px  #656863
+        TEXT "12팩"  @1468,4942 27x17  text='12팩'  Pretendard Regular 14px  #1D1E1C
+      FRAME "Frame"  @1149,4979 345x33
+        TEXT "부족 기준"  @1149,4987 318x16  text='부족 기준'  Pretendard Regular 13px  #656863
+        TEXT "10팩"  @1468,4987 27x17  text='10팩'  Pretendard Regular 14px  #1D1E1C
+      FRAME "Frame"  @1149,5024 345x33
+        TEXT "상태"  @1149,5032 320x16  text='상태'  Pretendard Regular 13px  #656863
+        TEXT "정상"  @1470,5032 25x17  text='정상'  Pretendard Regular 14px  #1D1E1C
+    FRAME "Card"  @1137,5093 370x381  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      INSTANCE "App/CardTitle"  @1149,5113 345x21
+      FRAME "Frame"  @1149,5145 345x37
+        FRAME "Frame"  @1149,5145 80x37  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+          TEXT "-5"  @1182,5155 15x17  text='-5'  Pretendard Regular 14px  #1D1E1C
+        FRAME "Frame"  @1238,5145 80x37  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+          TEXT "-1"  @1271,5155 13x17  text='-1'  Pretendard Regular 14px  #1D1E1C
+        FRAME "Frame"  @1326,5145 80x37  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+          TEXT "+1"  @1359,5155 15x17  text='+1'  Pretendard Regular 14px  #1D1E1C
+        FRAME "Frame"  @1414,5145 80x37  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+          TEXT "+5"  @1445,5155 18x17  text='+5'  Pretendard Regular 14px  #1D1E1C
+      INSTANCE "App/Field"  @1149,5194 345x73
+      TEXT "조정 사유 *"  @1149,5279 72x19  text='조정 사유 *'  Pretendard SemiBold 16px  #3C3F3A
+      FRAME "Frame"  @1149,5310 345x80  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+        TEXT "예: 베드 A 수확 입고"  @1162,5322 112x17  text='예: 베드 A 수확 입고'  Pretendard Regular 14px  #656863
+      INSTANCE "App/PrimaryButton"  @1149,5402 345x52  fill=#1B5E3F  r=8
+    FRAME "Card"  @1137,5490 370x189  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      INSTANCE "App/CardTitle"  @1149,5510 345x21
+      FRAME "Frame"  @1149,5544 345x50
+        FRAME "Frame"  @1149,5544 8x12
+          ELLIPSE "Ellipse"  @1149,5548 8x8  fill=#1B5E3F
+        FRAME "Frame"  @1169,5544 325x50
+          TEXT "08.13 10:20 · 운영자 1"  @1169,5544 101x13  text='08.13 10:20 · 운영자 1'  Pretendard Regular 11px  #656863
+          TEXT "+14팩 → 12팩"  @1169,5559 83x17  text='+14팩 → 12팩'  Pretendard Regular 14px  #1B5E3F
+          TEXT "베드 A 수확 입고"  @1169,5578 86x16  text='베드 A 수확 입고'  Pretendard Regular 13px  #1D1E1C
+      FRAME "Frame"  @1149,5608 345x50
+        FRAME "Frame"  @1149,5608 8x12
+          ELLIPSE "Ellipse"  @1149,5612 8x8  fill=#A33A2A
+        FRAME "Frame"  @1169,5608 325x50
+          TEXT "08.13 09:05 · POS 연동"  @1169,5608 110x13  text='08.13 09:05 · POS 연동'  Pretendard Regular 11px  #656863
+          TEXT "-6팩 → -2팩"  @1169,5623 73x17  text='-6팩 → -2팩'  Pretendard Regular 14px  #A33A2A
+          TEXT "매장 판매"  @1169,5642 49x16  text='매장 판매'  Pretendard Regular 13px  #1D1E1C
+    INSTANCE "App/GhostButton"  @1137,5694 370x44  fill=#1B5E3F@0.08  stroke=#1B5E3F@0.08/1  r=8
+  FRAME "TopBar"  @1121,4743 402x103
+    FRAME "Status Bar"  @1121,4743 402x47
+      INSTANCE "Status Bar"  @1121,4743 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+    FRAME "HeaderRow"  @1121,4790 402x56
+      INSTANCE "App/DetailHeader"  @1121,4790 402x56  fill=#FFFFFF  stroke=#C9CEC9@0.50/1
+      INSTANCE "App/Badge"  @1468,4806 37x22  fill=#EEF4EA  r=5
+  FRAME "Frame 2121453045"  @1121,5749 402x36
+    FRAME "Group 828"  @1121,5749 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @1121,5749 402x36
+      FRAME "Group 819"  @1251,5771 144x5
+        FRAME "Group 665"  @1251,5771 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @1251,5771 144x5  fill=#070428  r=107

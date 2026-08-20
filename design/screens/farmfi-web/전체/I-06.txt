@@ -1,0 +1,90 @@
+FRAME "I-06 · 투자자 홈"  @6115,1700 1440x633  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "선"  @6116,1761 1438x1  fill=#EDEDEB
+  TEXT "FarmFi"  @6148,1720 55x20  text='FarmFi'  Pretendard Bold 17px  #14542E
+  TEXT "프로젝트"  @6236,1724 46x15  text='프로젝트'  Pretendard Regular 13px  #4A4A4A
+  TEXT "내 투자"  @6307,1724 38x15  text='내 투자'  Pretendard Regular 13px  #4A4A4A
+  TEXT "알림"  @6370,1724 23x15  text='알림'  Pretendard Regular 13px  #4A4A4A
+  FRAME "아이콘"  @7464,1723 16x16
+    VECTOR "Vector"  @7470,1726 5x5  stroke=#8A8A8A/1
+    VECTOR "Vector"  @7468,1732 9x4  stroke=#8A8A8A/1
+  TEXT "김투자"  @7488,1724 35x15  text='김동일'  Pretendard Regular 13px  #4A4A4A
+  TEXT "2026.03.15 기준"  @6148,1825 91x15  text='2026.03.15 기준'  Pretendard Regular 13px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @6148,1859 982x85  stroke=#E5E5E3/1  r=10
+  TEXT "3,400,000"  @6169,1898 123x29  text='3,400,000'  Pretendard Medium 24px  #1A1A1A
+  TEXT "원"  @6291,1907 14x18  text='원'  Pretendard Regular 15px  #4A4A4A
+  ROUNDED_RECTANGLE "선"  @6394,1860 1x83  fill=#EDEDEB
+  TEXT "3"  @6415,1898 16x29  text='3'  Pretendard Medium 24px  #1A1A1A
+  TEXT "개"  @6430,1907 14x18  text='개'  Pretendard Regular 15px  #4A4A4A
+  ROUNDED_RECTANGLE "선"  @6639,1860 1x83  fill=#EDEDEB
+  TEXT "배당 예정액"  @6660,1877 60x15  text='예상 회수액'  Inter Regular 13px  #8A8A8A
+  TEXT "86,400"  @6660,1898 86x29  text='86,400'  Pretendard Medium 24px  #14542E
+  TEXT "원"  @6745,1907 14x18  text='원'  Pretendard Regular 15px  #4A4A4A
+  ROUNDED_RECTANGLE "선"  @6884,1860 1x83  fill=#EDEDEB
+  TEXT "지급 완료액"  @6905,1877 60x15  text='지급 완료액'  Pretendard Regular 13px  #8A8A8A
+  TEXT "124,800"  @6905,1898 95x29  text='124,800'  Pretendard Medium 24px  #1A1A1A
+  TEXT "원"  @6999,1907 14x18  text='원'  Pretendard Regular 15px  #4A4A4A
+  TEXT "전체 보기"  @7086,1973 46x14  text='전체 보기'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @6148,2001 982x271  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "선"  @6149,2091 980x1  fill=#F2F2F0
+  TEXT "부산 전포동 미니팜 1호"  @6169,2019 126x16  text='부산 전포동 미니팜 1호'  Pretendard Medium 14px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @6169,2046 940x5  fill=#EDEDEB
+  ROUNDED_RECTANGLE "면"  @6169,2046 376x5  fill=#14542E
+  TEXT "3단계 설비 설치 ·"  @6169,2058 89x15  text='3단계 설비 설치 ·'  Pretendard Regular 12px  #4A4A4A
+  TEXT "검증중"  @6257,2058 33x15  text='검증중'  Pretendard Regular 12px  #4A4A4A
+  TEXT "5단계 중 2단계 집행 완료"  @6984,2058 126x15  text='5단계 중 2단계 집행 완료'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "선"  @6149,2181 980x1  fill=#F2F2F0
+  TEXT "서울 성수동 미니팜 2호"  @6169,2109 128x16  text='서울 성수동 미니팜 2호'  Pretendard Medium 14px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @6169,2136 940x5  fill=#EDEDEB
+  ROUNDED_RECTANGLE "면"  @6169,2136 188x5  fill=#14542E
+  TEXT "2단계 설비 발주 ·"  @6169,2148 89x15  text='2단계 설비 발주 ·'  Pretendard Regular 12px  #4A4A4A
+  TEXT "통과"  @6257,2148 23x15  text='통과'  Pretendard Medium 12px  #14542E
+  TEXT "5단계 중 1단계 집행 완료"  @6986,2148 124x15  text='5단계 중 1단계 집행 완료'  Pretendard Regular 12px  #8A8A8A
+  TEXT "대전 둔산동 미니팜 1호"  @6169,2199 126x16  text='대전 둔산동 미니팜 1호'  Pretendard Medium 14px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @6169,2226 940x5  fill=#EDEDEB
+  ROUNDED_RECTANGLE "면"  @6169,2226 564x5  fill=#14542E
+  TEXT "3단계 설비 설치 ·"  @6169,2238 89x15  text='3단계 설비 설치 ·'  Pretendard Regular 12px  #4A4A4A
+  TEXT "보류"  @6257,2238 23x15  text='보류'  Pretendard Medium 12px  #A34A3D
+  TEXT "5단계 중 3단계 집행 완료"  @6984,2238 126x15  text='5단계 중 3단계 집행 완료'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @7162,1788 360x243  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "선"  @7163,1833 358x1  fill=#EDEDEB
+  TEXT "최근 알림"  @7181,1803 53x16  text='최근 알림'  Pretendard Bold 14px  #1A1A1A
+  ROUNDED_RECTANGLE "선"  @7163,1899 358x1  fill=#F2F2F0
+  ROUNDED_RECTANGLE "면"  @7163,1834 3x66  fill=#14542E
+  TEXT "2단계 설비 발주 집행 완료"  @7184,1849 133x15  text='2단계 설비 발주 집행 완료'  Pretendard Medium 13px  #1A1A1A
+  TEXT "서울 성수동 2호 · 8,200,000원"  @7184,1872 151x14  text='서울 성수동 2호 · 8,200,000원'  Pretendard Regular 12px  #757575
+  TEXT "03.14"  @7474,1872 30x14  text='03.14'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "선"  @7163,1964 358x1  fill=#F2F2F0
+  TEXT "3단계 검증 보류"  @7181,1915 83x15  text='3단계 검증 보류'  Pretendard Medium 13px  #4A4A4A
+  TEXT "대전 둔산동 1호"  @7181,1937 75x14  text='대전 둔산동 1호'  Pretendard Regular 12px  #757575
+  TEXT "03.15"  @7474,1937 30x14  text='03.15'  Pretendard Regular 12px  #8A8A8A
+  TEXT "1분기 배당 지급 예정"  @7181,1980 106x15  text='1분기 회수금 지급 예정'  Inter Regular 13px  #4A4A4A
+  TEXT "부산 전포동 1호 · 86,400원"  @7181,2003 133x14  text='부산 전포동 1호 · 86,400원'  Pretendard Regular 12px  #757575
+  TEXT "03.10"  @7474,2003 30x14  text='03.10'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @7162,2047 360x214  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "선"  @7163,2092 358x1  fill=#EDEDEB
+  ROUNDED_RECTANGLE "선"  @7163,2134 358x1  fill=#F2F2F0
+  FRAME "아이콘"  @7490,2107 13x13
+    VECTOR "Vector"  @7495,2110 3x6  stroke=#B6B6B4/1
+  ROUNDED_RECTANGLE "선"  @7163,2176 358x1  fill=#F2F2F0
+  FRAME "아이콘"  @7490,2149 13x13
+    VECTOR "Vector"  @7495,2152 3x6  stroke=#B6B6B4/1
+  ROUNDED_RECTANGLE "선"  @7163,2218 358x1  fill=#F2F2F0
+  FRAME "아이콘"  @7490,2191 13x13
+    VECTOR "Vector"  @7495,2194 3x6  stroke=#B6B6B4/1
+  TEXT "운영 콘솔"  @7181,2232 49x15  text='운영 콘솔'  Pretendard Regular 13px  #1A1A1A
+  FRAME "아이콘"  @7490,2233 13x13
+    VECTOR "Vector"  @7495,2236 3x6  stroke=#B6B6B4/1
+  FRAME "Frame"  @7162,2037 360x262  fill=#FFFFFF  stroke=#FFFFFF/1
+  TEXT "다른 서비스도 이용해보세요"  @7181,2062 173x18  text='다른 서비스도 이용해보세요'  Inter Bold 15px  #1A1A1A
+  TEXT "가까운 팜에서 원하는 작물을 골라 3·5·7종 믹스팩으로 픽업할 수 있어요."  @7181,2100 205x32  text='가까운 팜에서 원하는 작물을 골라\n3·5·7종 믹스팩으로 픽업할 수 있어요.'  Inter Regular 13px  #757575
+  FRAME "Frame"  @7181,2174 315x44  fill=#14542E  stroke=#14542E/1  r=6
+  TEXT "구매자 화면으로 전환"  @7269,2188 115x16  text='구매자 화면으로 전환'  Inter Medium 13px  #FFFFFF
+  TEXT "투자 화면은 그대로 유지됩니다."  @7181,2238 157x15  text='투자 화면은 그대로 유지됩니다.'  Inter Regular 12px  #757575
+  TEXT "FRIENDLY COPY / 10:552"  @6148,1789 477x27  text='김동일님, 투자한 프로젝트가 차근차근 진행 중이에요'  Inter Bold 22px  #1A1A1A
+  TEXT "FRIENDLY COPY / 10:555"  @6169,1877 115x16  text='지금까지 투자한 금액'  Inter Regular 13px  #8A8A8A
+  TEXT "FRIENDLY COPY / 10:559"  @6415,1877 88x16  text='함께한 프로젝트'  Inter Regular 13px  #8A8A8A
+  TEXT "FRIENDLY COPY / 10:570"  @6148,1970 108x18  text='내 투자 진행 상황'  Inter Bold 15px  #1A1A1A
+  TEXT "FRIENDLY COPY / 10:575"  @7018,2020 123x15  text='투자 신청 1,000,000원'  Inter Regular 12px  #8A8A8A
+  TEXT "FRIENDLY COPY / 10:583"  @7018,2110 124x15  text='투자 신청 1,400,000원'  Inter Regular 12px  #8A8A8A
+  TEXT "FRIENDLY COPY / 10:590"  @7018,2200 123x15  text='투자 신청 1,000,000원'  Inter Regular 12px  #8A8A8A
+  TEXT "FRIENDLY COPY / 10:599"  @7472,1804 48x15  text='투자 소식'  Inter Regular 12px  #8A8A8A

@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 // 시연하는 admin 콘솔. 세 API를 그대로 호출한다:
 //   PATCH /api/milestones/[id]/deadline  (⚠️ 데모 전용 — 기한 당기기)
 //   POST  /api/milestones/[id]/timeout   (기한 초과 → 실패 전환)
-//   POST  /api/projects/[id]/refund      (잔여 에스크로 비례 환불)
+//   POST  /api/projects/[id]/refund      (남은 신탁 자금 비례 환불)
 
 type Milestone = {
   id: string;
@@ -65,7 +65,7 @@ export function InvestorProtectionPanel() {
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error("목록 로드 실패"))))
       .then((data: { projects?: (ProjectSummary & { tokenSymbol: string | null })[] }) => {
         if (!alive) return;
-        // 펀딩 라운드(토큰 심볼 보유)만 대상 — 운영 전용 지점은 환불 개념이 없다.
+        // 모집 라운드만 대상 — 운영 전용 지점은 환불 개념이 없다.
         const list = (data.projects ?? []).filter((p) => p.tokenSymbol);
         setProjects(list);
         // 기본 선택은 데모 라운드(MF03) — /api/demo/step이 같은 심볼로 프로젝트를 찾는다.
@@ -180,7 +180,7 @@ export function InvestorProtectionPanel() {
             투자자 보호 — 기한 초과 · 실패 전환 · 환불
           </p>
           <p className="muted" style={{ margin: "6px 0 0" }}>
-            기한 당기기(데모 전용) → 타임아웃 실패 전환 → 잔여 에스크로 비례 환불 순서로
+            기한 당기기(데모 전용) → 타임아웃 실패 전환 → 남은 신탁 자금 비례 환불 순서로
             실행합니다.
           </p>
         </div>
@@ -214,7 +214,7 @@ export function InvestorProtectionPanel() {
               </strong>
             </li>
             <li>
-              <span className="muted">에스크로 (상태 · 잔여 / 잠김)</span>
+              <span className="muted">신탁 (상태 · 잔여 / 예치)</span>
               <strong>
                 {detail.escrow?.status ?? "—"} · {won(remaining)} / {won(locked)}
               </strong>
@@ -302,7 +302,7 @@ export function InvestorProtectionPanel() {
                   `/api/projects/${detail.id}/refund`,
                   "POST",
                   {},
-                  "잔여 에스크로 비례 환불 완료"
+                  "남은 신탁 자금 비례 환불 완료"
                 )
               }
             >
@@ -328,7 +328,7 @@ export function InvestorProtectionPanel() {
             (<code>block.timestamp &gt; milestoneDeadline</code>) 때문에 배포 후 180일 전에는
             revert합니다. 실패 사유를 그대로 표시하고 DB 상태로 시연을 진행합니다.
             ③ 은 DB 청약 기록(구좌 보유내역) 기준 비례 환불입니다. 컨트랙트{" "}
-            <code>refund()</code> 는 지갑으로 직접 온체인 청약한 투자자 전용 경로라 앱
+            <code>refund()</code> 는 원장에 직접 기록된 투자자 전용 경로라 앱
             청약분에는 쓸 수 없습니다.
           </p>
         </>

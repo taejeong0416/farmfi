@@ -1,0 +1,2 @@
+SYMBOL "App/PrimaryButton"  @164,1536 289x52  fill=#1B5E3F  r=8
+  TEXT "기록 저장"  @281,1553 55x17  text='기록 저장'  Inter Semi Bold 14px  #FFFFFF

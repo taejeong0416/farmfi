@@ -1,0 +1,113 @@
+FRAME "O-08 · 운영자 / 보증서 발급·앱 설치"  @9930,4400 1440x980  fill=#FBFBF9
+  ROUNDED_RECTANGLE "Rectangle"  @9930,4400 1440x64  fill=#FFFFFF  stroke=#E0E0D6/1
+  TEXT "FarmFi"  @9962,4421 57x21  text='FarmFi'  Inter Bold 17px  #0E6340
+  TEXT "운영"  @10050,4423 24x16  text='운영'  Inter Medium 13px  #0E6340
+  TEXT "공간 찾기"  @10104,4423 52x16  text='공간 찾기'  Inter Regular 13px  #171A14
+  TEXT "내 준비 현황"  @10180,4423 68x16  text='내 준비 현황'  Inter Regular 13px  #171A14
+  TEXT "보증서"  @10276,4423 36x16  text='보증서'  Inter Medium 13px  #0E6340
+  TEXT "이운영"  @11290,4423 36x16  text='이운영'  Inter Medium 13px  #171A14
+  TEXT "운영 준비가 모두 확인됐어요"  @9962,4508 353x36  text='운영 준비가 모두 확인됐어요'  Inter Bold 30px  #171A14
+  TEXT "이 보증서는 운영자 자격과 배정 공간을 증명하며, 운영자 앱에서 인증할 때 사용합니다."  @9962,4554 502x17  text='이 보증서는 운영자 자격과 배정 공간을 증명하며, 운영자 앱에서 인증할 때 사용합니다.'  Inter Regular 14px  #66665C
+  ROUNDED_RECTANGLE "Rectangle"  @10022,4618 760x620  stroke=#D1A84D/2  r=22
+  TEXT "FarmFi OPERATOR GUARANTEE"  @10062,4654 200x16  text='FarmFi OPERATOR GUARANTEE'  Inter Semi Bold 13px  #D1A84D
+  TEXT "운영자 보증서"  @10062,4692 173x36  text='운영자 보증서'  Inter Bold 30px  #F2D680
+  ROUNDED_RECTANGLE "Rectangle"  @10630,4650 106x30  fill=#F2D680  r=15
+  TEXT "발급 완료"  @10655,4658 48x15  text='발급 완료'  Inter Semi Bold 12px  #805714
+  TEXT "운영자"  @10062,4770 31x13  text='운영자'  Inter Medium 11px  #A6C9B2
+  TEXT "이운영"  @10062,4792 61x27  text='이운영'  Inter Semi Bold 22px  #FFFFFF
+  TEXT "배정 공간"  @10062,4846 44x13  text='배정 공간'  Inter Medium 11px  #A6C9B2
+  TEXT "부산 전포동 미니팜 1호"  @10062,4868 172x22  text='부산 전포동 미니팜 1호'  Inter Semi Bold 18px  #FFFFFF
+  TEXT "보증서 번호"  @10062,4922 54x13  text='보증서 번호'  Inter Medium 11px  #A6C9B2
+  TEXT "FF-OP-2026-0048"  @10062,4944 144x19  text='FF-OP-2026-0048'  Inter Medium 16px  #FFFFFF
+  TEXT "유효기간"  @10062,4992 41x13  text='유효기간'  Inter Medium 11px  #A6C9B2
+  TEXT "2026.08.18 — 운영 계약 종료일까지"  @10062,5014 218x17  text='2026.08.18 — 운영 계약 종료일까지'  Inter Regular 14px  #FFFFFF
+  ROUNDED_RECTANGLE "Rectangle"  @10524,4768 212x212  fill=#FFFFFF  r=10
+  ROUNDED_RECTANGLE "Rectangle"  @10540,4784 15x15  fill=#171A14  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10540,4804 15x15  fill=#171A14  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10540,4844 15x15  fill=#171A14  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10540,4904 15x15  fill=#171A14  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10540,4924 15x15  fill=#171A14  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10540,4944 15x15  fill=#171A14  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10560,4784 15x15  fill=#171A14  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10560,4804 15x15  fill=#171A14  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10560,4864 15x15  fill=#171A14  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10560,4924 15x15  fill=#171A14  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10560,4944 15x15  fill=#171A14  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10600,4784 15x15  fill=#171A14  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10600,4844 15x15  fill=#171A14  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10600,4904 15x15  fill=#171A14  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10620,4804 15x15  fill=#171A14  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10620,4864 15x15  fill=#171A14  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10620,4924 15x15  fill=#171A14  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10660,4784 15x15  fill=#171A14  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10660,4844 15x15  fill=#171A14  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10660,4904 15x15  fill=#171A14  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10680,4784 15x15  fill=#171A14  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10680,4804 15x15  fill=#171A14  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10680,4864 15x15  fill=#171A14  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10680,4924 15x15  fill=#171A14  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10700,4784 15x15  fill=#171A14  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10700,4804 15x15  fill=#171A14  r=2
+  TEXT "‘Farmfi’ 앱에서 QR 인증"  @10565,4996 124x15  text='‘Farmfi’ 앱에서 QR 인증'  Inter Medium 12px  #B8D6C4
+  ROUNDED_RECTANGLE "Rectangle"  @10062,5086 674x1  fill=#45785E
+  TEXT "발급 기관 FarmFi"  @10062,5114 93x15  text='발급 기관  FarmFi'  Inter Medium 12px  #D1A84D
+  TEXT "공간 배정과 운영 자격이 유효한 동안 사용할 수 있습니다."  @10062,5146 261x13  text='공간 배정과 운영 자격이 유효한 동안 사용할 수 있습니다.'  Inter Regular 11px  #B8D6C4
+  TEXT "검증 해시 7F2A · 91C4 · B830"  @10062,5182 137x12  text='검증 해시  7F2A · 91C4 · B830'  Inter Regular 10px  #8CB29C
+  ROUNDED_RECTANGLE "Rectangle"  @10846,4618 492x246  fill=#FFFFFF  stroke=#E0E0D6/1  r=14
+  TEXT "보증서 사용 방법"  @10870,4642 125x22  text='보증서 사용 방법'  Inter Semi Bold 18px  #171A14
+  ROUNDED_RECTANGLE "Rectangle"  @10870,4686 26x26  fill=#EDF5ED  r=13
+  TEXT "1"  @10879,4692 6x13  text='1'  Inter Bold 11px  #0E6340
+  TEXT "운영자 앱에서 ‘보증서 인증’ 선택"  @10910,4690 380x15  text='운영자 앱에서 ‘보증서 인증’ 선택'  Inter Medium 12px  #171A14
+  ROUNDED_RECTANGLE "Rectangle"  @10870,4734 26x26  fill=#EDF5ED  r=13
+  TEXT "2"  @10879,4740 7x13  text='2'  Inter Bold 11px  #0E6340
+  TEXT "보증서 QR 스캔 또는 번호 입력"  @10910,4738 380x15  text='보증서 QR 스캔 또는 번호 입력'  Inter Medium 12px  #171A14
+  ROUNDED_RECTANGLE "Rectangle"  @10870,4782 26x26  fill=#EDF5ED  r=13
+  TEXT "3"  @10879,4788 8x13  text='3'  Inter Bold 11px  #0E6340
+  TEXT "본인 확인 후 배정 매장과 자동 연결"  @10910,4786 380x15  text='본인 확인 후 배정 매장과 자동 연결'  Inter Medium 12px  #171A14
+  ROUNDED_RECTANGLE "Rectangle"  @10846,4890 492x174  fill=#EDF5ED  r=14
+  TEXT "FarmFi 운영자 앱에서 시작하세요"  @10870,4916 420x22  text='FarmFi 운영자 앱에서 시작하세요'  Inter Bold 17px  #0E6340
+  TEXT "앱을 설치하고 보증서를 인증하면 배정 매장 확인과 설비 연결을 바로 시작할 수 있어요."  @10870,4948 451x29  text='앱을 설치하고 보증서를 인증하면 배정 매장 확인과 설비 연결을 바로 시작할 수 있어요.'  Inter Regular 12px  #66665C
+  ROUNDED_RECTANGLE "Rectangle"  @10846,5090 236x48  fill=#0E6340  r=9
+  TEXT "iPhone용 다운로드"  @10916,5105 107x16  text='iPhone용 다운로드'  Inter Semi Bold 13px  #FFFFFF
+  ROUNDED_RECTANGLE "Rectangle"  @11102,5090 236x48  fill=#FFFFFF  stroke=#0E6340/1  r=9
+  TEXT "Android용 다운로드"  @11148,5105 113x16  text='Android용 다운로드'  Inter Semi Bold 13px  #0E6340
+  ROUNDED_RECTANGLE "Rectangle"  @10846,5166 492x72  fill=#FFFFFF  stroke=#E0E0D6/1  r=12
+  TEXT "보증서 상태"  @10870,5186 59x15  text='보증서 상태'  Inter Regular 12px  #66665C
+  TEXT "유효 · 공간 배정 완료"  @11155,5186 113x16  text='유효 · 공간 배정 완료'  Inter Semi Bold 13px  #0E6340
+  TEXT "정보가 달라지면 FarmFi에 변경을 요청해 주세요."  @10870,5214 226x13  text='정보가 달라지면 FarmFi에 변경을 요청해 주세요.'  Inter Regular 11px  #66665C
+  ROUNDED_RECTANGLE "Rectangle"  @10038,4634 728x588  stroke=#D1A84D/1  r=18
+  ELLIPSE "Ellipse"  @10628,5092 92x92  fill=#F2D680  stroke=#D1A84D/3
+  ELLIPSE "Ellipse"  @10638,5102 72x72  stroke=#9E7324/1
+  TEXT "F"  @10664,5114 18x36  text='F'  Inter Bold 30px  #9E7324
+  TEXT "VERIFIED"  @10653,5153 41x13  text='VERIFIED'  Inter Bold 9px  #9E7324
+  ROUNDED_RECTANGLE "Rectangle"  @10062,5086 674x1  fill=#D1A84D
+  ROUNDED_RECTANGLE "Rectangle"  @10540,4784 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10560,4784 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10600,4784 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10660,4784 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10680,4784 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10700,4784 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10540,4804 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10560,4804 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10620,4804 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10680,4804 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10700,4804 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10540,4844 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10600,4844 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10660,4844 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10560,4864 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10620,4864 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10680,4864 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10540,4904 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10600,4904 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10660,4904 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10540,4924 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10560,4924 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10620,4924 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10680,4924 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10540,4944 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10560,4944 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10600,4944 15x15  fill=#0F120F  r=2
+  ROUNDED_RECTANGLE "Rectangle"  @10660,4944 15x15  fill=#0F120F  r=2
+  TEXT "FARMFI"  @10657,5145 34x11  text='FARMFI'  Inter Bold 9px  #8C6114
+  ROUNDED_RECTANGLE "FarmFi App Logo"  @10868,4980 64x60  r=12

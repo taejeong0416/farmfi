@@ -1,0 +1,22 @@
+FRAME "O-12 · 마일스톤 집행 완료"  @19980,4500 465x567  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+  TEXT "서울 성수동 미니팜 2호"  @20013,4530 110x14  text='서울 성수동 미니팜 2호'  Pretendard Regular 12px  #8A8A8A
+  TEXT "2단계 설비 발주집행이 완료되었습니다"  @20013,4554 178x51  text='2단계 설비 발주집행이 완료되었습니다'  Pretendard Bold 20px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @20013,4627 399x85  stroke=#E5E5E3/1  r=10
+  TEXT "집행 금액"  @20034,4645 49x15  text='집행 금액'  Pretendard Regular 13px  #8A8A8A
+  TEXT "8,200,000"  @20034,4666 122x29  text='8,200,000'  Pretendard Medium 24px  #14542E
+  TEXT "원"  @20155,4675 14x18  text='원'  Pretendard Regular 15px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @20013,4726 399x121  stroke=#E5E5E3/1  r=8
+  ROUNDED_RECTANGLE "선"  @20014,4766 397x1  fill=#F2F2F0
+  TEXT "집행 시각"  @20030,4738 47x15  text='집행 시각'  Pretendard Regular 12px  #8A8A8A
+  TEXT "2026.03.14 11:02"  @20294,4739 102x15  text='2026.03.14 11:02'  Pretendard Medium 13px  #1A1A1A
+  ROUNDED_RECTANGLE "선"  @20014,4806 397x1  fill=#F2F2F0
+  TEXT "수취처"  @20030,4778 33x15  text='수취처'  Pretendard Regular 12px  #8A8A8A
+  TEXT "(주)어반설비"  @20330,4779 66x15  text='(주)어반설비'  Pretendard Medium 13px  #1A1A1A
+  TEXT "집행 번호"  @20030,4818 47x15  text='집행 번호'  Pretendard Regular 12px  #8A8A8A
+  TEXT "EX-2026-0314-0021"  @20272,4819 124x15  text='EX-2026-0314-0021'  Pretendard Medium 13px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @20013,4861 399x49  fill=#FCFCFA  stroke=#EDEDEB/1  r=8
+  TEXT "다음 단계인 3단계 설비 설치 증빙을 제출할…"  @20029,4878 275x15  text='다음 단계인 3단계 설비 설치 증빙을 제출할 수 있습니다.'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @20013,4930 399x46  fill=#14542E  r=6
+  TEXT "다음 증빙 제출하기"  @20161,4945 104x16  text='다음 증빙 제출하기'  Pretendard Medium 14px  #FFFFFF
+  ROUNDED_RECTANGLE "면"  @20013,4986 399x46  fill=#FFFFFF  stroke=#D6D6D4/1  r=6
+  TEXT "집행 내역 보기"  @20174,5000 77x16  text='집행 내역 보기'  Pretendard Medium 14px  #1A1A1A

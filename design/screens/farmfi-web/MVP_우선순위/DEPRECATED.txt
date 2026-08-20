@@ -1,0 +1,22 @@
+  ROUNDED_RECTANGLE "선"  @18561,1846 463x1  fill=#EDEDEB
+  TEXT "지갑 재바인딩 요청"  @18581,1814 112x18  text='지갑 재바인딩 요청'  Pretendard Bold 15px  #1A1A1A
+  TEXT "현재 등록 주소"  @18581,1867 72x15  text='현재 등록 주소'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @18581,1890 423x70  fill=#FCFCFA  stroke=#EDEDEB/1  r=8
+  TEXT "0x8F3A···92B7"  @18596,1918 90x14  text='0x8F3A···92B7'  Pretendard Regular 12px  #8A8A8A
+  TEXT "새 지갑 주소"  @18581,1974 61x15  text='새 지갑 주소'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @18581,1998 423x70  stroke=#99A39C/1  r=8
+  TEXT "0xC17D···4E20"  @18596,2026 90x14  text='0xC17D···4E20'  Pretendard Regular 12px  #1A1A1A
+  TEXT "요청 사유"  @18581,2082 47x15  text='요청 사유'  Pretendard Regular 12px  #8A8A8A
+  TEXT "지갑 앱 변경"  @18605,2105 61x15  text='지갑 앱 변경'  Pretendard Regular 12px  #1A1A1A
+  ELLIPSE "점"  @18581,2106 15x15  stroke=#14542E/4
+  TEXT "기기 분실 · 키 재발급"  @18605,2129 103x15  text='기기 분실 · 키 재발급'  Pretendard Regular 12px  #4A4A4A
+  ELLIPSE "점"  @18581,2130 15x15  stroke=#CFCFCC/1
+  TEXT "기타 (사유 입력)"  @18605,2153 81x15  text='기타 (사유 입력)'  Pretendard Regular 12px  #4A4A4A
+  ELLIPSE "점"  @18581,2154 15x15  stroke=#CFCFCC/1
+  ROUNDED_RECTANGLE "면"  @18581,2186 423x40  stroke=#E5E5E3/1  r=8
+  TEXT "처리 상태"  @18597,2198 47x15  text='처리 상태'  Pretendard Regular 12px  #4A4A4A
+  TEXT "운영팀 검토 대기"  @18907,2198 82x15  text='운영팀 검토 대기'  Pretendard Medium 12px  #4A4A4A
+  ELLIPSE "점"  @18893,2204 7x7  fill=#B5B5B5
+  ROUNDED_RECTANGLE "면"  @18581,2247 423x46  fill=#14542E  r=6
+  TEXT "재바인딩 요청 제출"  @18741,2262 104x16  text='재바인딩 요청 제출'  Pretendard Medium 14px  #FFFFFF
+  TEXT "검토 중에는 배당 지급과 토큰 이전이 보류됩…"  @18581,2310 403x35  text='검토 중에는 배당 지급과 토큰 이전이 보류됩니다. 요청과 승인 이력은 감사 로그에 남습니다.'  Pretendard Regular 12px  #8A8A8A

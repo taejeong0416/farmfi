@@ -1,0 +1,2 @@
+SYMBOL "App/GhostButton"  @164,1608 289x44  fill=#1B5E3F@0.08  stroke=#1B5E3F@0.08/1  r=8
+  TEXT "확인 처리"  @281,1621 55x17  text='확인 처리'  Inter Semi Bold 14px  #656863

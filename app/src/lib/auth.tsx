@@ -5,7 +5,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { useRouter, useSegments } from "expo-router";
+import { useRouter, useSegments, type Href } from "expo-router";
 import { apiFetch, setToken, clearToken, getToken } from "./api";
 
 export type Role = "investor" | "operator" | "landlord" | "admin";
@@ -43,18 +43,23 @@ function useProtectedRoute(user: User | null, loading: boolean) {
   const segments = useSegments();
   const router = useRouter();
 
-  // 데모 우회 플래그. EXPO_PUBLIC_DEMO_BYPASS=1 이면 미로그인도 /farm 미리보기 허용
-  // (진입은 모니터링으로). 프로덕션에선 이 값을 비워 원래 /login 가드로 동작한다.
+  // 데모 우회 플래그. EXPO_PUBLIC_DEMO_BYPASS=1 이면 미로그인이어도 /farm/* 에
+  // 직접 URL로 들어온 경우는 통과시킨다. 프로덕션에선 이 값을 비운다.
   const demoBypass = process.env.EXPO_PUBLIC_DEMO_BYPASS === "1";
 
   useEffect(() => {
     if (loading) return;
     if (demoBypass && segments[0] === "farm") return;
-    const inAuthScreen = segments[0] === "login";
-    if (!user && !inAuthScreen) {
-      router.replace(demoBypass ? "/farm/monitoring" : "/login");
-    } else if (user && inAuthScreen) {
-      router.replace("/");
+    // Splash(루트)와 로그인·QR 스캔은 세션 없이 머물러도 되는 화면이다.
+    // Splash가 세션을 보고 직접 다음 화면을 고르므로 여기서 가로채지 않는다.
+    // useSegments의 유니온은 `.expo/types` 생성 시점의 라우트만 담으므로 문자열로 본다.
+    const seg = segments as string[];
+    const open = seg.length === 0 || seg[0] === "login" || seg[0] === "scan";
+    if (!user && !open) {
+      router.replace("/login");
+    } else if (user && seg[0] === "login") {
+      // typedRoutes 유니온은 `.expo/types`가 만들어질 때만 새 경로를 안다.
+      router.replace("/store-select" as Href);
     }
   }, [user, loading, segments, router, demoBypass]);
 }

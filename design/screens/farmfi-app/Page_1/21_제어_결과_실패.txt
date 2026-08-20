@@ -1,0 +1,45 @@
+FRAME "21 제어 결과 실패"  @1019,8063 402x874  fill=#F0F0EE
+  FRAME "09 베드 상세 모니터링"  @1019,8063 402x1036  fill=#FFFFFF
+    FRAME "Body"  @1019,8166 402x933
+      FRAME "SceneCard"  @1035,8182 370x270  r=10
+      FRAME "Card"  @1035,8468 370x240  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+        TEXT "환경 센서"  @1047,8480 60x19  text='환경 센서'  Pretendard SemiBold 16px  #1D1E1C
+        FRAME "Frame"  @1047,8509 345x76
+          INSTANCE "App/SensorTile"  @1047,8509 169x76  fill=#FDF6EA  r=9
+          INSTANCE "App/SensorTile"  @1224,8509 169x76  fill=#FFFFFF  stroke=#C9CEC9/1  r=9
+        FRAME "Frame"  @1047,8596 345x76
+          INSTANCE "App/SensorTile"  @1047,8596 169x76  fill=#FBF0EE  r=9
+          INSTANCE "App/SensorTile"  @1224,8596 169x76  fill=#FFFFFF  stroke=#C9CEC9/1  r=9
+        TEXT "기준 온도 18~26℃ · CO₂ 400~1000ppm"  @1047,8683 192x13  text='기준 온도 18~26℃ · CO₂ 400~1000ppm'  Pretendard Regular 11px  #656863
+      FRAME "Card"  @1035,8724 370x223  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+        TEXT "설비 제어"  @1047,8736 60x19  text='설비 제어'  Pretendard SemiBold 16px  #1D1E1C
+        INSTANCE "App/DeviceRow"  @1047,8759 345x56
+        INSTANCE "App/DeviceRow"  @1047,8819 345x56
+        INSTANCE "App/DeviceRow"  @1047,8879 345x56
+      INSTANCE "App/GhostButton"  @1035,8963 370x44  fill=#1B5E3F@0.08  stroke=#1B5E3F@0.08/1  r=8
+      INSTANCE "App/GhostButton"  @1035,9023 370x44  fill=#1B5E3F@0.08  stroke=#1B5E3F@0.08/1  r=8
+    FRAME "TopBar"  @1019,8063 402x103
+      INSTANCE "Status Bar"  @1019,8063 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+      FRAME "HeaderRow"  @1019,8110 402x56
+        INSTANCE "App/DetailHeader"  @1019,8110 402x56  fill=#FFFFFF  stroke=#C9CEC9@0.50/1
+        INSTANCE "App/Badge"  @1366,8126 37x22  fill=#FBF0EE  r=5
+    FRAME "Frame 2121453045"  @1019,9062 402x36
+      FRAME "Group 828"  @1019,9062 402x36
+        ROUNDED_RECTANGLE "Rectangle 375"  @1019,9062 402x36
+        FRAME "Group 819"  @1149,9085 144x5
+          FRAME "Group 665"  @1149,9085 144x5
+            ROUNDED_RECTANGLE "Home Indicator"  @1149,9085 144x5  fill=#070428  r=107
+  ROUNDED_RECTANGLE "Rectangle"  @1019,8063 402x874  fill=#000000@0.35
+  FRAME "App/Popup"  @1055,8367 330x277  fill=#FFFFFF  stroke=#C9CEC9/1  r=14
+    FRAME "Icon"  @1193,8389 54x54  fill=#A33A2A@0.15  r=27
+      TEXT "!"  @1216,8402 8x29  text='!'  Pretendard Bold 24px  #A33A2A
+    TEXT "제어 실패"  @1186,8455 67x21  text='제어 실패'  Pretendard SemiBold 18px  #1D1E1C
+    TEXT "환기 팬이 응답하지 않습니다. 실제 설비 상태를 다시 확인해주세요."  @1076,8488 289x28  text='환기 팬이 응답하지 않습니다.\n실제 설비 상태를 다시 확인해주세요.'  Pretendard Regular 12px  #4D504B
+    FRAME "Frame"  @1076,8528 289x30
+      TEXT "실패 시각 08.15 14:26"  @1164,8528 113x14  text='실패 시각  08.15 14:26'  Pretendard Regular 12px  #656863
+      TEXT "현재 설비 상태 정지"  @1172,8544 96x14  text='현재 설비 상태  정지'  Pretendard Regular 12px  #656863
+    FRAME "Actions"  @1076,8570 289x57
+      FRAME "취소"  @1076,8582 140x45  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+        TEXT "닫기"  @1133,8596 25x17  text='닫기'  Pretendard Regular 14px  #656863
+      FRAME "확인"  @1224,8582 140x45  fill=#1B5E3F  r=8
+        TEXT "다시 시도"  @1268,8596 52x17  text='다시 시도'  Pretendard SemiBold 14px  #FFFFFF

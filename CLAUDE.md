@@ -1,11 +1,35 @@
 # CLAUDE.md
 
-FarmFi — 도심 유휴공간 공실전환 창업 지원 인프라 (PNU 창의융합AI해커톤 2026).
+FarmFi — 토큰증권(STO) 활용 미니팜 자금집행 웹플랫폼 (PNU 창의융합AI해커톤 2026).
+도심 유휴공실을 스마트팜 매장으로 전환하는 자금을 STO로 조달하고, AI 검증에 연동된 에스크로가 단계 집행한다.
 사람용 가이드는 `CONTRIBUTING.md`, 문서 작성 규칙은 `docs/README.md` 참고.
 
+## 진행 중인 작업
+`docs/build-plan.md` — Figma 화면 98개(웹 62 · 앱 36) + 기능 개발. **체크박스가 진행 상황의 정본이다.**
+작업을 이어받을 때는 이 파일에서 체크 안 된 첫 항목부터 시작하고, 단위를 끝내면 체크·커밋한다.
+Phase A~M 체크는 잠정 `.fig` 기준으로 끝났다는 뜻이고, 최종 디자인 반영은 Phase N이 남아있다.
+
+## 디자인
+Figma가 기준이다. 원본은 `design/*.fig`, 화면별 좌표·색·폰트 덤프는 `design/screens/`.
+
+현재 `design/*.fig`는 **잠정본**이다. 지금까지 옮긴 화면은 전부 이 잠정본 기준이라 최종 디자인과 다를 수 있다. 최종본이 들어오면 `docs/build-plan.md` Phase N(교체·대조·재검증)을 따른다.
+
+색은 아래를 기본으로 쓴다.
+```
+ink #1A1A1A · body #4A4A4A · muted #8A8A8A
+line #E5E5E3 · line-soft #EDEDEB · surface #F2F2F0
+brand #14542E · brand-soft #EAF6EE · danger #A34A3D
+```
+- Figma에 남아있는 노랑·파랑과 연한 틴트 배경은 쓰지 않는다. 치환표는 `docs/figma-color-map.md`.
+- 상태를 여러 색으로 등급 매기지 않는다. 글자로 말한다.
+- 제3자 브랜드 로고(B-05 결제수단)는 원본 색을 쓴다.
+- 웹과 앱이 같은 색을 쓴다.
+
 ## 구조
-- `frontend/` — Next.js 14 (App Router) + Prisma + API Routes
-- `docs/` — 공유 문서 (기획안 v18 / 피벗 실행계획 / api-spec / dev-log)
+- `frontend/` — Next.js 14 (App Router) + Prisma + API Routes (웹 + 백엔드)
+- `app/` — Expo React Native 운영자 앱
+- `contracts/` — Foundry (Escrow · FarmToken · Dividend · RoundGate)
+- `docs/` — 공유 문서 (feature-spec / app-feature-spec / dev-log)
 
 ## 명령어 (frontend/)
 - 개발: `npm run dev`

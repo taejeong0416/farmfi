@@ -1,0 +1,68 @@
+FRAME "O-01 · 운영자 / 운영 공간 탐색"  @0,4400 1440x980  fill=#FBFBF9
+  ROUNDED_RECTANGLE "Rectangle"  @0,4400 1440x64  fill=#FFFFFF  stroke=#E0E0D6/1
+  TEXT "FarmFi"  @32,4421 57x21  text='FarmFi'  Inter Bold 17px  #0E6340
+  TEXT "운영"  @120,4423 24x16  text='운영'  Inter Medium 13px  #0E6340
+  TEXT "공간 찾기"  @174,4423 52x16  text='공간 찾기'  Inter Medium 13px  #171A14
+  TEXT "내 준비 현황"  @250,4423 68x16  text='내 준비 현황'  Inter Regular 13px  #171A14
+  TEXT "보증서"  @346,4423 36x16  text='보증서'  Inter Regular 13px  #171A14
+  TEXT "이운영"  @1360,4423 36x16  text='이운영'  Inter Medium 13px  #171A14
+  TEXT "어디에서 시작할지, 지도에서 먼저 살펴보세요"  @32,4504 561x36  text='어디에서 시작할지, 지도에서 먼저 살펴보세요'  Inter Bold 30px  #171A14
+  TEXT "운영 가능한 공실과 준비 상태를 한눈에 비교할 수 있어요."  @32,4550 332x17  text='운영 가능한 공실과 준비 상태를 한눈에 비교할 수 있어요.'  Inter Regular 14px  #63665C
+  ROUNDED_RECTANGLE "Rectangle"  @32,4590 1376x52  fill=#FFFFFF  stroke=#E0E0D6/1  r=10
+  TEXT "부산 전체"  @52,4607 52x16  text='부산 전체'  Inter Medium 13px  #171A14
+  TEXT "신청 가능한 공간"  @190,4607 92x16  text='신청 가능한 공간'  Inter Regular 13px  #171A14
+  TEXT "25평 내외"  @330,4607 56x16  text='25평 내외'  Inter Regular 13px  #171A14
+  TEXT "개점 예정일 전체"  @438,4607 92x16  text='개점 예정일 전체'  Inter Regular 13px  #171A14
+  ROUNDED_RECTANGLE "Rectangle"  @1178,4601 206x30  fill=#EDF5ED  r=8
+  TEXT "공간명 · 동네 검색"  @1196,4609 91x15  text='공간명 · 동네 검색'  Inter Regular 12px  #63665C
+  ROUNDED_RECTANGLE "Rectangle"  @32,4662 900x674  fill=#EDF0E8  stroke=#E0E0D6/1  r=14
+  ROUNDED_RECTANGLE "Rectangle"  @82,4700 160x596  fill=#BFE0EB  r=30
+  ROUNDED_RECTANGLE "Rectangle"  @270,4680 14x630  fill=#FFFFFF  r=7
+  ROUNDED_RECTANGLE "Rectangle"  @355,4680 14x630  fill=#FFFFFF  r=7
+  ROUNDED_RECTANGLE "Rectangle"  @440,4680 14x630  fill=#FFFFFF  r=7
+  ROUNDED_RECTANGLE "Rectangle"  @525,4680 14x630  fill=#FFFFFF  r=7
+  ROUNDED_RECTANGLE "Rectangle"  @610,4680 14x630  fill=#FFFFFF  r=7
+  ROUNDED_RECTANGLE "Rectangle"  @695,4680 14x630  fill=#FFFFFF  r=7
+  ROUNDED_RECTANGLE "Rectangle"  @780,4680 14x630  fill=#FFFFFF  r=7
+  ROUNDED_RECTANGLE "Rectangle"  @245,4740 640x12  fill=#FFFFFF  r=6
+  ROUNDED_RECTANGLE "Rectangle"  @245,4852 640x12  fill=#FFFFFF  r=6
+  ROUNDED_RECTANGLE "Rectangle"  @245,4964 640x12  fill=#FFFFFF  r=6
+  ROUNDED_RECTANGLE "Rectangle"  @245,5076 640x12  fill=#FFFFFF  r=6
+  ROUNDED_RECTANGLE "Rectangle"  @245,5188 640x12  fill=#FFFFFF  r=6
+  ELLIPSE "Ellipse"  @530,4810 34x34  fill=#0E6340  stroke=#FFFFFF/4
+  TEXT "전포 1호"  @512,4850 42x15  text='전포 1호'  Inter Semi Bold 12px  #171A14
+  TEXT "신청 가능"  @512,4867 44x13  text='신청 가능'  Inter Regular 11px  #63665C
+  ELLIPSE "Ellipse"  @745,5010 34x34  fill=#D9941F  stroke=#FFFFFF/4
+  TEXT "연산 2호"  @727,5050 44x15  text='연산 2호'  Inter Semi Bold 12px  #171A14
+  TEXT "준비 중"  @727,5067 34x13  text='준비 중'  Inter Regular 11px  #63665C
+  ELLIPSE "Ellipse"  @360,5120 34x34  fill=#6B7A73  stroke=#FFFFFF/4
+  TEXT "부곡 1호"  @342,5160 42x15  text='부곡 1호'  Inter Semi Bold 12px  #171A14
+  TEXT "모집 예정"  @342,5177 44x13  text='모집 예정'  Inter Regular 11px  #63665C
+  ROUNDED_RECTANGLE "Rectangle"  @52,5278 258x38  fill=#FFFFFF  stroke=#E0E0D6/1  r=8
+  TEXT "● 신청 가능 ● 준비 중 ● 모집 예정"  @68,5290 179x13  text='● 신청 가능   ● 준비 중   ● 모집 예정'  Inter Regular 11px  #63665C
+  TEXT "지도에 6개 공간이 있어요"  @964,4670 159x18  text='지도에 6개 공간이 있어요'  Inter Semi Bold 15px  #171A14
+  ROUNDED_RECTANGLE "Rectangle"  @964,4706 444x154  fill=#FFFFFF  stroke=#E0E0D6/1  r=12
+  TEXT "부산 전포동 미니팜 1호"  @984,4724 153x19  text='부산 전포동 미니팜 1호'  Inter Semi Bold 16px  #171A14
+  TEXT "부산진구 · 25평"  @984,4750 80x15  text='부산진구 · 25평'  Inter Regular 12px  #63665C
+  ROUNDED_RECTANGLE "Rectangle"  @984,4778 80x25  fill=#EDF5ED  r=12
+  TEXT "신청 가능"  @998,4784 44x13  text='신청 가능'  Inter Medium 11px  #0E6340
+  TEXT "공간 확정 · 설비 투자 모집 중"  @984,4818 270x15  text='공간 확정 · 설비 투자 모집 중'  Inter Regular 12px  #63665C
+  TEXT "자세히 보기 →"  @1288,4818 73x15  text='자세히 보기 →'  Inter Medium 12px  #0E6340
+  ROUNDED_RECTANGLE "Rectangle"  @964,4880 444x154  fill=#FFFFFF  stroke=#E0E0D6/1  r=12
+  TEXT "연산동 미니팜 2호"  @984,4898 121x19  text='연산동 미니팜 2호'  Inter Semi Bold 16px  #171A14
+  TEXT "연제구 · 28평"  @984,4924 69x15  text='연제구 · 28평'  Inter Regular 12px  #63665C
+  ROUNDED_RECTANGLE "Rectangle"  @984,4952 80x25  fill=#FAE8B8  r=12
+  TEXT "준비 중"  @998,4958 34x13  text='준비 중'  Inter Medium 11px  #63665C
+  TEXT "리모델링 일정 조율 중"  @984,4992 270x15  text='리모델링 일정 조율 중'  Inter Regular 12px  #63665C
+  TEXT "자세히 보기 →"  @1288,4992 73x15  text='자세히 보기 →'  Inter Medium 12px  #0E6340
+  ROUNDED_RECTANGLE "Rectangle"  @964,5054 444x154  fill=#FFFFFF  stroke=#E0E0D6/1  r=12
+  TEXT "부곡동 생활팜 1호"  @984,5072 119x19  text='부곡동 생활팜 1호'  Inter Semi Bold 16px  #171A14
+  TEXT "금정구 · 24평"  @984,5098 69x15  text='금정구 · 24평'  Inter Regular 12px  #63665C
+  ROUNDED_RECTANGLE "Rectangle"  @984,5126 80x25  fill=#EBEDEB  r=12
+  TEXT "모집 예정"  @998,5132 44x13  text='모집 예정'  Inter Medium 11px  #63665C
+  TEXT "기관 협의 진행 중"  @984,5166 270x15  text='기관 협의 진행 중'  Inter Regular 12px  #63665C
+  TEXT "자세히 보기 →"  @1288,5166 73x15  text='자세히 보기 →'  Inter Medium 12px  #0E6340
+  ROUNDED_RECTANGLE "Rectangle"  @964,5246 444x90  fill=#0A422B  r=12
+  TEXT "내 조건에 맞는 공간이 없나요?"  @984,5266 189x18  text='내 조건에 맞는 공간이 없나요?'  Inter Semi Bold 15px  #FFFFFF
+  TEXT "새 공간이 등록되면 알려드릴게요"  @984,5291 165x15  text='새 공간이 등록되면 알려드릴게요'  Inter Regular 12px  #D1E8DB
+  TEXT "알림 받기"  @1318,5279 48x15  text='알림 받기'  Inter Semi Bold 12px  #FFFFFF

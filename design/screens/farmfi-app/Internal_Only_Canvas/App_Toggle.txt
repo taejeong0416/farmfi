@@ -1,0 +1,5 @@
+FRAME "App/Toggle"  @731,2041 144x61  r=3
+  SYMBOL "on=true"  @748,2057 47x28  fill=#1B5E3F  r=51
+    ELLIPSE "Knob"  @770,2060 22x22  fill=#FFFFFF
+  SYMBOL "on=false"  @812,2057 47x28  fill=#C9CDC9  r=51
+    ELLIPSE "Knob"  @815,2060 22x22  fill=#FFFFFF

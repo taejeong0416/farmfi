@@ -1,0 +1,171 @@
+FRAME "App/BottomNav"  @-1677,1765 443x451  stroke=#1E1E1E/1  r=3
+  SYMBOL "active=매장"  @-1656,1785 402x65  fill=#FFFFFF  stroke=#F1F1F1/1
+    FRAME "매장"  @-1646,1790 76x56  fill=#EEF4EA@0.00  r=10
+      FRAME "line-report"  @-1620,1796 25x25
+        FRAME "Frame 4"  @-1615,1800 15x16
+          ROUNDED_RECTANGLE "Rectangle 1"  @-1615,1800 8x10  stroke=#1B5E3F/1  r=1
+          ROUNDED_RECTANGLE "Rectangle 3"  @-1605,1800 5x6  stroke=#1B5E3F/1  r=1
+          ROUNDED_RECTANGLE "Rectangle 4"  @-1605,1808 5x8  stroke=#1B5E3F/1  r=1
+          ROUNDED_RECTANGLE "Rectangle 2"  @-1615,1812 8x4  stroke=#1B5E3F/1  r=1
+      TEXT "대시보드"  @-1630,1825 45x15  text='대시보드'  Inter Regular 12px  #1B5E3F
+    FRAME "운영"  @-1569,1789 76x57  r=10
+      FRAME "TabIcon"  @-1544,1795 26x26  stroke=#676A67@0.00/2  r=4
+        FRAME "line-user"  @-1544,1796 25x25
+          VECTOR "Vector"  @-1534,1800 6x6  stroke=#A5A89F/1
+          VECTOR "Vector"  @-1538,1809 13x8  stroke=#A5A89F/1
+      TEXT "운영"  @-1543,1825 23x15  text='운영'  Inter Regular 12px  #A5A89F
+    FRAME "모니터링"  @-1493,1789 76x57  r=10
+      FRAME "TabIcon"  @-1468,1795 26x26  stroke=#676A67@0.00/2  r=4
+        FRAME "line-monitor"  @-1467,1796 25x25
+          VECTOR "Vector"  @-1464,1800 19x13  stroke=#A5A89F/1
+          VECTOR "Vector"  @-1459,1814 8x4  stroke=#A5A89F/1
+      TEXT "모니터링"  @-1478,1825 45x15  text='모니터링'  Inter Regular 12px  #A5A89F
+    FRAME "연동"  @-1417,1789 76x57  r=10
+      FRAME "TabIcon"  @-1392,1795 26x26  stroke=#676A67@0.00/2  r=4
+        FRAME "line-link"  @-1391,1796 25x25
+          VECTOR "Vector"  @-1390,1804 9x10  stroke=#A5A89F/1
+          VECTOR "Vector"  @-1382,1803 14x10  stroke=#A5A89F/1
+      TEXT "연동"  @-1390,1825 23x15  text='연동'  Inter Regular 12px  #A5A89F
+    FRAME "리포트"  @-1341,1789 76x57  r=10
+      FRAME "TabIcon"  @-1315,1795 26x26  stroke=#676A67@0.00/2  r=4
+        FRAME "line-report"  @-1315,1796 25x25
+          VECTOR "Vector"  @-1311,1810 4x7  stroke=#A5A89F/1
+          VECTOR "Vector"  @-1305,1805 4x12  stroke=#A5A89F/1
+          VECTOR "Vector"  @-1298,1799 4x19  stroke=#A5A89F/1
+      TEXT "리포트"  @-1319,1825 34x15  text='리포트'  Inter Regular 12px  #A5A89F
+  SYMBOL "active=운영"  @-1656,1871 402x65  fill=#FFFFFF  stroke=#F1F1F1/1
+    FRAME "매장"  @-1646,1876 76x56  r=10
+      FRAME "line-report"  @-1620,1882 25x25
+        FRAME "Frame 4"  @-1615,1886 15x16
+          ROUNDED_RECTANGLE "Rectangle 1"  @-1615,1886 8x10  stroke=#A5A89F/1  r=1
+          ROUNDED_RECTANGLE "Rectangle 3"  @-1605,1886 5x6  stroke=#A5A89F/1  r=1
+          ROUNDED_RECTANGLE "Rectangle 4"  @-1605,1894 5x8  stroke=#A5A89F/1  r=1
+          ROUNDED_RECTANGLE "Rectangle 2"  @-1615,1898 8x4  stroke=#A5A89F/1  r=1
+      TEXT "대시보드"  @-1630,1911 45x15  text='대시보드'  Inter Regular 12px  #A5A89F
+    FRAME "운영"  @-1569,1875 76x57  fill=#EEF4EA@0.00  r=10
+      FRAME "TabIcon"  @-1544,1882 26x26  stroke=#1B5E3F@0.00/2  r=4
+        FRAME "line-user"  @-1544,1882 25x25
+          VECTOR "Vector"  @-1534,1886 6x6  stroke=#1B5E3F/1
+          VECTOR "Vector"  @-1538,1895 13x8  stroke=#1B5E3F/1
+      TEXT "운영"  @-1543,1911 23x15  text='운영'  Inter Regular 12px  #1B5E3F
+    FRAME "모니터링"  @-1493,1875 76x57  r=10
+      FRAME "TabIcon"  @-1468,1882 26x26  stroke=#676A67@0.00/2  r=4
+        FRAME "line-monitor"  @-1467,1882 25x25
+          VECTOR "Vector"  @-1464,1886 19x13  stroke=#A5A89F/1
+          VECTOR "Vector"  @-1459,1900 8x4  stroke=#A5A89F/1
+      TEXT "모니터링"  @-1478,1911 45x15  text='모니터링'  Inter Regular 12px  #A5A89F
+    FRAME "연동"  @-1417,1875 76x57  r=10
+      FRAME "TabIcon"  @-1392,1882 26x26  stroke=#676A67@0.00/2  r=4
+        FRAME "line-link"  @-1391,1882 25x25
+          VECTOR "Vector"  @-1390,1890 9x10  stroke=#A5A89F/1
+          VECTOR "Vector"  @-1382,1889 14x10  stroke=#A5A89F/1
+      TEXT "연동"  @-1390,1911 23x15  text='연동'  Inter Regular 12px  #A5A89F
+    FRAME "리포트"  @-1341,1875 76x57  r=10
+      FRAME "TabIcon"  @-1315,1882 26x26  stroke=#676A67@0.00/2  r=4
+        FRAME "line-report"  @-1315,1882 25x25
+          VECTOR "Vector"  @-1311,1896 4x7  stroke=#A5A89F/1
+          VECTOR "Vector"  @-1305,1891 4x12  stroke=#A5A89F/1
+          VECTOR "Vector"  @-1298,1885 4x19  stroke=#A5A89F/1
+      TEXT "리포트"  @-1319,1911 34x15  text='리포트'  Inter Regular 12px  #A5A89F
+  SYMBOL "active=모니터링"  @-1656,1957 402x65  fill=#FFFFFF  stroke=#F1F1F1/1
+    FRAME "매장"  @-1646,1962 76x56  r=10
+      FRAME "line-report"  @-1620,1968 25x25
+        FRAME "Frame 4"  @-1615,1972 15x16
+          ROUNDED_RECTANGLE "Rectangle 1"  @-1615,1972 8x10  stroke=#A5A89F/1  r=1
+          ROUNDED_RECTANGLE "Rectangle 3"  @-1605,1972 5x6  stroke=#A5A89F/1  r=1
+          ROUNDED_RECTANGLE "Rectangle 4"  @-1605,1980 5x8  stroke=#A5A89F/1  r=1
+          ROUNDED_RECTANGLE "Rectangle 2"  @-1615,1984 8x4  stroke=#A5A89F/1  r=1
+      TEXT "대시보드"  @-1630,1997 45x15  text='대시보드'  Inter Regular 12px  #A5A89F
+    FRAME "운영"  @-1569,1961 76x57  r=10
+      FRAME "TabIcon"  @-1544,1968 26x26  stroke=#676A67@0.00/2  r=4
+        FRAME "line-user"  @-1544,1968 25x25
+          VECTOR "Vector"  @-1534,1972 6x6  stroke=#A5A89F/1
+          VECTOR "Vector"  @-1538,1981 13x8  stroke=#A5A89F/1
+      TEXT "운영"  @-1543,1997 23x15  text='운영'  Inter Regular 12px  #A5A89F
+    FRAME "모니터링"  @-1493,1961 76x57  fill=#EEF4EA@0.00  r=10
+      FRAME "TabIcon"  @-1468,1968 26x26  stroke=#1B5E3F@0.00/2  r=4
+        FRAME "line-monitor"  @-1467,1968 25x25
+          VECTOR "Vector"  @-1464,1972 19x13  stroke=#1B5E3F/1
+          VECTOR "Vector"  @-1459,1986 8x4  stroke=#1B5E3F/1
+      TEXT "모니터링"  @-1478,1997 45x15  text='모니터링'  Inter Regular 12px  #1B5E3F
+    FRAME "연동"  @-1417,1961 76x57  r=10
+      FRAME "TabIcon"  @-1392,1968 26x26  stroke=#676A67@0.00/2  r=4
+        FRAME "line-link"  @-1391,1968 25x25
+          VECTOR "Vector"  @-1390,1976 9x10  stroke=#A5A89F/1
+          VECTOR "Vector"  @-1382,1975 14x10  stroke=#A5A89F/1
+      TEXT "연동"  @-1390,1997 23x15  text='연동'  Inter Regular 12px  #A5A89F
+    FRAME "리포트"  @-1341,1961 76x57  r=10
+      FRAME "TabIcon"  @-1315,1968 26x26  stroke=#676A67@0.00/2  r=4
+        FRAME "line-report"  @-1315,1968 25x25
+          VECTOR "Vector"  @-1311,1983 4x7  stroke=#A5A89F/1
+          VECTOR "Vector"  @-1305,1977 4x12  stroke=#A5A89F/1
+          VECTOR "Vector"  @-1298,1971 4x19  stroke=#A5A89F/1
+      TEXT "리포트"  @-1319,1997 34x15  text='리포트'  Inter Regular 12px  #A5A89F
+  SYMBOL "active=연동"  @-1656,2043 402x65  fill=#FFFFFF  stroke=#F1F1F1/1
+    FRAME "매장"  @-1646,2048 76x56  r=10
+      FRAME "line-report"  @-1620,2054 25x25
+        FRAME "Frame 4"  @-1615,2058 15x16
+          ROUNDED_RECTANGLE "Rectangle 1"  @-1615,2058 8x10  stroke=#A5A89F/1  r=1
+          ROUNDED_RECTANGLE "Rectangle 3"  @-1605,2058 5x6  stroke=#A5A89F/1  r=1
+          ROUNDED_RECTANGLE "Rectangle 4"  @-1605,2066 5x8  stroke=#A5A89F/1  r=1
+          ROUNDED_RECTANGLE "Rectangle 2"  @-1615,2070 8x4  stroke=#A5A89F/1  r=1
+      TEXT "대시보드"  @-1630,2083 45x15  text='대시보드'  Inter Regular 12px  #A5A89F
+    FRAME "운영"  @-1569,2047 76x57  r=10
+      FRAME "TabIcon"  @-1544,2054 26x26  stroke=#676A67@0.00/2  r=4
+        FRAME "line-user"  @-1544,2054 25x25
+          VECTOR "Vector"  @-1534,2058 6x6  stroke=#A5A89F/1
+          VECTOR "Vector"  @-1538,2067 13x8  stroke=#A5A89F/1
+      TEXT "운영"  @-1543,2083 23x15  text='운영'  Inter Regular 12px  #A5A89F
+    FRAME "모니터링"  @-1493,2047 76x57  fill=#EEF4EA@0.00  r=10
+      FRAME "TabIcon"  @-1468,2054 26x26  stroke=#1B5E3F@0.00/2  r=4
+        FRAME "line-monitor"  @-1467,2054 25x25
+          VECTOR "Vector"  @-1464,2058 19x13  stroke=#A5A89F/1
+          VECTOR "Vector"  @-1459,2072 8x4  stroke=#A5A89F/1
+      TEXT "모니터링"  @-1478,2083 45x15  text='모니터링'  Inter Regular 12px  #A5A89F
+    FRAME "연동"  @-1417,2047 76x57  r=10
+      FRAME "TabIcon"  @-1392,2054 26x26  stroke=#676A67@0.00/2  r=4
+        FRAME "line-link"  @-1391,2054 25x25
+          VECTOR "Vector"  @-1390,2062 9x10  stroke=#1B5E3F/1
+          VECTOR "Vector"  @-1382,2061 14x10  stroke=#1B5E3F/1
+      TEXT "연동"  @-1390,2083 23x15  text='연동'  Inter Regular 12px  #1B5E3F
+    FRAME "리포트"  @-1341,2047 76x57  r=10
+      FRAME "TabIcon"  @-1315,2054 26x26  stroke=#676A67@0.00/2  r=4
+        FRAME "line-report"  @-1315,2054 25x25
+          VECTOR "Vector"  @-1311,2069 4x7  stroke=#A5A89F/1
+          VECTOR "Vector"  @-1305,2063 4x12  stroke=#A5A89F/1
+          VECTOR "Vector"  @-1298,2057 4x19  stroke=#A5A89F/1
+      TEXT "리포트"  @-1319,2083 34x15  text='리포트'  Inter Regular 12px  #A5A89F
+  SYMBOL "active=리포트"  @-1656,2129 402x65  fill=#FFFFFF  stroke=#F1F1F1/1
+    FRAME "매장"  @-1646,2134 76x56  r=10
+      FRAME "line-report"  @-1620,2140 25x25
+        FRAME "Frame 4"  @-1615,2144 15x16
+          ROUNDED_RECTANGLE "Rectangle 1"  @-1615,2144 8x10  stroke=#A5A89F/1  r=1
+          ROUNDED_RECTANGLE "Rectangle 3"  @-1605,2144 5x6  stroke=#A5A89F/1  r=1
+          ROUNDED_RECTANGLE "Rectangle 4"  @-1605,2152 5x8  stroke=#A5A89F/1  r=1
+          ROUNDED_RECTANGLE "Rectangle 2"  @-1615,2156 8x4  stroke=#A5A89F/1  r=1
+      TEXT "대시보드"  @-1630,2169 45x15  text='대시보드'  Inter Regular 12px  #A5A89F
+    FRAME "운영"  @-1569,2133 76x57  r=10
+      FRAME "TabIcon"  @-1544,2140 26x26  stroke=#676A67@0.00/2  r=4
+        FRAME "line-user"  @-1544,2140 25x25
+          VECTOR "Vector"  @-1534,2144 6x6  stroke=#A5A89F/1
+          VECTOR "Vector"  @-1538,2153 13x8  stroke=#A5A89F/1
+      TEXT "운영"  @-1543,2169 23x15  text='운영'  Inter Regular 12px  #A5A89F
+    FRAME "모니터링"  @-1493,2133 76x57  fill=#EEF4EA@0.00  r=10
+      FRAME "TabIcon"  @-1468,2140 26x26  stroke=#1B5E3F@0.00/2  r=4
+        FRAME "line-monitor"  @-1467,2140 25x25
+          VECTOR "Vector"  @-1464,2144 19x13  stroke=#A5A89F/1
+          VECTOR "Vector"  @-1459,2158 8x4  stroke=#A5A89F/1
+      TEXT "모니터링"  @-1478,2169 45x15  text='모니터링'  Inter Regular 12px  #A5A89F
+    FRAME "연동"  @-1417,2133 76x57  r=10
+      FRAME "TabIcon"  @-1392,2140 26x26  stroke=#676A67@0.00/2  r=4
+        FRAME "line-link"  @-1391,2140 25x25
+          VECTOR "Vector"  @-1390,2148 9x10  stroke=#A5A89F/1
+          VECTOR "Vector"  @-1382,2147 14x10  stroke=#A5A89F/1
+      TEXT "연동"  @-1390,2169 23x15  text='연동'  Inter Regular 12px  #A5A89F
+    FRAME "리포트"  @-1341,2133 76x57  r=10
+      FRAME "TabIcon"  @-1315,2140 26x26  stroke=#676A67@0.00/2  r=4
+        FRAME "line-report"  @-1315,2140 25x25
+          VECTOR "Vector"  @-1311,2155 4x7  stroke=#1B5E3F/1
+          VECTOR "Vector"  @-1305,2149 4x12  stroke=#1B5E3F/1
+          VECTOR "Vector"  @-1298,2143 4x19  stroke=#1B5E3F/1
+      TEXT "리포트"  @-1319,2169 34x15  text='리포트'  Inter Regular 12px  #1B5E3F

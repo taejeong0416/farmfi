@@ -35,7 +35,12 @@ export async function seedScenario(prisma: PrismaClient) {
   await prisma.tokenHolding.deleteMany();
   await prisma.transaction.deleteMany();
   await prisma.notification.deleteMany();
+  await prisma.appealComment.deleteMany();
+  await prisma.appeal.deleteMany();
   await prisma.milestone.deleteMany();
+  await prisma.payout.deleteMany();
+  await prisma.settlementRule.deleteMany();
+  await prisma.auditLog.deleteMany();
   await prisma.navSnapshot.deleteMany();
   await prisma.projectPartner.deleteMany();
   await prisma.escrow.deleteMany();
@@ -113,7 +118,7 @@ export async function seedScenario(prisma: PrismaClient) {
   const p1 = await prisma.project.create({
     data: {
       name: "온천장 스마트팜 1호점", location: "부산 동래구", buildingType: "vacant_store", areaSqm: 83,
-      status: "funded", institutionId: institution.id,
+      status: "funded", institutionId: institution.id, operatorId: operator.id,
       // STO 라운드 완료 — 기획 v16 §3: 사이트당 4,400만(설비 4,000만 + 온보딩피 400만),
       // 1구좌 1만원 → 4,400구좌. contracts/script/Deploy.s.sol의 FarmToken 총발행 4400과 동일.
       tokenSymbol: "MF01", tokenPrice: BigInt(10_000), totalTokens: 4400, soldTokens: 4400,
@@ -123,7 +128,7 @@ export async function seedScenario(prisma: PrismaClient) {
     },
   });
   const p2 = await prisma.project.create({
-    data: { name: "장전동 스마트팜 2호점", location: "부산 금정구", buildingType: "vacant_store", areaSqm: 66, status: "operating", institutionId: institution.id },
+    data: { name: "장전동 스마트팜 2호점", location: "부산 금정구", buildingType: "vacant_store", areaSqm: 66, status: "operating", institutionId: institution.id, operatorId: operator.id },
   });
   const projects = [p1, p2];
 
@@ -155,7 +160,17 @@ export async function seedScenario(prisma: PrismaClient) {
     await prisma.salesRecord.createMany({ data: sales });
 
     // IoT 60일치 (생육 모니터링·이상감지)
-    await prisma.iotData.createMany({ data: buildIotRecords(proj.id, now) });
+    // 1호점은 관행 점등 + 고장 시나리오(냉방 저하·펌프 막힘·LED 열화)를 담아 탐지기가
+    // 실제로 발화하는 계열을, 2호점은 TOU 최적 점등 + 무고장 계열을 갖는다. 두 지점을
+    // 나란히 보면 "심야 점등은 정상, 순간 조도가 아니라 일적산으로 판정한다"가 드러난다.
+    const isPilot = proj.id === p1.id;
+    await prisma.iotData.createMany({
+      data: buildIotRecords(proj.id, now, {
+        cropKey: "leafy",
+        schedule: isPilot ? "conventional" : "tou-optimized",
+        scenario: isPilot,
+      }),
+    });
   }
 
   // ─── STO: 1호점 에스크로·마일스톤4·파트너·투자 (청약·배당·검증 데모) ───
@@ -181,7 +196,7 @@ export async function seedScenario(prisma: PrismaClient) {
     ],
   });
   await prisma.projectPartner.create({
-    data: { projectId: p1.id, role: "landlord", name: "최영호", monthlyRecoveryAmount: BigInt(500_000) },
+    data: { projectId: p1.id, role: "landlord", name: "최영호", userId: landlord.id, monthlyRecoveryAmount: BigInt(500_000) },
   });
   await prisma.tokenHolding.create({
     data: { userId: investor1.id, projectId: p1.id, amount: 50, avgPrice: BigInt(10_000) },
@@ -196,7 +211,7 @@ export async function seedScenario(prisma: PrismaClient) {
       name: "명륜동 스마트팜 3호점",
       description: "부산 동래구 명륜동 공실 상가 전환 라운드 (모집 중).",
       location: "부산 동래구 명륜동", buildingType: "vacant_store", areaSqm: 76,
-      status: "funding", institutionId: institution.id,
+      status: "funding", institutionId: institution.id, operatorId: operator.id,
       // 1호점과 같은 표준 유닛 — 4,400구좌/4,400만. 모집 진행률 79%(3,480구좌 = 3,480만).
       // 잔여 920구좌 = 데모 스텝 1~3(300+200+420)이 채우는 양 → 스텝 3에서 정확히 완납(funded)되고
       // escrow가 4,400만이 되어 트랜치 4개(1,540+1,320+880+660만 = 4,400만)를 전부 집행할 수 있다.
@@ -250,12 +265,33 @@ export async function seedScenario(prisma: PrismaClient) {
       amount: BigInt(amount) * BigInt(10_000), tokenAmount: amount, memo: "청약 (시드)",
     })),
   });
-  // IoT 60일치 — 시운전·지속운영 마일스톤(가동률 게이트) 검증용
-  await prisma.iotData.createMany({ data: buildIotRecords(p3.id, now) });
+  // IoT 60일치 — 시운전·지속운영 마일스톤(가동률 게이트) 검증용. 게이트를 재는 지점이라
+  // 고장 시나리오는 넣지 않는다.
+  await prisma.iotData.createMany({
+    data: buildIotRecords(p3.id, now, { cropKey: "leafy", scenario: false }),
+  });
 
   // ─── 생육 이상 알림 ───
-  await prisma.notification.create({
-    data: { projectId: p1.id, type: "anomaly_detected", message: "온도 이상 감지 · 현재 31.2℃ (정상범위 18~28℃)" },
+  // 1호점 IoT 계열에 심은 세 고장에 각각 대응한다. 탐지 경로가 다르다는 것이 요점 —
+  // 스파이크는 Z-score, 지속 드리프트는 CUSUM, 광량 열화는 일적산(DLI)만이 잡는다.
+  await prisma.notification.createMany({
+    data: [
+      {
+        projectId: p1.id,
+        type: "drift_temperature",
+        message: "온도 지속 드리프트 · CUSUM 4.1σ — 냉방 성능 저하 예지보전 점검 권고",
+      },
+      {
+        projectId: p1.id,
+        type: "range_violation",
+        message: "설비 이상 의심 · 양액 pH 4.2pH (정상 5~7) — 현장 점검이 필요합니다",
+      },
+      {
+        projectId: p1.id,
+        type: "dli_shortfall",
+        message: "일적산광량 미달 · 목표의 78% — LED 광량 열화 의심",
+      },
+    ],
   });
 
   return {

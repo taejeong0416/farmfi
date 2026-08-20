@@ -1,86 +1,75 @@
-// 운영자 앱 디자인 시스템 — Figma "0818ver_앱 UI_운영자용 앱" 기준.
-//
-// 이전 픽셀아트 팔레트(흙빛 #fffefa/#ded8cf)에서 밝은 카드 중심으로 개편됐다.
-// Figma 캔버스가 402x874(1x)라 여기 값은 dp 와 1:1 이다 — 예전처럼 2로 나누지 않는다.
+// 앱 디자인 토큰 — 웹(`frontend/tailwind.config.ts`)과 같은 팔레트를 쓴다.
+// Figma 앱 원본은 초록이 #1B5E3F, 웹은 #14542E로 서로 달랐다. 웹 값으로 맞춘다.
+// 치환 근거는 `docs/figma-color-map.md`. 여기 없는 hex를 화면 코드에 직접 적지 않는다.
+
 export const C = {
-  // 브랜드
-  green: "#1b5e3f",
-  greenSoft: "#eef4ea",
-  greenDark: "#164b2f",
+  ink: "#1A1A1A",
+  body: "#4A4A4A",
+  muted: "#8A8A8A",
+  line: "#E5E5E3",
+  lineSoft: "#EDEDEB",
+  surface: "#F2F2F0",
+  brand: "#14542E",
+  brandSoft: "#EAF6EE",
+  danger: "#A34A3D",
+  paper: "#FFFFFF",
 
-  // 텍스트
-  ink: "#1d1e1c",       // 본문·제목
-  label: "#333333",     // 지표 라벨
-  muted: "#656563",     // 보조 설명
-  faint: "#656863",     // 시각 등 최약
-  tabOff: "#a5a89f",    // 비활성 탭
-  placeholder: "#a5a89f",
-
-  // 면·선
-  paper: "#ffffff",
-  line: "#c9cec9",      // 카드 테두리
-  divider: "#f1f1f1",   // 하단 네비 상단선
-  stageBg: "#ffffff",
-
-  // 상태
-  danger: "#a33a2a",
-  dangerSoft: "#fbf0ee",
-  warn: "#a8762a",
-  warnSoft: "#fdf6ea",
-  info: "#2f6b86",
-  infoSoft: "#eef5f8",
+  // 기존 픽셀아트 화면이 쓰는 이름. 값은 위 팔레트를 가리킨다.
+  green: "#14542E",
+  greenDark: "#0F3D21",
+  greenSoft: "#EAF6EE",
+  stageBg: "#F2F2F0",
 } as const;
 
-// 앱 프레임 최대 폭. Figma 402 기준.
+// 상태는 색으로 등급 매기지 않는다 — 글자로 말한다. 배지 배경은 전부 surface고
+// 위험만 danger 글자색을 쓴다. (`build-plan.md` 그라운드 룰)
+export const SEVERITY = {
+  critical: { bg: C.surface, fg: C.danger, label: "위험" },
+  warning: { bg: C.surface, fg: C.body, label: "주의" },
+  normal: { bg: C.brandSoft, fg: C.brand, label: "정상" },
+} as const;
+
+export type Severity = keyof typeof SEVERITY;
+
+// Figma 앱 프레임 402 · 좌우 여백 16 · 콘텐츠 370
 export const FRAME_MAX_WIDTH = 402;
+export const GUTTER = 16;
+export const CONTENT_WIDTH = FRAME_MAX_WIDTH - GUTTER * 2;
 
-// ── 타이포 ──
-// 디자인은 Pretendard 를 쓴다. ttf 를 번들하기 전까지는 시스템 폰트로 떨어뜨리되,
-// 굵기 토큰을 여기 모아 둬서 폰트가 들어오면 이 파일만 고치면 되게 한다.
-// (iOS Apple SD Gothic Neo / Android Noto Sans KR 이 Pretendard 와 가장 가깝다)
-export const F = {
-  regular: undefined as string | undefined,
-  semibold: undefined as string | undefined,
-  bold: undefined as string | undefined,
+export const FS = {
+  xs: 11,
+  sm: 12,
+  cap: 13,
+  body: 14,
+  md: 15,
+  lg: 16,
+  xl: 18,
+  h2: 20,
+  h1: 22,
+  hero: 24,
 } as const;
 
-export const W = {
+// Figma는 Regular / SemiBold / Bold 세 굵기만 쓴다.
+export const FW = {
   regular: "400",
   semibold: "600",
   bold: "700",
 } as const;
 
-// 디자인에서 반복되는 글자 크기
-export const T = {
-  title: 18,      // 사용자 이름
-  section: 16,    // 섹션 제목 · 카드 제목
-  body: 15,       // 본문
-  label: 14,      // 지표 라벨 · 카드 본문
-  sub: 13,        // 보조 설명
-  badge: 12,      // 배지 · 탭 라벨
-  caption: 11,    // 시각 등
-  metric: 20,     // 지표 숫자
+export const R = {
+  xs: 4,
+  sm: 6,
+  md: 8,
+  lg: 10,
+  xl: 12,
+  pill: 999,
 } as const;
 
-// 여백·모서리
-export const S = {
-  screenPad: 16,
-  sectionGap: 24,
-  itemGap: 12,
-  cardPad: 16,
-  radiusCard: 10,
-  radiusBadge: 5,
-  radiusChip: 6,
-  radiusPill: 99,
-  radiusCheckbox: 4,
-  border: 1,
+export const SP = {
+  xs: 4,
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 24,
+  xxl: 32,
 } as const;
-
-// 알림·제어 결과에서 공통으로 쓰는 심각도 축
-export type Severity = "critical" | "warning" | "normal";
-
-export const SEVERITY: Record<Severity, { label: string; fg: string; bg: string }> = {
-  critical: { label: "위험", fg: C.danger, bg: C.dangerSoft },
-  warning: { label: "주의", fg: C.warn, bg: C.warnSoft },
-  normal: { label: "정상", fg: C.green, bg: C.greenSoft },
-};

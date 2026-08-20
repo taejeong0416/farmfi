@@ -1,0 +1,10 @@
+FRAME "App/SensorTile"  @164,2041 576x109  r=3
+  SYMBOL "state=normal"  @181,2057 170x76  fill=#FFFFFF  stroke=#C9CEC9/1  r=9
+    TEXT "온도"  @253,2072 26x17  text='온도'  Inter Regular 14px  #4B4E49
+    TEXT "22.4℃"  @231,2095 69x24  text='22.4℃'  Inter Bold 20px  #1B5E3F
+  SYMBOL "state=warning"  @367,2057 170x76  fill=#FDF6EA  r=9
+    TEXT "습도"  @439,2072 26x17  text='습도'  Inter Regular 14px  #4B4E49
+    TEXT "71%"  @433,2095 39x24  text='71%'  Inter Bold 20px  #A8762A
+  SYMBOL "state=critical"  @554,2057 170x76  fill=#FBF0EE  r=9
+    TEXT "CO₂"  @625,2072 27x17  text='CO₂'  Inter Regular 14px  #4B4E49
+    TEXT "1240ppm"  @592,2095 93x24  text='1240ppm'  Inter Bold 20px  #A33A2A

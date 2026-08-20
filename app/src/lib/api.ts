@@ -5,28 +5,28 @@ import { API_BASE_URL } from "./config";
 const TOKEN_KEY = "farmfi.token";
 
 // ─── 토큰 저장소 ───
-// 네이티브: SecureStore (안드 Keystore / iOS Keychain 기반 보안 저장).
-// 웹: expo-secure-store 에 웹 구현이 없어 호출 즉시 throw 한다. GitHub Pages 웹
-// 빌드에서 AuthProvider 가 앱 시작 시 getToken() 을 부르기 때문에, 폴백이 없으면
-// 모든 화면이 "getValueWithKeyAsync is not a function" 으로 깨진다.
-// ⚠️ localStorage 는 XSS 에 노출된다. 웹 빌드는 시연·미리보기 용도이며,
-// 웹을 정식 배포 대상으로 삼으려면 httpOnly 쿠키 세션으로 바꿔야 한다.
+// 네이티브는 SecureStore(안드 Keystore 기반 보안 저장). expo-secure-store는 웹을
+// 지원하지 않아(Android·iOS·tvOS 전용) 웹에서 호출하면 네이티브 모듈이 없어 터진다.
+// 웹은 localStorage로 내린다 — Keystore 수준의 보호는 없고 데모 배포용 경로다.
+// 정적 렌더(프리렌더)는 브라우저가 아니라 localStorage 자체가 없으므로 함께 막는다.
 const isWeb = Platform.OS === "web";
+const webStore = (): Storage | null =>
+  typeof localStorage === "undefined" ? null : localStorage;
 
 export async function getToken(): Promise<string | null> {
-  if (isWeb) return globalThis.localStorage?.getItem(TOKEN_KEY) ?? null;
+  if (isWeb) return webStore()?.getItem(TOKEN_KEY) ?? null;
   return SecureStore.getItemAsync(TOKEN_KEY);
 }
 export async function setToken(token: string): Promise<void> {
   if (isWeb) {
-    globalThis.localStorage?.setItem(TOKEN_KEY, token);
+    webStore()?.setItem(TOKEN_KEY, token);
     return;
   }
   await SecureStore.setItemAsync(TOKEN_KEY, token);
 }
 export async function clearToken(): Promise<void> {
   if (isWeb) {
-    globalThis.localStorage?.removeItem(TOKEN_KEY);
+    webStore()?.removeItem(TOKEN_KEY);
     return;
   }
   await SecureStore.deleteItemAsync(TOKEN_KEY);

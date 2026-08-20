@@ -31,7 +31,7 @@ export async function fetchIdentityStatus(
   return body as IdentityStatusResponse;
 }
 
-// 데모 전용 — 지갑앱 없이 세션을 verified로 확정한다(admin 게이트). 상세: /api/identity/confirm.
+// 데모 전용 — 신분증 앱 없이 세션을 verified로 확정한다(admin 게이트). 상세: /api/identity/confirm.
 export async function confirmIdentity(txId: string): Promise<void> {
   const res = await fetch("/api/identity/confirm", {
     method: "POST",

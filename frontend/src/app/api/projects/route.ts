@@ -5,7 +5,10 @@ import { requireRole } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
   try {
+    // 개설 순(1호점 → 2호점 → 3호점). 정렬이 없으면 DB 반환 순서에 맡겨져
+    // 목록 첫 항목이 매번 달라지고, 앱은 첫 지점을 기본 선택한다.
     const projects = await prisma.project.findMany({
+      orderBy: { createdAt: "asc" },
       include: {
         escrow: true,
         milestones: true,
@@ -171,7 +174,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "프로젝트명을 입력해주세요." }, { status: 400 });
     }
     if (typeof tokenSymbol !== "string" || tokenSymbol.trim().length === 0) {
-      return NextResponse.json({ error: "토큰 심볼을 입력해주세요." }, { status: 400 });
+      return NextResponse.json({ error: "구좌 코드를 입력해주세요." }, { status: 400 });
     }
     if (
       typeof tokenPrice !== "number" ||
@@ -179,7 +182,7 @@ export async function POST(request: NextRequest) {
       tokenPrice <= 0
     ) {
       return NextResponse.json(
-        { error: "토큰 가격은 0보다 큰 숫자여야 합니다." },
+        { error: "구좌 단가는 0보다 큰 숫자여야 합니다." },
         { status: 400 }
       );
     }
@@ -189,7 +192,7 @@ export async function POST(request: NextRequest) {
       totalTokens <= 0
     ) {
       return NextResponse.json(
-        { error: "총 토큰 수는 0보다 큰 정수여야 합니다." },
+        { error: "총 구좌 수는 0보다 큰 정수여야 합니다." },
         { status: 400 }
       );
     }
@@ -218,7 +221,7 @@ export async function POST(request: NextRequest) {
     if (targetAmount > maxRaise) {
       return NextResponse.json(
         {
-          error: `모집 목표(${targetAmount.toLocaleString()}원)가 최대 조달 가능액(토큰가격×총토큰수 = ${maxRaise.toLocaleString()}원)을 초과할 수 없습니다.`,
+          error: `모집 목표(${targetAmount.toLocaleString()}원)가 최대 조달 가능액(구좌 단가×총 구좌 수 = ${maxRaise.toLocaleString()}원)을 초과할 수 없습니다.`,
         },
         { status: 400 }
       );

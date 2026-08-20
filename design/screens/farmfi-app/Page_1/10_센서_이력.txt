@@ -1,0 +1,44 @@
+FRAME "10 센서 이력"  @1570,3526 402x874  fill=#FFFFFF
+  FRAME "Body"  @1570,3629 402x643
+    FRAME "Frame"  @1586,3645 370x30
+      FRAME "Frame"  @1586,3645 86x30  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+        TEXT "온도"  @1619,3653 21x14  text='온도'  Pretendard Regular 12px  #656863
+      FRAME "Frame"  @1680,3645 86x30  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+        TEXT "습도"  @1713,3653 21x14  text='습도'  Pretendard Regular 12px  #656863
+      FRAME "Frame"  @1775,3645 86x30  fill=#1B5E3F  stroke=#1B5E3F/2  r=8
+        TEXT "CO₂"  @1807,3653 23x14  text='CO₂'  Pretendard SemiBold 12px  #FFFFFF
+      FRAME "Frame"  @1870,3645 86x30  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+        TEXT "EC"  @1905,3653 16x14  text='EC'  Pretendard Regular 12px  #656863
+    FRAME "Frame"  @1586,3691 370x30
+      FRAME "Frame"  @1586,3691 118x30  fill=#EAF6EE  stroke=#1B5E3F/2  r=8
+        TEXT "24시간"  @1627,3699 36x14  text='24시간'  Pretendard SemiBold 12px  #1B5E3F
+      FRAME "Frame"  @1712,3691 118x30  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+        TEXT "7일"  @1762,3699 17x14  text='7일'  Pretendard Regular 12px  #656863
+      FRAME "Frame"  @1838,3691 118x30  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+        TEXT "30일"  @1884,3699 25x14  text='30일'  Pretendard Regular 12px  #656863
+    FRAME "Card"  @1586,3737 370x240  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      INSTANCE "App/LineChart"  @1598,3757 345x200
+    FRAME "Card"  @1586,3993 370x247  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      TEXT "기간 요약"  @1598,4013 60x19  text='기간 요약'  Pretendard SemiBold 16px  #1D1E1C
+      FRAME "Frame"  @1598,4046 345x33
+        TEXT "평균"  @1598,4054 291x16  text='평균'  Pretendard Regular 13px  #656863
+        TEXT "845ppm"  @1890,4054 54x17  text='845ppm'  Pretendard Regular 14px  #1D1E1C
+      FRAME "Frame"  @1598,4093 345x33
+        TEXT "최저"  @1598,4101 291x16  text='최저'  Pretendard Regular 13px  #656863
+        TEXT "495ppm"  @1890,4101 54x17  text='495ppm'  Pretendard Regular 14px  #1D1E1C
+      FRAME "Frame"  @1598,4140 345x33
+        TEXT "최고"  @1598,4148 285x16  text='최고'  Pretendard Regular 13px  #656863
+        TEXT "1240ppm"  @1884,4148 60x17  text='1240ppm'  Pretendard Regular 14px  #1D1E1C
+      FRAME "Frame"  @1598,4187 345x33
+        TEXT "범위 이탈"  @1598,4195 324x16  text='범위 이탈'  Pretendard Regular 13px  #656863
+        TEXT "6회"  @1923,4195 21x17  text='6회'  Pretendard Regular 14px  #1D1E1C
+  FRAME "TopBar"  @1570,3526 402x103
+    INSTANCE "Status Bar"  @1570,3526 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+    FRAME "HeaderRow"  @1570,3573 402x56
+      INSTANCE "App/DetailHeader"  @1570,3573 402x56  fill=#FFFFFF  stroke=#C9CEC9@0.50/1
+  FRAME "Frame 2121453045"  @1570,4364 402x36
+    FRAME "Group 828"  @1570,4364 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @1570,4364 402x36
+      FRAME "Group 819"  @1700,4387 144x5
+        FRAME "Group 665"  @1700,4387 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @1700,4387 144x5  fill=#070428  r=107

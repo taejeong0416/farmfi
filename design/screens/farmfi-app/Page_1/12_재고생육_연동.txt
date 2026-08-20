@@ -1,0 +1,22 @@
+FRAME "12 재고생육 연동"  @602,4743 402x874  fill=#FFFFFF
+  FRAME "Body"  @602,4846 402x617
+    FRAME "Card"  @618,4862 370x220  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      INSTANCE "App/CardTitle"  @630,4882 345x21
+      INSTANCE "App/StockRow"  @630,4914 345x41  r=6
+      INSTANCE "App/StockRow"  @630,4968 345x41  r=6
+      INSTANCE "App/StockRow"  @630,5021 345x41  r=6
+    FRAME "Card"  @618,5098 370x333  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      INSTANCE "App/CardTitle"  @630,5118 345x21
+      INSTANCE "App/LinkedBedRow"  @630,5151 345x79  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+      INSTANCE "App/LinkedBedRow"  @630,5242 345x79  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+      INSTANCE "App/LinkedBedRow"  @630,5332 345x79  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+  FRAME "Status Bar"  @602,4743 402x103
+    INSTANCE "Status Bar"  @602,4743 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+    INSTANCE "App/DetailHeader2"  @602,4790 402x56
+  FRAME "Frame 2121453045"  @602,5516 402x101
+    INSTANCE "App/BottomNav"  @602,5516 402x64  fill=#FFFFFF  stroke=#F1F1F1/1
+    FRAME "Group 828"  @602,5581 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @602,5581 402x36  fill=#FFFFFF  stroke=#FFFFFF/1
+      FRAME "Group 819"  @732,5603 144x5
+        FRAME "Group 665"  @732,5603 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @732,5603 144x5  fill=#070428  r=107

@@ -1,0 +1,71 @@
+FRAME "O-09 · 운영자 / 개점 준비 현황"  @11450,4400 1440x980  fill=#FBFBF9
+  ROUNDED_RECTANGLE "Rectangle"  @11450,4400 1440x64  fill=#FFFFFF  stroke=#E0E0D6/1
+  TEXT "FarmFi"  @11482,4421 57x21  text='FarmFi'  Inter Bold 17px  #0E6340
+  TEXT "운영"  @11570,4423 24x16  text='운영'  Inter Medium 13px  #0E6340
+  TEXT "공간 찾기"  @11624,4423 52x16  text='공간 찾기'  Inter Regular 13px  #171A14
+  TEXT "내 준비 현황"  @11700,4423 67x16  text='내 준비 현황'  Inter Medium 13px  #0E6340
+  TEXT "보증서"  @11796,4423 36x16  text='보증서'  Inter Regular 13px  #171A14
+  TEXT "이운영"  @12810,4423 36x16  text='이운영'  Inter Medium 13px  #171A14
+  TEXT "개점까지 두 단계 남았어요"  @11482,4508 325x36  text='개점까지 두 단계 남았어요'  Inter Bold 30px  #171A14
+  TEXT "부산 전포동 미니팜 1호 · 개점 목표 2026년 9월"  @11482,4554 279x17  text='부산 전포동 미니팜 1호 · 개점 목표 2026년 9월'  Inter Regular 14px  #66665C
+  ROUNDED_RECTANGLE "Rectangle"  @11482,4598 1376x112  fill=#0A422B  r=14
+  TEXT "전체 준비도"  @11506,4622 64x16  text='전체 준비도'  Inter Medium 13px  #CCE5D9
+  TEXT "67%"  @11506,4647 72x41  text='67%'  Inter Bold 34px  #FFFFFF
+  ROUNDED_RECTANGLE "Rectangle"  @11616,4652 1110x12  fill=#40614F  r=6
+  ROUNDED_RECTANGLE "Rectangle"  @11616,4652 744x12  fill=#59C98C  r=6
+  TEXT "보증서가 발급됐어요. 이제 공간과 설비 준비를 마치면 운영을 시작할 수 있어요."  @12464,4678 361x13  text='보증서가 발급됐어요. 이제 공간과 설비 준비를 마치면 운영을 시작할 수 있어요.'  Inter Regular 11px  #CCE5D9
+  TEXT "내가 준비할 것"  @11482,4754 121x24  text='내가 준비할 것'  Inter Semi Bold 20px  #171A14
+  ROUNDED_RECTANGLE "Rectangle"  @11482,4798 760x96  fill=#FFFFFF  stroke=#E0E0D6/1  r=12
+  ROUNDED_RECTANGLE "Rectangle"  @11502,4822 46x46  fill=#EDF5ED  r=23
+  TEXT "1"  @11520,4834 7x17  text='1'  Inter Bold 14px  #0E6340
+  TEXT "본인·운영 자격 확인"  @11570,4816 123x18  text='본인·운영 자격 확인'  Inter Semi Bold 15px  #171A14
+  TEXT "신원과 운영 가능 여부가 확인됐어요"  @11570,4843 180x15  text='신원과 운영 가능 여부가 확인됐어요'  Inter Regular 12px  #66665C
+  ROUNDED_RECTANGLE "Rectangle"  @12102,4823 116x30  fill=#EDF5ED  r=15
+  TEXT "완료"  @12135,4831 23x15  text='완료'  Inter Medium 12px  #0E6340
+  ROUNDED_RECTANGLE "Rectangle"  @11482,4916 760x96  fill=#FFFFFF  stroke=#E0E0D6/1  r=12
+  ROUNDED_RECTANGLE "Rectangle"  @11502,4940 46x46  fill=#FAE8B8  r=23
+  TEXT "2"  @11520,4952 9x17  text='2'  Inter Bold 14px  #66665C
+  TEXT "필수 교육 수료"  @11570,4934 91x18  text='필수 교육 수료'  Inter Semi Bold 15px  #171A14
+  TEXT "온라인 교육 2시간 중 1시간 20분 수강"  @11570,4961 192x15  text='온라인 교육 2시간 중 1시간 20분 수강'  Inter Regular 12px  #66665C
+  ROUNDED_RECTANGLE "Rectangle"  @12102,4941 116x30  fill=#FAE8B8  r=15
+  TEXT "진행 중"  @12135,4949 37x15  text='진행 중'  Inter Medium 12px  #66665C
+  ROUNDED_RECTANGLE "Rectangle"  @11482,5034 760x96  fill=#FFFFFF  stroke=#E0E0D6/1  r=12
+  ROUNDED_RECTANGLE "Rectangle"  @11502,5058 46x46  fill=#EDEDE8  r=23
+  TEXT "3"  @11520,5070 10x17  text='3'  Inter Bold 14px  #66665C
+  TEXT "운영 계약 서명"  @11570,5052 91x18  text='운영 계약 서명'  Inter Semi Bold 15px  #171A14
+  TEXT "최종 배정된 공간과 조건으로 서명했어요"  @11570,5079 202x15  text='최종 배정된 공간과 조건으로 서명했어요'  Inter Regular 12px  #66665C
+  ROUNDED_RECTANGLE "Rectangle"  @12102,5059 116x30  fill=#EDEDE8  r=15
+  TEXT "완료"  @12135,5067 23x15  text='완료'  Inter Medium 12px  #66665C
+  ROUNDED_RECTANGLE "Rectangle"  @11482,5170 760x166  fill=#FFFFFF  stroke=#E0E0D6/1  r=12
+  TEXT "지금 할 일"  @11502,5192 63x18  text='지금 할 일'  Inter Semi Bold 15px  #171A14
+  TEXT "필수 교육 이어 듣기"  @11502,5228 146x22  text='필수 교육 이어 듣기'  Inter Semi Bold 18px  #171A14
+  TEXT "남은 시간 약 40분 · 수료 후 운영 계약 단계로 넘어가요."  @11502,5260 277x15  text='남은 시간 약 40분 · 수료 후 운영 계약 단계로 넘어가요.'  Inter Regular 12px  #66665C
+  ROUNDED_RECTANGLE "Rectangle"  @12050,5216 168x44  fill=#0E6340  r=9
+  TEXT "교육 이어보기"  @12088,5229 75x16  text='교육 이어보기'  Inter Semi Bold 13px  #FFFFFF
+  TEXT "공간 준비 현황"  @12282,4754 121x24  text='공간 준비 현황'  Inter Semi Bold 20px  #171A14
+  ROUNDED_RECTANGLE "Rectangle"  @12282,4798 576x338  fill=#FFFFFF  stroke=#E0E0D6/1  r=12
+  ROUNDED_RECTANGLE "Rectangle"  @12306,4826 20x20  fill=#EDF5ED  r=10
+  TEXT "✓"  @12312,4828 9x12  text='✓'  Inter Bold 10px  #0E6340
+  TEXT "공간 사용 협약"  @12344,4822 79x16  text='공간 사용 협약'  Inter Medium 13px  #171A14
+  TEXT "완료"  @12732,4822 23x15  text='완료'  Inter Medium 12px  #0E6340
+  ROUNDED_RECTANGLE "Rectangle"  @12344,4860 468x1  fill=#E0E0D6
+  ROUNDED_RECTANGLE "Rectangle"  @12306,4892 20x20  fill=#EDEDE8  r=10
+  TEXT "2"  @12312,4894 7x12  text='2'  Inter Bold 10px  #66665C
+  TEXT "리모델링 일정"  @12344,4888 76x16  text='리모델링 일정'  Inter Medium 13px  #171A14
+  TEXT "8월 2주차"  @12732,4888 52x15  text='8월 2주차'  Inter Medium 12px  #66665C
+  ROUNDED_RECTANGLE "Rectangle"  @12344,4926 468x1  fill=#E0E0D6
+  ROUNDED_RECTANGLE "Rectangle"  @12306,4958 20x20  fill=#FAE8B8  r=10
+  TEXT "3"  @12312,4960 7x12  text='3'  Inter Bold 10px  #66665C
+  TEXT "설비 투자 모집"  @12344,4954 79x16  text='설비 투자 모집'  Inter Medium 13px  #171A14
+  TEXT "68%"  @12732,4954 26x15  text='68%'  Inter Medium 12px  #66665C
+  ROUNDED_RECTANGLE "Rectangle"  @12344,4992 468x1  fill=#E0E0D6
+  ROUNDED_RECTANGLE "Rectangle"  @12306,5024 20x20  fill=#EDEDE8  r=10
+  TEXT "4"  @12312,5026 7x12  text='4'  Inter Bold 10px  #66665C
+  TEXT "설비 설치·검수"  @12344,5020 79x16  text='설비 설치·검수'  Inter Medium 13px  #171A14
+  TEXT "예정"  @12732,5020 23x15  text='예정'  Inter Medium 12px  #66665C
+  ROUNDED_RECTANGLE "Rectangle"  @12282,5158 576x178  fill=#EDF5ED  r=12
+  TEXT "완료된 운영자 자격"  @12306,5182 118x18  text='완료된 운영자 자격'  Inter Semi Bold 15px  #0E6340
+  TEXT "✓ 필수 교육 수료"  @12306,5218 90x15  text='✓  필수 교육 수료'  Inter Medium 12px  #66665C
+  TEXT "✓ 운영 계약 서명"  @12306,5246 90x15  text='✓  운영 계약 서명'  Inter Medium 12px  #66665C
+  TEXT "✓ 공간 배정 확정"  @12306,5274 90x15  text='✓  공간 배정 확정'  Inter Medium 12px  #0E6340
+  TEXT "교육·공간 확정·계약이 확인되어 보증서가 발급됐어요."  @12582,5282 245x13  text='교육·공간 확정·계약이 확인되어 보증서가 발급됐어요.'  Inter Regular 11px  #66665C

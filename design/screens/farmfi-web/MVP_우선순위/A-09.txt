@@ -1,0 +1,37 @@
+FRAME "A-09 · 외부 전문가 / 최종 판정"  @17750,5900 730x508  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "선"  @17751,5946 728x1  fill=#EDEDEB
+  TEXT "외부전문가 판정"  @17771,5914 95x18  text='외부전문가 판정'  Pretendard Bold 15px  #1A1A1A
+  TEXT "담당"  @18346,5916 22x14  text='담당'  Pretendard Regular 12px  #8A8A8A
+  TEXT "강진현 · 설비 감정"  @18375,5916 85x14  text='강진현 · 설비 감정'  Pretendard Medium 12px  #1A1A1A
+  TEXT "부산 전포동 미니팜 1호 · 3단계 설비 설…"  @17771,5966 225x16  text='부산 전포동 미니팜 1호 · 3단계 설비 설치'  Pretendard Bold 14px  #1A1A1A
+  TEXT "배정 2026.03.16 09:20 · 판정…"  @17771,5989 226x14  text='배정 2026.03.16 09:20 · 판정 기한 2026.03.18'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @17771,6019 418x106  stroke=#E5E5E3/1  r=8
+  ROUNDED_RECTANGLE "면"  @17772,6020 416x34  fill=#FAFAF7
+  ROUNDED_RECTANGLE "선"  @17772,6053 416x1  fill=#F2F2F0
+  TEXT "이전 판정 이력"  @17786,6029 66x14  text='이전 판정 이력'  Pretendard Medium 12px  #8A8A8A
+  ROUNDED_RECTANGLE "선"  @17772,6088 416x1  fill=#F2F2F0
+  TEXT "자동 검증"  @17786,6064 46x14  text='자동 검증'  Pretendard Regular 12px  #1A1A1A
+  TEXT "보류"  @18153,6064 22x14  text='보류'  Pretendard Medium 12px  #A34A3D
+  TEXT "운영팀 재검증"  @17786,6099 66x14  text='운영팀 재검증'  Pretendard Regular 12px  #1A1A1A
+  TEXT "보류 유지"  @18130,6099 45x14  text='보류 유지'  Pretendard Medium 12px  #A34A3D
+  TEXT "검토 자료"  @18209,5963 47x15  text='검토 자료'  Pretendard Medium 12px  #1A1A1A
+  ROUNDED_RECTANGLE "사진 자리"  @18209,5988 121x72  fill=#F1F4F2  stroke=#E0E5E0/1  r=6
+  ROUNDED_RECTANGLE "사진 자리"  @18338,5988 121x72  fill=#F1F4F2  stroke=#E0E5E0/1  r=6
+  ROUNDED_RECTANGLE "면"  @18209,6068 250x92  stroke=#E5E5E3/1  r=6
+  ROUNDED_RECTANGLE "선"  @18210,6098 248x1  fill=#F2F2F0
+  TEXT "설비 계약서.pdf"  @18222,6076 74x14  text='설비 계약서.pdf'  Pretendard Regular 12px  #1A1A1A
+  ROUNDED_RECTANGLE "선"  @18210,6128 248x1  fill=#F2F2F0
+  TEXT "설비 영수증.pdf"  @18222,6106 74x14  text='설비 영수증.pdf'  Pretendard Regular 12px  #1A1A1A
+  TEXT "변경합의서.pdf"  @18222,6136 71x14  text='변경합의서.pdf'  Pretendard Regular 12px  #1A1A1A
+  TEXT "최종 판정"  @17771,6177 46x14  text='최종 판정'  Pretendard Regular 12px  #757575
+  ROUNDED_RECTANGLE "면"  @17771,6199 111x36  stroke=#14542E/1  r=6
+  TEXT "통과 · 집행 진행"  @17788,6209 78x15  text='통과 · 집행 진행'  Pretendard Medium 12px  #14542E
+  ROUNDED_RECTANGLE "면"  @17890,6199 91x36  stroke=#E5E5E3/1  r=6
+  TEXT "조건부 통과"  @17907,6209 58x15  text='조건부 통과'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @17989,6199 111x36  stroke=#E5E5E3/1  r=6
+  TEXT "반려 · 집행 중지"  @18006,6209 78x15  text='반려 · 집행 중지'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @17771,6249 688x86  stroke=#E5E5E3/1  r=8
+  TEXT "판정 의견을 입력하세요. 최종 판정과 의견은…"  @17785,6265 379x14  text='판정 의견을 입력하세요. 최종 판정과 의견은 감사 로그에 불변 기록으로 남습니다.'  Pretendard Regular 12px  #8A8A8A
+  TEXT "최종 판정 이후에는 동일 단계에 대한 이의제…"  @17771,6361 273x14  text='최종 판정 이후에는 동일 단계에 대한 이의제기가 불가합니다.'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @18342,6349 117x38  fill=#14542E  r=6
+  TEXT "최종 판정 제출"  @18364,6360 74x15  text='최종 판정 제출'  Pretendard Medium 13px  #FFFFFF

@@ -38,6 +38,9 @@ model User {
   operatorApplications  OperatorApplication[]
   identityVerifications IdentityVerification[]
   notificationPrefs NotificationPref[]
+  operatedProjects      Project[]              @relation("ProjectOperator")
+  investments           Investment[]
+  subscriptions         Subscription[]
 }
 
 // ─── 운영자 지원 신청 ───
@@ -49,7 +52,22 @@ model OperatorApplication {
   cropExperience String   // 작물 재배 경험
   availableHours String   // 주간 투입 가능 시간
   status         String   @default("applied") // applied → docs → education → matched → operating
+  // ─── 운영 신청 7단계 (O-03 자격 → O-04 방문 → O-05 교육 → O-06 확정 → O-07 계약 → O-08 보증서) ───
+  spaceId            String?   // 신청한 공간
+  documents          String[]  // 제출 서류 URL
+  reviewNote         String?   // 심사자 보완 요청 사유
+  visitAt            DateTime? // 현장 방문 예약 시각
+  visitNote          String?
+  visitDoneAt        DateTime?
+  educationProgress  Int       @default(0) // 0~100
+  educationDoneAt    DateTime?
+  confirmedAt        DateTime? // 공간 최종 확정
+  contractSignature  String?
+  contractSignedAt   DateTime?
+  certificateNo      String?
+  certificateIssuedAt DateTime?
   createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt @default(now())
 }
 
 // ─── 신원 인증 세션 (OpenDID Verifier 흐름 — 모바일 신분증) ───
@@ -101,11 +119,13 @@ model Project {
   fundingStart    DateTime?
   fundingEnd      DateTime?
   contractAddress String?
-  status        String       @default("operating") // upcoming, funding, funded, operating, paused, completed, failed
+  status        String       @default("operating") // upcoming, funding, funded, operating, paused, rejected, completed, failed
   failedAt      DateTime?    // 마일스톤 기한 초과로 실패 전환된 시각 (status="failed"와 함께 기록)
   imageUrl      String?
   institutionId String?      // 도입 기관 (성과 리포트 집계 단위)
   institution   Institution? @relation(fields: [institutionId], references: [id])
+  operatorId    String?      // 이 지점을 운영하는 운영자 (운영자 몫 지급 대상)
+  operator      User?        @relation("ProjectOperator", fields: [operatorId], references: [id])
   createdAt     DateTime     @default(now())
   escrow         Escrow?
   milestones     Milestone[]
@@ -121,6 +141,10 @@ model Project {
   sensorThresholds SensorThreshold[]
   devices          Device[]
   stockAdjustments StockAdjustment[]
+  settlementRule SettlementRule?
+  payouts        Payout[]
+  investments    Investment[]
+  subscriptions  Subscription[]
 }
 
 // ─── 에스크로 ───
@@ -153,6 +177,15 @@ model Milestone {
   crossCheck           String?
   assetValue           BigInt         @default(0)
   evidenceUrl          String?
+  // ─── 증빙 제출·승인 게이트 (O-11 제출 → A-08 재검토) ───
+  // status: pending → evidence_submitted → in_progress(검증) → verified(승인)
+  //         → completed(집행). 보완이 필요하면 revision_required로 되돌린다.
+  evidenceUrls         String[]  // 운영자가 올린 증빙 파일들
+  evidenceNote         String?   // 제출 시 남긴 설명
+  evidenceSubmittedAt  DateTime?
+  reviewNote           String?   // 관리자 재검토 의견
+  reviewedById         String?
+  reviewedAt           DateTime?
   aiVerificationResult Json?
   completedAt          DateTime?
   // 이 마일스톤의 집행 기한. Escrow.sol의 milestoneDeadline(= 직전 트랜치 집행 +
@@ -161,6 +194,7 @@ model Milestone {
   // 단계는 null.
   deadlineAt           DateTime?
   notifications        Notification[]
+  appeals              Appeal[]
 
   @@unique([projectId, seq])
 }
@@ -258,6 +292,7 @@ model ProjectPartner {
   project                Project @relation(fields: [projectId], references: [id])
   role                   String  // landlord, equipment_partner
   name                   String
+  userId                 String? // 계정이 있는 파트너 — 지급 내역을 본인이 조회할 수 있게 연결
   totalContribution      BigInt  @default(0)
   recoveredAmount        BigInt  @default(0)
   monthlyRecoveryAmount  BigInt  @default(0)
@@ -307,6 +342,105 @@ model Institution {
   contactEmail String?
   createdAt    DateTime  @default(now())
   projects     Project[]
+}
+
+// ─── 감사 로그 (청약·검증·집행·정산·권한변경 추적) ───
+// 다른 모델과 FK로 묶지 않는다. 감사 기록은 대상 행이 삭제·변경돼도 그 자체로 남아야
+// 하므로 actorId·entityId·projectId를 값으로만 들고 있는다.
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?  // null = 시스템 이벤트 (스케줄러·자동 집행)
+  actorRole  String?  // investor, operator, landlord, admin, system
+  action     String   // subscription.created, milestone.verified, payout.processed 등
+  entityType String   // project, milestone, dividend, payout, appeal, settlement_rule, user
+  entityId   String?
+  projectId  String?  // 프로젝트 단위 필터용 (entityType이 project가 아닐 때도 채움)
+  summary    String   // 화면에 그대로 뿌리는 한 줄 요약
+  detail     Json?    // 변경 전/후 값 등 부가 정보
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([projectId, createdAt])
+  @@index([action, createdAt])
+  @@index([actorId, createdAt])
+}
+
+// ─── 정산 규칙 (프로젝트별 — 행이 없으면 lib/waterfall.ts 기본값) ───
+// 임대료는 여기 두지 않는다. ProjectPartner(role="landlord").monthlyRecoveryAmount가
+// 이미 프로젝트별 월 고정 임대료를 들고 있어 단일 출처로 유지한다.
+model SettlementRule {
+  id                 String  @id @default(cuid())
+  projectId          String  @unique
+  project            Project @relation(fields: [projectId], references: [id])
+  monthlyPlatformFee BigInt  @default(200000) // 플랫폼 이용료 월 정액
+  experienceFeeRate  Float   @default(0.3)    // 체험 중개 수수료율
+  b2bFeeRate         Float   @default(0.08)   // B2B 신규계약 성사 수수료율
+  // 우선배분/전환 — 흑자 전환 전에는 투자자 배분을 높게 두고(우선배분),
+  // 기간 매출이 breakEvenRevenue 이상이면 흑자 구간 비율로 전환한다.
+  deficitInvestorShare Float  @default(0.6)
+  surplusInvestorShare Float  @default(0.6)
+  breakEvenRevenue     BigInt @default(0) // 0 = 전환 없음 (항상 흑자 구간 비율)
+  updatedById        String?
+  updatedAt          DateTime @updatedAt
+}
+
+// ─── 이의제기 (반려·보류 마일스톤에 대한 단계적 재검증) ───
+model Appeal {
+  id            String    @id @default(cuid())
+  milestoneId   String
+  milestone     Milestone @relation(fields: [milestoneId], references: [id])
+  projectId     String    // 프로젝트 단위 조회용 비정규화 (milestone 조인 회피)
+  submittedById String    // 이의제기한 운영자
+  reason        String
+  // open(접수) → under_review(운영팀 검토) → escalated(외부 전문가) → approved/rejected(최종)
+  status        String    @default("open")
+  decision      String?   // 최종 판정 사유
+  decidedById   String?
+  decidedAt     DateTime?
+  createdAt     DateTime  @default(now())
+  comments      AppealComment[]
+
+  @@index([projectId, createdAt])
+  @@index([status, createdAt])
+}
+
+// ─── 이의제기 코멘트 스레드 ───
+model AppealComment {
+  id            String   @id @default(cuid())
+  appealId      String
+  appeal        Appeal   @relation(fields: [appealId], references: [id])
+  authorId      String
+  authorRole    String   // operator, admin (운영팀), auditor (외부 전문가)
+  body          String
+  attachmentUrl String?  // 보완 자료
+  createdAt     DateTime @default(now())
+
+  @@index([appealId, createdAt])
+}
+
+// ─── 지급 원장 (배당·임대료·운영자 정산) ───
+// MVP 범위: 실제 계좌이체·온체인 전송은 하지 않는다. 지급 예정 건을 등록하고
+// 상태(예정/완료/실패)와 증빙만 관리한다 (명세 2.2.1).
+model Payout {
+  id            String    @id @default(cuid())
+  projectId     String
+  project       Project   @relation(fields: [projectId], references: [id])
+  category      String    // dividend, landlord_rent, operator_settlement
+  payeeUserId   String?   // 계정이 없는 수취인(건물주 파트너 등)은 null
+  payeeName     String
+  amount        BigInt
+  period        String    // YYYY-MM
+  status        String    @default("scheduled") // scheduled → paid / failed
+  paidAt        DateTime?
+  failureReason String?
+  evidenceUrl   String?   // 세금계산서 등 지급 증빙
+  memo          String?
+  createdAt     DateTime  @default(now())
+
+  // 같은 기간·같은 수취인에게 같은 항목이 두 번 등록되는 것을 막는다.
+  @@unique([projectId, period, category, payeeName])
+  @@index([payeeUserId, period])
+  @@index([status, period])
 }
 
 // ─── 품목 마스터 (재배·판매 대상 작물) ───
@@ -450,4 +584,75 @@ model StockAdjustment {
   adjustedAt  DateTime @default(now())
 
   @@index([projectId, adjustedAt])
+}
+// ─── 투자 신청 (다단계 청약 흐름) ───
+// 화면 I-02~I-04가 이 레코드 하나의 상태를 밀고 나간다. 실제 납입은 마지막
+// 단계에서 executeSubscription을 호출해 처리하고, 결과를 여기에 기록한다.
+model Investment {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id])
+  // DRAFT → IDENTITY_REQUIRED → ELIGIBILITY_CHECKED → CONSENT_REQUIRED →
+  // AWAITING_DEPOSIT → DEPOSIT_CONFIRMED → COMPLETED (+ DEPOSIT_FAILED · CANCELLED)
+  status     String   @default("DRAFT")
+  amount     BigInt   @default(0) // 신청 금액 (원)
+  units      Int      @default(0) // 보유 구좌 수
+  // 적합성 판정 결과 (연간한도·본인확인·연령)
+  eligible       Boolean?
+  eligibilityMemo String?
+  annualLimit    BigInt?
+  // 동의·서명
+  consentedAt  DateTime?
+  signature    String?
+  // 납입 결과
+  transactionId String?
+  failureReason String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([projectId, status])
+}
+
+// ─── 정기구독 (구매자) ───
+// 배송이 아니라 지정한 지점에서 직접 받는 픽업 구독이다.
+// 팩 크기(3·5·7종)와 수령 주기를 고르고, 지점 재고 안에서 작물·드레싱을 고른다.
+model Subscription {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  projectId     String   // 픽업 지점
+  project       Project  @relation(fields: [projectId], references: [id])
+  packSize      Int      // 3 · 5 · 7 (작물 종수)
+  perWeek       Int      @default(1) // 주 수령 횟수
+  productIds    String[] // 고른 작물
+  dressings     String[] // 고른 드레싱
+  monthlyPrice  Int      // 월 결제액 (원)
+  couponCode    String?
+  discount      Int      @default(0)
+  paymentMethod String?  // 표시용 결제수단 라벨
+  status        String   @default("active") // active · paused · cancelled · waitlist
+  startedAt     DateTime @default(now())
+  nextPaymentAt DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt @default(now())
+  pickups       PickupOrder[]
+
+  @@index([userId, status])
+}
+
+// 구독 한 건의 회차. 매장에서 보여줄 확인번호를 갖는다.
+model PickupOrder {
+  id             String       @id @default(cuid())
+  subscriptionId String
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
+  scheduledAt    DateTime
+  status         String       @default("scheduled") // scheduled · picked · skipped
+  code           String       // 매장 확인번호
+  pickedAt       DateTime?
+  createdAt      DateTime     @default(now())
+
+  @@index([subscriptionId, scheduledAt])
 }

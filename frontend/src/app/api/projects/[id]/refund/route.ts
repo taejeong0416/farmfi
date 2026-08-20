@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { serializeBigInt as serialize } from "@/lib/serialize";
 import { requireRole } from "@/lib/auth";
+import { recordAudit } from "@/lib/audit";
 
 // POST /api/projects/[id]/refund — 실패한 프로젝트의 잔여 에스크로를 보유 구좌 비례로 환불.
 //
@@ -21,8 +22,9 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  let session;
   try {
-    await requireRole("admin");
+    session = await requireRole("admin");
   } catch (err) {
     if (err instanceof Response) return err;
     throw err;
@@ -133,6 +135,17 @@ export async function POST(
       },
       { maxWait: 5000, timeout: 15000 } // 보유자별 잔액·거래 쓰기 다수 — pooler 지연 대비
     );
+
+    await recordAudit({
+      actorId: session.userId,
+      actorRole: "admin",
+      action: "project.refunded",
+      entityType: "project",
+      entityId: id,
+      projectId: id,
+      summary: `${project.name} 실패 환불 집행 — ${payouts.length}명에게 ${Number(totalRefunded).toLocaleString("ko-KR")}원`,
+      detail: { totalRefunded: Number(totalRefunded), recipients: payouts.length },
+    });
 
     return NextResponse.json(
       serialize({

@@ -47,7 +47,7 @@ export function mapRecordToReading(r: OpenEnvRecord): IoTReading {
 // 불요 — GET /structuredDataset/fileDownload.do?type=ent&fileName=...) →
 // 장비코드(FG-EI-TI 내부온도/FG-EI-HI 내부습도/FG-EI-CI CO2/FG-EI-IS 일사량/
 // FG-EL-PL 토양pH) 기준 피벗 → 이 파일 교체.
-// 주의: 실데이터는 딸기 온실(일사량 W/m², 토양 pH)이라 새싹삼 수경 도메인과
+// 주의: 실데이터는 딸기 온실(일사량 W/m², 토양 pH)이라 엽채류 수경 도메인과
 // 품목이 다르다 — 알고리즘 데모용 실측 시계열이며, 품목별 정상범위(HEALTHY_RANGES)는
 // 운영 품목에 맞춰 교체하는 지점.
 export async function fetchOpenData(): Promise<OpenEnvRecord[]> {
@@ -64,6 +64,27 @@ export async function fetchOpenData(): Promise<OpenEnvRecord[]> {
 export interface SalesRecord {
   salesDt: string; // YYYY-MM-DD
   units: number; // 판매 포기 수
+}
+
+// ── 외기 계열 정렬 ─────────────────────────────────────────────────────────
+// IotData에는 외부기상이 없다(내부 센서만 적재). 외기온도·일사량은 같은 오픈데이터
+// 레코드에 들어 있으므로 측정시각으로 맞붙인다. 시각이 없는 행은 null로 남겨
+// 호출부가 "실측 없음"으로 다루게 한다 — 내부값에서 파생시켜 채우면 그 계열을 쓰는
+// 분석(내외기 차분 관리도)이 영원히 "정상"만 내면서 동작하는 것처럼 보인다.
+export function alignExternalSeries(
+  rows: { recordedAt: Date }[],
+  records: OpenEnvRecord[]
+): { extTemp: (number | null)[]; extInsolation: (number | null)[] } {
+  const byTime = new Map<number, OpenEnvRecord>();
+  for (const r of records) byTime.set(new Date(r.measDt).getTime(), r);
+  const extTemp: (number | null)[] = [];
+  const extInsolation: (number | null)[] = [];
+  for (const row of rows) {
+    const rec = byTime.get(row.recordedAt.getTime());
+    extTemp.push(rec?.extTemp ?? null);
+    extInsolation.push(rec?.extInsolation ?? null);
+  }
+  return { extTemp, extInsolation };
 }
 
 export async function fetchSalesData(): Promise<SalesRecord[]> {

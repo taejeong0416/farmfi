@@ -1,0 +1,65 @@
+FRAME "02 대시보드"  @602,919 402x1265  fill=#FFFFFF
+  FRAME "Body"  @602,1022 402x1076
+    FRAME "OperatorProfile"  @618,1038 370x41
+      FRAME "Frame 2121453055"  @618,1038 240x41
+        FRAME "Avatar"  @618,1039 40x40  fill=#EEF4EA  r=20
+          TEXT "박"  @632,1050 13x17  text='박'  Pretendard Regular 14px  #1B5E3F
+        FRAME "TextCol"  @668,1038 119x41
+          TEXT "박태정 운영자"  @668,1038 98x21  text='박태정 운영자'  Pretendard SemiBold 18px  #1D1E1C
+          TEXT "오늘도 좋은 하루입니다"  @668,1063 119x16  text='오늘도 좋은 하루입니다'  Pretendard Regular 13px  #656563
+      FRAME "StoreSelector"  @936,1050 52x18
+        TEXT "StoreName"  @936,1050 39x18  text='서면점'  Pretendard SemiBold 15px  #1D1E1C
+        TEXT "Chevron"  @979,1053 9x11  text='▼'  Pretendard Regular 9px  #656563
+    FRAME "KpiGrid"  @618,1103 370x154
+      FRAME "Row"  @618,1103 370x71
+        INSTANCE "App/MetricTile"  @618,1103 179x71  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+        INSTANCE "App/MetricTile"  @809,1103 179x71  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      FRAME "Row"  @618,1186 370x71
+        INSTANCE "App/MetricTile"  @618,1186 179x71  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+        INSTANCE "App/MetricTile"  @809,1186 179x71  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+    FRAME "AlertsSection"  @618,1281 370x205
+      FRAME "HeaderRow"  @618,1281 370x19
+        INSTANCE "App/SectionTitle"  @618,1281 314x19
+        TEXT "전체 보기 ›"  @932,1283 56x16  text='전체 보기 ›'  Pretendard Regular 13px  #656563
+      INSTANCE "App/AlertCard"  @618,1312 370x81  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      INSTANCE "App/AlertCard"  @618,1405 370x81  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+    FRAME "TasksSection"  @618,1511 370x150
+      INSTANCE "App/SectionTitle"  @618,1511 370x19
+      SYMBOL "App/TaskRow"  @618,1542 370x54  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+        INSTANCE "App/Checkbox"  @630,1559 18x18  fill=#1B5E3F  r=4
+        TEXT "상추 수확 시점 도래 · 재배중 120봉"  @658,1559 267x18  text='상추 수확 시점 도래 · 재배중 120봉'  Inter Regular 15px  #1D1E1C
+        FRAME "Action"  @934,1557 42x23  fill=#EEF4EA  r=6
+          TEXT "수확"  @944,1561 21x14  text='수확'  Pretendard SemiBold 12px  #1B5E3F
+      INSTANCE "App/TaskRow"  @618,1607 370x54  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+    FRAME "StoreStatusSection"  @618,1685 370x381
+      INSTANCE "App/SectionTitle"  @618,1685 370x19
+      FRAME "Card"  @618,1716 370x350  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+        FRAME "FloorPlanPlaceholder"  @618,1716 370x350
+          FRAME "BedPill"  @634,1732 64x26  fill=#FFFFFF  r=99
+            ELLIPSE "Ellipse"  @644,1742 6x6  fill=#1B5E3F
+            TEXT "베드 A"  @656,1738 32x14  text='베드 A'  Pretendard SemiBold 12px  #1D1E1C
+          FRAME "BedPill"  @889,1732 64x26  fill=#FFFFFF  r=99
+            ELLIPSE "Ellipse"  @899,1742 6x6  fill=#A8762A
+            TEXT "베드 B"  @911,1738 32x14  text='베드 B'  Pretendard SemiBold 12px  #1D1E1C
+          FRAME "BedPill"  @634,2021 65x26  fill=#FFFFFF  r=99
+            ELLIPSE "Ellipse"  @644,2031 6x6  fill=#1B5E3F
+            TEXT "베드 C"  @656,2027 33x14  text='베드 C'  Pretendard SemiBold 12px  #1D1E1C
+          FRAME "BedPill"  @890,2021 64x26  fill=#FFFFFF  r=99
+            ELLIPSE "Ellipse"  @900,2031 6x6  fill=#1B5E3F
+            TEXT "베드 D"  @912,2027 32x14  text='베드 D'  Pretendard SemiBold 12px  #1D1E1C
+  FRAME "Frame 2121453045"  @602,2083 402x101
+    INSTANCE "App/BottomNav"  @602,2083 402x64  fill=#FFFFFF  stroke=#F1F1F1/1
+    FRAME "Group 828"  @602,2148 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @602,2148 402x36  fill=#070428  stroke=#FFFFFF/1
+      FRAME "Group 819"  @732,2170 144x5
+        FRAME "Group 665"  @732,2170 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @732,2170 144x5  fill=#070428  r=107
+  FRAME "Status Bar"  @602,919 402x103
+    INSTANCE "Status Bar"  @602,919 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+    FRAME "Frame 2121452728"  @602,966 402x56  fill=#FFFFFF  stroke=#C9CEC9@0.50/1
+      FRAME "Frame 1171276457"  @618,985 370x18
+        FRAME "logo"  @618,985 78x18
+          VECTOR "Vector"  @618,985 78x18  fill=#217248
+        FRAME "settings"  @970,985 18x18
+          VECTOR "Vector"  @977,992 4x4  stroke=#A5A89F/2
+          VECTOR "Vector"  @971,986 16x16  stroke=#A5A89F/2

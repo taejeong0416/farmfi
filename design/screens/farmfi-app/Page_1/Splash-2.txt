@@ -1,0 +1,15 @@
+FRAME "Splash"  @-675,-1037 402x874
+  FRAME "Body"  @-675,-990 402x438
+    FRAME "Spacer"  @-629,-977 310x316
+    FRAME "Logo"  @-629,-651 310x77
+      FRAME "logo"  @-572,-651 196x45
+        VECTOR "Vector"  @-572,-651 196x45  fill=#FFFFFF
+      TEXT "도심 속 신선한 내일을 심다"  @-543,-590 137x16  text='도심 속 신선한 내일을 심다'  Pretendard Regular 13px  #FFFFFF
+  FRAME "Frame 2121453045"  @-675,-199 402x36
+    FRAME "Group 828"  @-675,-199 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @-675,-199 402x36
+      FRAME "Group 819"  @-545,-177 144x5
+        FRAME "Group 665"  @-545,-177 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @-545,-177 144x5  fill=#070428  r=107
+  FRAME "Status Bar"  @-675,-1037 402x47
+    INSTANCE "Status Bar"  @-675,-1037 402x47

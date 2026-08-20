@@ -4,7 +4,7 @@ import { useState } from "react";
 
 // POST /api/demo/step 이 실제로 실행하는 시나리오 (route.ts: buildStepExecutors).
 // 3호점(MF03) 시드 3,480구좌 + 잔여 920구좌 청약 = 4,400구좌 완납 → escrow 4,400만 →
-// 마일스톤 seq1~4 순차 집행(트랜치 합계 4,400만, 잔여 0) + 스텝7 수수료 풀 배당.
+// 마일스톤 seq1~4 순차 집행(집행 합계 4,400만, 잔여 0) + 스텝7 수수료 풀 회수금.
 const STEPS: { step: number; title: string; detail: string }[] = [
   { step: 1, title: "청약 · 김투자", detail: "300구좌 매수 (잔여 920 → 620)" },
   { step: 2, title: "청약 · 이서연", detail: "200구좌 매수 (잔여 620 → 420)" },
@@ -12,7 +12,7 @@ const STEPS: { step: number; title: string; detail: string }[] = [
   { step: 4, title: "마일스톤 1 · 공간 준비", detail: "계약서·영수증·사진 AI 검증 → 트랜치 15,400,000원 집행" },
   { step: 5, title: "마일스톤 2 · 시운전", detail: "IoT 14일 가동률 검증 → 트랜치 13,200,000원 집행" },
   { step: 6, title: "마일스톤 3 · 수확", detail: "판매 영수증·수확 사진 검증 → 트랜치 8,800,000원 집행" },
-  { step: 7, title: "배당 분배", detail: "월 매출 1,400,000원 → 수수료 풀 380,000원 · 투자자 배당 228,000원(1좌 51원)" },
+  { step: 7, title: "회수금 분배", detail: "월 매출 1,400,000원 → 수수료 풀 380,000원 · 투자자 회수금 228,000원(1좌 51원)" },
   { step: 8, title: "마일스톤 4 · 지속운영", detail: "IoT 60일 + 판매 실적 검증 → 트랜치 6,600,000원 집행 (잔여 0)" },
 ];
 
@@ -87,19 +87,19 @@ function headline(result: unknown): string {
     }
     const complete = asObject(r.complete);
     return complete
-      ? "AI 검증 통과 → 에스크로 트랜치 집행 완료"
+      ? "AI 검증 통과 → 신탁 자금 집행 완료"
       : "AI 검증 통과 (집행 응답 없음)";
   }
 
-  // /api/dividends/distribute 응답의 Dividend 행 — totalDividend(투자자 배당 총액)·perToken(1좌당).
+  // /api/dividends/distribute 응답의 응답 — totalDividend(투자자 회수금 총액)·perToken(1좌당).
   const dividend = asObject(r.dividend);
   if (dividend) {
     const total = dividend.totalDividend;
-    if (total == null) return "배당 분배 완료";
+    if (total == null) return "회수금 분배 완료";
     const perToken = dividend.perToken;
     return perToken != null
-      ? `배당 분배 완료 · 총 ${won(Number(total))} · 1좌당 ${won(Number(perToken))}`
-      : `배당 분배 완료 · 총 ${won(Number(total))}`;
+      ? `회수금 분배 완료 · 총 ${won(Number(total))} · 1좌당 ${won(Number(perToken))}`
+      : `회수금 분배 완료 · 총 ${won(Number(total))}`;
   }
 
   return "완료";
@@ -300,7 +300,7 @@ export function DemoConsole() {
                     margin: 0,
                     fontWeight: 800,
                     fontSize: 17,
-                    color: r.ok ? "var(--green-700)" : "#b02a2a",
+                    color: r.ok ? "var(--green-700)" : "#A34A3D",
                   }}
                 >
                   {r.headline}
@@ -311,7 +311,7 @@ export function DemoConsole() {
                     {r.signals.map(([name, ok]) => (
                       <li key={name}>
                         <span className="muted">{name}</span>
-                        <strong style={{ color: ok ? "var(--green-700)" : "#b02a2a" }}>
+                        <strong style={{ color: ok ? "var(--green-700)" : "#A34A3D" }}>
                           {ok ? "통과 ✓" : "미통과 ✗"}
                         </strong>
                       </li>

@@ -1,0 +1,3 @@
+SYMBOL "App/AckedMark"  @164,4195 60x15
+  ELLIPSE "Ellipse"  @164,4200 6x6  fill=#1B5E3F
+  TEXT "확인 완료"  @177,4195 48x15  text='확인 완료'  Inter Regular 12px  #1B5E3F

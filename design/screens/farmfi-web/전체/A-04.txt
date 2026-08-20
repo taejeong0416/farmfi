@@ -1,0 +1,30 @@
+FRAME "A-04 · 관리자 / 공간·설비 구성"  @3260,5800 730x920  fill=#F9FAFA
+  TEXT "공간·설비 관리"  @3288,5828 620x20  text='공간·설비 관리'  Inter Semi Bold 13px  #0F6E56
+  TEXT "공간에 들어갈 설비를 먼저 구성해요"  @3288,5862 620x20  text='공간에 들어갈 설비를 먼저 구성해요'  Inter Bold 25px  #141F1C
+  TEXT "웹에서는 종류·수량·배치를 관리하고, 현장 운영자는 앱으로 설비 코드를 스캔해 실제 장치와 연결합니다."  @3288,5896 620x20  text='웹에서는 종류·수량·배치를 관리하고, 현장 운영자는 앱으로 설비 코드를 스캔해 실제 장치와 연결합니다.'  Inter Regular 13px  #616E69
+  FRAME "공간 선택"  @3288,5930 674x80  fill=#F0F9F6  stroke=#DBE3E0/1  r=12
+    TEXT "성수 로컬팜 후보지 A · 전용 82㎡"  @3304,5946 620x20  text='성수 로컬팜 후보지 A · 전용 82㎡'  Inter Bold 17px  #141F1C
+    TEXT "개점 준비 중 · 운영자 김운영"  @3304,5974 620x20  text='개점 준비 중 · 운영자 김운영'  Inter Regular 13px  #0C3127
+  FRAME "Zone"  @3288,6024 674x108  fill=#FFFFFF  stroke=#DBE3E0/1  r=12
+    TEXT "재배존 A"  @3304,6040 620x20  text='재배존 A'  Inter Semi Bold 15px  #141F1C
+    TEXT "수경재배 랙 4대 · LED 12개"  @3304,6068 620x20  text='수경재배 랙 4대 · LED 12개'  Inter Regular 13px  #141F1C
+    TEXT "연결 12 / 16"  @3304,6096 620x20  text='연결 12 / 16'  Inter Semi Bold 12px  #296BAD
+  FRAME "Zone"  @3288,6146 674x108  fill=#FFFFFF  stroke=#DBE3E0/1  r=12
+    TEXT "재배존 B"  @3304,6162 620x20  text='재배존 B'  Inter Semi Bold 15px  #141F1C
+    TEXT "수경재배 랙 3대 · LED 9개"  @3304,6190 620x20  text='수경재배 랙 3대 · LED 9개'  Inter Regular 13px  #141F1C
+    TEXT "연결 12 / 12"  @3304,6218 620x20  text='연결 12 / 12'  Inter Semi Bold 12px  #0F6E56
+  FRAME "Zone"  @3288,6268 674x108  fill=#FFFFFF  stroke=#DBE3E0/1  r=12
+    TEXT "환경·공용"  @3304,6284 620x20  text='환경·공용'  Inter Semi Bold 15px  #141F1C
+    TEXT "온습도 3개 · CO₂ 2개 · 허브 1대"  @3304,6312 620x20  text='온습도 3개 · CO₂ 2개 · 허브 1대'  Inter Regular 13px  #141F1C
+    TEXT "연결 5 / 6"  @3304,6340 620x20  text='연결 5 / 6'  Inter Semi Bold 12px  #296BAD
+  FRAME "미연결 설비"  @3288,6390 674x108  fill=#FFFFFF  stroke=#DBE3E0/1  r=12
+    TEXT "연결 대기 5개"  @3304,6406 620x20  text='연결 대기 5개'  Inter Bold 16px  #141F1C
+    TEXT "LED-013~016 · HUB-001"  @3304,6434 620x20  text='LED-013~016 · HUB-001'  Inter Regular 13px  #616E69
+    TEXT "운영자 앱에서 설비의 QR/바코드를 스캔하면 이 공간에 자동 연결됩니다."  @3304,6462 620x20  text='운영자 앱에서 설비의 QR/바코드를 스캔하면 이 공간에 자동 연결됩니다.'  Inter Regular 12px  #616E69
+  FRAME "Button"  @3288,6512 674x44  fill=#0F6E56  stroke=#0F6E56/1  r=9
+    TEXT "앱 연결용 작업 열기"  @3355,6524 540x20  text='앱 연결용 작업 열기'  Inter Semi Bold 13px  #FFFFFF
+  FRAME "Button"  @3288,6570 674x44  fill=#FFFFFF  stroke=#DBE3E0/1  r=9
+    TEXT "설비 구성 수정"  @3355,6582 540x20  text='설비 구성 수정'  Inter Semi Bold 13px  #141F1C
+  FRAME "운영 전 점검"  @3288,6628 674x80  fill=#F0F9F6  stroke=#DBE3E0/1  r=12
+    TEXT "운영 가능 전환 조건"  @3304,6644 620x20  text='운영 가능 전환 조건'  Inter Semi Bold 14px  #0C3127
+    TEXT "필수 설비 연결 100% · 통신 테스트 통과 · 센서값 정상"  @3304,6672 620x20  text='필수 설비 연결 100% · 통신 테스트 통과 · 센서값 정상'  Inter Regular 12px  #616E69

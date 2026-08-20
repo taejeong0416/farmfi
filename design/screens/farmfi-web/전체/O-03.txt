@@ -1,0 +1,95 @@
+FRAME "O-03 · 운영자 / 자격·서류 신청"  @3040,4400 730x1122  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "선"  @3041,4465 728x1  fill=#EDEDEB
+  TEXT "운영 자격 인증"  @3061,4414 86x18  text='운영 자격 인증'  Pretendard Bold 15px  #1A1A1A
+  TEXT "그린테이블 · 대표 이운영 · 신청 2026…"  @3061,4436 203x14  text='그린테이블 · 대표 이운영 · 신청 2026.03.02'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @3573,4416 72x34  stroke=#D6D6D4/1  r=6
+  TEXT "임시 저장"  @3587,4426 45x14  text='임시 저장'  Pretendard Medium 12px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @3653,4416 96x32  fill=#14542E  r=6
+  TEXT "자격 심사 요청"  @3667,4425 69x14  text='자격 심사 요청'  Pretendard Medium 12px  #FFFFFF
+  ROUNDED_RECTANGLE "선"  @3041,4549 728x1  fill=#EDEDEB
+  TEXT "심사 상태"  @3061,4483 49x15  text='심사 상태'  Pretendard Regular 13px  #8A8A8A
+  TEXT "보완 필요"  @3075,4507 56x18  text='보완 필요'  Pretendard Medium 15px  #A34A3D
+  ELLIPSE "점"  @3061,4514 7x7  fill=#A34A3D
+  ROUNDED_RECTANGLE "선"  @3284,4466 1x83  fill=#EDEDEB
+  TEXT "충족 요건"  @3305,4483 49x15  text='충족 요건'  Pretendard Regular 13px  #8A8A8A
+  TEXT "4"  @3305,4504 17x29  text='4'  Pretendard Medium 24px  #1A1A1A
+  TEXT "/ 6"  @3320,4513 23x18  text='/ 6'  Pretendard Regular 15px  #4A4A4A
+  ROUNDED_RECTANGLE "선"  @3526,4466 1x83  fill=#EDEDEB
+  TEXT "인증 유효기간"  @3547,4483 72x15  text='인증 유효기간'  Pretendard Regular 13px  #8A8A8A
+  TEXT "2"  @3547,4504 16x29  text='2'  Pretendard Medium 24px  #1A1A1A
+  TEXT "년"  @3562,4513 14x18  text='년'  Pretendard Regular 15px  #4A4A4A
+  TEXT "자격 요건"  @3061,4569 53x16  text='자격 요건'  Pretendard Bold 14px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @3041,4598 728x32  fill=#FAFAF7
+  ROUNDED_RECTANGLE "선"  @3041,4629 728x1  fill=#EDEDEB
+  TEXT "요건"  @3061,4607 20x13  text='요건'  Pretendard Regular 11px  #8A8A8A
+  TEXT "제출 서류"  @3337,4607 42x13  text='제출 서류'  Pretendard Regular 11px  #8A8A8A
+  TEXT "상태"  @3649,4607 20x13  text='상태'  Pretendard Regular 11px  #8A8A8A
+  ROUNDED_RECTANGLE "선"  @3041,4668 728x1  fill=#F2F2F0
+  TEXT "사업자 등록"  @3061,4641 58x15  text='사업자 등록'  Pretendard Regular 12px  #1A1A1A
+  TEXT "사업자등록증.pdf"  @3337,4641 88x15  text='사업자등록증.pdf'  Pretendard Regular 12px  #4A4A4A
+  TEXT "제출완료"  @3663,4642 42x14  text='제출완료'  Pretendard Medium 12px  #14542E
+  ELLIPSE "점"  @3649,4647 7x7  fill=#14542E
+  ROUNDED_RECTANGLE "선"  @3041,4708 728x1  fill=#F2F2F0
+  TEXT "대표자 실명 확인"  @3061,4680 83x15  text='대표자 실명 확인'  Pretendard Regular 12px  #1A1A1A
+  TEXT "지갑 신원증명 · 03.12 14:02"  @3337,4680 143x15  text='지갑 신원증명 · 03.12 14:02'  Pretendard Regular 12px  #4A4A4A
+  TEXT "확인 완료"  @3663,4682 45x14  text='확인 완료'  Pretendard Medium 12px  #14542E
+  ELLIPSE "점"  @3649,4686 7x7  fill=#14542E
+  ROUNDED_RECTANGLE "선"  @3041,4748 728x1  fill=#F2F2F0
+  TEXT "스마트팜 운영 이력"  @3061,4720 94x15  text='스마트팜 운영 이력'  Pretendard Regular 12px  #1A1A1A
+  TEXT "운영 실적 자료 2건"  @3337,4720 93x15  text='운영 실적 자료 2건'  Pretendard Regular 12px  #4A4A4A
+  TEXT "제출완료"  @3663,4721 42x14  text='제출완료'  Pretendard Medium 12px  #14542E
+  ELLIPSE "점"  @3649,4726 7x7  fill=#14542E
+  ROUNDED_RECTANGLE "선"  @3041,4787 728x1  fill=#F2F2F0
+  ROUNDED_RECTANGLE "선"  @3041,4748 2x40  fill=#A34A3D
+  TEXT "교육 이수"  @3061,4760 47x15  text='교육 이수'  Pretendard Regular 12px  #1A1A1A
+  TEXT "스마트팜 교육 이수증 · 만료"  @3338,4760 136x15  text='스마트팜 교육 이수증 · 만료'  Pretendard Regular 12px  #4A4A4A
+  TEXT "보완 요청"  @3663,4761 45x14  text='보완 요청'  Pretendard Medium 12px  #A34A3D
+  ELLIPSE "점"  @3649,4765 7x7  fill=#A34A3D
+  ROUNDED_RECTANGLE "선"  @3041,4826 728x1  fill=#F2F2F0
+  TEXT "세무 신고"  @3061,4799 47x15  text='세무 신고'  Pretendard Regular 12px  #1A1A1A
+  TEXT "국세 납세증명서 미제출"  @3337,4799 115x15  text='국세 납세증명서 미제출'  Pretendard Regular 12px  #8A8A8A
+  TEXT "확인 전"  @3663,4800 35x14  text='확인 전'  Pretendard Regular 12px  #4A4A4A
+  ELLIPSE "점"  @3649,4805 7x7  fill=#B5B5B5
+  ROUNDED_RECTANGLE "선"  @3041,4866 728x1  fill=#EDEDEB
+  TEXT "배상 책임보험"  @3061,4838 69x15  text='배상 책임보험'  Pretendard Regular 12px  #1A1A1A
+  TEXT "보험 가입증명서.pdf"  @3337,4838 102x15  text='보험 가입증명서.pdf'  Pretendard Regular 12px  #4A4A4A
+  TEXT "제출완료"  @3663,4840 42x14  text='제출완료'  Pretendard Medium 12px  #14542E
+  ELLIPSE "점"  @3649,4844 7x7  fill=#14542E
+  ROUNDED_RECTANGLE "면"  @3061,4883 688x93  fill=#FCFCFA  stroke=#EDEDEB/1  r=8
+  TEXT "보완 요청 사유"  @3078,4896 72x15  text='보완 요청 사유'  Pretendard Medium 12px  #A34A3D
+  TEXT "제출한 교육 이수증의 유효기간이 지났습니다.…"  @3078,4922 570x15  text='제출한 교육 이수증의 유효기간이 지났습니다. 최근 2년 이내 이수 내역을 올리고, 국세 납세증명서를 함께 제출하세요.'  Pretendard Regular 12px  #757575
+  TEXT "2026.03.05 11:20 · 심사자 정…"  @3078,4948 161x14  text='2026.03.05 11:20 · 심사자 정심사'  Pretendard Regular 12px  #8A8A8A
+  TEXT "심사 진행"  @3061,4997 53x16  text='심사 진행'  Pretendard Bold 14px  #1A1A1A
+  ROUNDED_RECTANGLE "선"  @3065,5036 1x200  fill=#E5E5E3
+  ELLIPSE "점"  @3061,5032 9x9  fill=#14542E
+  TEXT "2026.03.02 09:40"  @3083,5027 98x14  text='2026.03.02 09:40'  Pretendard Regular 12px  #8A8A8A
+  TEXT "신청 접수"  @3083,5047 52x15  text='신청 접수'  Pretendard Medium 13px  #1A1A1A
+  TEXT "· 통과"  @3134,5047 30x15  text='· 통과'  Pretendard Medium 13px  #14542E
+  ELLIPSE "점"  @3061,5086 9x9  fill=#FFFFFF  stroke=#99A39C/1
+  TEXT "2026.03.05 11:20"  @3083,5081 94x14  text='2026.03.05 11:20'  Pretendard Regular 12px  #8A8A8A
+  TEXT "서류 확인"  @3083,5101 52x15  text='서류 확인'  Pretendard Medium 13px  #1A1A1A
+  TEXT "· 보완 요청"  @3134,5101 56x15  text='· 보완 요청'  Pretendard Medium 13px  #A34A3D
+  TEXT "보완 제출 시 심사가 이어집니다"  @3083,5123 148x14  text='보완 제출 시 심사가 이어집니다'  Pretendard Regular 12px  #8A8A8A
+  ELLIPSE "점"  @3061,5158 9x9  fill=#FFFFFF  stroke=#CFCFCC/1
+  TEXT "—"  @3083,5153 12x14  text='—'  Pretendard Regular 12px  #8A8A8A
+  TEXT "운영 이력 검토"  @3083,5173 77x15  text='운영 이력 검토'  Pretendard Medium 13px  #4A4A4A
+  TEXT "· 예정"  @3159,5173 30x15  text='· 예정'  Pretendard Regular 13px  #8A8A8A
+  ELLIPSE "점"  @3061,5212 9x9  fill=#FFFFFF  stroke=#CFCFCC/1
+  TEXT "—"  @3083,5207 12x14  text='—'  Pretendard Regular 12px  #8A8A8A
+  TEXT "자격 승인"  @3083,5227 52x15  text='자격 승인'  Pretendard Medium 13px  #4A4A4A
+  TEXT "· 예정"  @3134,5227 30x15  text='· 예정'  Pretendard Regular 13px  #8A8A8A
+  TEXT "보완 서류 제출"  @3061,5265 80x16  text='보완 서류 제출'  Pretendard Bold 14px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @3061,5294 688x90  stroke=#CFCFCC/1  r=10
+  TEXT "파일을 끌어다 놓거나 선택하세요"  @3322,5322 167x15  text='파일을 끌어다 놓거나 선택하세요'  Pretendard Medium 13px  #14542E
+  TEXT "PDF · JPG · PNG · 1건당 20…"  @3319,5341 174x14  text='PDF · JPG · PNG · 1건당 20MB 이하'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @3061,5396 688x72  stroke=#E5E5E3/1  r=8
+  ROUNDED_RECTANGLE "선"  @3062,5431 686x1  fill=#F2F2F0
+  TEXT "스마트팜_교육이수증_2025.pdf"  @3076,5406 160x15  text='스마트팜_교육이수증_2025.pdf'  Pretendard Regular 12px  #1A1A1A
+  TEXT "방금 첨부"  @3691,5406 44x14  text='방금 첨부'  Pretendard Regular 12px  #14542E
+  TEXT "국세 납세증명서"  @3076,5441 80x15  text='국세 납세증명서'  Pretendard Regular 12px  #8A8A8A
+  TEXT "미첨부"  @3704,5442 31x14  text='미첨부'  Pretendard Regular 12px  #8A8A8A
+  TEXT "자격 인증은 승인일로부터 2년간 유효하며 만…"  @3061,5486 682x14  text='자격 인증은 승인일로부터 2년간 유효하며 만료 60일 전에 갱신 안내가 발송됩니다. 인증이 없으면 프로젝트 등록과 마일스톤 집행 신청을 할 수 없습니다.'  Pretendard Regular 12px  #8A8A8A
+  FRAME "Flow Step Label"  @3061,4454 360x34  fill=#F0F9F6  r=999
+    TEXT "운영 신청 1 / 7 · 자동 저장"  @3075,4463 300x16  text='운영 신청 1 / 7 · 자동 저장'  Inter Semi Bold 12px  #0F6E56
+  ROUNDED_RECTANGLE "CX Operator Identity Cover"  @3322,4670 335x34  fill=#FFFFFF
+  TEXT "모바일 신분증 · 본인확인 완료"  @3336,4680 315x20  text='모바일 신분증 · 본인확인 완료'  Inter Semi Bold 12px  #0F6E56

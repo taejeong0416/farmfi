@@ -1,4 +1,6 @@
-import { ProjectDetail } from "@/components/FarmFi";
+import { ProjectDetailScreen } from "@/components/screens/investor/ProjectDetailScreen";
+
+export const metadata = { title: "프로젝트 상세 | FarmFi" };
 
 export default async function ProjectDetailPage({
   params,
@@ -6,9 +8,5 @@ export default async function ProjectDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  return (
-    <main className="page" style={{ paddingTop: 40, paddingBottom: 64 }}>
-      <ProjectDetail id={id} />
-    </main>
-  );
+  return <ProjectDetailScreen id={id} />;
 }

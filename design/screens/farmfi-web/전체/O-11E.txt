@@ -1,0 +1,36 @@
+FRAME "O-11E · 증빙 보완·이의제기"  @16010,4400 730x631  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "선"  @16011,4465 728x1  fill=#EDEDEB
+  TEXT "재제출 · 이의제기"  @16031,4414 103x18  text='재제출 · 이의제기'  Pretendard Bold 15px  #1A1A1A
+  TEXT "부산 전포동 미니팜 1호 · 3단계 설비 설…"  @16031,4436 185x14  text='부산 전포동 미니팜 1호 · 3단계 설비 설치'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @16582,4416 59x34  stroke=#E5E5E3/1  r=6
+  TEXT "재제출"  @16596,4426 32x14  text='재제출'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @16650,4416 69x34  stroke=#14542E/1  r=6
+  TEXT "이의제기"  @16664,4426 42x14  text='이의제기'  Pretendard Medium 12px  #14542E
+  ROUNDED_RECTANGLE "면"  @16031,4484 688x73  fill=#FCFCFA  stroke=#EDEDEB/1  r=8
+  TEXT "판정 : 보류 유지 · 운영팀 재검증"  @16048,4497 155x15  text='판정 : 보류 유지 · 운영팀 재검증'  Pretendard Medium 12px  #A34A3D
+  TEXT "설비 금액 불일치 2건과 현장 신호 미충족 …"  @16048,4524 339x15  text='설비 금액 불일치 2건과 현장 신호 미충족 2건이 해소되지 않았습니다.'  Pretendard Regular 12px  #757575
+  TEXT "코멘트 스레드"  @16031,4578 77x16  text='코멘트 스레드'  Pretendard Bold 14px  #1A1A1A
+  ROUNDED_RECTANGLE "선"  @16035,4615 1x188  fill=#E5E5E3
+  ELLIPSE "점"  @16031,4611 9x9  fill=#14542E
+  TEXT "이운영"  @16053,4606 38x15  text='이운영'  Pretendard Medium 13px  #1A1A1A
+  TEXT "· 운영자"  @16090,4606 41x15  text='· 운영자'  Pretendard Regular 13px  #8A8A8A
+  TEXT "03.15 16:10"  @16659,4607 61x14  text='03.15 16:10'  Pretendard Regular 12px  #8A8A8A
+  TEXT "계약 후 공급처와 금액을 조정했고 변경합의서…"  @16053,4631 510x15  text='계약 후 공급처와 금액을 조정했고 변경합의서를 첨부합니다. 발주 일자는 합의서 기준 03.06이 맞습니다.'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @16053,4659 96x30  stroke=#E5E5E3/1  r=5
+  TEXT "변경합의서.pdf"  @16066,4666 71x14  text='변경합의서.pdf'  Pretendard Regular 12px  #4A4A4A
+  ELLIPSE "점"  @16031,4711 9x9  fill=#14542E
+  TEXT "박운영"  @16053,4706 38x15  text='박운영'  Pretendard Medium 13px  #1A1A1A
+  TEXT "· 플랫폼 운영팀"  @16090,4706 78x15  text='· 플랫폼 운영팀'  Pretendard Regular 13px  #8A8A8A
+  TEXT "03.15 17:02"  @16659,4707 61x14  text='03.15 17:02'  Pretendard Regular 12px  #8A8A8A
+  TEXT "합의서는 확인했습니다. LED 점등 사진이 …"  @16053,4731 425x15  text='합의서는 확인했습니다. LED 점등 사진이 흐려 판독되지 않으니 재촬영본을 올려주세요.'  Pretendard Regular 12px  #4A4A4A
+  ELLIPSE "점"  @16031,4772 9x9  fill=#FFFFFF  stroke=#99A39C/1
+  TEXT "외부 전문가 강진현"  @16053,4766 97x15  text='외부 전문가 강진현'  Pretendard Medium 13px  #4A4A4A
+  TEXT "03.18 예정"  @16666,4768 54x14  text='03.18 예정'  Pretendard Regular 12px  #8A8A8A
+  TEXT "최종 판정 대기"  @16053,4792 72x15  text='최종 판정 대기'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @16031,4832 688x94  stroke=#E5E5E3/1  r=8
+  TEXT "추가 설명을 입력하세요. 입력한 내용은 운영…"  @16046,4849 414x15  text='추가 설명을 입력하세요. 입력한 내용은 운영팀과 외부 전문가에게 그대로 전달됩니다.'  Pretendard Regular 12px  #B5B5B5
+  ROUNDED_RECTANGLE "면"  @16031,4938 76x38  stroke=#D6D6D4/1  r=6
+  TEXT "파일 첨부"  @16046,4949 47x15  text='파일 첨부'  Pretendard Medium 12px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @16615,4939 104x36  fill=#14542E  r=6
+  TEXT "이의제기 제출"  @16633,4949 69x15  text='이의제기 제출'  Pretendard Medium 12px  #FFFFFF
+  TEXT "외부 전문가 최종 판정 이후에는 동일 단계에…"  @16031,4994 328x14  text='외부 전문가 최종 판정 이후에는 동일 단계에 대한 이의제기가 불가합니다.'  Pretendard Regular 12px  #8A8A8A

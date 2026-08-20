@@ -1,0 +1,41 @@
+FRAME "14 재고 품목 등록"  @1574,4743 402x950  fill=#FFFFFF
+  FRAME "Body"  @1574,4846 402x709
+    FRAME "Card"  @1590,4862 370x167  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      INSTANCE "App/CardTitle"  @1602,4882 345x21
+      FRAME "Frame"  @1602,4914 345x41
+        FRAME "Chip"  @1602,4914 169x41  fill=#EAF6EE  stroke=#1B5E3F/2  r=8
+          TEXT "엽채류"  @1668,4926 37x17  text='엽채류'  Pretendard Regular 14px  #1B5E3F
+        FRAME "Chip"  @1779,4914 169x41  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+          TEXT "쌈채소"  @1845,4926 37x17  text='쌈채소'  Pretendard Regular 14px  #656863
+      FRAME "Frame"  @1602,4967 345x41
+        FRAME "Chip"  @1602,4967 169x41  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+          TEXT "허브"  @1674,4979 25x17  text='허브'  Pretendard Regular 14px  #656863
+        FRAME "Chip"  @1779,4967 169x41  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+          TEXT "과채류"  @1845,4979 37x17  text='과채류'  Pretendard Regular 14px  #656863
+    FRAME "Card"  @1590,5044 370x410  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      INSTANCE "App/CardTitle"  @1602,5064 345x21
+      INSTANCE "App/Field"  @1602,5101 345x73
+      FRAME "Frame"  @1602,5190 345x68
+        TEXT "단위"  @1602,5190 28x19  text='단위'  Pretendard SemiBold 16px  #3C3F3A
+        FRAME "Frame"  @1602,5217 345x41
+          FRAME "Chip"  @1602,5217 80x41  fill=#EAF6EE  stroke=#1B5E3F/2  r=8
+            TEXT "팩"  @1636,5229 13x17  text='팩'  Pretendard Regular 14px  #1B5E3F
+          FRAME "Chip"  @1691,5217 80x41  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+            TEXT "kg"  @1723,5229 16x17  text='kg'  Pretendard Regular 14px  #656863
+          FRAME "Chip"  @1779,5217 80x41  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+            TEXT "포기"  @1807,5229 25x17  text='포기'  Pretendard Regular 14px  #656863
+          FRAME "Chip"  @1867,5217 80x41  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+            TEXT "박스"  @1895,5229 25x17  text='박스'  Pretendard Regular 14px  #656863
+      INSTANCE "App/Field"  @1602,5274 345x73
+      INSTANCE "App/Field"  @1602,5362 345x73
+    INSTANCE "App/PrimaryButton"  @1590,5471 370x52  fill=#1B5E3F  r=8
+  FRAME "TopBar"  @1574,4743 402x103
+    FRAME "Status Bar"  @1574,4743 402x47
+      INSTANCE "Status Bar"  @1574,4743 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+    INSTANCE "App/DetailHeader"  @1574,4790 402x56  fill=#FFFFFF  stroke=#C9CEC9@0.50/1
+  FRAME "Frame 2121453045"  @1574,5657 402x36
+    FRAME "Group 828"  @1574,5657 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @1574,5657 402x36
+      FRAME "Group 819"  @1704,5679 144x5
+        FRAME "Group 665"  @1704,5679 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @1704,5679 144x5  fill=#070428  r=107

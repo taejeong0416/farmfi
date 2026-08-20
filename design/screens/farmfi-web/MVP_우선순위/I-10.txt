@@ -1,0 +1,61 @@
+FRAME "I-10 · 투자자 알림 설정"  @17750,1800 730x446  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "선"  @17751,1864 728x1  fill=#EDEDEB
+  TEXT "투자자 · 김투자 · 역할에 해당하는 이벤트…"  @17771,1836 246x14  text='투자자 · 김투자 · 역할에 해당하는 이벤트만 표시됩니다'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @18410,1817 49x32  fill=#14542E  r=6
+  TEXT "저장"  @18424,1826 22x14  text='저장'  Pretendard Medium 12px  #FFFFFF
+  ROUNDED_RECTANGLE "면"  @17751,1866 728x32  fill=#FAFAF7
+  ROUNDED_RECTANGLE "선"  @17751,1896 728x1  fill=#EDEDEB
+  TEXT "이벤트 유형"  @17771,1874 51x13  text='이벤트 유형'  Pretendard Regular 11px  #8A8A8A
+  TEXT "앱 내 알림"  @18182,1874 45x13  text='앱 내 알림'  Pretendard Regular 11px  #8A8A8A
+  TEXT "이메일"  @18300,1874 30x13  text='이메일'  Pretendard Regular 11px  #8A8A8A
+  TEXT "SMS"  @18408,1874 24x13  text='SMS'  Pretendard Regular 11px  #8A8A8A
+  ROUNDED_RECTANGLE "선"  @17751,1956 728x1  fill=#F2F2F0
+  ROUNDED_RECTANGLE "면"  @18196,1920 15x15  fill=#14542E  r=4
+  FRAME "아이콘"  @18200,1923 9x9
+    VECTOR "Vector"  @18201,1926 6x4  stroke=#FFFFFF/1
+  ROUNDED_RECTANGLE "면"  @18306,1920 15x15  fill=#14542E  r=4
+  FRAME "아이콘"  @18310,1923 9x9
+    VECTOR "Vector"  @18311,1926 6x4  stroke=#FFFFFF/1
+  ROUNDED_RECTANGLE "면"  @18412,1917 15x15  stroke=#CFCFCC/1  r=4
+  ROUNDED_RECTANGLE "선"  @17751,2016 728x1  fill=#F2F2F0
+  TEXT "집행 완료"  @17771,1970 49x15  text='집행 완료'  Pretendard Regular 13px  #1A1A1A
+  TEXT "단계별 지급 완료"  @17771,1988 76x14  text='단계별 지급 완료'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @18196,1980 15x15  fill=#14542E  r=4
+  FRAME "아이콘"  @18200,1983 9x9
+    VECTOR "Vector"  @18201,1985 6x4  stroke=#FFFFFF/1
+  ROUNDED_RECTANGLE "면"  @18306,1977 15x15  stroke=#CFCFCC/1  r=4
+  ROUNDED_RECTANGLE "면"  @18412,1977 15x15  stroke=#CFCFCC/1  r=4
+  ROUNDED_RECTANGLE "선"  @17751,2075 728x1  fill=#F2F2F0
+  TEXT "검증 보류 · 반려"  @17771,2030 82x15  text='검증 보류 · 반려'  Pretendard Regular 13px  #1A1A1A
+  TEXT "집행이 멈추는 상태 변화"  @17771,2048 109x14  text='집행이 멈추는 상태 변화'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @18196,2039 15x15  fill=#14542E  r=4
+  FRAME "아이콘"  @18200,2042 9x9
+    VECTOR "Vector"  @18201,2044 6x4  stroke=#FFFFFF/1
+  ROUNDED_RECTANGLE "면"  @18306,2039 15x15  fill=#14542E  r=4
+  FRAME "아이콘"  @18310,2042 9x9
+    VECTOR "Vector"  @18311,2044 6x4  stroke=#FFFFFF/1
+  ROUNDED_RECTANGLE "면"  @18412,2039 15x15  fill=#14542E  r=4
+  FRAME "아이콘"  @18414,2042 9x9
+    VECTOR "Vector"  @18416,2044 6x4  stroke=#FFFFFF/1
+  ROUNDED_RECTANGLE "선"  @17751,2134 728x1  fill=#F2F2F0
+  TEXT "배당 지급"  @17771,2089 49x15  text='회수금 지급'  Inter Regular 13px  #1A1A1A
+  TEXT "지급예정 · 지급완료 · 지급실패"  @17771,2107 138x14  text='지급예정 · 지급완료 · 지급실패'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @18196,2099 15x15  fill=#14542E  r=4
+  FRAME "아이콘"  @18200,2102 9x9
+    VECTOR "Vector"  @18201,2104 6x4  stroke=#FFFFFF/1
+  ROUNDED_RECTANGLE "면"  @18306,2099 15x15  fill=#14542E  r=4
+  FRAME "아이콘"  @18310,2102 9x9
+    VECTOR "Vector"  @18311,2104 6x4  stroke=#FFFFFF/1
+  ROUNDED_RECTANGLE "면"  @18412,2096 15x15  stroke=#CFCFCC/1  r=4
+  ROUNDED_RECTANGLE "선"  @17751,2194 728x1  fill=#EDEDEB
+  TEXT "공지 · 안내"  @17771,2148 56x15  text='공지 · 안내'  Pretendard Regular 13px  #4A4A4A
+  TEXT "정산 일정, 서비스 공지"  @17771,2166 102x14  text='정산 일정, 서비스 공지'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @18196,2158 15x15  fill=#14542E  r=4
+  FRAME "아이콘"  @18200,2161 9x9
+    VECTOR "Vector"  @18201,2164 6x4  stroke=#FFFFFF/1
+  ROUNDED_RECTANGLE "면"  @18306,2155 15x15  stroke=#CFCFCC/1  r=4
+  ROUNDED_RECTANGLE "면"  @18412,2155 15x15  stroke=#CFCFCC/1  r=4
+  TEXT "집행이 멈추는 상태 변화(보류 · 반려)는 …"  @17771,2211 305x14  text='집행이 멈추는 상태 변화(보류 · 반려)는 앱 내 알림을 끌 수 없습니다.'  Pretendard Regular 12px  #8A8A8A
+  TEXT "FRIENDLY COPY / 10:909"  @17771,1814 90x18  text='받을 소식 설정'  Inter Bold 15px  #1A1A1A
+  TEXT "FRIENDLY COPY / 10:920"  @17771,1910 142x16  text='투자 신청 접수 · 배정 결과'  Inter Regular 13px  #1A1A1A
+  TEXT "FRIENDLY COPY / 10:921"  @17771,1928 143x14  text='투자 신청, 배정 · 미배정, 환불'  Inter Regular 12px  #8A8A8A

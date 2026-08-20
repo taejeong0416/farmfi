@@ -1,0 +1,20 @@
+  ROUNDED_RECTANGLE "면"  @5208,358 399x70  stroke=#E5E5E3/1  r=8
+  TEXT "0x8F3A···92B7"  @5223,386 90x14  text='0x8F3A···92B7'  Pretendard Regular 12px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @5208,442 399x40  fill=#FCFCFA  stroke=#EDEDEB/1  r=8
+  ELLIPSE "점"  @5224,459 7x7  fill=#14542E
+  TEXT "2026.03.15 14:12"  @5491,454 101x15  text='2026.03.15 14:12'  Pretendard Medium 12px  #14542E
+  ROUNDED_RECTANGLE "선"  @5208,505 399x1  fill=#EDEDEB
+  ROUNDED_RECTANGLE "선"  @5208,543 399x1  fill=#F2F2F0
+  TEXT "보유자 정보 연결"  @5208,517 86x15  text='보유자 정보 연결'  Pretendard Regular 13px  #1A1A1A
+  TEXT "김투자"  @5575,516 33x15  text='김투자'  Pretendard Medium 12px  #14542E
+  TEXT "체인 · 네트워크"  @5208,555 78x15  text='체인 · 네트워크'  Pretendard Regular 13px  #1A1A1A
+  TEXT "테스트넷"  @5564,554 44x15  text='테스트넷'  Pretendard Medium 12px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @5208,603 399x46  fill=#14542E  r=6
+  TEXT "지갑 주소 등록 · updated"  @5208,254 399x24  text='투자 준비 4 / 5 · 지갑 주소 등록'  Inter Semi Bold 20px  #1A1A1A
+  TEXT "등록한 주소로만 토큰이 배정되고 배당이 지급… · updated"  @5208,291 399x15  text='앱에서 지갑 주소를 복사해 아래 칸에 붙여넣어 주세요.'  Inter Regular 13px  #757575
+  TEXT "지갑 주소 · updated"  @5208,335 399x15  text='지갑 주소'  Inter Regular 12px  #8A8A8A
+  TEXT "지갑 서명으로 소유 확인 완료 · updated"  @5238,454 399x15  text='지갑 주소 확인 완료'  Inter Regular 12px  #4A4A4A
+  TEXT "이 주소로 등록하기 · updated"  @5356,618 399x16  text='지갑 주소 등록'  Inter Medium 14px  #FFFFFF
+  TEXT "등록되지 않은 주소로는 이전할 수 없습니다.… · updated"  @5208,668 399x35  text='지갑 주소는 어디에서 확인하나요?'  Inter Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "Chain Name Cover"  @5475,546 130x30  fill=#FFFFFF
+  TEXT "투자 기록 네트워크 · 연결됨"  @5470,554 140x20  text='투자 기록 네트워크 · 연결됨'  Inter Semi Bold 12px  #0F6E56

@@ -1,0 +1,63 @@
+FRAME "A-12 · 관리자 / 감사 로그"  @20180,5900 730x422  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "선"  @20181,5963 728x1  fill=#EDEDEB
+  TEXT "감사 로그 조회"  @20201,5922 86x18  text='감사 로그 조회'  Pretendard Bold 15px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @20794,5916 95x32  fill=#14542E  r=6
+  TEXT "CSV 내보내기"  @20807,5925 70x14  text='CSV 내보내기'  Pretendard Medium 12px  #FFFFFF
+  ROUNDED_RECTANGLE "선"  @20181,6026 728x1  fill=#EDEDEB
+  ROUNDED_RECTANGLE "면"  @20201,5978 131x34  stroke=#E5E5E3/1  r=6
+  TEXT "2026.03.01 ~ 03.15"  @20215,5988 104x14  text='2026.03.01 ~ 03.15'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @20340,5978 93x34  stroke=#E5E5E3/1  r=6
+  TEXT "프로젝트 전체"  @20354,5988 66x14  text='프로젝트 전체'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @20441,5978 118x34  stroke=#14542E/1  r=6
+  TEXT "이벤트 : 집행 · 검증"  @20455,5988 91x14  text='이벤트 : 집행 · 검증'  Pretendard Medium 12px  #14542E
+  ROUNDED_RECTANGLE "면"  @20567,5978 83x34  stroke=#E5E5E3/1  r=6
+  TEXT "사용자 전체"  @20581,5988 56x14  text='사용자 전체'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @20658,5978 231x34  stroke=#E5E5E3/1  r=6
+  TEXT "이벤트 · 대상 검색"  @20672,5988 86x14  text='이벤트 · 대상 검색'  Pretendard Regular 12px  #B5B5B5
+  ROUNDED_RECTANGLE "면"  @20181,6027 728x32  fill=#FAFAF7
+  ROUNDED_RECTANGLE "선"  @20181,6058 728x1  fill=#EDEDEB
+  TEXT "시각"  @20201,6036 20x13  text='시각'  Pretendard Regular 11px  #8A8A8A
+  TEXT "이벤트"  @20331,6036 30x13  text='이벤트'  Pretendard Regular 11px  #8A8A8A
+  TEXT "대상"  @20431,6036 20x13  text='대상'  Pretendard Regular 11px  #8A8A8A
+  TEXT "행위자"  @20709,6036 30x13  text='행위자'  Pretendard Regular 11px  #8A8A8A
+  TEXT "결과"  @20829,6036 20x13  text='결과'  Pretendard Regular 11px  #8A8A8A
+  ROUNDED_RECTANGLE "선"  @20181,6095 728x1  fill=#F2F2F0
+  TEXT "03.15 16:10"  @20201,6070 61x14  text='03.15 16:10'  Pretendard Regular 12px  #4A4A4A
+  TEXT "이의제기"  @20331,6070 42x14  text='이의제기'  Pretendard Regular 12px  #1A1A1A
+  TEXT "부산 전포동 1호 · 3단계"  @20431,6070 112x14  text='부산 전포동 1호 · 3단계'  Pretendard Regular 12px  #4A4A4A
+  TEXT "이운영"  @20709,6070 32x14  text='이운영'  Pretendard Regular 12px  #4A4A4A
+  TEXT "접수"  @20829,6070 22x14  text='접수'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "선"  @20181,6132 728x1  fill=#F2F2F0
+  TEXT "03.15 15:30"  @20201,6107 63x14  text='03.15 15:30'  Pretendard Regular 12px  #4A4A4A
+  TEXT "검증"  @20331,6107 22x14  text='검증'  Pretendard Regular 12px  #1A1A1A
+  TEXT "부산 전포동 1호 · 3단계"  @20431,6107 112x14  text='부산 전포동 1호 · 3단계'  Pretendard Regular 12px  #4A4A4A
+  TEXT "박운영"  @20709,6107 32x14  text='박운영'  Pretendard Regular 12px  #4A4A4A
+  TEXT "보류"  @20829,6107 22x14  text='보류'  Pretendard Medium 12px  #A34A3D
+  ROUNDED_RECTANGLE "선"  @20181,6169 728x1  fill=#F2F2F0
+  TEXT "03.14 11:02"  @20201,6144 61x14  text='03.14 11:02'  Pretendard Regular 12px  #4A4A4A
+  TEXT "집행"  @20331,6144 22x14  text='집행'  Pretendard Regular 12px  #1A1A1A
+  TEXT "서울 성수동 2호 · 2단계 · 8,200,…"  @20431,6144 188x14  text='서울 성수동 2호 · 2단계 · 8,200,000원'  Pretendard Regular 12px  #4A4A4A
+  TEXT "시스템"  @20709,6144 32x14  text='시스템'  Pretendard Regular 12px  #4A4A4A
+  TEXT "완료"  @20829,6144 22x14  text='완료'  Pretendard Medium 12px  #14542E
+  ROUNDED_RECTANGLE "선"  @20181,6206 728x1  fill=#F2F2F0
+  TEXT "03.10 09:00"  @20201,6181 65x14  text='03.10 09:00'  Pretendard Regular 12px  #4A4A4A
+  TEXT "정산"  @20331,6181 22x14  text='정산'  Pretendard Regular 12px  #1A1A1A
+  TEXT "대전 둔산동 1호 · 1분기 배당"  @20431,6181 133x14  text='대전 둔산동 1호 · 1분기 배당'  Pretendard Regular 12px  #4A4A4A
+  TEXT "시스템"  @20709,6181 32x14  text='시스템'  Pretendard Regular 12px  #4A4A4A
+  TEXT "완료"  @20829,6181 22x14  text='완료'  Pretendard Medium 12px  #14542E
+  ROUNDED_RECTANGLE "선"  @20181,6243 728x1  fill=#F2F2F0
+  TEXT "03.09 16:20"  @20201,6218 65x14  text='03.09 16:20'  Pretendard Regular 12px  #4A4A4A
+  TEXT "청약"  @20331,6218 22x14  text='청약'  Pretendard Regular 12px  #1A1A1A
+  TEXT "부산 전포동 1호 · 1,000,000원"  @20431,6218 147x14  text='부산 전포동 1호 · 1,000,000원'  Pretendard Regular 12px  #4A4A4A
+  TEXT "김투자"  @20709,6218 32x14  text='김투자'  Pretendard Regular 12px  #4A4A4A
+  TEXT "완료"  @20829,6218 22x14  text='완료'  Pretendard Medium 12px  #14542E
+  ROUNDED_RECTANGLE "선"  @20181,6280 728x1  fill=#EDEDEB
+  TEXT "03.08 10:12"  @20201,6255 63x14  text='03.08 10:12'  Pretendard Regular 12px  #4A4A4A
+  TEXT "권한 변경"  @20331,6255 46x14  text='권한 변경'  Pretendard Regular 12px  #1A1A1A
+  TEXT "심사자 권한 부여 · 정심사"  @20431,6255 120x14  text='심사자 권한 부여 · 정심사'  Pretendard Regular 12px  #4A4A4A
+  TEXT "관리자"  @20709,6255 32x14  text='관리자'  Pretendard Regular 12px  #4A4A4A
+  TEXT "완료"  @20829,6255 22x14  text='완료'  Pretendard Medium 12px  #14542E
+  TEXT "전체 1,284건 중 1 - 6"  @20201,6292 101x14  text='전체 1,284건 중 1 - 6'  Pretendard Regular 12px  #8A8A8A
+  TEXT "다음"  @20850,6293 22x14  text='다음'  Pretendard Regular 12px  #4A4A4A
+  FRAME "아이콘"  @20877,6294 12x12
+    VECTOR "Vector"  @20882,6297 3x6  stroke=#B6B6B4/1

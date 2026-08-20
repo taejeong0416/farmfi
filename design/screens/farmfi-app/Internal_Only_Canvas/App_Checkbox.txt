@@ -1,0 +1,5 @@
+FRAME "App/Checkbox"  @0,6839 58x18  r=5
+  SYMBOL "state=unchecked"  @0,6839 18x18  fill=#FFFFFF  stroke=#C9CEC9/2  r=4
+  SYMBOL "state=checked"  @40,6839 18x18  fill=#1B5E3F  r=4
+    FRAME "Check"  @43,6842 12x12
+      VECTOR "Vector"  @46,6846 7x5  stroke=#FFFFFF/2

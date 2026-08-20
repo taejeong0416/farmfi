@@ -1,0 +1,44 @@
+FRAME "B-07 · 내 구독 / 이용 현황"  @9240,3300 1440x880  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "선"  @9241,3361 1438x1  fill=#EDEDEB
+  TEXT "FarmFi"  @9273,3320 55x20  text='FarmFi'  Pretendard Bold 17px  #14542E
+  TEXT "둘러보기"  @10522,3324 46x15  text='둘러보기'  Pretendard Regular 13px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @10577,3313 70x36  stroke=#D6D6D4/1  r=6
+  TEXT "로그인"  @10596,3323 33x15  text='로그인'  Pretendard Medium 12px  #1A1A1A
+  TEXT "내 구독"  @9272,3400 90x36  text='내 구독'  Inter Bold 30px  #1A1A1A
+  TEXT "생산량 안에서 작물과 드레싱 구성을 유연하게 바꿔보세요."  @9272,3445 337x17  text='생산량 안에서 작물과 드레싱 구성을 유연하게 바꿔보세요.'  Inter Regular 14px  #757575
+  FRAME "Frame"  @9272,3496 1375x172  fill=#F1F4F2  stroke=#D6E3D9/1  r=10
+  TEXT "이용 중"  @9296,3519 37x15  text='이용 중'  Inter Medium 12px  #14542E
+  TEXT "5종 믹스팩"  @9296,3553 110x29  text='5종 믹스팩'  Inter Bold 24px  #1A1A1A
+  TEXT "월 49,000원 · 주 2회"  @9296,3592 127x17  text='월 49,000원 · 주 2회'  Inter Regular 14px  #757575
+  TEXT "다음 결제일"  @10021,3526 59x15  text='다음 결제일'  Inter Regular 12px  #757575
+  TEXT "2026. 10. 01"  @10021,3550 93x19  text='2026. 10. 01'  Inter Medium 16px  #1A1A1A
+  TEXT "남은 변경 기한"  @10298,3526 73x15  text='남은 변경 기한'  Inter Regular 12px  #757575
+  TEXT "8월 30일 23:59까지"  @10298,3550 143x19  text='8월 30일 23:59까지'  Inter Medium 16px  #9E6114
+  FRAME "Frame"  @10370,3602 126x38  fill=#FFFFFF  stroke=#E5E5E3/1  r=6
+  TEXT "결제 내역"  @10407,3613 52x16  text='결제 내역'  Inter Medium 13px  #1A1A1A
+  FRAME "Frame"  @10508,3602 115x38  fill=#FFFFFF  stroke=#E5E5E3/1  r=6
+  TEXT "구독 해지"  @10537,3613 52x16  text='구독 해지'  Inter Medium 13px  #1A1A1A
+  TEXT "다음 픽업"  @9272,3715 67x21  text='다음 픽업'  Inter Bold 17px  #1A1A1A
+  FRAME "Frame"  @9272,3751 862x293  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+  TEXT "9월 1일 화요일 · 17:00–20:00"  @9296,3780 264x24  text='9월 1일 화요일 · 17:00–20:00'  Inter Bold 20px  #1A1A1A
+  TEXT "부산 전포동 미니팜 1호 · 도보 8분"  @9296,3816 184x16  text='부산 전포동 미니팜 1호 · 도보 8분'  Inter Regular 13px  #757575
+  FRAME "Frame"  @9296,3860 360x108  fill=#FFFFFF  stroke=#E5E5E3/1  r=8
+  TEXT "이번 구성"  @9316,3880 48x15  text='이번 구성'  Inter Regular 12px  #757575
+  TEXT "선택 작물 5종 + 참깨·유자 드레싱 각 1봉"  @9316,3910 252x18  text='선택 작물 5종 + 참깨·유자 드레싱 각 1봉'  Inter Medium 15px  #1A1A1A
+  FRAME "Frame"  @9688,3860 190x44  fill=#FFFFFF  stroke=#E5E5E3/1  r=6
+  TEXT "수량 변경"  @9752,3874 52x16  text='수량 변경'  Inter Medium 13px  #1A1A1A
+  FRAME "Frame"  @9890,3860 190x44  fill=#14542E  stroke=#14542E/1  r=6
+  TEXT "픽업 완료 표시"  @9932,3874 79x16  text='픽업 완료 표시'  Inter Medium 13px  #FFFFFF
+  TEXT "변경 가능 수량은 이번 주 생산 잔여분을 기준으로 표시됩니다."  @9296,3998 307x15  text='변경 가능 수량은 이번 주 생산 잔여분을 기준으로 표시됩니다.'  Inter Regular 12px  #757575
+  FRAME "Frame"  @10174,3751 473x293  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+  TEXT "이번 달 픽업"  @10198,3780 87x21  text='이번 달 픽업'  Inter Bold 17px  #1A1A1A
+  TEXT "완료"  @10198,3831 23x15  text='완료'  Inter Medium 12px  #14542E
+  TEXT "8월 18일 · 5종 믹스팩"  @10273,3829 130x17  text='8월 18일 · 5종 믹스팩'  Inter Medium 14px  #1A1A1A
+  TEXT "완료"  @10198,3877 23x15  text='완료'  Inter Medium 12px  #14542E
+  TEXT "8월 22일 · 5종 믹스팩"  @10273,3875 131x17  text='8월 22일 · 5종 믹스팩'  Inter Medium 14px  #1A1A1A
+  TEXT "예정"  @10198,3923 23x15  text='예정'  Inter Medium 12px  #9E6114
+  TEXT "9월 1일 · 5종 믹스팩"  @10273,3921 121x17  text='9월 1일 · 5종 믹스팩'  Inter Medium 14px  #1A1A1A
+  TEXT "4회 중 2회 픽업 완료"  @10198,3987 106x15  text='4회 중 2회 픽업 완료'  Inter Regular 12px  #757575
+  TEXT "정기구독"  @9361,3323 48x16  text='정기구독'  Inter Medium 13px  #14542E
+  TEXT "내 구독"  @9433,3323 40x16  text='내 구독'  Inter Regular 13px  #4A4A4A
+  TEXT "알림"  @9495,3323 24x16  text='알림'  Inter Regular 13px  #4A4A4A

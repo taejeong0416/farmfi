@@ -1,0 +1,14 @@
+FRAME "25 매출 데이터 없음"  @1043,9068 402x874  fill=#FFFFFF
+  FRAME "Frame"  @1059,9360 370x272
+    INSTANCE "App/EmptyState"  @1074,9420 340x124
+    INSTANCE "App/GhostButton"  @1100,9564 289x44  fill=#1B5E3F@0.08  stroke=#1B5E3F@0.08/1  r=8
+  FRAME "Frame 2121453045"  @1043,9841 402x101
+    INSTANCE "App/BottomNav"  @1043,9841 402x64  fill=#FFFFFF  stroke=#F1F1F1/1
+    FRAME "Group 828"  @1043,9906 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @1043,9906 402x36
+      FRAME "Group 819"  @1173,9928 144x5
+        FRAME "Group 665"  @1173,9928 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @1173,9928 144x5  fill=#070428  r=107
+  FRAME "Status Bar"  @1043,9068 402x103
+    INSTANCE "Status Bar"  @1043,9068 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+    INSTANCE "App/DetailHeader2"  @1043,9115 402x56

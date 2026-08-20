@@ -1,0 +1,37 @@
+FRAME "B-05 · 구매자 / 결제수단·자동결제"  @6890,3200 1440x920  fill=#FCFCFB
+  ROUNDED_RECTANGLE "Rectangle"  @6890,3200 1440x920  fill=#FFFFFF
+  ROUNDED_RECTANGLE "Rectangle"  @6890,3200 1440x920  fill=#141714@0.48
+  ROUNDED_RECTANGLE "Rectangle"  @7310,3286 600x748  fill=#FFFFFF  r=18
+  TEXT "결제수단 선택"  @7344,3320 127x27  text='결제수단 선택'  Inter Bold 22px  #171A14
+  TEXT "×"  @7864,3318 14x24  text='×'  Inter Regular 20px  #6B6B61
+  TEXT "이번 결제와 다음 자동결제에 사용할 수단을 골라주세요."  @7344,3356 278x15  text='이번 결제와 다음 자동결제에 사용할 수단을 골라주세요.'  Inter Regular 12px  #6B6B61
+  TEXT "등록된 결제수단"  @7344,3404 87x16  text='등록된 결제수단'  Inter Semi Bold 13px  #171A14
+  ROUNDED_RECTANGLE "Rectangle"  @7344,3436 532x82  fill=#EDF5ED  stroke=#0E6340/1  r=10
+  ROUNDED_RECTANGLE "Rectangle"  @7364,3456 48x48  fill=#386BB2  r=8
+  TEXT "CARD"  @7371,3472 26x11  text='CARD'  Inter Bold 9px  #FFFFFF
+  TEXT "신한카드 **** 4821"  @7432,3454 127x17  text='신한카드  **** 4821'  Inter Semi Bold 14px  #171A14
+  TEXT "개인 · 일시불"  @7432,3480 60x13  text='개인 · 일시불'  Inter Regular 11px  #6B6B61
+  TEXT "✓"  @7840,3466 15x19  text='✓'  Inter Bold 16px  #0E6340
+  TEXT "간편결제"  @7344,3550 48x16  text='간편결제'  Inter Semi Bold 13px  #171A14
+  ROUNDED_RECTANGLE "Rectangle"  @7344,3582 164x68  fill=#FFFFFF  stroke=#E0E0D6/1  r=10
+  ROUNDED_RECTANGLE "Rectangle"  @7358,3599 34x34  fill=#FAD61A  r=8
+  TEXT "Kakao Pay"  @7404,3607 61x15  text='Kakao Pay'  Inter Semi Bold 12px  #171A14
+  ROUNDED_RECTANGLE "Rectangle"  @7522,3582 164x68  fill=#FFFFFF  stroke=#E0E0D6/1  r=10
+  ROUNDED_RECTANGLE "Rectangle"  @7536,3599 34x34  fill=#1FB85C  r=8
+  TEXT "N pay"  @7582,3607 33x15  text='N pay'  Inter Semi Bold 12px  #171A14
+  ROUNDED_RECTANGLE "Rectangle"  @7700,3582 164x68  fill=#FFFFFF  stroke=#E0E0D6/1  r=10
+  ROUNDED_RECTANGLE "Rectangle"  @7714,3599 34x34  fill=#2E5EDB  r=8
+  TEXT "toss pay"  @7760,3607 50x15  text='toss pay'  Inter Semi Bold 12px  #171A14
+  ROUNDED_RECTANGLE "Rectangle"  @7344,3674 532x48  fill=#FFFFFF  stroke=#E0E0D6/1  r=9
+  TEXT "+ 새 카드 등록"  @7516,3689 82x16  text='+  새 카드 등록'  Inter Semi Bold 13px  #0E6340
+  ROUNDED_RECTANGLE "Rectangle"  @7344,3754 532x1  fill=#E0E0D6
+  TEXT "결제 정보"  @7344,3782 52x16  text='결제 정보'  Inter Semi Bold 13px  #171A14
+  TEXT "오늘 결제"  @7344,3816 48x15  text='오늘 결제'  Inter Regular 12px  #6B6B61
+  TEXT "44,000원"  @7784,3812 74x19  text='44,000원'  Inter Bold 16px  #171A14
+  TEXT "다음 결제"  @7344,3850 48x15  text='다음 결제'  Inter Regular 12px  #6B6B61
+  TEXT "10월 1일 · 49,000원"  @7732,3848 116x16  text='10월 1일 · 49,000원'  Inter Medium 13px  #171A14
+  ROUNDED_RECTANGLE "Rectangle"  @7344,3888 532x58  fill=#EDF5ED  r=9
+  TEXT "✓ 선택한 결제수단을 정기결제에 등록합니다."  @7364,3908 229x15  text='✓  선택한 결제수단을 정기결제에 등록합니다.'  Inter Medium 12px  #0E6340
+  ROUNDED_RECTANGLE "Rectangle"  @7344,3966 532x50  fill=#0E6340  r=9
+  TEXT "신한카드로 결제"  @7544,3982 94x17  text='신한카드로 결제'  Inter Semi Bold 14px  #FFFFFF
+  TEXT "결제 정보는 결제사에서 안전하게 처리됩니다."  @7484,4044 208x13  text='결제 정보는 결제사에서 안전하게 처리됩니다.'  Inter Regular 11px  #6B6B61

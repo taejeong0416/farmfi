@@ -1,0 +1,10 @@
+SYMBOL "App/CropProgressRow"  @0,0 370x60
+  FRAME "Frame"  @0,10 40x40  fill=#EAF6EE  r=8
+  FRAME "Frame"  @52,10 318x39
+    FRAME "Frame"  @52,10 318x17
+      TEXT "미니레드 상추"  @52,10 241x17  text='미니레드 상추'  Inter Semi Bold 14px  #1D1E1C
+      TEXT "베드 A · 성장기"  @299,14 71x13  text='베드 A · 성장기'  Inter Regular 11px  #656863
+    FRAME "Frame"  @52,34 318x16
+      FRAME "Frame"  @52,38 282x6  fill=#F0EEEA  r=3
+        ROUNDED_RECTANGLE "Rectangle"  @52,38 144x6  fill=#1B5E3F  r=3
+      TEXT "72%"  @342,34 28x16  text='72%'  Inter Bold 13px  #1B5E3F

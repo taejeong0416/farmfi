@@ -1,0 +1,45 @@
+FRAME "A-06 · 관리자 / 투자 프로젝트 관리"  @4880,5800 730x373  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "선"  @4881,5865 728x1  fill=#EDEDEB
+  TEXT "프로젝트 관리"  @4901,5824 82x18  text='프로젝트 관리'  Pretendard Bold 15px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @5415,5816 72x34  stroke=#E5E5E3/1  r=6
+  TEXT "상태 전체"  @5429,5826 46x14  text='상태 전체'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @5496,5816 93x34  stroke=#E5E5E3/1  r=6
+  TEXT "프로젝트 검색"  @5510,5826 66x14  text='프로젝트 검색'  Pretendard Regular 12px  #B5B5B5
+  ROUNDED_RECTANGLE "면"  @4881,5866 728x32  fill=#FAFAF7
+  ROUNDED_RECTANGLE "선"  @4881,5897 728x1  fill=#EDEDEB
+  TEXT "프로젝트명"  @4901,5875 49x13  text='프로젝트명'  Pretendard Regular 11px  #8A8A8A
+  TEXT "운영자"  @5106,5875 30x13  text='운영자'  Pretendard Regular 11px  #8A8A8A
+  TEXT "상태"  @5259,5875 20x13  text='상태'  Pretendard Regular 11px  #8A8A8A
+  TEXT "신청일"  @5359,5875 30x13  text='신청일'  Pretendard Regular 11px  #8A8A8A
+  TEXT "처리"  @5469,5875 20x13  text='처리'  Pretendard Regular 11px  #8A8A8A
+  ROUNDED_RECTANGLE "선"  @4881,5954 728x1  fill=#F2F2F0
+  TEXT "광주 충장로 미니팜 1호"  @4901,5918 113x15  text='광주 충장로 미니팜 1호'  Pretendard Regular 12px  #1A1A1A
+  TEXT "어반팜스"  @5106,5918 44x15  text='어반팜스'  Pretendard Regular 12px  #4A4A4A
+  TEXT "승인 대기"  @5259,5919 45x14  text='승인 대기'  Pretendard Medium 12px  #A34A3D
+  TEXT "2026.03.12"  @5359,5919 61x14  text='2026.03.12'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @5469,5911 44x28  fill=#14542E  r=5
+  TEXT "승인"  @5481,5917 21x14  text='승인'  Pretendard Medium 12px  #FFFFFF
+  ROUNDED_RECTANGLE "면"  @5521,5911 46x30  stroke=#D6D6D4/1  r=5
+  TEXT "반려"  @5534,5918 21x14  text='반려'  Pretendard Medium 12px  #1A1A1A
+  ROUNDED_RECTANGLE "선"  @4881,6011 728x1  fill=#F2F2F0
+  TEXT "부산 전포동 미니팜 1호"  @4901,5975 113x15  text='부산 전포동 미니팜 1호'  Pretendard Regular 12px  #1A1A1A
+  TEXT "그린테이블"  @5106,5975 55x15  text='그린테이블'  Pretendard Regular 12px  #4A4A4A
+  TEXT "모집 중"  @5259,5976 35x14  text='모집 중'  Pretendard Medium 12px  #14542E
+  TEXT "2026.02.02"  @5359,5976 63x14  text='2026.02.02'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @5469,5968 46x30  stroke=#D6D6D4/1  r=5
+  TEXT "중지"  @5482,5975 21x14  text='중지'  Pretendard Medium 12px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @5523,5968 46x30  stroke=#D6D6D4/1  r=5
+  TEXT "이력"  @5536,5975 21x14  text='이력'  Pretendard Medium 12px  #1A1A1A
+  ROUNDED_RECTANGLE "선"  @4881,6068 728x1  fill=#F2F2F0
+  TEXT "대구 동성로 미니팜 1호"  @4901,6032 113x15  text='대구 동성로 미니팜 1호'  Pretendard Regular 12px  #1A1A1A
+  TEXT "시티그로우"  @5106,6032 55x15  text='시티그로우'  Pretendard Regular 12px  #4A4A4A
+  TEXT "중지"  @5259,6033 22x14  text='중지'  Pretendard Medium 12px  #A34A3D
+  TEXT "2026.01.20"  @5359,6033 61x14  text='2026.01.20'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @5469,6025 46x30  stroke=#D6D6D4/1  r=5
+  TEXT "재개"  @5482,6032 21x14  text='재개'  Pretendard Medium 12px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @5523,6025 46x30  stroke=#D6D6D4/1  r=5
+  TEXT "이력"  @5536,6032 21x14  text='이력'  Pretendard Medium 12px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @4881,6069 728x103  fill=#FCFCFA
+  TEXT "처리 사유 기록"  @4901,6083 72x15  text='처리 사유 기록'  Pretendard Medium 12px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @4901,6108 688x46  fill=#FFFFFF  stroke=#E5E5E3/1  r=8
+  TEXT "사유를 입력하면 감사 로그에 함께 저장됩니다…"  @4915,6124 216x14  text='사유를 입력하면 감사 로그에 함께 저장됩니다.'  Pretendard Regular 12px  #8A8A8A

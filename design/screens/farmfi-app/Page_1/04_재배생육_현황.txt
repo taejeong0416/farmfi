@@ -1,0 +1,23 @@
+FRAME "04 재배생육 현황"  @602,2335 402x874  fill=#FFFFFF
+  FRAME "Body"  @602,2438 402x477
+    FRAME "KpiRow"  @618,2454 370x71
+      INSTANCE "App/MetricTile"  @618,2454 115x71  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      INSTANCE "App/MetricTile"  @745,2454 115x71  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      INSTANCE "App/MetricTile"  @873,2454 115x71  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+    INSTANCE "App/BedTabs"  @618,2541 370x42
+    FRAME "Card"  @618,2599 370x84  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      INSTANCE "App/CropProgressRow"  @630,2611 345x60
+    FRAME "Card"  @618,2699 370x84  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      INSTANCE "App/CropProgressRow"  @630,2711 345x60
+    FRAME "Card"  @618,2799 370x84  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      INSTANCE "App/CropProgressRow"  @630,2811 345x60
+  FRAME "Frame 2121453045"  @602,3108 402x101
+    INSTANCE "App/BottomNav"  @602,3108 402x64  fill=#FFFFFF  stroke=#F1F1F1/1
+    FRAME "Group 828"  @602,3173 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @602,3173 402x36  fill=#FFFFFF  stroke=#FFFFFF/1
+      FRAME "Group 819"  @732,3195 144x5
+        FRAME "Group 665"  @732,3195 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @732,3195 144x5  fill=#070428  r=107
+  FRAME "Status Bar"  @602,2335 402x103
+    INSTANCE "Status Bar"  @602,2335 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+    INSTANCE "App/DetailHeader2"  @602,2382 402x56

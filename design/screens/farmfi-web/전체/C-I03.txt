@@ -1,0 +1,20 @@
+FRAME "C-I03 · 투자자 준비 / 본인 명의 계좌 확인"  @4510,120 465x725  fill=#FFFFFF  r=12
+  TEXT "투자 준비 3 / 3 · 본인 계좌 확인"  @4543,154 262x24  text='투자 준비 3 / 3 · 본인 계좌 확인'  Inter Bold 20px  #000000
+  TEXT "회수금과 환불을 받을 본인 명의 계좌를 확인해 주세요."  @4543,192 399x36  text='회수금과 환불을 받을 본인 명의 계좌를 확인해 주세요.'  Inter Regular 13px  #000000
+  FRAME "공식 앱 안내"  @4543,242 399x132  fill=#F5F7FA  r=12
+    FRAME "Frame"  @4561,260 363x80  fill=#FFFFFF
+      TEXT "은행 선택 · 부산은행 ▾"  @4561,260 145x18  text='은행 선택  ·  부산은행  ▾'  Inter Bold 15px  #000000
+      TEXT "계좌번호 · 123-****-7890"  @4561,285 146x15  text='계좌번호  ·  123-****-7890'  Inter Regular 12px  #000000
+      TEXT "예금주 · 김동일 · 확인 전"  @4561,307 135x15  text='예금주  ·  김동일  ·  확인 전'  Inter Medium 12px  #14613D
+  FRAME "설치 순서"  @4543,388 399x178  fill=#FFFFFF  stroke=#DBE0E5/1  r=12
+    TEXT "본인 명의 계좌를 확인해요"  @4561,406 152x17  text='본인 명의 계좌를 확인해요'  Inter Bold 14px  #000000
+    TEXT "1 은행을 선택하고 계좌번호 입력"  @4561,435 180x16  text='1  은행을 선택하고 계좌번호 입력'  Inter Regular 13px  #000000
+    TEXT "2 계좌번호 입력 후 예금주 확인"  @4561,463 174x16  text='2  계좌번호 입력 후 예금주 확인'  Inter Regular 13px  #000000
+    TEXT "3 확인된 계좌를 회수 계좌로 등록"  @4561,491 186x16  text='3  확인된 계좌를 회수 계좌로 등록'  Inter Regular 13px  #000000
+  FRAME "스토어 버튼"  @4543,580 399x44  fill=#FFFFFF
+    FRAME "Frame"  @4543,580 194x44  fill=#FFFFFF  stroke=#C7CCD1/1  r=9
+      TEXT "계좌번호 입력"  @4602,594 76x16  text='계좌번호 입력'  Inter Medium 13px  #000000
+    FRAME "Frame"  @4748,580 194x44  fill=#FFFFFF  stroke=#C7CCD1/1  r=9
+      TEXT "예금주 확인"  @4813,594 64x16  text='예금주 확인'  Inter Medium 13px  #000000
+  FRAME "Frame"  @4543,638 399x48  fill=#14613D  r=9
+    TEXT "계좌 확인하기"  @4702,654 81x17  text='계좌 확인하기'  Inter Bold 14px  #FFFFFF

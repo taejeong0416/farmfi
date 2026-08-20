@@ -1,0 +1,20 @@
+FRAME "03 설비 알림"  @1019,919 402x874  fill=#FFFFFF
+  FRAME "Body"  @1019,1022 402x670
+    FRAME "Filter"  @1035,1038 370x39  fill=#FFFFFF
+      FRAME "Segment 1"  @1035,1038 185x39  fill=#1B5E3F  stroke=#1B5E3F/1
+        TEXT "전체 4"  @1109,1049 37x17  text='전체 4'  Pretendard SemiBold 14px  #FFFFFF
+      FRAME "Segment 2"  @1220,1038 185x39  fill=#FFFFFF  stroke=#C9CEC9/1
+        TEXT "미확인 2"  @1288,1049 49x17  text='미확인 2'  Pretendard Regular 14px  #1D1E1C
+    INSTANCE "App/AlertCard"  @1035,1093 370x161  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+    INSTANCE "App/AlertCard"  @1035,1270 370x161  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+    INSTANCE "App/AlertCard"  @1035,1446 370x107  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+    INSTANCE "App/AlertCard"  @1035,1569 370x107  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+  INSTANCE "App/DetailHeader"  @1019,966 402x56  fill=#FFFFFF  stroke=#C9CEC9@0.50/1
+  FRAME "Status Bar"  @1019,919 402x47
+    INSTANCE "Status Bar"  @1019,919 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+  FRAME "Frame 2121453045"  @1019,1757 402x36
+    FRAME "Group 828"  @1019,1757 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @1019,1757 402x36
+      FRAME "Group 819"  @1149,1779 144x5
+        FRAME "Group 665"  @1149,1779 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @1149,1779 144x5  fill=#070428  r=107

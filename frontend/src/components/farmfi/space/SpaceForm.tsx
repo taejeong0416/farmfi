@@ -2,7 +2,6 @@
 
 import { useRef, useState, type ReactNode } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { Metric } from "../ui/Metric";
 
 const SPACE_TYPES = ["옥상", "빈 점포", "실내 유휴공간"] as const;
 // 라우트(/api/spaces)는 영문 코드만 허용 — 한글 라벨→코드 매핑.
@@ -20,12 +19,21 @@ const MAX_PHOTOS = 10;
 // Visual state that mirrors the mockup's `.seg span:first-child` highlight,
 // applied via inline style so we don't have to touch globals.css.
 const ACTIVE_SEG_STYLE = {
-  borderColor: "#72aa86",
-  background: "#f0f8f3",
+  borderColor: "#14542e",
+  background: "#eaf6ee",
   color: "var(--green-800)",
   cursor: "pointer",
 } as const;
 const INACTIVE_SEG_STYLE = { cursor: "pointer" } as const;
+
+function Metric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-10 border border-line bg-white px-5 py-4">
+      <p className="text-12 text-muted">{label}</p>
+      <p className="mt-1.5 font-num text-17 font-medium text-ink">{value}</p>
+    </div>
+  );
+}
 
 type UploadedPhoto = { url: string; name: string };
 

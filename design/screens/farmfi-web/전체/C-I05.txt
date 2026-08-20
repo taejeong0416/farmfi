@@ -1,0 +1,21 @@
+FRAME "C-I05 · 투자자 준비 / 완료"  @5055,120 465x488  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "선"  @5056,177 463x1  fill=#EDEDEB
+  TEXT "건너뛰기"  @5452,141 44x15  text='건너뛰기'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "선"  @5092,300 1x166  fill=#E5E5E3
+  ELLIPSE "점"  @5088,295 9x9  fill=#14542E
+  ELLIPSE "점"  @5088,377 9x9  fill=#14542E
+  ELLIPSE "점"  @5088,438 9x9  fill=#14542E
+  ELLIPSE "점"  @5272,500 6x6  fill=#14542E
+  ELLIPSE "점"  @5284,500 6x6  fill=#DBDBD9
+  ELLIPSE "점"  @5296,500 6x6  fill=#DBDBD9
+  ROUNDED_RECTANGLE "면"  @5088,528 399x46  fill=#14542E  r=6
+  FRAME "Frame"  @5082,202 410x32  fill=#FFFFFF  stroke=#FFFFFF/1
+  TEXT "투자 준비 완료"  @5088,211 120x24  text='투자 준비 완료'  Inter Bold 20px  #1A1A1A
+  FRAME "Frame"  @5104,446 380x40  fill=#FFFFFF  stroke=#FFFFFF/1
+  TEXT "운영비 반영 후 매출에 따라 회수액이 달라지며, 원금은 보장되지 않습니다."  @5110,457 360x32  text='운영비 반영 후 매출에 따라 회수액이 달라지며, 원금은 보장되지 않습니다.'  Inter Regular 13px  #757575
+  TEXT "통과한 단계만 집행됩니다 · updated"  @5110,288 399x16  text='투자금이 쓰인 과정을 확인할 수 있어요'  Inter Regular 14px  #1A1A1A
+  TEXT "청약금은 에스크로에 예치되고, 마일스톤을 통… · updated"  @5110,314 399x36  text='계약부터 개점까지 진행 상황과 사용 내역을 차례대로 공개해요.'  Inter Regular 12px  #757575
+  TEXT "네 가지 증빙을 함께 봅니다 · updated"  @5110,370 399x16  text='프로젝트 진행 자료를 함께 확인해요'  Inter Regular 14px  #1A1A1A
+  TEXT "계약서 · 영수증 · 현장 사진 · 센서 신… · updated"  @5110,396 399x15  text='계약서·설비 설치 사진·검수 결과를 프로젝트 화면에서 볼 수 있어요.'  Inter Regular 12px  #757575
+  TEXT "분기마다 정산합니다 · updated"  @5110,431 399x16  text='운영 결과에 따라 회수액이 달라질 수 있어요'  Inter Regular 14px  #1A1A1A
+  TEXT "시작하기 · updated"  @5263,542 399x16  text='프로젝트 둘러보기'  Inter Medium 14px  #FFFFFF

@@ -1,0 +1,6 @@
+SYMBOL "App/LineChart"  @80,4800 370x200
+  TEXT "CO₂ 추이"  @80,4800 57x17  text='CO₂ 추이'  Inter Semi Bold 14px  #1D1E1C
+  FRAME "ChartArea"  @80,4830 370x140  fill=#EAF6EE@0.40  r=8
+    ROUNDED_RECTANGLE "Rectangle"  @80,4885 370x50  fill=#EAF6EE@0.80
+    VECTOR "TrendLine"  @80,4830 370x140  stroke=#1B5E3F/2
+  TEXT "정상 범위 400~1000ppm"  @80,4978 124x13  text='정상 범위 400~1000ppm'  Inter Regular 11px  #656863

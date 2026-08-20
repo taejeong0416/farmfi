@@ -1,0 +1,2 @@
+SYMBOL "App/CardTitle"  @566,1680 330x21
+  TEXT "카드 제목"  @566,1681 330x19  text='카드 제목'  Inter Semi Bold 16px  #1D1E1C

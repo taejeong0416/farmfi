@@ -1,0 +1,14 @@
+FRAME "C-I02E · 모바일 신분증 확인 실패"  @13430,220 465x458  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "CX Failure BG"  @13430,220 465x458  fill=#FAFBFA
+  TEXT "모바일 신분증 확인을 완료하지 못했어요"  @13463,254 399x20  text='모바일 신분증 확인을 완료하지 못했어요'  Inter Bold 22px  #141F1C
+  TEXT "인증 요청 시간이 지났거나 모바일 신분증 앱에서 요청을 취소했습니다."  @13463,296 399x20  text='인증 요청 시간이 지났거나 모바일 신분증 앱에서 요청을 취소했습니다.'  Inter Regular 14px  #616E69
+  ROUNDED_RECTANGLE "Failure Card"  @13463,352 399x128  fill=#FFFFFF  stroke=#DBE3E0/1  r=12
+  TEXT "확인 방법"  @13481,371 160x20  text='확인 방법'  Inter Regular 12px  #616E69
+  TEXT "모바일 신분증 앱에서 확인"  @13481,397 320x20  text='모바일 신분증 앱에서 확인'  Inter Semi Bold 15px  #141F1C
+  TEXT "처리 결과"  @13481,430 160x20  text='처리 결과'  Inter Regular 12px  #616E69
+  TEXT "시간 만료 · 본인정보 저장 안 됨"  @13481,453 320x20  text='시간 만료 · 본인정보 저장 안 됨'  Inter Semi Bold 13px  #C22E29
+  ROUNDED_RECTANGLE "Retry Button"  @13463,504 399x46  fill=#0F6E56  r=10
+  TEXT "모바일 신분증으로 다시 확인"  @13569,519 240x20  text='모바일 신분증으로 다시 확인'  Inter Semi Bold 14px  #FFFFFF
+  ROUNDED_RECTANGLE "Simple Auth Button"  @13463,562 399x46  fill=#FFFFFF  stroke=#DBE3E0/1  r=10
+  TEXT "간편인증으로 로그인만 하기"  @13575,577 220x20  text='간편인증으로 로그인만 하기'  Inter Semi Bold 14px  #141F1C
+  TEXT "투자 신청 전에는 모바일 신분증 확인을 다시 요청합니다."  @13463,634 399x20  text='투자 신청 전에는 모바일 신분증 확인을 다시 요청합니다.'  Inter Regular 12px  #616E69

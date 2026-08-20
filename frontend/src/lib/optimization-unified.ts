@@ -16,9 +16,15 @@
 // 문맥 적응: 계절이 열 가중치를, DR 달력이 VPP 가중치를 자동 조절 → 자연스럽게.
 
 import { getCrop } from "./crop-profiles";
-import { TARIFF_TOU_GENERAL, CARBON_INTENSITY_FACTOR, GRID_EMISSION_FACTOR } from "./optimization";
-import { CROP_PHOTOPERIOD } from "./optimization-advanced";
+import {
+  TARIFF_TOU_GENERAL,
+  CARBON_INTENSITY_FACTOR,
+  GRID_EMISSION_FACTOR,
+  resolveLighting,
+  ledThermalCostPerHour,
+} from "./optimization";
 import { mulberry32, gaussFrom } from "./prng";
+import { PARAMS } from "./optimization-params";
 
 export interface UnifiedWeights {
   thermal: number; // 열 항 가중 (계절이 조절)
@@ -52,7 +58,6 @@ export interface UnifiedResult {
 export function unifiedCoOptimize(opts: {
   cropKey?: string;
   ledPowerKw: number;
-  sites: number;
   hourlyExtTemp: number[]; // 24h
   tariff?: number[];
   cropPricePerKg?: number;
@@ -62,10 +67,9 @@ export function unifiedCoOptimize(opts: {
   seed?: number;
 }): UnifiedResult {
   const crop = getCrop(opts.cropKey);
-  const pc = CROP_PHOTOPERIOD[crop.key] ?? { maxPhotoperiodH: 16, minDarkH: 6 };
   const tariff = opts.tariff ?? TARIFF_TOU_GENERAL;
-  const price = opts.cropPricePerKg ?? 4000;
-  const area = opts.areaM2 ?? 60;
+  const price = opts.cropPricePerKg ?? PARAMS.cropPricePerKg.value;
+  const area = opts.areaM2 ?? PARAMS.growRoomAreaM2.value;
   const vol = opts.priceVolatility ?? 0.35;
   const drWindows = opts.drWindowHours ?? [18, 19, 20]; // 저녁 피크 = DR 빈발
   const rand = mulberry32(opts.seed ?? 42);
@@ -74,16 +78,18 @@ export function unifiedCoOptimize(opts: {
   const avgExt = opts.hourlyExtTemp.reduce((a, b) => a + b, 0) / 24;
   const season = avgExt < 12 ? "winter" : avgExt > 24 ? "summer" : "mild";
   const weights: UnifiedWeights = {
-    // 혹서·혹한기: 3.0으로 강화해 비례 열비용이 블록 배치를 실제로 뒤집게 함
-    thermal: season === "mild" ? 0.4 : 3.0,
+    // 열은 원 단위 실비용이므로 가중치가 1.0이다. 계절 적응은 가중치가 아니라 물리가
+    // 한다 — 난방 수요는 외기에 따라 커지고 잔여열 제거단가는 외기냉방/압축기로 갈린다.
+    // 계수를 끼워 비용을 부풀리면 그만큼 목적함수가 실제 청구서에서 멀어진다.
+    thermal: 1.0,
     vpp: drWindows.length > 0 ? 1.0 : 0.3,
     co2: 0.6,
     robust: vol > 0.3 ? 0.6 : 0.2,
   };
 
   // 수율/비용 모델
-  const ymax = 4.5;
-  const k = 0.08;
+  const ymax = PARAMS.yieldMaxKgM2.value;
+  const k = PARAMS.yieldLightK.value;
   const yieldOf = (dli: number) => ymax * (1 - Math.exp(-k * dli));
   const dailyYieldRevenue = (dli: number) =>
     (yieldOf(dli) * area * price) / crop.cycleDays;
@@ -93,80 +99,93 @@ export function unifiedCoOptimize(opts: {
   const gauss = gaussFrom(rand);
   const scenarios: number[][] = [];
   for (let n = 0; n < S; n++)
-    scenarios.push(tariff.map((p, h) => Math.max(30, p * (1 + gauss() * vol * (p > 180 ? 1.5 : 1)))));
+    scenarios.push(tariff.map((p) => Math.max(30, p * (1 + gauss() * vol * (p > 180 ? 1.5 : 1)))));
 
-  const TARGET_TEMP = 20;
-  const heatCoef = 60;
-  const coolCoef = 90;
+  const TARGET_TEMP = PARAMS.targetRoomTempC.value;
+  const heatCoef = PARAMS.heatCreditPerKwh.value;
+  const coolCoef = PARAMS.coolCostPerKwh.value;
+
+  // 보조부하 제원 — 공조는 LED와 동기, 펌프는 유연 부하로 본다.
+  const aux = PARAMS.auxLoads.value;
+  const hvacKw = aux.find((l) => l.name === "공조")?.kw ?? 0;
+  const pump = aux.find((l) => l.name === "양액펌프");
+  const pumpKw = pump?.kw ?? 0;
+  const pumpHours = pump?.hoursNeeded ?? 0;
 
   // 후보 평가: (dli, blockStart) → 통합 순가치
   const evalCandidate = (dli: number, start: number) => {
-    // 광주기 안전: 필요 명기 계산(최대광주기 내로 PPFD 압축)
-    let ppfd = crop.ppfd;
-    let hours = Math.ceil(dli / ((ppfd * 3600) / 1e6));
-    if (hours > pc.maxPhotoperiodH) {
-      ppfd = Math.ceil((dli * 1e6) / (pc.maxPhotoperiodH * 3600));
-      hours = pc.maxPhotoperiodH;
-    }
-    const darkH = 24 - hours;
-    const safe = darkH >= pc.minDarkH;
-    if (!safe) return null;
+    // 광주기 안전 + 정격 상한을 함께 푼다. 명기가 최대광주기를 넘으면 PPFD를 올려
+    // 시간을 압축하는데, 그만큼 소비전력도 오른다(ledPowerKw) — 이 스케일이 빠지면
+    // 광량 증설이 공짜가 되어 최적해가 항상 탐색 상한에 붙는다.
+    const light = resolveLighting({
+      cropKey: opts.cropKey,
+      dliTarget: dli,
+      ledPowerKw: opts.ledPowerKw,
+    });
+    if (!light.feasible || !light.photoperiodSafe) return null;
+    const { hours, ppfd, darkH, ledPowerKw: kw } = light;
     const litHours = Array.from({ length: hours }, (_, i) => (start + i) % 24);
     const litSet = new Set(litHours);
 
     // 전력량요금: 시나리오 기대값 + CVaR
     const costs = scenarios
-      .map((sc) => litHours.reduce((s, h) => s + opts.ledPowerKw * sc[h], 0))
+      .map((sc) => litHours.reduce((s, h) => s + kw * sc[h], 0))
       .sort((a, b) => a - b);
     const expEnergy = costs.reduce((a, b) => a + b, 0) / S;
     const cvar = costs.slice(Math.floor(S * 0.95)).reduce((a, b, _, arr) => a + b / arr.length, 0);
 
     // 기본요금(피크): 시간별 부하 프로파일로 실제 피크 동적 계산 (peakStagger 방식)
-    // 공조(1.5kW)는 LED와 동기 가동(식물 환경 유지 필수), 펌프(0.7kW, 8h/일)는
-    // 유연 — 부하 가장 낮은 시간대에 배치해 피크 최소화.
+    // 공조는 LED와 동기 가동(식물 환경 유지 필수), 펌프는 유연 — 부하 가장 낮은
+    // 시간대에 배치해 피크 최소화. 부하 제원은 레지스트리에서 온다(리포트와 같은 값).
     const hourProfile = Array(24).fill(0);
-    for (const h of litHours) hourProfile[h] += opts.ledPowerKw + 1.5;
+    for (const h of litHours) hourProfile[h] += kw + hvacKw;
     const pumpSlots = [...Array(24).keys()]
       .sort((a, b) => hourProfile[a] - hourProfile[b])
-      .slice(0, 8);
-    for (const h of pumpSlots) hourProfile[h] += 0.7;
+      .slice(0, pumpHours);
+    for (const h of pumpSlots) hourProfile[h] += pumpKw;
     const peakKw = Math.max(...hourProfile);
-    const demand = peakKw * 8320 / 30; // 일 환산
+    const demand = (peakKw * PARAMS.demandChargePerKw.value) / 30; // 일 환산
 
-    // 순열비용: 시간별 외부온도 비례 연동
-    // 이진 방식(t<20 ? -fixed : +fixed)은 겨울에 모든 시간이 동일값 → 블록 배치 구분 불가.
-    // 비례 방식: 더 추울수록 LED 발열 이득↑(음수 증가), 더 더울수록 냉방 부하↑(양수 증가).
-    const thermal = litHours.reduce((s, h) => {
-      const t = opts.hourlyExtTemp[h];
-      const delta = t - TARGET_TEMP;
-      return s + opts.ledPowerKw * (delta < 0
-        ? delta * heatCoef * 0.05   // 겨울: 더 추운 시간대 = 더 큰 난방상쇄 이득 (음수)
-        : delta * coolCoef * 0.05); // 여름: 더 더운 시간대 = 더 큰 냉방 부하 (양수)
-    }, 0);
+    // 순열비용: 난방 대체는 그 시간의 난방 수요만큼만 가능해 포화하고, 남는 LED 발열은
+    // 외기가 낮으면 외기냉방으로 싸게, 높으면 압축기로 비싸게 버린다. 계층마다 사본을
+    // 두지 않고 ledThermalCostPerHour를 공유한다.
+    const thermal = litHours.reduce(
+      (s, h) =>
+        s +
+        ledThermalCostPerHour({
+          ledPowerKw: kw,
+          externalTempC: opts.hourlyExtTemp[h],
+          targetTempC: TARGET_TEMP,
+          heatCreditPerKwh: heatCoef,
+          coolCostPerKwh: coolCoef,
+        }),
+      0
+    );
 
     // CO2 비용 (시간대 탄소집약도, 탄소가격 근사 30원/kg)
     const co2 = litHours.reduce(
-      (s, h) => s + opts.ledPowerKw * GRID_EMISSION_FACTOR * CARBON_INTENSITY_FACTOR[h] * 30,
+      (s, h) => s + kw * GRID_EMISSION_FACTOR * CARBON_INTENSITY_FACTOR[h] * PARAMS.carbonPricePerKg.value,
       0
     );
 
     // VPP 유연성 가치: DR 창에 LED가 없으면(=그 시간 끌 필요 없어 유연) 가치↑
     const drOverlap = drWindows.filter((h) => litSet.has(h)).length;
-    const vppFlexValue = ((drWindows.length - drOverlap) / Math.max(1, drWindows.length)) *
-      (opts.ledPowerKw * opts.sites * 100 * 2) / 30 / opts.sites; // 일·사이트 환산 근사
+    const vppFlexValue =
+      ((drWindows.length - drOverlap) / Math.max(1, drWindows.length)) *
+      ((kw * 100 * 2) / 30); // 일·사이트 환산 근사
 
     const revenue = dailyYieldRevenue(dli);
     const net =
       revenue -
       expEnergy -
-      weights.thermal * thermal / 1 -
+      weights.thermal * thermal -
       weights.co2 * co2 -
       weights.robust * (cvar - expEnergy) +
       weights.vpp * vppFlexValue -
       demand;
 
     return {
-      dli, ppfd, hours, litHours, darkH, safe,
+      dli, ppfd, hours, litHours, darkH, safe: light.photoperiodSafe,
       revenue, expEnergy, cvar, demand, thermal, co2, vppFlexValue, net,
     };
   };
@@ -183,24 +202,35 @@ export function unifiedCoOptimize(opts: {
       if (!bestEvalOrNull || ev.net > bestEvalOrNull.net) bestEvalOrNull = ev;
     }
   }
-  const bestEval = bestEvalOrNull ?? evalCandidate(crop.dliTarget, 0)!;
+  if (!bestEvalOrNull) {
+    // 탐색 구간 전체가 광주기·정격 제약에 걸림 — 이 설비로는 어떤 DLI도 안전하게
+    // 만들 수 없다는 뜻이므로 최적화 결과를 지어내지 않고 그대로 알린다.
+    throw new Error(
+      `${crop.label}: DLI ${dliMin}~${dliMax} 전 구간이 광주기·정격 제약 밖. 광량 설계(maxPpfd/maxPhotoperiodH) 재검토 필요`
+    );
+  }
+  const bestEval = bestEvalOrNull;
 
-  // 순차 파이프라인 기준: DLI=목표 고정, 전력만 최저 배치 (비교용)
+  // 순차 파이프라인 기준: DLI=목표 고정, 전력만 최저 배치 (비교용).
+  // 목표 DLI가 제약 밖이면 비교 자체가 성립하지 않으므로 통합해를 그대로 쓴다(개선 0).
   const seqEval = (() => {
-    let e = evalCandidate(crop.dliTarget, 0)!;
-    for (let s = 1; s < 24; s++) {
+    let e: NonNullable<ReturnType<typeof evalCandidate>> | null = null;
+    for (let s = 0; s < 24; s++) {
       const c = evalCandidate(crop.dliTarget, s);
-      if (c && c.expEnergy < e.expEnergy) e = c;
+      if (c && (!e || c.expEnergy < e.expEnergy)) e = c;
     }
-    return e;
+    return e ?? bestEval;
   })();
 
   // 트레이드오프 서술
   const tradeoffs: string[] = [];
   if (bestEval.dli > crop.dliTarget)
     tradeoffs.push(`채소값 반영해 DLI ${crop.dliTarget}→${bestEval.dli} 상향 (수율매출 > 추가 전기비)`);
-  if (weights.thermal >= 1.0)
-    tradeoffs.push(`${season}철: 열 항을 강조해 ${season === "winter" ? "추운" : "더운"} 시간대 ${season === "winter" ? "선호(난방상쇄)" : "회피(냉방)"}`);
+  tradeoffs.push(
+    season === "summer"
+      ? `여름: LED 잔여열을 압축기로 빼야 해 더운 시간대 회피 (열비용 ${Math.round(bestEval.thermal)}원/일)`
+      : `${season === "winter" ? "겨울" : "간절기"}: LED 잔여열을 외기냉방으로 싸게 버릴 수 있어 외기 낮은 시간대 선호 (열비용 ${Math.round(bestEval.thermal)}원/일)`
+  );
   const drOverlap = drWindows.filter((h) => new Set(bestEval.litHours).has(h)).length;
   if (drOverlap < drWindows.length)
     tradeoffs.push(`DR창(${drWindows.join(",")}시) 중 ${drWindows.length - drOverlap}h를 비워 VPP 유연성 확보 — 최저요금을 조금 포기하고 수요반응 수익 유지`);
@@ -208,7 +238,7 @@ export function unifiedCoOptimize(opts: {
   return {
     dliChosen: bestEval.dli,
     ppfd: bestEval.ppfd,
-    litHours: bestEval.litHours.slice().sort((a, b) => a - b),
+    litHours: bestEval.litHours,
     darkContinuousH: bestEval.darkH,
     photoperiodSafe: bestEval.safe,
     breakdown: {

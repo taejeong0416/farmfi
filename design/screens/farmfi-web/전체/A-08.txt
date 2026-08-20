@@ -1,0 +1,44 @@
+FRAME "A-08 · 관리자 / 증빙 재검토"  @6500,5800 730x461  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "선"  @6501,5846 728x1  fill=#EDEDEB
+  TEXT "운영팀 재검증"  @6521,5814 82x18  text='운영팀 재검증'  Pretendard Bold 15px  #1A1A1A
+  TEXT "대기 4건 · 처리 중 1건"  @7106,5816 104x14  text='대기 4건 · 처리 중 1건'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "선"  @6771,5847 1x238  fill=#EDEDEB
+  ROUNDED_RECTANGLE "면"  @6501,5847 270x60  fill=#FCFCFC
+  ROUNDED_RECTANGLE "선"  @6501,5906 270x1  fill=#F2F2F0
+  ROUNDED_RECTANGLE "면"  @6501,5847 3x60  fill=#14542E
+  TEXT "부산 전포동 1호 · 3단계"  @6520,5859 116x15  text='부산 전포동 1호 · 3단계'  Pretendard Medium 12px  #1A1A1A
+  TEXT "이의제기 접수 · 03.15 16:10"  @6520,5882 124x13  text='이의제기 접수 · 03.15 16:10'  Pretendard Regular 11px  #8A8A8A
+  ROUNDED_RECTANGLE "선"  @6501,5966 270x1  fill=#F2F2F0
+  TEXT "대전 둔산동 1호 · 2단계"  @6517,5919 116x15  text='대전 둔산동 1호 · 2단계'  Pretendard Regular 12px  #4A4A4A
+  TEXT "보완 제출 · 03.15 13:10"  @6517,5942 105x13  text='보완 제출 · 03.15 13:10'  Pretendard Regular 11px  #8A8A8A
+  ROUNDED_RECTANGLE "선"  @6501,6026 270x1  fill=#F2F2F0
+  TEXT "서울 성수동 2호 · 2단계"  @6517,5979 118x15  text='서울 성수동 2호 · 2단계'  Pretendard Regular 12px  #4A4A4A
+  TEXT "재검증 요청 · 03.14 18:22"  @6517,6002 116x13  text='재검증 요청 · 03.14 18:22'  Pretendard Regular 11px  #8A8A8A
+  TEXT "광주 충장로 1호 · 1단계"  @6517,6039 114x15  text='광주 충장로 1호 · 1단계'  Pretendard Regular 12px  #4A4A4A
+  TEXT "재검증 요청 · 03.14 09:40"  @6517,6062 119x13  text='재검증 요청 · 03.14 09:40'  Pretendard Regular 11px  #8A8A8A
+  TEXT "부산 전포동 미니팜 1호 · 3단계 설비 설…"  @6792,5866 225x16  text='부산 전포동 미니팜 1호 · 3단계 설비 설치'  Pretendard Bold 14px  #1A1A1A
+  TEXT "자동 판정 보류 · 불일치 3건 · 현장 신…"  @6792,5889 228x14  text='자동 판정 보류 · 불일치 3건 · 현장 신호 미충족 2건'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @6792,5919 417x106  stroke=#E5E5E3/1  r=8
+  ROUNDED_RECTANGLE "선"  @6793,5954 415x1  fill=#F2F2F0
+  TEXT "설비 금액 불일치"  @6807,5930 80x14  text='설비 금액 불일치'  Pretendard Regular 12px  #1A1A1A
+  TEXT "20,000,000 → 18,500,000"  @7060,5929 135x14  text='20,000,000 → 18,500,000'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "선"  @6793,5989 415x1  fill=#F2F2F0
+  TEXT "발주 일자 불일치"  @6807,5965 80x14  text='발주 일자 불일치'  Pretendard Regular 12px  #1A1A1A
+  TEXT "03.05 → 03.06"  @7117,5964 78x14  text='03.05 → 03.06'  Pretendard Regular 12px  #4A4A4A
+  TEXT "운영자 첨부"  @6807,6000 56x14  text='운영자 첨부'  Pretendard Regular 12px  #1A1A1A
+  TEXT "변경합의서.pdf"  @7124,5999 71x14  text='변경합의서.pdf'  Pretendard Regular 12px  #14542E
+  TEXT "판정"  @6792,6040 22x14  text='판정'  Pretendard Regular 12px  #757575
+  ROUNDED_RECTANGLE "면"  @6792,6062 74x34  stroke=#14542E/1  r=6
+  TEXT "통과 처리"  @6807,6072 45x14  text='통과 처리'  Pretendard Medium 12px  #14542E
+  ROUNDED_RECTANGLE "면"  @6874,6062 74x34  stroke=#E5E5E3/1  r=6
+  TEXT "보류 유지"  @6889,6072 46x14  text='보류 유지'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @6957,6062 51x34  stroke=#E5E5E3/1  r=6
+  TEXT "반려"  @6972,6072 22x14  text='반려'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @7016,6062 109x34  stroke=#E5E5E3/1  r=6
+  TEXT "외부 전문가 이관"  @7030,6072 80x14  text='외부 전문가 이관'  Pretendard Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @6792,6110 417x78  stroke=#E5E5E3/1  r=8
+  TEXT "판정 사유를 입력하세요. 사유는 운영자에게 …"  @6806,6126 295x14  text='판정 사유를 입력하세요. 사유는 운영자에게 그대로 전달됩니다.'  Pretendard Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @7035,6202 80x38  stroke=#D6D6D4/1  r=6
+  TEXT "임시 저장"  @7052,6212 47x15  text='임시 저장'  Pretendard Medium 12px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @7123,6202 86x36  fill=#14542E  r=6
+  TEXT "판정 제출"  @7143,6211 47x15  text='판정 제출'  Pretendard Medium 12px  #FFFFFF

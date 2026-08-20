@@ -1,0 +1,6 @@
+SYMBOL "App/DetailHeader"  @647,1824 443x56  fill=#FFFFFF  stroke=#C9CEC9@0.50/1
+  FRAME "chevron-left"  @663,1863 22x22
+    VECTOR "Vector"  @671,1868 5x11  stroke=#9B9A94/2
+  FRAME "Title"  @691,1832 383x39
+    TEXT "베드 A"  @691,1832 51x22  text='베드 A'  Inter Semi Bold 18px  #1D1E1C
+    TEXT "버터헤드 · 최근 수신 08.13 14:35"  @691,1856 171x15  text='버터헤드 · 최근 수신 08.13 14:35'  Inter Regular 12px  #656863

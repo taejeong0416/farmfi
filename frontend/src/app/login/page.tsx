@@ -1,19 +1,12 @@
-import { redirect } from "next/navigation";
-import { getServerSession } from "@/lib/auth";
-import { LoginForm } from "@/components/farmfi/auth/LoginForm";
+import { Suspense } from "react";
+import { LoginScreen } from "@/components/screens/common/LoginScreen";
 
-// 이미 로그인 시 /mypage로 redirect.
-export default async function LoginPage() {
-  const session = await getServerSession();
-  if (session) {
-    redirect("/mypage");
-  }
+export const metadata = { title: "로그인 | FarmFi" };
 
+export default function LoginPage() {
   return (
-    <main className="page">
-      <section className="section">
-        <LoginForm />
-      </section>
-    </main>
+    <Suspense>
+      <LoginScreen />
+    </Suspense>
   );
 }

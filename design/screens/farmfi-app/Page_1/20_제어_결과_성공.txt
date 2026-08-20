@@ -1,0 +1,33 @@
+FRAME "20 제어 결과 성공"  @569,8063 402x874  fill=#F0F0EE
+  FRAME "09 베드 상세 모니터링"  @569,8063 402x1036  fill=#FFFFFF
+    FRAME "Body"  @569,8166 402x933
+      FRAME "SceneCard"  @585,8182 370x270  r=10
+      FRAME "Card"  @585,8468 370x240  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+        TEXT "환경 센서"  @597,8480 60x19  text='환경 센서'  Pretendard SemiBold 16px  #1D1E1C
+        FRAME "Frame"  @597,8509 345x76
+          INSTANCE "App/SensorTile"  @597,8509 169x76  fill=#FDF6EA  r=9
+          INSTANCE "App/SensorTile"  @774,8509 169x76  fill=#FFFFFF  stroke=#C9CEC9/1  r=9
+        FRAME "Frame"  @597,8596 345x76
+          INSTANCE "App/SensorTile"  @597,8596 169x76  fill=#FBF0EE  r=9
+          INSTANCE "App/SensorTile"  @774,8596 169x76  fill=#FFFFFF  stroke=#C9CEC9/1  r=9
+        TEXT "기준 온도 18~26℃ · CO₂ 400~1000ppm"  @597,8683 192x13  text='기준 온도 18~26℃ · CO₂ 400~1000ppm'  Pretendard Regular 11px  #656863
+      FRAME "Card"  @585,8724 370x223  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+        TEXT "설비 제어"  @597,8736 60x19  text='설비 제어'  Pretendard SemiBold 16px  #1D1E1C
+        INSTANCE "App/DeviceRow"  @597,8759 345x56
+        INSTANCE "App/DeviceRow"  @597,8819 345x56
+        INSTANCE "App/DeviceRow"  @597,8879 345x56
+      INSTANCE "App/GhostButton"  @585,8963 370x44  fill=#1B5E3F@0.08  stroke=#1B5E3F@0.08/1  r=8
+      INSTANCE "App/GhostButton"  @585,9023 370x44  fill=#1B5E3F@0.08  stroke=#1B5E3F@0.08/1  r=8
+    FRAME "TopBar"  @569,8063 402x103
+      INSTANCE "Status Bar"  @569,8063 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+      FRAME "HeaderRow"  @569,8110 402x56
+        INSTANCE "App/DetailHeader"  @569,8110 402x56  fill=#FFFFFF  stroke=#C9CEC9@0.50/1
+        INSTANCE "App/Badge"  @916,8126 37x22  fill=#FBF0EE  r=5
+    FRAME "Frame 2121453045"  @569,9062 402x36
+      FRAME "Group 828"  @569,9062 402x36
+        ROUNDED_RECTANGLE "Rectangle 375"  @569,9062 402x36
+        FRAME "Group 819"  @699,9085 144x5
+          FRAME "Group 665"  @699,9085 144x5
+            ROUNDED_RECTANGLE "Home Indicator"  @699,9085 144x5  fill=#070428  r=107
+  ROUNDED_RECTANGLE "Rectangle"  @569,8063 402x874  fill=#000000@0.35
+  INSTANCE "App/Popup"  @605,8375 330x247  fill=#FFFFFF  stroke=#C9CEC9/1  r=14

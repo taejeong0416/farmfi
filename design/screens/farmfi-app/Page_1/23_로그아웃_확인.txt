@@ -1,0 +1,66 @@
+FRAME "23 로그아웃 확인"  @1919,8063 402x874  fill=#F0F0EE
+  FRAME "18 설정"  @1919,8063 402x874  fill=#FFFFFF
+    INSTANCE "App/DetailHeader"  @1919,8110 402x56  fill=#FFFFFF  stroke=#C9CEC9@0.50/1
+    FRAME "Status Bar"  @1919,8063 402x47
+      INSTANCE "Status Bar"  @1919,8063 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+    FRAME "Frame 2121453045"  @1919,8901 402x36
+      FRAME "Group 828"  @1919,8901 402x36
+        ROUNDED_RECTANGLE "Rectangle 375"  @1919,8901 402x36
+        FRAME "Group 819"  @2049,8923 144x5
+          FRAME "Group 665"  @2049,8923 144x5
+            ROUNDED_RECTANGLE "Home Indicator"  @2049,8923 144x5  fill=#070428  r=107
+    FRAME "Body"  @1919,8166 402x596
+      FRAME "Frame"  @1935,8182 370x79  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+        FRAME "Avatar"  @1951,8198 47x47  fill=#EEF4EA  r=35
+          TEXT "박"  @1968,8213 13x17  text='박'  Pretendard Regular 14px  #1B5E3F
+        FRAME "Frame"  @2010,8203 218x37
+          TEXT "박태정"  @2010,8203 42x19  text='박태정'  Pretendard SemiBold 16px  #1D1E1C
+          TEXT "매장 운영자 · 서면점"  @2010,8226 96x14  text='매장 운영자 · 서면점'  Pretendard Regular 12px  #656863
+        FRAME "Frame"  @2240,8206 49x30  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+          TEXT "수정"  @2254,8214 21x14  text='수정'  Pretendard SemiBold 12px  #656863
+      FRAME "Frame 2121453058"  @1935,8281 370x130
+        TEXT "매장"  @1935,8281 28x19  text='매장'  Pretendard SemiBold 16px  #1D1E1C
+        FRAME "Card"  @1935,8312 370x99  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+          FRAME "Frame"  @1935,8312 370x49
+            TEXT "현재 매장"  @1951,8328 52x17  text='현재 매장'  Pretendard Regular 14px  #1D1E1C
+            FRAME "Frame"  @2244,8328 45x17
+              TEXT "서면점"  @2244,8328 34x16  text='서면점'  Pretendard Regular 13px  #656863
+              TEXT "›"  @2284,8328 5x17  text='›'  Pretendard Regular 14px  #656863
+          ROUNDED_RECTANGLE "Rectangle"  @1935,8361 370x1  fill=#F0F0ED
+          FRAME "Frame"  @1935,8362 370x49
+            TEXT "매장 전환"  @1951,8378 52x17  text='매장 전환'  Pretendard Regular 14px  #1D1E1C
+            FRAME "Frame"  @2284,8378 5x17
+              TEXT "›"  @2284,8378 5x17  text='›'  Pretendard Regular 14px  #656863
+      FRAME "Frame 2121453059"  @1935,8431 370x84
+        TEXT "알림"  @1935,8431 28x19  text='알림'  Pretendard SemiBold 16px  #1D1E1C
+        FRAME "Card"  @1935,8462 370x53  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+          FRAME "Frame"  @1935,8462 370x53
+            TEXT "알림 설정"  @1951,8480 52x17  text='알림 설정'  Pretendard Regular 14px  #1D1E1C
+            FRAME "Frame"  @2198,8478 91x21
+              FRAME "Frame"  @2198,8478 80x21  fill=#EAF6EE  r=6
+                TEXT "설비 3 · 재고 1"  @2206,8482 64x13  text='설비 3 · 재고 1'  Pretendard SemiBold 11px  #1B5E3F
+              TEXT "›"  @2284,8480 5x17  text='›'  Pretendard Regular 14px  #656863
+      FRAME "Frame 2121453060"  @1935,8535 370x130
+        TEXT "정보"  @1935,8535 28x19  text='정보'  Pretendard SemiBold 16px  #1D1E1C
+        FRAME "Card"  @1935,8566 370x99  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+          FRAME "Frame"  @1935,8566 370x49
+            TEXT "이용약관"  @1951,8582 49x17  text='이용약관'  Pretendard Regular 14px  #1D1E1C
+            FRAME "Frame"  @2284,8582 5x17
+              TEXT "›"  @2284,8582 5x17  text='›'  Pretendard Regular 14px  #656863
+          ROUNDED_RECTANGLE "Rectangle"  @1935,8615 370x1  fill=#F0F0ED
+          FRAME "Frame"  @1935,8616 370x49
+            TEXT "버전"  @1951,8632 25x17  text='버전'  Pretendard Regular 14px  #1D1E1C
+            TEXT "1.0.0"  @2262,8632 27x16  text='1.0.0'  Pretendard Regular 13px  #656863
+      FRAME "Frame"  @1935,8685 370x45
+        TEXT "로그아웃"  @2096,8699 49x17  text='로그아웃'  Pretendard Regular 14px  #A33A2A
+  ROUNDED_RECTANGLE "Rectangle"  @1919,8063 402x874  fill=#000000@0.35
+  FRAME "App/Popup"  @1955,8387 330x237  fill=#FFFFFF  r=14
+    FRAME "Icon"  @2093,8414 54x54  fill=#EEF4EA  r=27
+      TEXT "🔒"  @2109,8430 22x22  text='🔒'  Pretendard Regular 22px  #000000
+    TEXT "로그아웃할까요?"  @2060,8480 119x21  text='로그아웃할까요?'  Pretendard SemiBold 18px  #1D1E1C
+    TEXT "현재 기기의 세션이 종료됩니다. 저장하지 않은 입력은 사라져요."  @2040,8513 160x32  text='현재 기기의 세션이 종료됩니다.\n저장하지 않은 입력은 사라져요.'  Pretendard Regular 13px  #4D504B
+    FRAME "Actions"  @1976,8557 289x45
+      FRAME "취소"  @1976,8557 140x45  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+        TEXT "취소"  @2033,8572 25x17  text='취소'  Pretendard SemiBold 14px  #4D504B
+      FRAME "확인"  @2124,8557 140x45  fill=#1B5E3F  r=8
+        TEXT "로그아웃"  @2170,8572 49x17  text='로그아웃'  Pretendard SemiBold 14px  #FFFFFF

@@ -1,0 +1,2 @@
+SYMBOL "Frame 7"  @223,3099 263x27
+  INSTANCE "bar chart"  @233,3109 243x7  r=32

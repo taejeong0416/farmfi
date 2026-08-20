@@ -1,0 +1,15 @@
+FRAME "01 매장 선택"  @1461,0 402x874  fill=#FFFFFF
+  FRAME "Body"  @1461,103 402x769
+    INSTANCE "App/StoreSelectCard"  @1477,119 370x279  fill=#1B5E3F@0.08  stroke=#1B5E3F/1  r=10
+    INSTANCE "App/StoreSelectCard"  @1477,414 370x279  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+    INSTANCE "App/TipCard"  @1477,709 370x64  fill=#1B5E3F@0.04  stroke=#1B5E3F@0.08/1  r=9
+    INSTANCE "App/PrimaryButton"  @1477,789 370x52  fill=#1B5E3F  r=8
+  INSTANCE "App/DetailHeader"  @1461,47 402x56  fill=#FFFFFF  stroke=#C9CEC9@0.50/1
+  FRAME "Status Bar"  @1461,0 402x47
+    INSTANCE "Status Bar"  @1461,0 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+  FRAME "Frame 2121453045"  @1461,838 402x36
+    FRAME "Group 828"  @1461,838 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @1461,838 402x36
+      FRAME "Group 819"  @1591,860 144x5
+        FRAME "Group 665"  @1591,860 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @1591,860 144x5  fill=#070428  r=107

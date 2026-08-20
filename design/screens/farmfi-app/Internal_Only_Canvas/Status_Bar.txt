@@ -1,0 +1,40 @@
+FRAME "Status Bar"  @0,78 415x212  stroke=#9747FF/1  r=5
+  SYMBOL "Text = White, Background = Off"  @0,78 375x44
+    ROUNDED_RECTANGLE "BG"  @0,78 375x44
+    FRAME "Battery"  @327,93 24x13
+      VECTOR "Outline"  @327,93 22x13  fill=#808080  r=4
+      ROUNDED_RECTANGLE "Rectangle 1"  @327,93 16x13  fill=#FFFFFF
+      VECTOR "Battery End"  @350,98 1x4  fill=#808080
+      VECTOR "✏️ Percentage"  @332,96 12x7  fill=#000000
+    BOOLEAN_OPERATION "Wifi"  @306,93 16x11  fill=#FFFFFF
+      VECTOR "Wifi-path"  @306,93 16x5  fill=#DADADA
+      VECTOR "Wifi-path"  @309,97 11x4  fill=#DADADA
+      VECTOR "Wifi-path"  @312,101 5x4  fill=#DADADA
+    VECTOR "Mobile Signal"  @284,93 17x12  fill=#FFFFFF
+    VECTOR "Time"  @41,94 29x11  fill=#FFFFFF
+  SYMBOL "Text = Black, Background = Off"  @0,78 375x44
+    ROUNDED_RECTANGLE "BG"  @0,78 375x44
+    FRAME "Battery"  @327,93 24x13
+      VECTOR "Outline"  @327,93 22x13  fill=#B2B2B2  r=4
+      ROUNDED_RECTANGLE "Rectangle 1"  @327,93 16x13  fill=#000000
+      VECTOR "Battery End"  @350,98 1x4  fill=#B2B2B2
+      VECTOR "✏️ Percentage"  @332,96 12x7  fill=#FFFFFF
+    BOOLEAN_OPERATION "Wifi"  @306,93 16x11  fill=#000000
+      VECTOR "Wifi-path"  @306,93 16x5  fill=#DADADA
+      VECTOR "Wifi-path"  @309,97 11x4  fill=#DADADA
+      VECTOR "Wifi-path"  @312,101 5x4  fill=#DADADA
+    VECTOR "Mobile Signal"  @284,93 17x12  fill=#000000
+    VECTOR "Time"  @41,94 29x11  fill=#000000
+  SYMBOL "Text = Black, Background = On"  @0,78 375x44  fill=#FFFFFF
+    ROUNDED_RECTANGLE "BG"  @0,78 375x44
+    FRAME "Battery"  @327,93 24x13
+      VECTOR "Outline"  @327,93 22x13  fill=#B2B2B2  r=4
+      ROUNDED_RECTANGLE "Rectangle 1"  @327,93 16x13  fill=#000000
+      VECTOR "Battery End"  @350,98 1x4  fill=#B2B2B2
+      VECTOR "✏️ Percentage"  @332,96 12x7  fill=#FFFFFF
+    BOOLEAN_OPERATION "Wifi"  @306,93 16x11  fill=#000000
+      VECTOR "Wifi-path"  @306,93 16x5  fill=#DADADA
+      VECTOR "Wifi-path"  @309,97 11x4  fill=#DADADA
+      VECTOR "Wifi-path"  @312,101 5x4  fill=#DADADA
+    VECTOR "Mobile Signal"  @284,93 17x12  fill=#000000
+    VECTOR "Time"  @41,94 29x11  fill=#000000

@@ -1,0 +1,16 @@
+FRAME "08 실시간 생육 모니터링"  @643,3526 402x905  fill=#FFFFFF
+  FRAME "Body"  @643,3629 402x701
+    INSTANCE "App/BedCard"  @659,3645 370x155  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+    INSTANCE "App/BedCard"  @659,3816 370x155  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+    INSTANCE "App/BedCard"  @659,3987 370x155  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+    INSTANCE "App/BedCard"  @659,4159 370x155  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+  FRAME "Status Bar"  @643,3526 402x103
+    INSTANCE "Status Bar"  @643,3526 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+    INSTANCE "App/DetailHeader2"  @643,3573 402x56
+  FRAME "Frame 2121453045"  @643,4330 402x101
+    INSTANCE "App/BottomNav"  @643,4330 402x64  fill=#FFFFFF  stroke=#F1F1F1/1
+    FRAME "Group 828"  @643,4395 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @643,4395 402x36  fill=#FFFFFF  stroke=#FFFFFF/1
+      FRAME "Group 819"  @773,4417 144x5
+        FRAME "Group 665"  @773,4417 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @773,4417 144x5  fill=#070428  r=107

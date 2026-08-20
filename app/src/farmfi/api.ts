@@ -1,7 +1,6 @@
 // 백엔드(frontend/src/app/api/**) 응답 계약과 픽셀아트 UI 사이의 변환 계층.
 // 화면은 이 파일의 타입만 알면 되고, 목데이터는 어디에도 남기지 않는다.
 import type { CropKind, RackId } from "./data";
-import type { PixelIconName } from "./assets";
 
 // ─── GET /api/inventory ───
 export type InventoryItem = {
@@ -45,6 +44,9 @@ export type InventoryResponse = {
 export type SalesResponse = {
   project: { id: string; name: string };
   periodDays: number;
+  // 조회 창의 끝점 = 판매 최신 시각. stale이면 화면이 기준일을 밝힌다.
+  dataAsOf: string | null;
+  stale: boolean;
   summary: { totalAmount: number; totalQuantity: number; orderCount: number };
   daily: { date: string; amount: number; quantity: number; orderCount: number }[];
   recent: {
@@ -84,76 +86,117 @@ export type TodayTasksResponse = {
   }[];
 };
 
+// ─── GET /api/notifications?projectId= ───
+export type FarmNotification = {
+  id: string;
+  projectId: string | null;
+  type: string;
+  message: string;
+  evidenceUrl: string | null;
+  isRead: boolean;
+  createdAt: string;
+};
+
+export type NotificationsResponse = { notifications: FarmNotification[] };
+
+// 알림 종류 → 화면 표기. 등급을 색으로 나누지 않으므로 severity는 배지 글자에만 쓴다.
+const ALERT_KIND: Record<string, { title: string; severity: "critical" | "warning" }> = {
+  anomaly_detected: { title: "생육 이상 감지", severity: "critical" },
+  verification_failed: { title: "검증 실패", severity: "critical" },
+  manual_review: { title: "수동 확인 요청", severity: "warning" },
+};
+
+export function alertKind(type: string): { title: string; severity: "critical" | "warning" } {
+  return ALERT_KIND[type] ?? { title: "설비 알림", severity: "warning" };
+}
+
 // ─── GET /api/monitoring/[projectId] (요약만 사용하는 화면용 부분 타입) ───
+export type LightAssessment = {
+  dliTarget: number;
+  recentDli: number;
+  ratioPct: number;
+  status: "ok" | "under" | "over" | "unknown";
+  degrading: boolean;
+  message: string;
+};
+
+export type HarvestForecast = {
+  cropLabel: string;
+  cycleElapsedDays: number;
+  accumulatedGdd: number;
+  targetGdd: number;
+  gddProgressPct: number;
+  observedGrowthPct: number;
+  daysRemaining: number | null;
+  delayDays: number | null;
+  message: string;
+};
+
 export type MonitoringSummaryResponse = {
   project: { id: string; name: string };
   days: number;
-  points: { humidity: number; healthy: boolean }[];
+  // 조회 창의 끝점 = 센서 최신 시각. stale이면 화면이 기준일을 밝힌다.
+  dataAsOf: string | null;
+  stale: boolean;
+  points: { humidity: number; healthy: boolean; growthRate: number }[];
+  light: LightAssessment;
+  harvest: HarvestForecast;
   summary: {
     count: number;
     uptimeRate: number;
     anomalyCount: number;
     driftSensors: string[];
+    suboptimalCount: number;
     latestHealthy: boolean;
   };
 };
 
-// ─── GET /api/monitoring/[projectId] (센서 상세 화면용 전체 타입) ───
-// 위 부분 타입과 같은 엔드포인트다. 베드 상세·센서 이력은 판독 5종과 서버가 준
-// 정상범위(healthyRanges)까지 써야 하므로 계약 전체를 선언한다.
-// 임계값을 앱에 하드코딩하면 서버 기준이 바뀔 때 화면만 거짓을 말하게 된다.
-export const SENSOR_KEYS = ["temperature", "humidity", "co2Level", "lightIntensity", "phLevel"] as const;
-export type SensorKey = (typeof SENSOR_KEYS)[number];
-
-export const SENSOR_META: Record<SensorKey, { label: string; unit: string; icon: PixelIconName }> = {
-  temperature: { label: "온도", unit: "℃", icon: "sensor-temp" },
-  humidity: { label: "습도", unit: "%", icon: "sensor-humidity" },
-  co2Level: { label: "CO₂", unit: "ppm", icon: "sensor-co2" },
-  // 광량·양액 pH 전용 픽셀 아이콘이 아직 없어 근사치를 쓴다(생성 요청 대기).
-  lightIntensity: { label: "광량", unit: "lux", icon: "ui-warning" },
-  phLevel: { label: "양액 pH", unit: "pH", icon: "sensor-ec" },
-};
+// ─── 센서 판독 (모니터링 응답의 points 전체 필드) ───
+// 센서는 지점 단위로 수집된다 — 베드마다 따로 달려 있지 않다.
+export type SensorKey = "temperature" | "humidity" | "co2Level" | "phLevel";
 
 export type MonitoringPoint = {
   t: string;
-  ts: number;
-  anomalyScore: number;
+  temperature: number;
+  humidity: number;
+  co2Level: number;
+  lightIntensity: number;
+  phLevel: number;
+  growthRate: number;
   isAnomaly: boolean;
-  affectedSensors: SensorKey[];
-} & Record<SensorKey, number>;
-
-export type MonitoringResponse = {
-  project: { id: string; name: string };
-  days: number;
-  points: MonitoringPoint[];
-  healthyRanges: Record<SensorKey, [number, number]>;
-  drift: { sensor: SensorKey; detected: boolean; detectedAt: string | null; maxStatistic: number }[];
-  summary: {
-    count: number;
-    uptimeRate: number;
-    anomalyCount: number;
-    driftSensors: string[];
-    latestHealthy: boolean;
-    windowStart: string | null;
-    windowEnd: string | null;
-  };
+  outOfRange: string[];
+  outOfOptimal: string[];
+  healthy: boolean;
 };
 
-// 임계 밖이면 위험, 경계 10% 안쪽이면 주의. 범위는 서버 값을 그대로 쓴다.
-export type Severity = "critical" | "warning" | "normal";
+export type MonitoringDetailResponse = Omit<MonitoringSummaryResponse, "points"> & {
+  points: MonitoringPoint[];
+  healthyRanges: Record<string, [number, number]>;
+  optimalRanges: Record<string, [number, number]>;
+};
 
-export function evaluateSensor(value: number, range: [number, number]): Severity {
-  const [min, max] = range;
-  if (value < min || value > max) return "critical";
-  const margin = (max - min) * 0.1;
-  if (value < min + margin || value > max - margin) return "warning";
-  return "normal";
+export const SENSOR_META: Record<SensorKey, { label: string; unit: string; digits: number }> = {
+  temperature: { label: "온도", unit: "℃", digits: 1 },
+  humidity: { label: "습도", unit: "%", digits: 0 },
+  co2Level: { label: "CO₂", unit: "ppm", digits: 0 },
+  // Figma에는 EC 칸이 있지만 수집하는 값은 pH다. 없는 값을 EC라고 부르지 않는다.
+  phLevel: { label: "pH", unit: "", digits: 1 },
+};
+
+export function formatReading(key: SensorKey, value: number): string {
+  const m = SENSOR_META[key];
+  return `${value.toFixed(m.digits)}${m.unit}`;
 }
 
-export function worstOf(list: Severity[]): Severity {
-  if (list.includes("critical")) return "critical";
-  if (list.includes("warning")) return "warning";
-  return "normal";
+// 정상 범위 안이면 normal, 벗어나면 critical. 등급을 더 잘게 나누지 않는다.
+export function readingSeverity(
+  key: SensorKey,
+  value: number,
+  ranges?: Record<string, [number, number]>
+): "normal" | "critical" {
+  const r = ranges?.[key];
+  if (!r) return "normal";
+  return value < r[0] || value > r[1] ? "critical" : "normal";
 }
 
 // ─── 성숙도 → 생육 단계 문구 ───
@@ -232,4 +275,12 @@ export function formatMonthDay(iso: string): string {
   const mm = String(d.getMonth() + 1).padStart(2, "0");
   const dd = String(d.getDate()).padStart(2, "0");
   return `${mm}.${dd}`;
+}
+
+export function formatStamp(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "--.-- --:--";
+  const hh = String(d.getHours()).padStart(2, "0");
+  const mi = String(d.getMinutes()).padStart(2, "0");
+  return `${formatMonthDay(iso)} ${hh}:${mi}`;
 }

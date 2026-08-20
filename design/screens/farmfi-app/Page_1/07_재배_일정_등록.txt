@@ -1,0 +1,45 @@
+FRAME "07 재배 일정 등록"  @1873,2335 402x874  fill=#FFFFFF
+  FRAME "Body"  @1873,2438 402x643
+    FRAME "Card"  @1889,2454 370x595  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      FRAME "Frame 2121453061"  @1901,2474 345x115
+        TEXT "베드 선택"  @1901,2474 60x19  text='베드 선택'  Pretendard SemiBold 16px  #1D1E1C
+        FRAME "Frame"  @1901,2505 345x36
+          FRAME "Frame"  @1901,2505 169x36  fill=#EAF6EE  stroke=#1B5E3F/2  r=8
+            TEXT "베드 A"  @1968,2515 35x16  text='베드 A'  Pretendard SemiBold 13px  #1B5E3F
+          FRAME "Frame"  @2078,2505 169x36  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+            TEXT "베드 B"  @2145,2515 34x16  text='베드 B'  Pretendard Regular 13px  #656863
+        FRAME "Frame"  @1901,2553 345x36
+          FRAME "Frame"  @1901,2553 169x36  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+            TEXT "베드 C"  @1968,2563 35x16  text='베드 C'  Pretendard Regular 13px  #656863
+          FRAME "Frame"  @2078,2553 169x36  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+            TEXT "베드 D"  @2145,2563 35x16  text='베드 D'  Pretendard Regular 13px  #656863
+      FRAME "Frame 2121453062"  @1901,2609 345x141
+        TEXT "작물 선택"  @1901,2609 60x19  text='작물 선택'  Pretendard SemiBold 16px  #1D1E1C
+        FRAME "Frame"  @1901,2640 345x49
+          FRAME "Frame"  @1901,2640 169x49  fill=#EAF6EE  stroke=#1B5E3F/2  r=8
+            FRAME "CropPixel"  @1917,2650 29x29  r=4
+            TEXT "버터헤드"  @1961,2656 45x16  text='버터헤드'  Pretendard SemiBold 13px  #1B5E3F
+          FRAME "Frame"  @2078,2640 169x49  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+            FRAME "CropPixel"  @2094,2650 29x29  r=4
+            TEXT "로메인"  @2138,2656 34x16  text='로메인'  Pretendard Regular 13px  #656863
+        FRAME "Frame"  @1901,2701 345x49
+          FRAME "Frame"  @1901,2701 169x49  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+            FRAME "CropPixel"  @1917,2711 29x29  r=4
+            TEXT "루꼴라"  @1961,2717 34x16  text='루꼴라'  Pretendard Regular 13px  #656863
+          FRAME "Frame"  @2078,2701 169x49  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+            FRAME "CropPixel"  @2094,2711 29x29  r=4
+            TEXT "바질"  @2138,2717 23x16  text='바질'  Pretendard Regular 13px  #656863
+      FRAME "Frame 2121453063"  @1901,2770 345x188
+        TEXT "일정"  @1901,2770 28x19  text='일정'  Pretendard SemiBold 16px  #1D1E1C
+        INSTANCE "App/Field"  @1901,2801 345x73
+        INSTANCE "App/Field"  @1901,2885 345x73
+      INSTANCE "App/PrimaryButton"  @1901,2978 345x52  fill=#1B5E3F  r=8
+  INSTANCE "App/DetailHeader"  @1873,2382 402x56  fill=#FFFFFF  stroke=#C9CEC9@0.50/1
+  FRAME "Status Bar"  @1873,2335 402x47
+    INSTANCE "Status Bar"  @1873,2335 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+  FRAME "Frame 2121453045"  @1873,3173 402x36
+    FRAME "Group 828"  @1873,3173 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @1873,3173 402x36
+      FRAME "Group 819"  @2003,3195 144x5
+        FRAME "Group 665"  @2003,3195 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @2003,3195 144x5  fill=#070428  r=107

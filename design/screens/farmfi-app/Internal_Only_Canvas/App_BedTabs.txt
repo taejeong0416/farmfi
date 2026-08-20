@@ -1,0 +1,9 @@
+SYMBOL "App/BedTabs"  @1644,2907 396x42
+  FRAME "베드 A"  @1644,2907 99x42  fill=#1B5E3F  stroke=#1B5E3F/1
+    TEXT "베드 A"  @1673,2919 40x17  text='베드 A'  Inter Regular 14px  #FFFFFF
+  FRAME "베드 B"  @1743,2907 99x42  fill=#FFFFFF  stroke=#C9CEC9/1
+    TEXT "베드 B"  @1773,2919 39x17  text='베드 B'  Inter Regular 14px  #1D1E1C
+  FRAME "베드 C"  @1842,2907 99x42  fill=#FFFFFF  stroke=#C9CEC9/1
+    TEXT "베드 C"  @1871,2919 40x17  text='베드 C'  Inter Regular 14px  #1D1E1C
+  FRAME "베드 D"  @1941,2907 99x42  fill=#FFFFFF  stroke=#C9CEC9/1
+    TEXT "베드 D"  @1970,2919 40x17  text='베드 D'  Inter Regular 14px  #1D1E1C

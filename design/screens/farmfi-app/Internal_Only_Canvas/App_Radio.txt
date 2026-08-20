@@ -1,0 +1,4 @@
+FRAME "App/Radio"  @0,6673 56x16  r=5
+  SYMBOL "state=unselected"  @0,6673 16x16  fill=#FFFFFF  stroke=#C9CEC9/2  r=8
+  SYMBOL "state=selected"  @40,6673 16x16  fill=#FFFFFF  stroke=#1B5E3F/2  r=8
+    ELLIPSE "Dot"  @44,6677 8x8  fill=#1B5E3F

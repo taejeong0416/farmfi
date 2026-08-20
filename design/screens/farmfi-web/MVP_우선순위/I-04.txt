@@ -1,0 +1,46 @@
+FRAME "I-04 · 투자 신청 완료"  @4070,1800 730x586  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+  ROUNDED_RECTANGLE "면"  @4103,1916 664x149  stroke=#E5E5E3/1  r=10
+  TEXT "1,000,000"  @4124,1955 118x29  text='1,000,000'  Pretendard Medium 24px  #1A1A1A
+  TEXT "원"  @4241,1964 14x18  text='원'  Pretendard Regular 15px  #4A4A4A
+  ROUNDED_RECTANGLE "선"  @4325,1917 1x83  fill=#EDEDEB
+  TEXT "예치 상태"  @4346,1934 49x15  text='입금'  Inter Regular 13px  #8A8A8A
+  TEXT "락업"  @4346,1955 54x29  text='완료'  Inter Regular 24px  #14542E
+  TEXT "중"  @4387,1964 18x18  text=''  Inter Regular 15px  #4A4A4A
+  ROUNDED_RECTANGLE "선"  @4545,1917 1x83  fill=#EDEDEB
+  TEXT "배정 예정일"  @4566,1934 60x15  text='배정 예정일'  Pretendard Regular 13px  #8A8A8A
+  TEXT "05.02"  @4566,1955 68x29  text='05.02'  Pretendard Medium 24px  #1A1A1A
+  ROUNDED_RECTANGLE "선"  @4104,2000 662x1  fill=#EDEDEB
+  TEXT "프로젝트"  @4124,2014 46x15  text='프로젝트'  Pretendard Regular 13px  #8A8A8A
+  TEXT "부산 전포동 미니팜 1호"  @4124,2035 126x16  text='부산 전포동 미니팜 1호'  Pretendard Medium 14px  #1A1A1A
+  ROUNDED_RECTANGLE "선"  @4325,2001 1x63  fill=#EDEDEB
+  TEXT "SB-2026-0315-0238"  @4346,2035 137x16  text='SB-2026-0315-0238'  Pretendard Medium 14px  #1A1A1A
+  ROUNDED_RECTANGLE "선"  @4545,2001 1x63  fill=#EDEDEB
+  TEXT "접수 완료"  @4566,2035 53x16  text='접수 완료'  Pretendard Medium 14px  #14542E
+  ROUNDED_RECTANGLE "선"  @4106,2134 1x96  fill=#E5E5E3
+  ELLIPSE "점"  @4103,2127 8x8  fill=#14542E
+  TEXT "1단계 계약 체결"  @4127,2123 87x16  text='1단계 계약 체결'  Pretendard Regular 14px  #1A1A1A
+  TEXT "집행완료"  @4531,2123 46x15  text='예정'  Inter Regular 13px  #14542E
+  TEXT "239,000원"  @4700,2123 68x16  text='239,000원'  Pretendard Medium 14px  #1A1A1A
+  ELLIPSE "점"  @4103,2161 8x8  fill=#14542E
+  TEXT "2단계 설비 발주"  @4127,2157 89x16  text='2단계 설비 발주'  Pretendard Regular 14px  #1A1A1A
+  TEXT "집행완료"  @4531,2157 46x15  text='예정'  Inter Regular 13px  #14542E
+  TEXT "163,000원"  @4702,2157 66x16  text='163,000원'  Pretendard Medium 14px  #1A1A1A
+  ELLIPSE "점"  @4103,2195 8x8  fill=#FFFFFF  stroke=#99A39C/1
+  TEXT "3단계 설비 설치"  @4127,2191 89x16  text='3단계 설비 설치'  Pretendard Regular 14px  #1A1A1A
+  TEXT "검증중"  @4531,2191 35x15  text='예정'  Inter Regular 13px  #4A4A4A
+  TEXT "359,000원"  @4700,2191 68x16  text='359,000원'  Pretendard Medium 14px  #1A1A1A
+  ELLIPSE "점"  @4103,2229 8x8  fill=#FFFFFF  stroke=#CFCFCC/1
+  TEXT "4 · 5단계"  @4127,2225 53x16  text='4 · 5단계'  Pretendard Regular 14px  #4A4A4A
+  TEXT "예정"  @4531,2225 23x15  text='예정'  Pretendard Regular 13px  #8A8A8A
+  TEXT "239,000원"  @4700,2225 68x16  text='239,000원'  Pretendard Medium 14px  #1A1A1A
+  ROUNDED_RECTANGLE "면"  @4103,2268 326x46  fill=#14542E  r=6
+  TEXT "내 투자 보기"  @4233,2283 68x16  text='내 투자 보기'  Pretendard Medium 14px  #FFFFFF
+  ROUNDED_RECTANGLE "면"  @4439,2268 328x48  fill=#FFFFFF  stroke=#D6D6D4/1  r=6
+  TEXT "프로젝트로 돌아가기"  @4547,2284 113x16  text='프로젝트로 돌아가기'  Pretendard Medium 14px  #1A1A1A
+  TEXT "배정 결과는 모집 마감 후 안내되며, 미배정…"  @4103,2333 335x14  text='배정 결과는 모집 마감 후 안내되며, 미배정분은 예치 계좌로 환불됩니다.'  Pretendard Regular 12px  #8A8A8A
+  TEXT "FRIENDLY COPY / 10:656"  @4103,1832 213x27  text='투자 신청이 완료됐어요'  Inter Bold 22px  #1A1A1A
+  TEXT "FRIENDLY COPY / 10:657"  @4103,1874 490x16  text='입금 확인이 완료됐어요. 프로젝트가 시작되면 진행 과정과 사용 내역을 확인할 수 있습니다.'  Inter Regular 13px  #757575
+  TEXT "FRIENDLY COPY / 10:659"  @4124,1934 52x16  text='투자 금액'  Inter Regular 13px  #8A8A8A
+  TEXT "FRIENDLY COPY / 10:673"  @4346,2014 52x16  text='신청 번호'  Inter Regular 13px  #8A8A8A
+  TEXT "FRIENDLY COPY / 10:676"  @4566,2014 52x16  text='신청 상태'  Inter Regular 13px  #8A8A8A
+  TEXT "FRIENDLY COPY / 10:678"  @4103,2091 104x18  text='투자금 사용 예정'  Inter Bold 15px  #1A1A1A

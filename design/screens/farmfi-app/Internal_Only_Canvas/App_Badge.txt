@@ -1,0 +1,7 @@
+FRAME "App/Badge"  @164,1350 168x48  r=3
+  SYMBOL "severity=critical"  @177,1363 39x23  fill=#FBF0EE  r=5
+    TEXT "위험"  @185,1367 23x15  text='위험'  Inter Semi Bold 12px  #A33A2A
+  SYMBOL "severity=warning"  @229,1363 39x23  fill=#FDF6EA  r=5
+    TEXT "주의"  @237,1367 23x15  text='주의'  Inter Semi Bold 12px  #A8762A
+  SYMBOL "severity=normal"  @280,1363 39x23  fill=#EEF4EA  r=5
+    TEXT "정상"  @289,1367 23x15  text='정상'  Inter Semi Bold 12px  #1B5E3F

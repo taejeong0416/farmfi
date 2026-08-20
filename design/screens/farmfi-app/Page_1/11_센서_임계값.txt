@@ -1,0 +1,75 @@
+FRAME "11 센서 임계값"  @2012,3526 402x874  fill=#FFFFFF
+  FRAME "Body"  @2012,3629 402x717
+    FRAME "Frame"  @2028,3645 370x37  fill=#EAF6EE  r=8
+      TEXT "저장한 임계값은 이후 센서 상태 판단과 설비 알림 발생 기준에 적용됩니다."  @2040,3657 346x13  text='저장한 임계값은 이후 센서 상태 판단과 설비 알림 발생 기준에 적용됩니다.'  Pretendard Regular 11px  #1B5E3F
+    FRAME "Card"  @2028,3698 370x125  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      FRAME "Frame"  @2040,3718 345x19
+        TEXT "온도"  @2040,3718 28x19  text='온도'  Pretendard SemiBold 16px  #1D1E1C
+        TEXT "현재 25.6℃"  @2324,3720 62x14  text='현재 25.6℃'  Pretendard Regular 12px  #1B5E3F
+      FRAME "Frame"  @2040,3747 345x56
+        FRAME "Frame"  @2040,3747 168x56
+          TEXT "하한"  @2040,3747 20x13  text='하한'  Pretendard Regular 11px  #656863
+          FRAME "Frame"  @2040,3766 168x37  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+            TEXT "18"  @2050,3776 131x17  text='18'  Pretendard Regular 14px  #1D1E1C
+            TEXT "℃"  @2185,3778 13x13  text='℃'  Pretendard Regular 11px  #656863
+        FRAME "Frame"  @2218,3747 168x56
+          TEXT "상한"  @2218,3747 20x13  text='상한'  Pretendard Regular 11px  #656863
+          FRAME "Frame"  @2218,3766 168x37  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+            TEXT "26"  @2228,3776 131x17  text='26'  Pretendard Regular 14px  #1D1E1C
+            TEXT "℃"  @2363,3778 13x13  text='℃'  Pretendard Regular 11px  #656863
+    FRAME "Card"  @2028,3839 370x125  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      FRAME "Frame"  @2040,3859 345x19
+        TEXT "습도"  @2040,3859 28x19  text='습도'  Pretendard SemiBold 16px  #1D1E1C
+        TEXT "현재 78%"  @2338,3861 48x14  text='현재 78%'  Pretendard Regular 12px  #1B5E3F
+      FRAME "Frame"  @2040,3888 345x56
+        FRAME "Frame"  @2040,3888 168x56
+          TEXT "하한"  @2040,3888 20x13  text='하한'  Pretendard Regular 11px  #656863
+          FRAME "Frame"  @2040,3907 168x37  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+            TEXT "60"  @2050,3917 134x17  text='60'  Pretendard Regular 14px  #1D1E1C
+            TEXT "%"  @2188,3919 10x13  text='%'  Pretendard Regular 11px  #656863
+        FRAME "Frame"  @2218,3888 168x56
+          TEXT "상한"  @2218,3888 20x13  text='상한'  Pretendard Regular 11px  #656863
+          FRAME "Frame"  @2218,3907 168x37  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+            TEXT "90"  @2228,3917 134x17  text='90'  Pretendard Regular 14px  #1D1E1C
+            TEXT "%"  @2366,3919 10x13  text='%'  Pretendard Regular 11px  #656863
+    FRAME "Card"  @2028,3980 370x125  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      FRAME "Frame"  @2040,4000 345x19
+        TEXT "CO₂"  @2040,4000 30x19  text='CO₂'  Pretendard SemiBold 16px  #1D1E1C
+        TEXT "현재 1240ppm"  @2311,4002 75x14  text='현재 1240ppm'  Pretendard Regular 12px  #1B5E3F
+      FRAME "Frame"  @2040,4029 345x56
+        FRAME "Frame"  @2040,4029 168x56
+          TEXT "하한"  @2040,4029 20x13  text='하한'  Pretendard Regular 11px  #656863
+          FRAME "Frame"  @2040,4048 168x37  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+            TEXT "400"  @2050,4058 122x17  text='400'  Pretendard Regular 14px  #1D1E1C
+            TEXT "ppm"  @2176,4060 22x13  text='ppm'  Pretendard Regular 11px  #656863
+        FRAME "Frame"  @2218,4029 168x56
+          TEXT "상한"  @2218,4029 20x13  text='상한'  Pretendard Regular 11px  #656863
+          FRAME "Frame"  @2218,4048 168x37  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+            TEXT "1000"  @2228,4058 122x17  text='1000'  Pretendard Regular 14px  #1D1E1C
+            TEXT "ppm"  @2354,4060 22x13  text='ppm'  Pretendard Regular 11px  #656863
+    FRAME "Card"  @2028,4121 370x125  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
+      FRAME "Frame"  @2040,4141 345x19
+        TEXT "EC"  @2040,4141 21x19  text='EC'  Pretendard SemiBold 16px  #1D1E1C
+        TEXT "현재 2.1dS/m"  @2319,4143 67x14  text='현재 2.1dS/m'  Pretendard Regular 12px  #1B5E3F
+      FRAME "Frame"  @2040,4170 345x56
+        FRAME "Frame"  @2040,4170 168x56
+          TEXT "하한"  @2040,4170 20x13  text='하한'  Pretendard Regular 11px  #656863
+          FRAME "Frame"  @2040,4189 168x37  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+            TEXT "1.2"  @2050,4199 117x17  text='1.2'  Pretendard Regular 14px  #1D1E1C
+            TEXT "dS/m"  @2171,4201 27x13  text='dS/m'  Pretendard Regular 11px  #656863
+        FRAME "Frame"  @2218,4170 168x56
+          TEXT "상한"  @2218,4170 20x13  text='상한'  Pretendard Regular 11px  #656863
+          FRAME "Frame"  @2218,4189 168x37  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
+            TEXT "2.4"  @2228,4199 117x17  text='2.4'  Pretendard Regular 14px  #1D1E1C
+            TEXT "dS/m"  @2349,4201 27x13  text='dS/m'  Pretendard Regular 11px  #656863
+    INSTANCE "App/PrimaryButton"  @2028,4262 370x52  fill=#1B5E3F  r=8
+  FRAME "TopBar"  @2012,3526 402x103
+    INSTANCE "Status Bar"  @2012,3526 402x47  fill=#FFFFFF  stroke=#FFFFFF/1
+    FRAME "HeaderRow"  @2012,3573 402x56
+      INSTANCE "App/DetailHeader"  @2012,3573 402x56  fill=#FFFFFF  stroke=#C9CEC9@0.50/1
+  FRAME "Frame 2121453045"  @2012,4364 402x36
+    FRAME "Group 828"  @2012,4364 402x36
+      ROUNDED_RECTANGLE "Rectangle 375"  @2012,4364 402x36
+      FRAME "Group 819"  @2142,4387 144x5
+        FRAME "Group 665"  @2142,4387 144x5
+          ROUNDED_RECTANGLE "Home Indicator"  @2142,4387 144x5  fill=#070428  r=107
