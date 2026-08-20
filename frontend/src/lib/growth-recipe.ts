@@ -138,6 +138,42 @@ function predictRS(beta: number[], x: number[]): number {
   return dotV(beta, buildDesignRow(x));
 }
 
+// ── 재적합 원시함수 ──────────────────────────────────────────────────────────
+// 부트스트랩은 같은 적합을 수백 번 되풀이한다. analyzeGrowthRecipe 전체를 돌리면
+// 부스팅·교차검증까지 딸려와 느리므로, 표면 적합과 최적화만 따로 내어 쓴다.
+// 입력·출력 모두 정규화 좌표다.
+
+/** 정규화 좌표 관측에서 반응표면 계수를 적합한다. */
+export function fitResponseSurface(Z: number[][], y: number[]): number[] {
+  return olsFit(Z.map(buildDesignRow), y);
+}
+
+/** 계수와 탐색범위에서 6D 결합 최적점(정규화 좌표)을 찾는다. */
+export function optimumZ(beta: number[], bounds: [number, number][]): number[] {
+  return coordinateAscent(beta, bounds);
+}
+
+export function predictSurface(beta: number[], z: number[]): number {
+  return predictRS(beta, z);
+}
+
+/**
+ * 탐색범위 = 관측범위 ∩ 농학 정상범위. z에서 농학 정상범위는 정의상 [-1,1]이다.
+ * clamp를 끄면 관측범위만 쓴다 — 농학 지식이 답을 대신 내지 않는지 볼 때 필요하다.
+ */
+export function zBounds(Z: number[][], clamp: boolean): [number, number][] {
+  return FEATURES.map((_, fi) => {
+    const vals = Z.map((z) => z[fi]);
+    const lo = Math.min(...vals);
+    const hi = Math.max(...vals);
+    if (!clamp) return [lo, hi];
+    const cLo = Math.max(lo, -1);
+    const cHi = Math.min(hi, 1);
+    // 교집합이 비면 관측범위로 물러선다 — 외삽하느니 못 봤다고 하는 편이 낫다
+    return (cLo < cHi ? [cLo, cHi] : [lo, hi]) as [number, number];
+  });
+}
+
 // OLS 정규방정식: (D^T D + λI) β = D^T y (λ=1e-6 릿지 정규화로 수치 안정)
 function olsFit(D: number[][], y: number[]): number[] {
   const p = D[0].length;
@@ -312,20 +348,8 @@ export function analyzeGrowthRecipe(obs: GrowthObservation[], opts?: {
   // 5-fold CV R²
   const r2 = cvR2(X, y);
 
-  // 좌표 상승 탐색 범위: 관측범위 ∩ 농학 정상범위. 다항식 외삽(temp 14.8℃ 같은
-  // 비현실값)을 막는다. z 좌표에서 농학 정상범위는 정의상 [-1, 1]이라, 클램프가
-  // 따로 표를 들고 있을 필요가 없다.
-  const AGRO_Z: [number, number] = [-1, 1];
-  const bounds: [number, number][] = FEATURES.map((_, fi) => {
-    const vals = X.map((x) => x[fi]);
-    const obsLo = Math.min(...vals);
-    const obsHi = Math.max(...vals);
-    if (!cropKey) return [obsLo, obsHi];
-    const cLo = Math.max(obsLo, AGRO_Z[0]);
-    const cHi = Math.min(obsHi, AGRO_Z[1]);
-    // 교집합이 비면 관측범위로 물러선다 — 외삽하느니 못 봤다고 하는 편이 낫다
-    return (cLo < cHi ? [cLo, cHi] : [obsLo, obsHi]) as [number, number];
-  });
+  // 다항식 외삽(temp 14.8℃ 같은 비현실값)을 막기 위해 농학 정상범위로 클램프한다
+  const bounds = zBounds(X, Boolean(cropKey));
 
   // 6D 결합 최적점 (좌표 상승 — 독립 1D 최적 ≠ 결합 최적)
   const optZ = coordinateAscent(beta, bounds);

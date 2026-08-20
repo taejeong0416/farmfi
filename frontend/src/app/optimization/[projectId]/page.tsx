@@ -327,45 +327,105 @@ export default async function OptimizationPage({
       </section>
 
       {/* 생육레시피 분석 — 최적화의 "목표"를 데이터에서 학습 */}
-      <section className="rounded-lg border border-lime-300 bg-lime-50 p-5 space-y-3">
-        <h2 className="font-semibold text-lime-900">AI 생육레시피 분석 — 최적 목표를 데이터에서 학습</h2>
-        <p className="text-xs text-lime-800">
+      <section className="rounded-lg border border-brand bg-brand-soft p-5 space-y-3">
+        <h2 className="font-semibold text-brand">AI 생육레시피 분석 — 최적 목표를 데이터에서 학습</h2>
+        <p className="text-xs text-brand">
           스케줄링이 &quot;어떻게 싸게 달성할지&quot;라면, 레시피 분석은 &quot;무엇을 목표로 할지&quot;를 정한다.
           환경↔수율 {recipe.samples}개 사이클을 학습해 최적 생육조건을 도출 — 이 레시피가
-          최적화 스택의 목표(DLI·정상범위)가 되어 두 시스템이 맞물린다. 비전공 운영자도 따라할 수 있다.
+          최적화 스택의 목표(DLI·정상범위)가 되어 두 시스템이 맞물린다.
         </p>
-        <p className="text-xs font-medium text-muted bg-surface rounded px-2 py-1">
-          ※ 합성 데이터 데모 (실 수율은 1호점 수확기록에서 확정) — 알고리즘 복원력 시험용 시뮬레이션
+        <p className="text-xs font-medium text-body bg-surface rounded px-2 py-1">
+          ※ 합성 데이터 데모 (실 수율은 1호점 수확기록에서 확정). 반응표면 판정{" "}
+          <strong>{recipe.surface}</strong> · 설명력{" "}
+          {recipe.modelR2 === null ? "판정 불가(표본 부족)" : `CV R² ${recipe.modelR2}`}
         </p>
+
         <div className="grid gap-3 sm:grid-cols-2 text-sm">
           <div className="rounded bg-white p-3">
             <div className="font-medium">특성 중요도 (SHAP 섀플리 값)</div>
-            <p className="mt-1 text-muted">
+            <p className="mt-1 text-body">
               {recipe.shap.slice(0, 4).map((s) => `${s.label} ${Math.round(s.meanAbsShap * 100)}`).join(" · ")}
-              — 협조게임이론의 공정 기여도로 &quot;수율을 좌우하는 요인&quot; 순위.
+            </p>
+            <p className="mt-1 text-xs text-muted">
+              협조게임이론의 공정 기여도. 배경 표본에 대한 개입 방식이라 부분의 합이 예측 차이와 맞는다.
             </p>
           </div>
           <div className="rounded bg-white p-3">
-            <div className="font-medium">도출된 최적 레시피 (농학정보 하이브리드)</div>
-            <p className="mt-1 text-muted">
-              {recipe.hybrid.map((s) => `${s.label} ${s.hybridOptimum}${s.unit}`).join(" · ")}
-            </p>
+            <div className="font-medium">권장 설정점과 95% 구간</div>
+            <ul className="mt-1 space-y-0.5 text-body">
+              {recipe.hybrid.map((s) => (
+                <li key={s.feature}>
+                  {s.label} <strong>{s.hybridOptimum}{s.unit}</strong>{" "}
+                  <span className="text-muted">
+                    ({s.interval[0]}~{s.interval[1]}{s.unit})
+                  </span>
+                </li>
+              ))}
+            </ul>
             <p className="mt-1 text-xs text-muted">
-              데이터가 최적점을 담으면 데이터가(가중 {recipe.hybrid[0].dataWeight}), 부족하면 작물학
-              사전이 이끔 — 농학사전 정규화 하이브리드(신경망·미분방정식 없음)로 데이터 부족을 보완.
+              출처 배분 — 문헌 {recipe.hybrid[0].source.literature}% · 이전{" "}
+              {recipe.hybrid[0].source.transfer}% · 자체 데이터 {recipe.hybrid[0].source.own}%
+              (온도 기준). 불확실성은 부트스트랩으로 데이터에서 직접 쟀다.
             </p>
           </div>
         </div>
-        {recipe.suggestions.length > 0 && (
-          <div className="rounded bg-surface p-3 text-sm text-muted">
-            능동학습 실험 제안: {recipe.suggestions.map((s) => `${s.label}→${s.suggestValue}${s.unit}`).join(" · ")}
-            <span className="text-xs"> — 데이터가 최적점을 못 담은 요인을 다음 사이클에 실험해 레시피 정밀도↑</span>
-          </div>
-        )}
-        <p className="text-xs text-lime-700">
-          근거: 실내 수직수경 바질 수율 ML(arXiv 2512.22151) · SHAP(2606.15273) · 하이브리드 농학사전(2601.16045 방법론 참고, 신경망·미분방정식 없음) ·
-          UCB 능동학습(2311.01195). 실 수율 라벨은 1호점 수확 기록에서 확정.
-        </p>
+
+        {/* 갭 분석 — 지금 조건에서 무엇을 먼저 옮길지 */}
+        <div className="rounded bg-white p-3 text-sm">
+          <div className="font-medium">갭 분석 · 무엇부터 옮길까</div>
+          <p className="mt-1 text-body">{recipe.gap.headline}</p>
+          {recipe.surface === "최대점" && (
+            <table className="mt-2 w-full text-xs">
+              <thead className="text-muted">
+                <tr className="border-b border-line-soft text-left">
+                  <th className="py-1 font-normal">요인</th>
+                  <th className="py-1 font-normal">현재</th>
+                  <th className="py-1 font-normal">목표</th>
+                  <th className="py-1 font-normal">조치</th>
+                  <th className="py-1 font-normal text-right">수율 기여</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recipe.gap.actions.map((a) => (
+                  <tr key={a.label} className="border-b border-line-soft last:border-0">
+                    <td className="py-1">
+                      {a.label}
+                      {a.atBoundary && <span className="ml-1 text-muted">(관측 끝)</span>}
+                    </td>
+                    <td className="py-1">{a.current}</td>
+                    <td className="py-1">{a.target}</td>
+                    <td className="py-1">{a.direction}</td>
+                    <td className="py-1 text-right">
+                      {a.predictedYieldUpliftPct >= 0 ? "+" : ""}
+                      {a.predictedYieldUpliftPct}%
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+          <p className="mt-1 text-xs text-muted">
+            요인별 기여는 섀플리 분해라 합이 전체 상방({recipe.gap.totalPotentialUpliftPct}%)과 맞는다.
+            &quot;관측 끝&quot; 표시는 그 방향으로 더 올릴 여지를 아직 확인하지 못했다는 뜻이다.
+          </p>
+        </div>
+
+        <div className="rounded bg-surface p-3 text-sm text-body">
+          <span className="font-medium">다음 실험 제안</span>
+          {recipe.suggestions.length > 0 ? (
+            <>
+              {" "}
+              {recipe.suggestions
+                .map((s) => `${s.label}→${s.suggestValue}${s.unit}`)
+                .join(" · ")}
+              <p className="mt-1 text-xs text-muted">{recipe.suggestNote}</p>
+            </>
+          ) : (
+            <p className="mt-1 text-xs text-muted">{recipe.suggestNote}</p>
+          )}
+        </div>
+
+        <p className="text-xs text-brand">{recipe.hybridNote}</p>
       </section>
 
       {/* 캡스톤: 통합 공동최적화 */}

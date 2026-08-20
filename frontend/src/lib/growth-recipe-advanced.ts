@@ -1,38 +1,40 @@
-// ── AI 생육레시피 분석 — 고도화 (타 분야 3기법 차용) ────────────────────────
-// 기본 버전(growth-recipe.ts)의 한계: ① gain 기반 중요도는 편향, ② 반응표면은
-// 데이터가 최적점을 안 담으면 실패, ③ "다음에 뭘 실험할지" 없음. 논문 차용으로 해결:
-//   · SHAP 섀플리 값 (협조게임이론/XAI)        → 공정한 특성 기여도 (DAG-SHAP 2606.15273)
-//   · 농학사전 정규화 하이브리드 (정규-정규 켤레) → 작물학 사전분포로 데이터 부족 보완
-//     [신경망·미분방정식 없음. "AgriPINN"이 아닌 베이지안 켤레 업데이트]
-//   · UCB 획득함수 능동학습 (실험설계)          → 사후분산 최대점을 다음 실험으로 제안
-//     (배치 베이지안 2311.01195)
-// 참고 선례: 실내 수직 수경 바질 수율 ML (arXiv 2512.22151) — 우리와 동일 세팅.
-// GB는 깊이2 트리(2단 분할)로 상호작용 포착 — SHAP이 주효과 이상을 반영.
+// ── AI 생육레시피 분석 — 고도화 ─────────────────────────────────────────────
+// 기본 버전(growth-recipe.ts)이 하나의 표면에서 최적점 하나를 낸다면, 여기서는
+// 그 최적점이 얼마나 믿을 만한지와, 그 믿음을 어디서 빌려왔는지를 다룬다.
+//   · SHAP 섀플리 값 (협조게임이론/XAI)  → 편향 없는 특성 기여도
+//   · 부트스트랩 → 계층 베이지안         → 최적점의 실제 불확실성과 출처 배분
+//   · 사후분산 기반 실험 제안            → 다음에 무엇을 시험하면 가장 많이 배우나
+//
+// 사전 정밀도를 표본 수의 함수로 두면(seTheta = sd·√(20/n)) 잡음이 전혀 다른 두
+// 데이터셋이 같은 가중치를 받는다. 그래서 불확실성은 데이터에서 직접 잰다 —
+// 관측을 복원추출해 표면을 다시 적합하고 최적점 분포의 산포를 본다.
+//
+// 계층은 3층이다. 문헌(농학 사전) → 같은 사이트의 다른 품종 → 이 품종의 자체 데이터.
+// 가운데 층이 "품종이 바뀌면 리셋인가 승계인가"에 답한다 — 이전 강도가 연속량이라
+// 둘 중 하나를 고를 필요가 없다.
 
-import { getCrop } from "./crop-profiles";
 import {
   GrowthObservation,
   analyzeGrowthRecipe,
+  fitResponseSurface,
+  optimumZ,
+  zBounds,
+  recipeGapAnalysis,
   FEATURES,
   FEATURE_LABEL,
   UNIT,
+  type GrowthFeature,
+  type SurfaceVerdict,
+  type RecipeGapReport,
 } from "./growth-recipe";
+import { toNormalized, fromNormalized, transferWeight } from "./crop-normalize";
 import { LEAFY_SPEC, generateObservations } from "./growth-recipe-synth";
 
-// crop-profiles의 농학 지식을 사전분포로 — 각 변수의 "알려진 최적 중앙값·허용폭"
-function agronomicPrior(cropKey?: string): Record<string, { mu: number; sd: number }> {
-  const c = getCrop(cropKey);
-  const mid = (r: [number, number]) => (r[0] + r[1]) / 2;
-  const half = (r: [number, number]) => (r[1] - r[0]) / 2;
-  return {
-    temp: { mu: mid(c.healthyRanges.temperature), sd: half(c.healthyRanges.temperature) },
-    humidity: { mu: mid(c.healthyRanges.humidity), sd: half(c.healthyRanges.humidity) },
-    co2: { mu: mid(c.healthyRanges.co2Level), sd: half(c.healthyRanges.co2Level) },
-    ec: { mu: mid(c.ecTarget), sd: half(c.ecTarget) },
-    ph: { mu: mid(c.healthyRanges.phLevel), sd: half(c.healthyRanges.phLevel) },
-    dli: { mu: c.dliTarget, sd: c.dliTarget * 0.25 },
-  };
-}
+// 정규화 좌표에서 농학 사전은 언제나 N(0, PRIOR_SD²)이다 — z=0이 문헌 최적,
+// z=±1이 정상범위 경계라는 정의에서 바로 나온다. 폭을 0.5로 두는 건 "정상범위"를
+// ±2σ(약 95%)로 읽는다는 뜻이다. ±1σ로 읽으면 문헌이 말한 범위 밖에 확률질량이
+// 3분의 1이나 남아, 농학 지식을 실제보다 약하게 쓰게 된다.
+const PRIOR_SD = 0.5;
 
 // ── 깊이2 결정트리 (2단 분할 — 상호작용 포착) ────────────────────────────────
 // 깊이1 스텀프는 순수 가법모델 → SHAP이 주효과만 본다.
@@ -45,11 +47,14 @@ interface Tree2 {
 interface GBModel { base: number; trees: Tree2[]; lr: number; }
 
 // 인덱스 부분집합에서 최적 분할 탐색 (깊이2 트리 자식 노드 구성용)
+// 잎에 남는 최소 표본 — 1개짜리 잎을 허용하면 40라운드가 잡음을 그대로 외운다.
+const MIN_LEAF = 5;
+
 function bestSplitOnIdx(
   X: number[][], resid: number[], indices: number[]
 ): { f: number; t: number; lM: number; rM: number } | null {
   const n = indices.length;
-  if (n < 2) return null;
+  if (n < 2 * MIN_LEAF) return null;
   const rMean = indices.reduce((s, i) => s + resid[i], 0) / n;
   const tot = indices.reduce((s, i) => s + (resid[i] - rMean) ** 2, 0);
   let best: { f: number; t: number; lM: number; rM: number; gain: number } | null = null;
@@ -62,7 +67,7 @@ function bestSplitOnIdx(
       for (const i of indices) {
         if (X[i][f] <= t) { lS += resid[i]; lN++; } else { rS += resid[i]; rN++; }
       }
-      if (!lN || !rN) continue;
+      if (lN < MIN_LEAF || rN < MIN_LEAF) continue;
       const lM = lS / lN, rM = rS / rN;
       let sse = 0;
       for (const i of indices) sse += (resid[i] - (X[i][f] <= t ? lM : rM)) ** 2;
@@ -84,8 +89,8 @@ function bestTree2(X: number[][], resid: number[]): Tree2 | null {
   const leftMean = leftIdx.reduce((s, i) => s + resid[i], 0) / leftIdx.length;
   const rightMean = rightIdx.reduce((s, i) => s + resid[i], 0) / rightIdx.length;
 
-  const leftChild = leftIdx.length >= 2 ? bestSplitOnIdx(X, resid, leftIdx) : null;
-  const rightChild = rightIdx.length >= 2 ? bestSplitOnIdx(X, resid, rightIdx) : null;
+  const leftChild = bestSplitOnIdx(X, resid, leftIdx);
+  const rightChild = bestSplitOnIdx(X, resid, rightIdx);
 
   return {
     rootF: root.f, rootT: root.t,
@@ -140,12 +145,17 @@ export interface ShapResult {
   meanAbsShap: number;
 }
 
-export function shapImportance(obs: GrowthObservation[]): ShapResult[] {
-  const X = obs.map((o) => FEATURES.map((f) => o[f]));
+export function shapImportance(obs: GrowthObservation[], cropKey?: string): ShapResult[] {
+  const X = obs.map((o) => toNormalized(o, o.cropKey ?? cropKey));
   const y = obs.map((o) => o.yield);
   const model = trainGB(X, y);
   const nF = FEATURES.length;
-  const bg = FEATURES.map((_, f) => X.reduce((s, x) => s + x[f], 0) / X.length);
+
+  // 기준선은 f(평균벡터)가 아니라 E[f(x)]다. 비선형 모델에서 둘은 다르고, 평균벡터를
+  // 쓰면 Σφ = f(x) − E[f]라는 섀플리의 효율성 공리가 깨진다. 배경 표본에 대해
+  // 평균을 내는 개입(interventional) 방식으로 계산한다.
+  const bgStride = Math.max(1, Math.floor(X.length / 20));
+  const background = X.filter((_, i) => i % bgStride === 0).slice(0, 20);
 
   const shapForRow = (x: number[]): number[] => {
     const phi = Array(nF).fill(0);
@@ -153,8 +163,14 @@ export function shapImportance(obs: GrowthObservation[]): ShapResult[] {
     const vCache = new Map<number, number>();
     const v = (mask: number) => {
       if (vCache.has(mask)) return vCache.get(mask)!;
-      const xin = FEATURES.map((_, f) => ((mask >> f) & 1) ? x[f] : bg[f]);
-      const val = predictGB(model, xin);
+      let acc = 0;
+      for (const bgRow of background) {
+        acc += predictGB(
+          model,
+          FEATURES.map((_, f) => (((mask >> f) & 1) ? x[f] : bgRow[f]))
+        );
+      }
+      const val = acc / background.length;
       vCache.set(mask, val);
       return val;
     };
@@ -171,12 +187,16 @@ export function shapImportance(obs: GrowthObservation[]): ShapResult[] {
     return phi;
   };
 
+  // 앞에서부터 40행이 아니라 전 구간에서 고르게 뽑는다 — 관측이 시간순이면
+  // 앞머리 40개는 한 계절만 보는 것과 같다.
   const absSum = Array(nF).fill(0);
-  const sampleN = Math.min(obs.length, 40);
-  for (let k = 0; k < sampleN; k++) {
-    const phi = shapForRow(X[k]);
+  const stride = Math.max(1, Math.floor(X.length / 40));
+  const rows = X.filter((_, i) => i % stride === 0).slice(0, 40);
+  for (const row of rows) {
+    const phi = shapForRow(row);
     for (let f = 0; f < nF; f++) absSum[f] += Math.abs(phi[f]);
   }
+  const sampleN = rows.length;
   return FEATURES.map((f, i) => ({
     feature: f,
     label: FEATURE_LABEL[f],
@@ -185,237 +205,270 @@ export function shapImportance(obs: GrowthObservation[]): ShapResult[] {
 }
 function popcount(x: number): number { let c = 0; while (x) { c += x & 1; x >>= 1; } return c; }
 
-// ── 1D 2차 적합 + 정점 SE (델타법) ──────────────────────────────────────────
-// 정점 v = -b/(2a)의 분산: 델타법으로 Var(v) ≈ g^T Cov(a,b) g 계산.
-// Cov(a,b) = sigma_y² * (X'X)^{-1}[1:3,1:3] — 3×3 역행렬 필요.
-function inv3(A: number[][]): number[][] | null {
-  const M = A.map((row, i) => {
-    const id = [0, 0, 0]; id[i] = 1;
-    return [...row, ...id];
-  });
-  for (let c = 0; c < 3; c++) {
-    let piv = c;
-    for (let r = c + 1; r < 3; r++) if (Math.abs(M[r][c]) > Math.abs(M[piv][c])) piv = r;
-    [M[c], M[piv]] = [M[piv], M[c]];
-    if (Math.abs(M[c][c]) < 1e-12) return null;
-    const d = M[c][c];
-    for (let k = c; k < 6; k++) M[c][k] /= d;
-    for (let r = 0; r < 3; r++) {
-      if (r === c) continue;
-      const f = M[r][c];
-      for (let k = c; k < 6; k++) M[r][k] -= f * M[c][k];
-    }
-  }
-  return [
-    [M[0][3], M[0][4], M[0][5]],
-    [M[1][3], M[1][4], M[1][5]],
-    [M[2][3], M[2][4], M[2][5]],
-  ];
+// ── ② 부트스트랩으로 최적점의 실제 불확실성을 잰다 ──────────────────────────
+// 관측을 복원추출해 표면을 다시 적합하고 최적점을 다시 찾는다. 그 분포의 산포가
+// 곧 최적점의 표준오차다. 잡음이 크거나 곡률이 얕거나 최적점이 상자 끝에 붙으면
+// 산포가 저절로 커진다 — 표본 수만 보는 공식으로는 셋 다 구분하지 못한다.
+export interface BootstrapOptimum {
+  /** 정규화 좌표에서의 최적점 평균 */
+  meanZ: number[];
+  /** 정규화 좌표에서의 표준오차 */
+  seZ: number[];
+  replicates: number;
 }
 
-function solve3(A: number[][], b: number[]): number[] {
-  const M = A.map((row, i) => [...row, b[i]]);
-  for (let c = 0; c < 3; c++) {
-    let piv = c;
-    for (let r = c + 1; r < 3; r++) if (Math.abs(M[r][c]) > Math.abs(M[piv][c])) piv = r;
-    [M[c], M[piv]] = [M[piv], M[c]];
-    if (Math.abs(M[c][c]) < 1e-12) continue;
-    for (let r = 0; r < 3; r++) {
-      if (r === c) continue;
-      const factor = M[r][c] / M[c][c];
-      for (let k = c; k <= 3; k++) M[r][k] -= factor * M[c][k];
+function bootstrapOptimum(
+  Z: number[][],
+  y: number[],
+  clamp: boolean,
+  replicates = 200,
+  seed = 11
+): BootstrapOptimum {
+  const n = Z.length;
+  const nF = FEATURES.length;
+  // 탐색범위는 원표본으로 고정한다. 재표본마다 상자를 다시 잡으면 산포에
+  // "상자가 흔들린 몫"이 섞여 최적점 자체의 불확실성이 아니게 된다.
+  const bounds = zBounds(Z, clamp);
+
+  let s = seed >>> 0;
+  const rand = () => {
+    s = (s * 1664525 + 1013904223) >>> 0;
+    return s / 4294967296;
+  };
+
+  const draws: number[][] = [];
+  for (let b = 0; b < replicates; b++) {
+    const zi: number[][] = [];
+    const yi: number[] = [];
+    for (let k = 0; k < n; k++) {
+      const j = Math.min(n - 1, Math.floor(rand() * n));
+      zi.push(Z[j]);
+      yi.push(y[j]);
     }
+    const beta = fitResponseSurface(zi, yi);
+    const opt = optimumZ(beta, bounds);
+    if (opt.every((v) => Number.isFinite(v))) draws.push(opt);
   }
-  return [0, 1, 2].map((i) => (Math.abs(M[i][i]) < 1e-12 ? 0 : M[i][3] / M[i][i]));
+
+  if (draws.length < 2) {
+    return { meanZ: Array(nF).fill(0), seZ: Array(nF).fill(PRIOR_SD), replicates: draws.length };
+  }
+  const meanZ = Array.from({ length: nF }, (_, f) =>
+    draws.reduce((acc, d) => acc + d[f], 0) / draws.length
+  );
+  const seZ = Array.from({ length: nF }, (_, f) =>
+    Math.sqrt(draws.reduce((acc, d) => acc + (d[f] - meanZ[f]) ** 2, 0) / (draws.length - 1))
+  );
+  return { meanZ, seZ, replicates: draws.length };
 }
 
-// 1D 2차 회귀: 정점 추정값 + 표준오차 (델타법)
-function quadraticVertexWithSE(
-  x: number[], y: number[], lo: number, hi: number
-): { vertex: number | null; se: number } {
-  const n = x.length;
-  if (n < 4) return { vertex: null, se: Infinity };
-  const sx = x.reduce((a, b) => a + b, 0);
-  const sx2 = x.reduce((a, b) => a + b * b, 0);
-  const sx3 = x.reduce((a, b) => a + b ** 3, 0);
-  const sx4 = x.reduce((a, b) => a + b ** 4, 0);
-  const sy = y.reduce((a, b) => a + b, 0);
-  const sxy = x.reduce((a, b, i) => a + b * y[i], 0);
-  const sx2y = x.reduce((a, b, i) => a + b * b * y[i], 0);
-  const A = [[n, sx, sx2], [sx, sx2, sx3], [sx2, sx3, sx4]];
-  const [c, b, a] = solve3(A, [sy, sxy, sx2y]);
-
-  let vertex: number | null = null;
-  if (a < -1e-12 && Math.abs(b) > 1e-12) {
-    const v = -b / (2 * a);
-    if (v >= lo && v <= hi) vertex = v;
-  }
-
-  // 잔차 표준편차 sigma_y
-  const yPred = x.map((xi) => a * xi * xi + b * xi + c);
-  const rss = y.reduce((s, yi, i) => s + (yi - yPred[i]) ** 2, 0);
-  const sigma2 = rss / Math.max(n - 3, 1);
-
-  let se = Infinity;
-  if (vertex !== null && Math.abs(a) > 1e-12) {
-    const Ainv = inv3(A);
-    if (Ainv) {
-      // Var(v=-b/2a): 델타법 편미분
-      // dv/da = b/(2a²), dv/db = -1/(2a)
-      const da = b / (2 * a * a);
-      const db = -1 / (2 * a);
-      const varV = sigma2 * (
-        da * da * Ainv[2][2] +
-        db * db * Ainv[1][1] +
-        2 * da * db * Ainv[2][1]
-      );
-      se = Math.sqrt(Math.max(0, varV));
-    }
-  }
-  return { vertex, se };
+// ── ③ 계층 사전 — 문헌 → 다른 품종 → 이 품종 ────────────────────────────────
+// 세 출처의 정밀도를 더한다. 가운데 층의 정밀도에 이전 강도 w를 곱하는 것이
+// "품종이 바뀌면 리셋인가 승계인가"에 대한 답이다. w=1이면 완전 승계, w=0이면
+// 리셋이고, 실제 값은 그 사이 어딘가다.
+export interface SetpointSource {
+  /** 문헌 / 다른 품종 이전 / 이 품종 자체가 각각 몇 %를 밀었나 */
+  literature: number;
+  transfer: number;
+  own: number;
 }
 
-// ── ② 농학정보 하이브리드 — 정규-정규 켤레 베이지안 업데이트 ────────────────
-// 사전 θ* ~ N(mu0, sig0²) (crop-profiles 농학 최적),
-// 데이터 우도: 2차 정점 추정값 θ̂, 표준오차 SE (델타법)
-// 정밀도 합산: τ_post = τ_prior + τ_lik (τ = 1/σ²)
-// 사후 평균: μ_post = (τ_prior*μ0 + τ_lik*θ̂) / τ_post
-// 이진절벽 없는 매끄러운 전이 + 사후분산 확인 가능.
-// 라벨 정직화: 신경망·미분방정식 없음 — "농학사전 정규화 하이브리드"
 export interface HybridSetpoint {
   feature: string;
   label: string;
   unit: string;
+  /** 이 품종 데이터만으로 본 최적점 (물리 단위) */
   dataOptimum: number | null;
+  /** 문헌 최적 (물리 단위) */
   priorOptimum: number;
+  /** 세 출처를 합친 권장 설정점 (물리 단위) */
   hybridOptimum: number;
-  dataWeight: number; // 0~1 (τ_lik / τ_post)
-  spanned: boolean;   // 데이터가 사전 최적 근처를 담았나 (참고용)
-  sigPost: number;    // 사후 표준편차 (능동학습 획득함수용)
+  /** 권장값의 95% 구간 — 점이 아니라 폭으로 준다 */
+  interval: [number, number];
+  source: SetpointSource;
+  /** 사후 평균·표준편차 (정규화 좌표) — 실험 제안이 이 좌표에서 움직인다 */
+  muZ: number;
+  sigPostZ: number;
 }
 
-// 유효 사전 표본수: 농학 지식의 등가 표본 수 (사전 정보가 약 20개 관측치에 해당)
-// dataWeight = n / (n + N_EFF_PRIOR) → n 증가에 따라 단조 증가 보장
-const N_EFF_PRIOR = 20;
-
-export function agronomyInformedRecipe(obs: GrowthObservation[], cropKey?: string): {
+export interface HybridRecipe {
   setpoints: HybridSetpoint[];
   note: string;
-} {
-  const n = obs.length;
-  const prior = agronomicPrior(cropKey);
-  const X = obs.map((o) => FEATURES.map((f) => o[f]));
+}
 
-  // 다변량 반응표면 결합 최적점 (coordinateAscent 결과) — 1D 투영 정점 대신 사용
-  // 상호작용 있는 실데이터에서도 1D 정점이 없어 tauLik=0에 고착되는 비단조 문제 해결
-  const { recipe } = analyzeGrowthRecipe(obs, { cropKey });
-  const mvOptimum = new Map(recipe.map((r) => [r.feature, r.optimum]));
+/**
+ * @param obs 이 사이트의 관측. cropKey가 섞여 있어도 된다 — 다른 품종 행은
+ *            이전 강도만큼만 반영된다.
+ * @param cropKey 지금 레시피를 만들 품종
+ */
+export function agronomyInformedRecipe(
+  obs: GrowthObservation[],
+  cropKey?: string
+): HybridRecipe {
+  const target = cropKey ?? obs.find((o) => o.cropKey)?.cropKey ?? "leafy";
+  const nF = FEATURES.length;
 
-  const setpoints: HybridSetpoint[] = FEATURES.map((f, fi) => {
-    const xf = X.map((x) => x[fi]);
-    const lo = Math.min(...xf), hi = Math.max(...xf);
-    const p = prior[f];
+  // 품종별로 나눠 각각 자기 좌표계에서 최적점과 산포를 낸다
+  const byCrop = new Map<string, GrowthObservation[]>();
+  for (const o of obs) {
+    const k = o.cropKey ?? target;
+    byCrop.set(k, [...(byCrop.get(k) ?? []), o]);
+  }
 
-    // 데이터 최적점 = 다변량 결합 최적 (항상 non-null)
-    const dataOpt = mvOptimum.get(f) ?? null;
-    // SE 표본수 기반 근사: n↑ → SE↓ → tauLik↑ → dataWeight 단조 증가
-    // seTheta = p.sd * sqrt(N_EFF_PRIOR/n)  →  tauLik = n/(N_EFF_PRIOR * p.sd²)
-    const seTheta = (dataOpt !== null && n >= 4)
-      ? p.sd * Math.sqrt(N_EFF_PRIOR / n)
-      : Infinity;
+  const MIN_FIT = 24; // 파라미터 16개에 못 미치면 적합 자체가 성립하지 않는다
+  const fits = new Map<string, BootstrapOptimum>();
+  for (const [k, rows] of byCrop) {
+    if (rows.length < MIN_FIT) continue;
+    const Z = rows.map((o) => toNormalized(o, k));
+    fits.set(k, bootstrapOptimum(Z, rows.map((o) => o.yield), true));
+  }
 
-    // 정규-정규 켤레 업데이트
-    const tau0 = 1 / (p.sd * p.sd);                              // 사전 정밀도
-    const tauLik = seTheta < 1e6 ? 1 / (seTheta * seTheta) : 0; // 데이터 정밀도
-    const tauPost = tau0 + tauLik;
-    const muPost = (tau0 * p.mu + tauLik * (dataOpt ?? p.mu)) / tauPost;
-    const sigPost = 1 / Math.sqrt(tauPost);
-    const dataWeight = tauLik / tauPost;                          // = n/(n+N_EFF_PRIOR)
+  const own = fits.get(target) ?? null;
+  const tau0 = 1 / (PRIOR_SD * PRIOR_SD);
 
-    const spanned = p.mu >= lo - p.sd && p.mu <= hi + p.sd;
+  const muPost: number[] = [];
+  const sigPost: number[] = [];
+  const sources: SetpointSource[] = [];
 
-    return {
-      feature: f,
-      label: FEATURE_LABEL[f],
-      unit: UNIT[f],
-      dataOptimum: dataOpt === null ? null : Math.round(dataOpt * 100) / 100,
-      priorOptimum: Math.round(p.mu * 100) / 100,
-      hybridOptimum: Math.round(muPost * 100) / 100,
-      dataWeight: Math.round(dataWeight * 100) / 100,
-      spanned,
-      sigPost: Math.round(sigPost * 1000) / 1000,
-    };
-  });
+  for (let f = 0; f < nF; f++) {
+    const feature = FEATURES[f];
+    // 문헌: z=0
+    let tauSum = tau0;
+    let weighted = 0; // Σ τ_i μ_i (문헌은 μ=0이라 기여가 0)
+    let tauTransfer = 0;
+    let tauOwn = 0;
 
-  const dataLed = setpoints.filter((s) => s.dataWeight > 0.5).length;
+    for (const [k, fit] of fits) {
+      const se = fit.seZ[f];
+      if (!Number.isFinite(se) || se <= 1e-6) continue;
+      const tau = 1 / (se * se);
+      if (k === target) {
+        tauOwn += tau;
+        tauSum += tau;
+        weighted += tau * fit.meanZ[f];
+      } else {
+        // 정밀도에 이전 강도를 곱하기만 하면 강도가 "얼마나 빨리"만 정하고
+        // "어디까지"를 정하지 못한다. 원 품종 데이터가 넉넉하면 w가 아무리 작아도
+        // 문헌을 밀어내 버린다. 그래서 품종 불일치 자체를 분산으로 세운다 —
+        // 다른 품종의 최적점은 이 품종의 최적점을 δ만큼 빗나가 관측한 값이다.
+        //   δ(w) = PRIOR_SD·√(1/w − 1)
+        // 원 데이터가 무한히 쌓여도(se→0) 이전이 가질 수 있는 비중은 정확히 w로
+        // 수렴한다. 이전계수 0.21은 "최대 21%까지만 민다"는 뜻이 된다.
+        const w = transferWeight(k, target, feature as GrowthFeature);
+        if (w <= 0) continue;
+        const delta2 = w >= 1 ? 0 : PRIOR_SD * PRIOR_SD * (1 / w - 1);
+        const tw = 1 / (se * se + delta2);
+        tauTransfer += tw;
+        tauSum += tw;
+        weighted += tw * fit.meanZ[f];
+      }
+    }
+
+    muPost.push(weighted / tauSum);
+    sigPost.push(1 / Math.sqrt(tauSum));
+    const pct = (t: number) => Math.round((t / tauSum) * 100);
+    sources.push({
+      literature: pct(tau0),
+      transfer: pct(tauTransfer),
+      own: pct(tauOwn),
+    });
+  }
+
+  const hybridPhys = fromNormalized(muPost, target);
+  const priorPhys = fromNormalized(Array(nF).fill(0), target);
+  const ownPhys = own ? fromNormalized(own.meanZ, target) : null;
+  const loPhys = fromNormalized(muPost.map((m, f) => m - 1.96 * sigPost[f]), target);
+  const hiPhys = fromNormalized(muPost.map((m, f) => m + 1.96 * sigPost[f]), target);
+  const r2 = (v: number) => Math.round(v * 100) / 100;
+
+  const setpoints: HybridSetpoint[] = FEATURES.map((f, i) => ({
+    feature: f,
+    label: FEATURE_LABEL[f],
+    unit: UNIT[f],
+    dataOptimum: ownPhys ? r2(ownPhys[f]) : null,
+    priorOptimum: r2(priorPhys[f]),
+    hybridOptimum: r2(hybridPhys[f]),
+    interval: [r2(loPhys[f]), r2(hiPhys[f])],
+    source: sources[i],
+    muZ: Math.round(muPost[i] * 1000) / 1000,
+    sigPostZ: Math.round(sigPost[i] * 1000) / 1000,
+  }));
+
+  const otherCrops = [...fits.keys()].filter((k) => k !== target);
+  const avg = (pick: (s: SetpointSource) => number) =>
+    Math.round(sources.reduce((s, x) => s + pick(x), 0) / nF);
+  const transferPart = otherCrops.length
+    ? ` 다른 품종(${otherCrops.join("·")})에서 ${avg((s) => s.transfer)}%를 이전받았다.`
+    : "";
+
   return {
     setpoints,
-    note: `농학사전 정규화 하이브리드 (신경망·미분방정식 없음): ${dataLed}/6 요인은 데이터가, 나머지는 작물학 사전이 최적값을 이끔. 정규-정규 켤레 베이지안으로 이진절벽 없는 매끄러운 전이 — 초기(데이터 부족)엔 사전이, 축적되면 데이터가 지배.`,
+    note:
+      `설정점은 문헌 ${avg((s) => s.literature)}% · 이전 ${avg((s) => s.transfer)}% · ` +
+      `자체 데이터 ${avg((s) => s.own)}%가 합쳐진 값이다.${transferPart} ` +
+      `불확실성은 부트스트랩 ${own?.replicates ?? 0}회로 데이터에서 직접 쟀다 — ` +
+      `표본 수뿐 아니라 잡음과 곡률이 함께 반영된다. 권장값은 점이 아니라 95% 구간으로 준다.`,
   };
 }
 
-// ── ③ 능동학습 실험제안 — 사후분산 UCB 획득함수 ────────────────────────────
-// 단순 임계 규칙 대신, 사후 표준편차(sigPost)를 기반으로 UCB 탐색점을 제안한다.
-// UCB = μ_post + κ*σ_post (κ=1). 불확실성이 사전의 50% 이상 남은 요인만 제안.
+// ── ④ 능동학습 실험제안 — 사후분산이 큰 요인부터 ────────────────────────────
+// 사후 표준편차가 실제 데이터에서 나오므로, 제안 여부가 표본 수 임계값이 아니라
+// "아직 모르는 정도"에 걸린다. 방향은 관측이 성긴 쪽으로 잡는다 — 이미 촘촘한
+// 구간을 한 번 더 재봐야 배우는 게 없다.
 export interface ExperimentSuggestion {
   label: string;
   suggestValue: number;
   unit: string;
+  /** 이 실험으로 줄어들 것으로 보는 사후 표준편차 비율 */
+  uncertaintyRatio: number;
   reason: string;
 }
 
-export function activeLearningSuggest(obs: GrowthObservation[], cropKey?: string): {
-  suggestions: ExperimentSuggestion[];
-  note: string;
-} {
-  const n = obs.length;
-  const prior = agronomicPrior(cropKey);
-  const X = obs.map((o) => FEATURES.map((f) => o[f]));
+/** 사후 표준편차가 사전의 이 비율을 넘으면 아직 모른다고 본다 */
+const UNCERTAIN_RATIO = 0.35;
+
+export function activeLearningSuggest(
+  obs: GrowthObservation[],
+  cropKey?: string
+): { suggestions: ExperimentSuggestion[]; note: string } {
+  const target = cropKey ?? obs.find((o) => o.cropKey)?.cropKey ?? "leafy";
+  const { setpoints } = agronomyInformedRecipe(obs, target);
+  const Z = obs.map((o) => toNormalized(o, o.cropKey ?? target));
+
   const suggestions: ExperimentSuggestion[] = [];
-  const kappa = 1.0; // UCB 탐색-활용 트레이드오프
+  FEATURES.forEach((f, i) => {
+    const sp = setpoints[i];
+    const ratio = sp.sigPostZ / PRIOR_SD;
+    if (ratio <= UNCERTAIN_RATIO) return;
 
-  // 다변량 결합 최적점 — agronomyInformedRecipe와 동일한 데이터 추정값 사용
-  const { recipe } = analyzeGrowthRecipe(obs, { cropKey });
-  const mvOptimum = new Map(recipe.map((r) => [r.feature, r.optimum]));
+    // 관측이 성긴 쪽으로 1σ 나간 점. 이미 촘촘한 구간을 한 번 더 재봐야 배울 게 없다.
+    const zf = Z.map((z) => z[i]);
+    const zMean = zf.reduce((a, b) => a + b, 0) / zf.length;
+    const side = sp.muZ >= zMean ? 1 : -1;
+    const probeZ = sp.muZ + side * sp.sigPostZ;
+    const probe = fromNormalized(
+      FEATURES.map((_, k) => (k === i ? probeZ : 0)),
+      target
+    )[f];
 
-  FEATURES.forEach((f, fi) => {
-    const xf = X.map((x) => x[fi]);
-    const lo = Math.min(...xf), hi = Math.max(...xf);
-    const p = prior[f];
-
-    const dataOpt = mvOptimum.get(f) ?? null;
-    const seTheta = (dataOpt !== null && n >= 4)
-      ? p.sd * Math.sqrt(N_EFF_PRIOR / n)
-      : Infinity;
-
-    // 사후 베이지안 업데이트
-    const tau0 = 1 / (p.sd * p.sd);
-    const tauLik = seTheta < 1e6 ? 1 / (seTheta * seTheta) : 0;
-    const tauPost = tau0 + tauLik;
-    const muPost = (tau0 * p.mu + tauLik * (dataOpt ?? p.mu)) / tauPost;
-    const sigPost = 1 / Math.sqrt(tauPost);
-
-    // 불확실성이 사전의 50% 이상 남아있으면 실험 제안
-    const uncertaintyRatio = sigPost / p.sd;
-    if (uncertaintyRatio > 0.5) {
-      // UCB 탐색점: 사후 평균 + κ*σ (관측 가능 범위로 클리핑)
-      const maxRange = hi + (hi - lo) * 0.3;
-      const minRange = lo - (hi - lo) * 0.3;
-      const ucbValue = Math.max(minRange, Math.min(maxRange, muPost + kappa * sigPost));
-      suggestions.push({
-        label: FEATURE_LABEL[f],
-        suggestValue: Math.round(ucbValue * 100) / 100,
-        unit: UNIT[f],
-        reason: `사후 불확실성 ${Math.round(uncertaintyRatio * 100)}% 잔존 (σ_post=${sigPost.toFixed(2)}) — UCB 탐색점 ${Math.round(ucbValue * 100) / 100}${UNIT[f]} 실험으로 베이지안 레시피 갱신`,
-      });
-    }
+    suggestions.push({
+      label: sp.label,
+      suggestValue: Math.round(probe * 100) / 100,
+      unit: sp.unit,
+      uncertaintyRatio: Math.round(ratio * 100) / 100,
+      reason:
+        `사후 표준편차가 사전의 ${Math.round(ratio * 100)}%로 남아 있다. ` +
+        `관측이 성긴 ${side > 0 ? "높은" : "낮은"} 쪽 ${Math.round(probe * 100) / 100}${sp.unit}에서 한 사이클 시험하면 ` +
+        `이 요인의 추정이 가장 많이 좁아진다.`,
+    });
   });
 
+  suggestions.sort((a, b) => b.uncertaintyRatio - a.uncertaintyRatio);
   return {
     suggestions,
-    note: suggestions.length > 0
-      ? `${suggestions.length}개 요인의 사후분산이 사전의 50% 이상 — UCB(기대상한) 획득함수 기반 실험점 제안. 이 조건 실험 후 베이지안 업데이트로 레시피 정밀도↑`
-      : `모든 요인의 사후 불확실성이 사전의 50% 미만 — 현 레시피 신뢰도 충분, 추가 실험 불요.`,
+    note: suggestions.length
+      ? `${suggestions.length}개 요인의 사후 표준편차가 사전의 ${Math.round(UNCERTAIN_RATIO * 100)}%를 넘는다 — 아직 데이터가 말해주지 않은 구간이다. 제안 조건으로 한 사이클 돌린 뒤 재학습하면 그만큼 좁아진다.`
+      : `모든 요인의 사후 표준편차가 사전의 ${Math.round(UNCERTAIN_RATIO * 100)}% 아래다 — 추가 실험 없이 현 레시피를 써도 된다.`,
   };
 }
 
@@ -430,18 +483,30 @@ export interface RecipeReport {
   suggestions: ExperimentSuggestion[];
   hybridNote: string;
   suggestNote: string;
+  /** 반응표면이 최대점을 갖는가 — 아니면 아래 갭 분석은 권고를 내지 않는다 */
+  surface: SurfaceVerdict;
+  modelR2: number | null;
+  gap: RecipeGapReport;
 }
 
 export function growthRecipeDemo(cropKey = "leafy"): RecipeReport {
   const { observations: obs } = generateObservations(LEAFY_SPEC, 120, 7, cropKey);
+  const fit = analyzeGrowthRecipe(obs, { cropKey });
   const hybrid = agronomyInformedRecipe(obs, cropKey);
   const active = activeLearningSuggest(obs, cropKey);
+  // 현 사이트 조건 = 관측 평균. 갭 분석이 "여기서 저기로"를 말하는 출발점이다.
+  const current = Object.fromEntries(
+    FEATURES.map((f) => [f, obs.reduce((s, o) => s + o[f], 0) / obs.length])
+  ) as Record<GrowthFeature, number>;
   return {
     samples: obs.length,
-    shap: shapImportance(obs),
+    shap: shapImportance(obs, cropKey),
     hybrid: hybrid.setpoints,
     suggestions: active.suggestions,
     hybridNote: hybrid.note,
     suggestNote: active.note,
+    surface: fit.surface,
+    modelR2: fit.modelR2,
+    gap: recipeGapAnalysis(fit, current),
   };
 }
