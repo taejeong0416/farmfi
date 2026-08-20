@@ -1,7 +1,8 @@
 // 19 알림 설정
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
+import { apiFetch } from "@/lib/api";
 import { C, FS, FW, R, SP } from "@/farmfi/theme";
 import { Card, DetailShell, Popup, PrimaryButton, Toggle, useGo } from "@/farmfi/ui";
 
@@ -51,11 +52,50 @@ export default function NotificationSettingsScreen() {
     Object.fromEntries(TYPES.map((t) => [t.key, t.on]))
   );
   const [saved, setSaved] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState<string | null>(null);
+
+  // 저장된 설정을 먼저 불러온다. 실패하면 화면 기본값을 그대로 두되, 그게 서버
+  // 상태라고 말하지는 않는다(저장을 누르면 그때 서버 값이 된다).
+  useEffect(() => {
+    let alive = true;
+    apiFetch<{ settings: { type: string; enabled: boolean; channel: string }[] }>(
+      "/api/me/notification-settings"
+    )
+      .then((res) => {
+        if (!alive || !res.settings?.length) return;
+        setOn(Object.fromEntries(res.settings.map((x) => [x.type, x.enabled])));
+        setChannel(CHANNELS.find((c) => c.key === res.settings[0].channel) ?? CHANNELS[0]);
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const save = async () => {
+    if (busy) return;
+    setBusy(true);
+    setFailed(null);
+    try {
+      await apiFetch("/api/me/notification-settings", {
+        method: "PUT",
+        body: JSON.stringify({
+          settings: TYPES.map((t) => ({ type: t.key, enabled: !!on[t.key], channel: channel.key })),
+        }),
+      });
+      setSaved(true);
+    } catch (e) {
+      setFailed(e instanceof Error ? e.message : "알림 설정 저장에 실패했습니다.");
+    } finally {
+      setBusy(false);
+    }
+  };
 
   return (
     <DetailShell
       title="알림 설정"
-      footer={<PrimaryButton label="설정 저장" onPress={() => setSaved(true)} />}
+      footer={<PrimaryButton label={busy ? "저장 중…" : "설정 저장"} onPress={save} disabled={busy} />}
     >
       <Card style={s.card}>
         <Text style={s.groupTitle}>수신 채널</Text>

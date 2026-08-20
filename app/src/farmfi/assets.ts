@@ -17,3 +17,26 @@ export const RACK_BASE = {
 export const TOMATO_BED = require("../../assets/farmfi/tomato-bed-topdown-v1.png");
 export const OPERATOR_PORTRAIT = require("../../assets/farmfi/operator-portrait-v2.png");
 export const STORE_FLOOR_PLAN = require("../../assets/farmfi/store-floor-plan-v1.png");
+
+// ── 픽셀 아이콘 (2026-08-13, 256x256 투명 PNG) ──
+// icons.tsx 의 SVG 글리프로 표현이 애매한 것(센서 계측·설비·파일형식)만 비트맵으로 둔다.
+export const PIXEL_ICON = {
+  "sensor-temp": require("../../assets/farmfi/icons/sensor-temp.png"),
+  "sensor-humidity": require("../../assets/farmfi/icons/sensor-humidity.png"),
+  "sensor-co2": require("../../assets/farmfi/icons/sensor-co2.png"),
+  "sensor-ec": require("../../assets/farmfi/icons/sensor-ec.png"),
+  "device-led": require("../../assets/farmfi/icons/device-led.png"),
+  "device-fan": require("../../assets/farmfi/icons/device-fan.png"),
+  "device-pump": require("../../assets/farmfi/icons/device-pump.png"),
+  "file-csv": require("../../assets/farmfi/icons/file-csv.png"),
+  "file-xlsx": require("../../assets/farmfi/icons/file-xlsx.png"),
+  "file-pdf": require("../../assets/farmfi/icons/file-pdf.png"),
+  "ui-warning": require("../../assets/farmfi/icons/ui-warning.png"),
+  "ui-bell": require("../../assets/farmfi/icons/ui-bell.png"),
+  "ui-download": require("../../assets/farmfi/icons/ui-download.png"),
+  "ui-alert": require("../../assets/farmfi/icons/ui-alert.png"),
+  "ui-box": require("../../assets/farmfi/icons/ui-box.png"),
+  "ui-calendar": require("../../assets/farmfi/icons/ui-calendar.png"),
+} as const;
+
+export type PixelIconName = keyof typeof PIXEL_ICON;

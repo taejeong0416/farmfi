@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
+import { apiFetch } from "@/lib/api";
 import { useFarmProjects } from "@/farmfi/branch";
 import { useApiResource } from "@/farmfi/useApiResource";
 import { alertKind, formatStamp, type NotificationsResponse } from "@/farmfi/api";
@@ -22,8 +23,18 @@ export default function AlertsScreen() {
     "설비 알림을 불러오지 못했습니다."
   );
 
-  // 확인 처리는 아직 서버에 쓰는 경로가 없다. 이 화면 안에서만 접어둔다.
+  // 확인 처리는 서버에 쓴다. 응답을 기다리지 않고 먼저 접되, 실패하면 되돌린다 —
+  // 처리된 척 남겨두면 운영자가 조치를 건너뛴다.
   const [acked, setAcked] = useState<string[]>([]);
+
+  const acknowledge = async (id: string) => {
+    setAcked((prev) => (prev.includes(id) ? prev : [...prev, id]));
+    try {
+      await apiFetch(`/api/alerts/${id}/acknowledge`, { method: "POST" });
+    } catch {
+      setAcked((prev) => prev.filter((x) => x !== id));
+    }
+  };
   const [onlyUnread, setOnlyUnread] = useState(false);
 
   const all = notif.data?.notifications ?? [];
@@ -66,7 +77,7 @@ export default function AlertsScreen() {
               time={formatStamp(a.createdAt)}
               message={a.message}
               acked={isAcked(a.id, a.isRead)}
-              onAck={() => setAcked((prev) => [...prev, a.id])}
+              onAck={() => acknowledge(a.id)}
             />
           );
         })}

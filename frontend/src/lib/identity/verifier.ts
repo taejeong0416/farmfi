@@ -322,11 +322,177 @@ export class OmniOneVerifier implements IdentityVerifier {
   }
 }
 
+// ─────────────────────────────────────────────────────────────
+// OacxVerifier — 라온시큐어 OmniOne CX 모바일 운전면허증.
+//
+// 세 단계가 그대로 대응된다:
+//   createOffer ≈ trans(토큰) + authen 요청  → qrBase64 · 딥링크
+//   getStatus   ≈ authen 결과 검증           → 제출 전이면 pending
+//   getClaims   ≈ trans/{token} 파싱         → 실명 · 생년
+//
+// 저장 원칙: 실명·생년·성인 여부만 남긴다. CI 원문·주소·전화번호는
+// IdentityVerification.claims 에 넣지 않는다. OACX 는 요청하면 다 주지만
+// 받는 것과 보관하는 것은 다른 문제다.
+//
+// provider 는 comdl(모바일 운전면허증) 고정. provider/list 실측 결과
+// 주민등록증(comrc)은 status=n 이라 요청해도 실패한다.
+// ─────────────────────────────────────────────────────────────
+class OacxVerifier implements IdentityVerifier {
+  constructor(private readonly base: string) {}
+
+  private async call<T>(path: string, init?: RequestInit): Promise<T> {
+    const res = await fetch(`${this.base}${path}`, {
+      ...init,
+      headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) },
+      cache: "no-store",
+    });
+    const text = await res.text();
+    let body: unknown = null;
+    try {
+      body = text ? JSON.parse(text) : null;
+    } catch {
+      throw new Error(`OACX 응답을 해석하지 못했습니다 (${res.status})`);
+    }
+    if (!res.ok) {
+      const msg = (body as { clientMessage?: string } | null)?.clientMessage;
+      throw new Error(msg ?? `OACX 요청 실패 (${res.status})`);
+    }
+    return body as T;
+  }
+
+  async createOffer(): Promise<IdentityOffer> {
+    const provider = process.env.OACX_PROVIDER ?? "comdl_v1.5";
+    const contentInfo = { signType: "ENT_MID" };
+
+    // OACX 토큰은 1회용이다. qr/request 에 쓴 토큰을 app/request 에 재사용하면
+    // "토큰 검증 실패"가 난다(실측). QR 과 딥링크는 각자 거래를 튼다.
+    const issue = async (path: string) => {
+      const trans = await this.call<{ token: string; txId: string }>(
+        "/oacx/api/v1.0/trans",
+        { method: "POST" }
+      );
+      const res = await this.call<{
+        token: string;
+        cxId: string;
+        data?: { qrBase64?: string; androidLink?: string; iosLink?: string; ssPayLink?: string };
+      }>(path, {
+        method: "POST",
+        body: JSON.stringify({ provider, token: trans.token, txId: trans.txId, contentInfo }),
+      });
+      return { txId: trans.txId, ...res };
+    };
+
+    const qr = await issue("/oacx/api/v1.0/authen/qr/request");
+    // 딥링크가 없어도 QR 로 진행할 수 있다. 실패해도 인증을 막지 않는다.
+    const app = await issue("/oacx/api/v1.0/authen/app/request").catch(() => null);
+
+    // OACX 결과 토큰과 cxId 는 서버에만 둔다. 파싱 API 에 별도 인증이 없어
+    // 토큰이 브라우저로 나가면 누구나 그 사람 개인정보를 꺼낼 수 있다.
+    await prisma.identityVerification.create({
+      data: {
+        txId: qr.txId,
+        status: "pending",
+        claims: { provider: "oacx", oacxToken: qr.token, cxId: qr.cxId } as Prisma.InputJsonValue,
+      },
+    });
+
+    return {
+      txId: qr.txId,
+      qrData: qr.data?.qrBase64 ? `data:image/png;base64,${qr.data.qrBase64}` : "",
+      // 행안부 권고: 삼성월렛이 함께 있으면 ssPayLink, 모바일 신분증만이면 androidLink.
+      deeplink: app?.data?.ssPayLink ?? app?.data?.androidLink ?? app?.data?.iosLink ?? "",
+    };
+  }
+
+  async getStatus(txId: string): Promise<IdentityStatus> {
+    const row = await prisma.identityVerification.findUnique({ where: { txId } });
+    if (!row) return "failed";
+    if (row.status === "verified" || row.status === "failed") return row.status as IdentityStatus;
+
+    const meta = (row.claims ?? {}) as Record<string, unknown>;
+    const token = typeof meta.oacxToken === "string" ? meta.oacxToken : "";
+    const cxId = typeof meta.cxId === "string" ? meta.cxId : "";
+    if (!token || !cxId) return "failed";
+
+    let verified: { token: string; oacxCode: string };
+    try {
+      verified = await this.call<{ token: string; oacxCode: string }>(
+        "/oacx/api/v1.0/authen/qr/result",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            provider: process.env.OACX_PROVIDER ?? "comdl_v1.5",
+            token,
+            txId,
+            cxId,
+            contentInfo: { signType: "ENT_MID" },
+          }),
+        }
+      );
+    } catch {
+      // 제출 전에는 에러로 온다. 실패로 굳히지 않는다 — 아직 안 끝났을 뿐이다.
+      return "pending";
+    }
+    if (verified.oacxCode !== "OACX_SUCCESS") return "pending";
+
+    const parsed = await this.call<{ data?: Record<string, unknown> } & Record<string, unknown>>(
+      `/oacx/api/v1.0/trans/${encodeURIComponent(verified.token)}`,
+      { method: "GET" }
+    );
+    const d = (parsed.data ?? parsed) as Record<string, unknown>;
+    const realName = typeof d.name === "string" ? d.name.trim() : undefined;
+    const raw = typeof d.birth === "string" ? d.birth.trim() : "";
+    const birthDate =
+      raw.length === 8 && /^[0-9]+$/.test(raw)
+        ? `${raw.slice(0, 4)}-${raw.slice(4, 6)}-${raw.slice(6, 8)}`
+        : undefined;
+    const adult = birthDate ? isAdultOacx(birthDate) : undefined;
+
+    await prisma.identityVerification.update({
+      where: { txId },
+      // 판정만 남긴다. CI 원문·주소·전화번호는 저장하지 않는다.
+      data: {
+        status: "verified",
+        claims: { provider: "oacx", realName, birthDate, adult } as Prisma.InputJsonValue,
+      },
+    });
+    return "verified";
+  }
+
+  async getClaims(txId: string): Promise<IdentityClaims | null> {
+    const row = await prisma.identityVerification.findUnique({ where: { txId } });
+    if (!row || row.status !== "verified") return null;
+    const c = (row.claims ?? {}) as Record<string, unknown>;
+    return {
+      realName: c.realName as string | undefined,
+      birthDate: c.birthDate as string | undefined,
+      adult: c.adult as boolean | undefined,
+    };
+  }
+}
+
+// 만 19세 이상. 투자 적격 판단에 쓰므로 생일 경계를 정확히 본다.
+function isAdultOacx(isoDate: string): boolean {
+  const b = new Date(isoDate);
+  if (Number.isNaN(b.getTime())) return false;
+  const now = new Date();
+  let age = now.getFullYear() - b.getFullYear();
+  const before =
+    now.getMonth() < b.getMonth() ||
+    (now.getMonth() === b.getMonth() && now.getDate() < b.getDate());
+  if (before) age -= 1;
+  return age >= 19;
+}
+
 /**
  * 환경에 맞는 IdentityVerifier 구현을 반환하는 팩토리.
  * IDENTITY_PROVIDER === "opendid"일 때만 실제 OpenDID Verifier로 교체된다.
  */
 export function getVerifier(): IdentityVerifier {
+  // 해커톤 제공 OACX 테스트 환경. 실물 모바일 운전면허증으로 검증된다.
+  if (process.env.IDENTITY_PROVIDER === "oacx") {
+    return new OacxVerifier(process.env.OACX_BASE_URL ?? "https://cx.raonsecure.co.kr:18543");
+  }
   if (process.env.IDENTITY_PROVIDER === "opendid") {
     const baseUrl = process.env.IDENTITY_VERIFIER_URL ?? "";
     if (!baseUrl) {
