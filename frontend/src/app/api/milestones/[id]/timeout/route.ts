@@ -105,7 +105,7 @@ export async function POST(
           type: "milestone_timeout",
           message: `마일스톤 "${milestone.name}" 기한 초과(${milestone.deadlineAt!.toLocaleDateString(
             "ko-KR"
-          )}) — 프로젝트 실패 전환. 잔여 에스크로는 보유 구좌 비례로 환불됩니다.`,
+          )}) — 프로젝트 실패 전환. 남은 신탁 자금은 보유 구좌 비례로 환불됩니다.`,
         },
       });
 

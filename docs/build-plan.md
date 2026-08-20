@@ -152,114 +152,114 @@ Figma에 우선순위 표시가 없다. 화면 번호(`00`~`25`)가 흐름 순�
 - [x] **A1** Figma 추출 도구 저장소 고정
   `design/farmfi-{web,app}.fig` 원본 · `tools/figma/kiwi.py`(kiwi 디코더) · `tools/figma/extract.py`(화면 트리 생성) · 결과물 `design/screens/`도 커밋
   검증: `python tools/figma/extract.py` → 웹 129 · 앱 73개 재생성
-- [ ] **A2** 웹 디자인 토큰 + 라우트 매핑표
+- [x] **A2** 웹 디자인 토큰 + 라우트 매핑표
   `frontend/tailwind.config.ts`에 색·폰트·radius 등록 · `layout.tsx`에 Inter 추가 · `docs/figma-route-map.md`에 62행 매핑표 + 금지 용어 치환표 + 등급색 치환표
-- [ ] **A3** 웹 공용 UI 컴포넌트 11종
+- [x] **A3** 웹 공용 UI 컴포넌트 11종
   `frontend/src/components/ui/` — `Button` `Card` `Badge` `ProgressBar` `StatRow` `DataTable` `Field` `Modal` `StepLine` `EmptyState` `AppHeader`
   기존 `components/farmfi/**`는 무수정(구 디자인 전용으로 남김)
 
 ## Phase B · 공통·인증 (신규 API 없음)
 
-- [ ] **B1** C-01 서비스 홈 → `/`
-- [ ] **B2** C-02 로그인 · C-03 회원가입 → `/login` `/signup` (`auth/*` 재사용)
-- [ ] **B3** C-04 이용 목적 선택 → `/start` (투자자·구매자·운영자 3분기)
-- [ ] **B4** 투자자 본인확인 5개 — C-I01 방법 선택 · C-I02 모바일 신분증 확인 · C-I02E 확인 실패 · C-I03 본인 명의 계좌 확인 · C-I05 완료
+- [x] **B1** C-01 서비스 홈 → `/`
+- [x] **B2** C-02 로그인 · C-03 회원가입 → `/login` `/signup` (`auth/*` 재사용)
+- [x] **B3** C-04 이용 목적 선택 → `/start` (투자자·구매자·운영자 3분기)
+- [x] **B4** 투자자 본인확인 5개 — C-I01 방법 선택 · C-I02 모바일 신분증 확인 · C-I02E 확인 실패 · C-I03 본인 명의 계좌 확인 · C-I05 완료
   → `/verify/*`. 기존 `identity/*` API와 `components/farmfi/identity/api.ts` 재사용
   C-I03의 레이어 이름에 옛 지갑 잔재(`공식 앱 안내`·`설치 순서`·`스토어 버튼`)가 남아있다. 표시 텍스트는 계좌 확인이 맞으므로 이름만 계좌 기준으로 옮긴다
 
 ## Phase C · 투자자
 
-- [ ] **C1** I-01 프로젝트 상세 → `/projects/[id]` · I-06 투자자 홈 → `/investor`
+- [x] **C1** I-01 프로젝트 상세 → `/projects/[id]` · I-06 투자자 홈 → `/investor`
   기존 `projects`, `projects/[id]` API 재사용. 금지 용어 치환 적용
-- [ ] **C2** `Investment` 모델 + 신청 상태 API
+- [x] **C2** `Investment` 모델 + 신청 상태 API
   상태: `DRAFT → IDENTITY_REQUIRED → ELIGIBILITY_CHECKED → CONSENT_REQUIRED → AWAITING_DEPOSIT → DEPOSIT_CONFIRMED → CHAIN_PENDING → COMPLETED` (+ `CHAIN_FAILED`)
   `executeSubscription`을 이 흐름의 납입 단계로 감싼다 — 새 파이프라인 신설 아님
-- [ ] **C3** I-02 적합성 확인 · I-03 최종확인·전자서명·납입 · I-04 신청 완료
+- [x] **C3** I-02 적합성 확인 · I-03 최종확인·전자서명·납입 · I-04 신청 완료
   → `/projects/[id]/invest/{eligibility,confirm,done}`
-- [ ] **C4** I-02E 부적격 안내 · I-03E 납입 실패 (모달·상태 분기)
-- [ ] **C5** I-07 보유 투자 → `/investor/holdings` · I-08 회수 상세 → `/investor/payouts/[id]`
+- [x] **C4** I-02E 부적격 안내 · I-03E 납입 실패 (모달·상태 분기)
+- [x] **C5** I-07 보유 투자 → `/investor/holdings` · I-08 회수 상세 → `/investor/payouts/[id]`
   `TokenHolding`을 `투자 금액 / 보유 구좌 / 계약 상태`로 표기. 원장 원문(주소·txHash·토큰수량) 응답 제외
 
 ## Phase D · 마일스톤 증빙 게이트 (P0 핵심)
 
 조건부 집행의 핵심. 증빙이 `APPROVED`가 아니면 집행 API가 거부한다.
 
-- [ ] **D1** `Milestone` 상태 흐름 확장 + 증빙 API
+- [x] **D1** `Milestone` 상태 흐름 확장 + 증빙 API
   `SCHEDULED → EVIDENCE_SUBMITTED → REVIEWING → APPROVED → EXECUTION_REQUESTED → PAID` (+ `REVISION_REQUIRED`)
   `POST /api/milestones/[id]/evidence`(운영자 제출) · `POST /api/milestones/[id]/approve`(관리자 승인)
   기존 `verify`(AI 검증 4종)를 `REVIEWING` 단계에 연결
-- [ ] **D2** O-11 증빙 제출 → `/operator/milestones/[id]/evidence`
-- [ ] **D3** A-08 증빙 재검토 → `/admin/evidence`
+- [x] **D2** O-11 증빙 제출 → `/operator/milestones/[id]/evidence`
+- [x] **D3** A-08 증빙 재검토 → `/admin/evidence`
 
 ## Phase E · 운영자
 
-- [ ] **E1** O-01 공간 탐색 · O-02 공간 상세 → `/operator/spaces`, `/operator/spaces/[id]` (`spaces` API 재사용)
-- [ ] **E2** O-03 자격·서류 신청 → `/operator/apply` (`operator-applications` 재사용)
-- [ ] **E3** O-04 방문 예약 · O-05 필수 교육 → `/operator/apply/{visit,education}` (**API 신규**)
-- [ ] **E4** O-06 공간 최종 확정 · O-07 계약 전자서명 → `/operator/apply/{confirm,contract}` (**API 신규**)
-- [ ] **E5** O-08 보증서 발급 · O-09 개점 준비 현황 → `/operator/certificate`, `/operator`
+- [x] **E1** O-01 공간 탐색 · O-02 공간 상세 → `/operator/spaces`, `/operator/spaces/[id]` (`spaces` API 재사용)
+- [x] **E2** O-03 자격·서류 신청 → `/operator/apply` (`operator-applications` 재사용)
+- [x] **E3** O-04 방문 예약 · O-05 필수 교육 → `/operator/apply/{visit,education}` (**API 신규**)
+- [x] **E4** O-06 공간 최종 확정 · O-07 계약 전자서명 → `/operator/apply/{confirm,contract}` (**API 신규**)
+- [x] **E5** O-08 보증서 발급 · O-09 개점 준비 현황 → `/operator/certificate`, `/operator`
 
 ## Phase F · 구매자 (백엔드 신규가 가장 큼)
 
-- [ ] **F1** `Subscription` 모델 + 정기구독 API
+- [x] **F1** `Subscription` 모델 + 정기구독 API
   픽업 지점 · 팩 크기 · 수령 주기 · 회차. `Product`/`Inventory` 연결
-- [ ] **F2** B-01 픽업 지점 · B-02 팩 크기·주기 · B-03 재고 기반 구성 → `/subscribe/*`
-- [ ] **F3** 결제 API + B-04 주문서 · B-05 결제수단·자동결제 · B-06 신청 완료
-- [ ] **F4** B-07 내 구독 현황 → `/subscriptions` · B-09 픽업 바코드 → `/subscriptions/pickup/[id]`
-- [ ] **F5** B-04M 쿠폰 모달 · B-00E 구독 없음 빈 상태
+- [x] **F2** B-01 픽업 지점 · B-02 팩 크기·주기 · B-03 재고 기반 구성 → `/subscribe/*`
+- [x] **F3** 결제 API + B-04 주문서 · B-05 결제수단·자동결제 · B-06 신청 완료
+- [x] **F4** B-07 내 구독 현황 → `/subscriptions` · B-09 픽업 바코드 → `/subscriptions/pickup/[id]`
+- [x] **F5** B-04M 쿠폰 모달 · B-00E 구독 없음 빈 상태
 
 ## Phase G · 관리자
 
-- [ ] **G1** A-01 콘솔 홈 → `/admin`
-- [ ] **G2** A-02 운영자 심사·가배정 · A-03 보증서 발급 관리 → `/admin/operators`, `/admin/certificates`
-- [ ] **G3** A-04 공간·설비 구성 → `/admin/spaces`
-- [ ] **G4** A-06 투자 프로젝트 관리 · A-07 마일스톤 설정 → `/admin/projects`, `/admin/projects/[id]/milestones`
+- [x] **G1** A-01 콘솔 홈 → `/admin`
+- [x] **G2** A-02 운영자 심사·가배정 · A-03 보증서 발급 관리 → `/admin/operators`, `/admin/certificates`
+- [x] **G3** A-04 공간·설비 구성 → `/admin/spaces`
+- [x] **G4** A-06 투자 프로젝트 관리 · A-07 마일스톤 설정 → `/admin/projects`, `/admin/projects/[id]/milestones`
 
 ## Phase H · v2.1 용어·모델 정리
 
-- [ ] **H1** 화면·API·로그에서 금지 용어 제거
+- [x] **H1** 화면·API·로그에서 금지 용어 제거
   `Escrow` → 신탁(custody) · `TokenHolding` → 보유 구좌 · `Dividend` → 회수금
   검증: `grep -rE '토큰|지갑|에스크로|배당|락업|증권|STO' frontend/src` → 0건
-- [ ] **H2** `DEPRECATED · 지갑 주소 등록` / `지갑 재연결` 라우팅 제외, 기존 URL은 리다이렉트
+- [x] **H2** `DEPRECATED · 지갑 주소 등록` / `지갑 재연결` 라우팅 제외, 기존 URL은 리다이렉트
 
 ## Phase I · Phase 2 화면 17개
 
-- [ ] **I1** 투자자 I-05 신청·취소 내역 · I-09 알림함 · I-10 알림 설정
-- [ ] **I2** 구매자 B-08 구성·일정 변경
-- [ ] **I3** 운영자 O-10 검증 현황 · O-11E 이의제기 · O-12 집행 완료 · O-13 정산·지급 내역
-- [ ] **I4** 관리자 A-05 구독·픽업 예외 · A-09 외부 전문가 판정 · A-10 정산 규칙 · A-11 정산 결과
-- [ ] **I5** 관리자 A-12 감사 로그 · A-13 권한 관리 · A-14 알림 발송 · A-15 AML·이상거래 · A-16 매출·비용 입력
+- [x] **I1** 투자자 I-05 신청·취소 내역 · I-09 알림함 · I-10 알림 설정
+- [x] **I2** 구매자 B-08 구성·일정 변경
+- [x] **I3** 운영자 O-10 검증 현황 · O-11E 이의제기 · O-12 집행 완료 · O-13 정산·지급 내역
+- [x] **I4** 관리자 A-05 구독·픽업 예외 · A-09 외부 전문가 판정 · A-10 정산 규칙 · A-11 정산 결과
+- [x] **I5** 관리자 A-12 감사 로그 · A-13 권한 관리 · A-14 알림 발송 · A-15 AML·이상거래 · A-16 매출·비용 입력
 
 ## Phase J · 기존 6개 재디자인
 
 Figma에 원본이 없으므로 A2 토큰과 A3 컴포넌트로 새로 그린다.
 
-- [ ] **J1** `/monitoring/[projectId]` · `/optimization/[projectId]` (AI 검증 핵심 화면)
-- [ ] **J2** `/landlord` · `/about` · `/admin/demo` · `/verify-identity`
+- [x] **J1** `/monitoring/[projectId]` · `/optimization/[projectId]` (AI 검증 핵심 화면)
+- [x] **J2** `/landlord` · `/about` · `/admin/demo` · `/verify-identity`
 
 ## Phase K · 웹 정리
 
-- [ ] **K1** `globals.css` 미사용 클래스 제거
-- [ ] **K2** `components/farmfi/**` 중 화면 전용 파일 삭제 (데이터 층 `api.ts`는 유지)
+- [x] **K1** `globals.css` 미사용 클래스 제거
+- [x] **K2** `components/farmfi/**` 중 화면 전용 파일 삭제 (데이터 층 `api.ts`는 유지)
 
 ## Phase L · 앱 기반
 
 앱은 `app/` (Expo RN). 그라운드 룰대로 웹과 같은 팔레트를 쓴다. 데이터도 웹과 같은 API를 쓴다.
 
-- [ ] **L1** 앱 디자인 토큰
+- [x] **L1** 앱 디자인 토큰
   `app/src/farmfi/theme.ts` — 웹과 같은 토큰(색·크기·radius) 상수화. 기존 `src/farmfi/components.tsx`가 쓰는 값과 대조해 하나로 합침
-- [ ] **L2** `App/*` 컴포넌트 30종 중 화면이 실제로 쓰는 것부터
+- [x] **L2** `App/*` 컴포넌트 30종 중 화면이 실제로 쓰는 것부터
   `MetricTile` `SectionTitle` `AlertCard` `BedCard` `CropProgressRow` `StockRow` `SensorTile` `DeviceRow` `LineChart` `BarChart` `Field` `PrimaryButton` `GhostButton` `BottomNav` `EmptyState` `Popup` `Calendar` `SkeletonBlock`
   정의는 `design/screens/farmfi-app/Internal_Only_Canvas/`
 
 ## Phase M · 앱 화면 36개
 
-- [ ] **M1** 진입 6개 — Splash, 00 로그인, 01 매장 선택, 00 scan 3종
-- [ ] **M2** 대시보드 3개 — 02 대시보드(+로딩), 03 설비 알림
-- [ ] **M3** 생육 10개 — 04~11 (재배 현황·상세·일정·등록·실시간·베드·센서 이력·임계값)
-- [ ] **M4** 재고 4개 — 12(+로딩), 13 상세·조정, 14 품목 등록
-- [ ] **M5** 매출 4개 — 15(+로딩), 16 거래 내역, 17 리포트 내보내기
-- [ ] **M6** 설정·상태 9개 — 18·19 설정, 20~25 결과·예외·빈 상태
+- [x] **M1** 진입 6개 — Splash, 00 로그인, 01 매장 선택, 00 scan 3종
+- [x] **M2** 대시보드 3개 — 02 대시보드(+로딩), 03 설비 알림
+- [x] **M3** 생육 10개 — 04~11 (재배 현황·상세·일정·등록·실시간·베드·센서 이력·임계값)
+- [x] **M4** 재고 4개 — 12(+로딩), 13 상세·조정, 14 품목 등록
+- [x] **M5** 매출 4개 — 15(+로딩), 16 거래 내역, 17 리포트 내보내기
+- [x] **M6** 설정·상태 9개 — 18·19 설정, 20~25 결과·예외·빈 상태
 
 ---
 
@@ -281,3 +281,12 @@ Figma에 원본이 없으므로 A2 토큰과 A3 컴포넌트로 새로 그린다
 
 - `contracts/` — 변경 없음
 - 수탁 지갑 · `HoldingLedger` · `FundCustodyAdapter` — `team-handoff-v2.1.md` PART 1의 체인 작업. 화면에 노출되지 않으므로 이 계획에 포함하지 않는다
+
+## 금지 용어 잔존 범위
+
+`frontend/src`에서 화면·API 응답·감사 로그 문구는 모두 치환했다. 아래 두 곳에는 옛 용어가 남는다.
+
+- **Prisma 모델명** — `Escrow` · `TokenHolding` · `Dividend`. 이름을 바꾸려면 데이터 마이그레이션이 따라야 하므로 `docs/team-handoff-v2.1.md`의 모델 정리 작업으로 넘긴다.
+- **내부 주석과 생성 코드** — 기존 API route의 설계 주석과 `src/generated/prisma/**`. 사용자에게 보이지 않는다.
+
+검증 기준은 `grep -rnE '토큰|지갑|에스크로|배당|락업|증권|\bSTO\b' frontend/src --include="*.tsx"` → 0건이다.

@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
             type: "dividend",
             amount: claimAmount,
             tokenAmount: holding.amount,
-            memo: `${period} 배당 (${holding.amount} 토큰)`,
+            memo: `${period} 회수금 (${holding.amount} 구좌)`,
           },
         });
       }
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
       entityType: "dividend",
       entityId: result.id,
       projectId,
-      summary: `${period} 배당 분배 — 총 ${feePool.investorDividend.toLocaleString("ko-KR")}원, 구좌당 ${perToken.toLocaleString("ko-KR")}원 (보유자 ${project.tokenHoldings.length}명)`,
+      summary: `${period} 회수금 분배 — 총 ${feePool.investorDividend.toLocaleString("ko-KR")}원, 구좌당 ${perToken.toLocaleString("ko-KR")}원 (보유자 ${project.tokenHoldings.length}명)`,
       detail: {
         period,
         perToken,

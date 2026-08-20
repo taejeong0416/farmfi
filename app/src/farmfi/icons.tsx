@@ -3,7 +3,11 @@ import { C } from "./theme";
 
 export type IconName =
   | "store" | "user" | "monitor" | "link" | "report" | "sprout" | "basket"
-  | "check" | "drop" | "users" | "clock" | "calendar" | "bars" | "plus";
+  | "check" | "drop" | "users" | "clock" | "calendar" | "bars" | "plus"
+  | "bell" | "settings" | "chevron-left" | "chevron-right" | "chevron-down"
+  | "thermometer" | "fan" | "led" | "leaf" | "box" | "download" | "search"
+  | "x" | "alert" | "mail" | "lock" | "camera" | "edit" | "trash"
+  | "logout" | "refresh" | "file" | "qr" | "co2" | "power";
 export type PixelGlyphName = "store" | "sprout" | "basket" | "bars" | "users" | "bed" | "bulb";
 
 // ── 라인 아이콘 (원본 stroke="currentColor" → color prop) ──
@@ -100,6 +104,152 @@ export function AppIcon({ name, size = 24, color = "#333" }: { name: IconName; s
       {name === "plus" && (
         <G {...s}>
           <Path d="M12 4v16M4 12h16" />
+        </G>
+      )}
+      {name === "bell" && (
+        <G {...s}>
+          <Path d="M6 9a6 6 0 0 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6Z" />
+          <Path d="M10 19a2 2 0 0 0 4 0" />
+        </G>
+      )}
+      {name === "settings" && (
+        <G {...s}>
+          <Circle cx="12" cy="12" r="3" />
+          <Path d="M12 2.5v2.2M12 19.3v2.2M4.2 7l1.9 1.1M17.9 15.9l1.9 1.1M4.2 17l1.9-1.1M17.9 8.1l1.9-1.1" />
+        </G>
+      )}
+      {name === "chevron-left" && (
+        <G {...s}>
+          <Path d="m15 5-7 7 7 7" />
+        </G>
+      )}
+      {name === "chevron-right" && (
+        <G {...s}>
+          <Path d="m9 5 7 7-7 7" />
+        </G>
+      )}
+      {name === "chevron-down" && (
+        <G {...s}>
+          <Path d="m5 9 7 7 7-7" />
+        </G>
+      )}
+      {name === "thermometer" && (
+        <G {...s}>
+          <Path d="M13 14.8V4.5a2 2 0 1 0-4 0v10.3a4 4 0 1 0 4 0Z" />
+        </G>
+      )}
+      {name === "fan" && (
+        <G {...s}>
+          <Circle cx="12" cy="12" r="2" />
+          <Path d="M12 10c0-3.5.8-6 3-6s2.4 3.2 0 4.6L12 10ZM14 12c3.5 0 6 .8 6 3s-3.2 2.4-4.6 0L14 12ZM12 14c0 3.5-.8 6-3 6s-2.4-3.2 0-4.6L12 14ZM10 12c-3.5 0-6-.8-6-3s3.2-2.4 4.6 0L10 12Z" />
+        </G>
+      )}
+      {name === "led" && (
+        <G {...s}>
+          <Path d="M9 17h6M10 21h4" />
+          <Path d="M12 3a6 6 0 0 0-3.5 10.9c.3.3.5.7.5 1.1h6c0-.4.2-.8.5-1.1A6 6 0 0 0 12 3Z" />
+        </G>
+      )}
+      {name === "leaf" && (
+        <G {...s}>
+          <Path d="M4 20c0-9 5-14 16-14 0 9-5 14-16 14Z" />
+          <Path d="M4 20c3-6 7-9 12-10.5" />
+        </G>
+      )}
+      {name === "box" && (
+        <G {...s}>
+          <Path d="M4 8.5 12 4l8 4.5v7L12 20l-8-4.5v-7Z" />
+          <Path d="m4 8.5 8 4.5 8-4.5M12 13v7" />
+        </G>
+      )}
+      {name === "download" && (
+        <G {...s}>
+          <Path d="M12 3v11M8 10.5l4 4 4-4M4 19h16" />
+        </G>
+      )}
+      {name === "search" && (
+        <G {...s}>
+          <Circle cx="11" cy="11" r="6.5" />
+          <Path d="m16 16 4 4" />
+        </G>
+      )}
+      {name === "x" && (
+        <G {...s}>
+          <Path d="M6 6l12 12M18 6 6 18" />
+        </G>
+      )}
+      {name === "alert" && (
+        <G {...s}>
+          <Path d="M12 4 2.5 20h19L12 4Z" />
+          <Path d="M12 10v4M12 17h.01" />
+        </G>
+      )}
+      {name === "mail" && (
+        <G {...s}>
+          <Rect x="3" y="5.5" width="18" height="13" rx="2" />
+          <Path d="m3.5 7 8.5 6 8.5-6" />
+        </G>
+      )}
+      {name === "lock" && (
+        <G {...s}>
+          <Rect x="4.5" y="10" width="15" height="10" rx="2" />
+          <Path d="M8 10V7.5a4 4 0 1 1 8 0V10" />
+        </G>
+      )}
+      {name === "camera" && (
+        <G {...s}>
+          <Path d="M3 8h3.5L8 5.5h8L17.5 8H21v11H3V8Z" />
+          <Circle cx="12" cy="13" r="3.5" />
+        </G>
+      )}
+      {name === "edit" && (
+        <G {...s}>
+          <Path d="M4 20h4l10-10-4-4L4 16v4Z" />
+          <Path d="m13.5 6.5 4 4" />
+        </G>
+      )}
+      {name === "trash" && (
+        <G {...s}>
+          <Path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13" />
+          <Path d="M10.5 11v5M13.5 11v5" />
+        </G>
+      )}
+      {name === "logout" && (
+        <G {...s}>
+          <Path d="M14 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h8" />
+          <Path d="M17 8.5 20.5 12 17 15.5M10 12h10.5" />
+        </G>
+      )}
+      {name === "refresh" && (
+        <G {...s}>
+          <Path d="M20 12a8 8 0 1 1-2.6-5.9" />
+          <Path d="M20 4v5h-5" />
+        </G>
+      )}
+      {name === "file" && (
+        <G {...s}>
+          <Path d="M6 3h8l4 4v14H6V3Z" />
+          <Path d="M14 3v4h4M9 12h6M9 16h6" />
+        </G>
+      )}
+      {name === "qr" && (
+        <G {...s}>
+          <Rect x="3.5" y="3.5" width="7" height="7" rx="1" />
+          <Rect x="13.5" y="3.5" width="7" height="7" rx="1" />
+          <Rect x="3.5" y="13.5" width="7" height="7" rx="1" />
+          <Path d="M13.5 13.5h3v3h-3zM19 13.5h1.5M13.5 19v1.5M17.5 19h3v1.5" />
+        </G>
+      )}
+      {name === "co2" && (
+        <G {...s}>
+          <Path d="M4 9.5c2-3 6-3 8 0M3 14c3-4 8-4 11 0M9 18.5c2.5-2.5 6-2.5 8.5 0" />
+          <Circle cx="18.5" cy="7" r="2.5" />
+        </G>
+      )}
+      {name === "power" && (
+        <G {...s}>
+          <Path d="M12 3v9" />
+          <Path d="M7.5 6.5a7 7 0 1 0 9 0" />
         </G>
       )}
     </Svg>

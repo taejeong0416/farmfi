@@ -5,7 +5,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { useRouter, useSegments } from "expo-router";
+import { useRouter, useSegments, type Href } from "expo-router";
 import { apiFetch, setToken, clearToken, getToken } from "./api";
 
 export type Role = "investor" | "operator" | "landlord" | "admin";
@@ -50,12 +50,16 @@ function useProtectedRoute(user: User | null, loading: boolean) {
   useEffect(() => {
     if (loading) return;
     if (demoBypass && segments[0] === "farm") return;
-    const inAuthScreen = segments[0] === "login";
-    if (!user && !inAuthScreen) {
+    // Splash(루트)와 로그인·QR 스캔은 세션 없이 머물러도 되는 화면이다.
+    // Splash가 세션을 보고 직접 다음 화면을 고르므로 여기서 가로채지 않는다.
+    // useSegments의 유니온은 `.expo/types` 생성 시점의 라우트만 담으므로 문자열로 본다.
+    const seg = segments as string[];
+    const open = seg.length === 0 || seg[0] === "login" || seg[0] === "scan";
+    if (!user && !open) {
       router.replace("/login");
-    } else if (user && inAuthScreen) {
-      // 홈은 통과 지점이므로 운영 화면 첫 탭으로 바로 보낸다.
-      router.replace("/farm/store");
+    } else if (user && seg[0] === "login") {
+      // typedRoutes 유니온은 `.expo/types`가 만들어질 때만 새 경로를 안다.
+      router.replace("/store-select" as Href);
     }
   }, [user, loading, segments, router, demoBypass]);
 }

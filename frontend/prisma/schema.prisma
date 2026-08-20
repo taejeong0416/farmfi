@@ -32,6 +32,8 @@ model User {
   operatorApplications  OperatorApplication[]
   identityVerifications IdentityVerification[]
   operatedProjects      Project[]              @relation("ProjectOperator")
+  investments           Investment[]
+  subscriptions         Subscription[]
 }
 
 // ─── 운영자 지원 신청 ───
@@ -43,7 +45,22 @@ model OperatorApplication {
   cropExperience String   // 작물 재배 경험
   availableHours String   // 주간 투입 가능 시간
   status         String   @default("applied") // applied → docs → education → matched → operating
+  // ─── 운영 신청 7단계 (O-03 자격 → O-04 방문 → O-05 교육 → O-06 확정 → O-07 계약 → O-08 보증서) ───
+  spaceId            String?   // 신청한 공간
+  documents          String[]  // 제출 서류 URL
+  reviewNote         String?   // 심사자 보완 요청 사유
+  visitAt            DateTime? // 현장 방문 예약 시각
+  visitNote          String?
+  visitDoneAt        DateTime?
+  educationProgress  Int       @default(0) // 0~100
+  educationDoneAt    DateTime?
+  confirmedAt        DateTime? // 공간 최종 확정
+  contractSignature  String?
+  contractSignedAt   DateTime?
+  certificateNo      String?
+  certificateIssuedAt DateTime?
   createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt @default(now())
 }
 
 // ─── 신원 인증 세션 (OpenDID Verifier 흐름 — 모바일 신분증) ───
@@ -116,6 +133,8 @@ model Project {
   salesRecords   SalesRecord[]
   settlementRule SettlementRule?
   payouts        Payout[]
+  investments    Investment[]
+  subscriptions  Subscription[]
 }
 
 // ─── 에스크로 ───
@@ -148,6 +167,15 @@ model Milestone {
   crossCheck           String?
   assetValue           BigInt         @default(0)
   evidenceUrl          String?
+  // ─── 증빙 제출·승인 게이트 (O-11 제출 → A-08 재검토) ───
+  // status: pending → evidence_submitted → in_progress(검증) → verified(승인)
+  //         → completed(집행). 보완이 필요하면 revision_required로 되돌린다.
+  evidenceUrls         String[]  // 운영자가 올린 증빙 파일들
+  evidenceNote         String?   // 제출 시 남긴 설명
+  evidenceSubmittedAt  DateTime?
+  reviewNote           String?   // 관리자 재검토 의견
+  reviewedById         String?
+  reviewedAt           DateTime?
   aiVerificationResult Json?
   completedAt          DateTime?
   // 이 마일스톤의 집행 기한. Escrow.sol의 milestoneDeadline(= 직전 트랜치 집행 +
@@ -460,4 +488,76 @@ model SalesRecord {
   soldAt    DateTime @default(now())
 
   @@index([projectId, soldAt])
+}
+
+// ─── 투자 신청 (다단계 청약 흐름) ───
+// 화면 I-02~I-04가 이 레코드 하나의 상태를 밀고 나간다. 실제 납입은 마지막
+// 단계에서 executeSubscription을 호출해 처리하고, 결과를 여기에 기록한다.
+model Investment {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id])
+  // DRAFT → IDENTITY_REQUIRED → ELIGIBILITY_CHECKED → CONSENT_REQUIRED →
+  // AWAITING_DEPOSIT → DEPOSIT_CONFIRMED → COMPLETED (+ DEPOSIT_FAILED · CANCELLED)
+  status     String   @default("DRAFT")
+  amount     BigInt   @default(0) // 신청 금액 (원)
+  units      Int      @default(0) // 보유 구좌 수
+  // 적합성 판정 결과 (연간한도·본인확인·연령)
+  eligible       Boolean?
+  eligibilityMemo String?
+  annualLimit    BigInt?
+  // 동의·서명
+  consentedAt  DateTime?
+  signature    String?
+  // 납입 결과
+  transactionId String?
+  failureReason String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([projectId, status])
+}
+
+// ─── 정기구독 (구매자) ───
+// 배송이 아니라 지정한 지점에서 직접 받는 픽업 구독이다.
+// 팩 크기(3·5·7종)와 수령 주기를 고르고, 지점 재고 안에서 작물·드레싱을 고른다.
+model Subscription {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  projectId     String   // 픽업 지점
+  project       Project  @relation(fields: [projectId], references: [id])
+  packSize      Int      // 3 · 5 · 7 (작물 종수)
+  perWeek       Int      @default(1) // 주 수령 횟수
+  productIds    String[] // 고른 작물
+  dressings     String[] // 고른 드레싱
+  monthlyPrice  Int      // 월 결제액 (원)
+  couponCode    String?
+  discount      Int      @default(0)
+  paymentMethod String?  // 표시용 결제수단 라벨
+  status        String   @default("active") // active · paused · cancelled · waitlist
+  startedAt     DateTime @default(now())
+  nextPaymentAt DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt @default(now())
+  pickups       PickupOrder[]
+
+  @@index([userId, status])
+}
+
+// 구독 한 건의 회차. 매장에서 보여줄 확인번호를 갖는다.
+model PickupOrder {
+  id             String       @id @default(cuid())
+  subscriptionId String
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
+  scheduledAt    DateTime
+  status         String       @default("scheduled") // scheduled · picked · skipped
+  code           String       // 매장 확인번호
+  pickedAt       DateTime?
+  createdAt      DateTime     @default(now())
+
+  @@index([subscriptionId, scheduledAt])
 }

@@ -20,11 +20,14 @@ export type AuthUser = {
   investorAnnualLimit: number | null;
 };
 
+// 가입 시 보낼 수 있는 역할. 이용 목적(C-04)은 가입 뒤에 고르므로 기본값은 investor다.
+export type SignupRole = AssignableRole | "investor";
+
 export type SignupInput = {
   name: string;
   email: string;
   password: string;
-  role: AssignableRole;
+  role: SignupRole;
 };
 
 const AUTH_ME_QUERY_KEY = ["auth", "me"] as const;

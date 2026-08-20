@@ -1,0 +1,96 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import type { ReactNode } from "react";
+
+export type NavItem = { label: string; href: string };
+
+/** 모든 화면 상단의 같은 자리. Figma 기준 높이 60, 아래 1px 선. */
+export function AppHeader({
+  nav = [],
+  right,
+}: {
+  nav?: NavItem[];
+  right?: ReactNode;
+}) {
+  const pathname = usePathname() ?? "";
+
+  return (
+    <header className="border-b border-line-soft bg-white">
+      <div className="mx-auto flex h-[60px] max-w-shell items-center gap-8 px-8">
+        <Link href="/" className="text-17 font-bold text-brand">
+          FarmFi
+        </Link>
+        <nav className="flex flex-1 items-center gap-6">
+          {nav.map((item) => {
+            const active =
+              item.href === "/"
+                ? pathname === "/"
+                : pathname.startsWith(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`text-13 ${
+                  active ? "font-medium text-brand" : "text-body hover:text-ink"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+        {right}
+      </div>
+    </header>
+  );
+}
+
+export function AppFooter() {
+  return (
+    <footer className="mt-20 border-t border-line-soft bg-white">
+      <div className="mx-auto flex max-w-shell flex-wrap items-center justify-between gap-4 px-8 py-8">
+        <div>
+          <p className="text-13 font-bold text-brand">FarmFi</p>
+          <p className="mt-2 text-11 text-muted">
+            도심 유휴공실을 스마트팜 매장으로 전환하는 자금을 모으고, 검증된 단계에만 집행합니다.
+          </p>
+        </div>
+        <p className="text-11 text-muted">
+          투자 원금은 보장되지 않습니다. 투자 전 계약 조건과 위험을 확인하세요.
+        </p>
+      </div>
+    </footer>
+  );
+}
+
+/** 1440 본문 폭. 화면 본문을 감싸는 기본 컨테이너. */
+export function Shell({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <main className={`mx-auto max-w-shell px-8 py-10 ${className ?? ""}`}>
+      {children}
+    </main>
+  );
+}
+
+/** 730 패널 폭. 신청·결제처럼 한 줄기로 진행하는 화면에 쓴다. */
+export function PanelShell({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <main className={`mx-auto max-w-panel px-6 py-10 ${className ?? ""}`}>
+      {children}
+    </main>
+  );
+}

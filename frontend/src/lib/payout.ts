@@ -12,7 +12,7 @@ export const PAYOUT_CATEGORIES = ["dividend", "landlord_rent", "operator_settlem
 export type PayoutCategory = (typeof PAYOUT_CATEGORIES)[number];
 
 export const PAYOUT_CATEGORY_LABEL: Record<PayoutCategory, string> = {
-  dividend: "투자자 배당",
+  dividend: "투자자 회수금",
   landlord_rent: "건물주 임대료",
   operator_settlement: "운영자 정산",
 };

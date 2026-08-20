@@ -1,20 +1,12 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "@/lib/auth";
-import { MyPageClient } from "@/components/farmfi/auth/MyPageClient";
+import { MyPageScreen } from "@/components/screens/common/MyPageScreen";
 
-// 서버 컴포넌트에서 세션을 먼저 확인한다 — 클라이언트 체크만으로는 우회
-// 가능하므로 항상 서버에서 먼저 막는다(admin/page.tsx와 동일 패턴).
+// 세션은 서버에서 먼저 막는다 — 클라이언트 확인만으로는 우회할 수 있다.
 export default async function MyPage() {
   const session = await getServerSession();
   if (!session) {
     redirect("/login");
   }
-
-  return (
-    <main className="page">
-      <section className="section">
-        <MyPageClient />
-      </section>
-    </main>
-  );
+  return <MyPageScreen />;
 }

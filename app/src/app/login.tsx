@@ -1,16 +1,11 @@
+// 00 로그인
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-} from "react-native";
+import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "@/lib/auth";
+import { C, FRAME_MAX_WIDTH, FS, FW, SP } from "@/farmfi/theme";
+import { PrimaryButton, RoundField } from "@/farmfi/ui";
 
 // 데모 계정. 우회 로그인이 아니라 이 자격으로 실제 세션을 발급받는다 —
 // 운영 데이터 API가 operator 세션을 요구하므로 세션 없이는 화면이 빈다.
@@ -35,8 +30,6 @@ export default function LoginScreen() {
     }
   };
 
-  const onSubmit = () => submit(email, password);
-
   const onDemo = () => {
     setEmail(DEMO_ACCOUNT.email);
     setPassword(DEMO_ACCOUNT.password);
@@ -44,108 +37,66 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={s.stage} edges={["top", "bottom"]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
-        style={styles.container}
+        style={s.frame}
       >
-        <Text style={styles.logo}>FarmFi</Text>
-        <Text style={styles.subtitle}>도심 스마트팜 STO 플랫폼</Text>
+        <View style={s.logoBlock}>
+          <Text style={s.logo}>FarmFi</Text>
+          <Text style={s.tagline}>도심 스마트팜 운영지원 서비스</Text>
+        </View>
 
-        <TextInput
-          style={styles.input}
-          placeholder="이메일"
-          placeholderTextColor="#9ca3af"
-          autoCapitalize="none"
-          keyboardType="email-address"
-          value={email}
-          onChangeText={setEmail}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="비밀번호"
-          placeholderTextColor="#9ca3af"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
+        <View style={s.form}>
+          <RoundField
+            icon="mail"
+            placeholder="이메일"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+          />
+          <RoundField
+            icon="lock"
+            placeholder="비밀번호"
+            value={password}
+            onChangeText={setPassword}
+            secure
+          />
 
-        {error ? <Text style={styles.error}>{error}</Text> : null}
+          {error && <Text style={s.error}>{error}</Text>}
 
-        <Pressable
-          style={[styles.button, busy && styles.buttonDisabled]}
-          onPress={onSubmit}
-          disabled={busy}
-        >
-          {busy ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.buttonText}>로그인</Text>
-          )}
-        </Pressable>
+          <PrimaryButton
+            label={busy ? "확인 중…" : "로그인"}
+            onPress={() => submit(email, password)}
+            disabled={busy}
+            style={s.submit}
+          />
 
-        <Pressable
-          style={[styles.demoButton, busy && styles.buttonDisabled]}
-          onPress={onDemo}
-          disabled={busy}
-        >
-          <Text style={styles.demoButtonText}>데모 계정으로 바로 들어가기</Text>
-        </Pressable>
-
-        <Text style={styles.hint}>
-          운영자 계정 operator@farmfi.test 로 접속합니다{"\n"}
-          비밀번호: farmfi123
-        </Text>
+          <Pressable onPress={onDemo} disabled={busy} hitSlop={8}>
+            <Text style={s.demo}>데모 계정으로 바로 들어가기</Text>
+          </Pressable>
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: "#fff" },
-  container: { flex: 1, justifyContent: "center", paddingHorizontal: 24 },
-  logo: { fontSize: 40, fontWeight: "800", color: "#16a34a", textAlign: "center" },
-  subtitle: {
-    fontSize: 14,
-    color: "#6b7280",
-    textAlign: "center",
-    marginTop: 4,
-    marginBottom: 32,
+const s = StyleSheet.create({
+  stage: { flex: 1, backgroundColor: C.paper },
+  frame: {
+    flex: 1,
+    width: "100%",
+    maxWidth: FRAME_MAX_WIDTH,
+    alignSelf: "center",
+    justifyContent: "center",
+    paddingHorizontal: 46,
+    gap: SP.xxl,
   },
-  input: {
-    borderWidth: 1,
-    borderColor: "#d1d5db",
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    fontSize: 16,
-    marginBottom: 12,
-    color: "#111827",
-  },
-  error: { color: "#dc2626", fontSize: 14, marginBottom: 8 },
-  button: {
-    backgroundColor: "#16a34a",
-    borderRadius: 10,
-    paddingVertical: 14,
-    alignItems: "center",
-    marginTop: 4,
-  },
-  buttonDisabled: { opacity: 0.6 },
-  buttonText: { color: "#fff", fontSize: 16, fontWeight: "700" },
-  demoButton: {
-    borderWidth: 1.4,
-    borderColor: "#16a34a",
-    borderRadius: 10,
-    paddingVertical: 13,
-    alignItems: "center",
-    marginTop: 10,
-  },
-  demoButtonText: { color: "#16a34a", fontSize: 15, fontWeight: "700" },
-  hint: {
-    fontSize: 12,
-    color: "#9ca3af",
-    textAlign: "center",
-    marginTop: 24,
-    lineHeight: 18,
-  },
+  logoBlock: { alignItems: "center", gap: SP.sm },
+  logo: { fontSize: 38, fontWeight: FW.bold, color: C.brand, letterSpacing: -1 },
+  tagline: { fontSize: FS.cap, color: C.body },
+  form: { gap: SP.md },
+  error: { fontSize: FS.cap, color: C.danger, textAlign: "center" },
+  submit: { marginTop: SP.sm },
+  demo: { fontSize: FS.cap, color: C.body, textAlign: "center", paddingVertical: SP.sm },
 });

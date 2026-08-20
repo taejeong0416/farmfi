@@ -86,6 +86,30 @@ export type TodayTasksResponse = {
   }[];
 };
 
+// ─── GET /api/notifications?projectId= ───
+export type FarmNotification = {
+  id: string;
+  projectId: string | null;
+  type: string;
+  message: string;
+  evidenceUrl: string | null;
+  isRead: boolean;
+  createdAt: string;
+};
+
+export type NotificationsResponse = { notifications: FarmNotification[] };
+
+// 알림 종류 → 화면 표기. 등급을 색으로 나누지 않으므로 severity는 배지 글자에만 쓴다.
+const ALERT_KIND: Record<string, { title: string; severity: "critical" | "warning" }> = {
+  anomaly_detected: { title: "생육 이상 감지", severity: "critical" },
+  verification_failed: { title: "검증 실패", severity: "critical" },
+  manual_review: { title: "수동 확인 요청", severity: "warning" },
+};
+
+export function alertKind(type: string): { title: string; severity: "critical" | "warning" } {
+  return ALERT_KIND[type] ?? { title: "설비 알림", severity: "warning" };
+}
+
 // ─── GET /api/monitoring/[projectId] (요약만 사용하는 화면용 부분 타입) ───
 export type LightAssessment = {
   dliTarget: number;
@@ -126,6 +150,54 @@ export type MonitoringSummaryResponse = {
     latestHealthy: boolean;
   };
 };
+
+// ─── 센서 판독 (모니터링 응답의 points 전체 필드) ───
+// 센서는 지점 단위로 수집된다 — 베드마다 따로 달려 있지 않다.
+export type SensorKey = "temperature" | "humidity" | "co2Level" | "phLevel";
+
+export type MonitoringPoint = {
+  t: string;
+  temperature: number;
+  humidity: number;
+  co2Level: number;
+  lightIntensity: number;
+  phLevel: number;
+  growthRate: number;
+  isAnomaly: boolean;
+  outOfRange: string[];
+  outOfOptimal: string[];
+  healthy: boolean;
+};
+
+export type MonitoringDetailResponse = Omit<MonitoringSummaryResponse, "points"> & {
+  points: MonitoringPoint[];
+  healthyRanges: Record<string, [number, number]>;
+  optimalRanges: Record<string, [number, number]>;
+};
+
+export const SENSOR_META: Record<SensorKey, { label: string; unit: string; digits: number }> = {
+  temperature: { label: "온도", unit: "℃", digits: 1 },
+  humidity: { label: "습도", unit: "%", digits: 0 },
+  co2Level: { label: "CO₂", unit: "ppm", digits: 0 },
+  // Figma에는 EC 칸이 있지만 수집하는 값은 pH다. 없는 값을 EC라고 부르지 않는다.
+  phLevel: { label: "pH", unit: "", digits: 1 },
+};
+
+export function formatReading(key: SensorKey, value: number): string {
+  const m = SENSOR_META[key];
+  return `${value.toFixed(m.digits)}${m.unit}`;
+}
+
+// 정상 범위 안이면 normal, 벗어나면 critical. 등급을 더 잘게 나누지 않는다.
+export function readingSeverity(
+  key: SensorKey,
+  value: number,
+  ranges?: Record<string, [number, number]>
+): "normal" | "critical" {
+  const r = ranges?.[key];
+  if (!r) return "normal";
+  return value < r[0] || value > r[1] ? "critical" : "normal";
+}
 
 // ─── 성숙도 → 생육 단계 문구 ───
 export function stageLabel(maturityPercent: number): string {
@@ -203,4 +275,12 @@ export function formatMonthDay(iso: string): string {
   const mm = String(d.getMonth() + 1).padStart(2, "0");
   const dd = String(d.getDate()).padStart(2, "0");
   return `${mm}.${dd}`;
+}
+
+export function formatStamp(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "--.-- --:--";
+  const hh = String(d.getHours()).padStart(2, "0");
+  const mi = String(d.getMinutes()).padStart(2, "0");
+  return `${formatMonthDay(iso)} ${hh}:${mi}`;
 }

@@ -37,7 +37,12 @@ export type AppealAction = keyof typeof APPEAL_TRANSITIONS;
  */
 export function isAppealable(status: string, retryCount: number): boolean {
   if (status === "verified" || status === "completed") return false;
-  return status === "manual_review" || status === "failed" || retryCount > 0;
+  return (
+    status === "manual_review" ||
+    status === "revision_required" ||
+    status === "failed" ||
+    retryCount > 0
+  );
 }
 
 /**

@@ -377,9 +377,9 @@ export interface VppPlan {
   basicSettlementPerYear: number; // 기본정산금 (대기 대가)
   performanceSettlementPerYear: number; // 실적정산금 (실제 감축)
   annualDrRevenue: number; // 플릿 전체 연 매출
-  dividendContributionPerYear: number; // 플릿 전체 배당 풀 기여 (60%)
+  dividendContributionPerYear: number; // 플릿 전체 회수 재원 기여 (60%)
   annualDrRevenuePerSite: number; // 사이트당 연 매출 (= annualDrRevenue / sites)
-  dividendPerSitePerYear: number; // 사이트당 배당 풀 기여 (= dividendContributionPerYear / sites)
+  dividendPerSitePerYear: number; // 사이트당 회수 재원 기여 (= dividendContributionPerYear / sites)
   note: string;
 }
 
@@ -435,7 +435,7 @@ export function fleetVPP(opts: {
             total / 10000
           )}만원/년 DR 매출(기본정산 ${Math.round(basic / 10000)}만 + 실적정산 ${Math.round(
             performance / 10000
-          )}만, 연 ${reductionHoursPerYear}h 감축) → 배당 풀 플릿 총 ${Math.round(
+          )}만, 연 ${reductionHoursPerYear}h 감축) → 회수 재원 플릿 총 ${Math.round(
             (total * share) / 10000
           )}만원/년 = 사이트당 ${Math.round((total * share) / opts.sites / 10000 * 10) / 10}만원/년. 규모에 비례 — ${opts.sites * 10}사이트면 ${Math.round((total * share) * 10 / 10000)}만원대. 광주기 유연성 ${flexH}h 안에서 회당 ${eventH}h 감축, 절감이 아니라 새 수익원.`,
   };
@@ -533,7 +533,7 @@ export function optimalStack(opts: {
         profit.profitMaxDli - profit.costMinDli
       }) 최적화, 남은 유연성은 ${opts.sites}사이트 VPP로 묶어 연 ${Math.round(
         vpp.dividendContributionPerYear / 10000
-      )}만원 배당 창출.`,
+      )}만원 회수 재원 창출.`,
     },
   };
 }

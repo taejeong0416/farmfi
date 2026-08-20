@@ -20,6 +20,9 @@ export type AuditActorRole =
 /** 남기는 이벤트 종류. 화면 필터의 선택지가 이 목록이다. */
 export const AUDIT_ACTIONS = [
   "subscription.created",
+  "milestone.evidence.submitted",
+  "milestone.evidence.approved",
+  "milestone.evidence.revision_requested",
   "milestone.verified",
   "milestone.rejected",
   "milestone.completed",
@@ -32,6 +35,7 @@ export const AUDIT_ACTIONS = [
   "payout.scheduled",
   "payout.processed",
   "project.status_changed",
+  "user.role_changed",
   "project.refunded",
   "notification.sent",
 ] as const;

@@ -106,7 +106,7 @@ export default function MonitoringPage() {
         desc: `${p.affectedSensors
           .map((s) => SENSOR_META[s].label)
           .join(", ")} 급변 (${p.anomalyScore.toFixed(1)}σ)`,
-        color: "#e05a3a",
+        color: "#A34A3D",
       }));
     const driftEvents = data.drift
       .filter((d) => d.detected && d.detectedAt)
@@ -115,7 +115,7 @@ export default function MonitoringPage() {
         t: d.detectedAt as string,
         kind: "drift" as const,
         desc: `${SENSOR_META[d.sensor].label} 지속 드리프트 시작 (CUSUM ${d.maxStatistic}σ)`,
-        color: "#d6a12f",
+        color: "#8A8A8A",
       }));
     // 광량 미달은 시점 이벤트가 아니라 구간 현상이라, 미달로 돌아선 첫 생육일을 세운다.
     const under = data.daily.filter((d) => d.complete && d.dliRatio < 0.9);
@@ -129,7 +129,7 @@ export default function MonitoringPage() {
               desc: `일적산광량 목표 미달 시작 (${Math.round(
                 under[0].dliRatio * 100
               )}%) · 이후 ${under.length}일 지속`,
-              color: "#b07d16",
+              color: "#8A8A8A",
             },
           ]
         : [];
@@ -340,28 +340,28 @@ function DliPanel({
         <div className={styles.miniChart}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={bars} margin={{ top: 4, right: 4, bottom: 0, left: -18 }}>
-              <CartesianGrid stroke="#eef2ee" vertical={false} />
+              <CartesianGrid stroke="#F2F2F0" vertical={false} />
               <XAxis
                 dataKey="ts"
                 tickFormatter={fmtDay}
-                tick={{ fontSize: 9, fill: "#8a948c" }}
+                tick={{ fontSize: 9, fill: "#8A8A8A" }}
                 minTickGap={24}
-                stroke="#d3ddd4"
+                stroke="#E5E5E3"
               />
               <YAxis
-                tick={{ fontSize: 9, fill: "#8a948c" }}
+                tick={{ fontSize: 9, fill: "#8A8A8A" }}
                 width={30}
-                stroke="#d3ddd4"
+                stroke="#E5E5E3"
               />
               <ReferenceLine
                 y={light.dliTarget}
-                stroke="#0b7d46"
+                stroke="#14542E"
                 strokeDasharray="4 3"
                 label={{
                   value: "목표",
                   position: "insideTopRight",
                   fontSize: 9,
-                  fill: "#0b7d46",
+                  fill: "#14542E",
                 }}
               />
               <Tooltip
@@ -383,7 +383,7 @@ function DliPanel({
                 {bars.map((d) => (
                   <Cell
                     key={d.ts}
-                    fill={d.dliRatio < 0.9 ? "#e0a03a" : "#d6a12f"}
+                    fill={d.dliRatio < 0.9 ? "#8A8A8A" : "#8A8A8A"}
                     fillOpacity={d.dliRatio < 0.9 ? 0.55 : 1}
                   />
                 ))}
@@ -458,19 +458,19 @@ function HarvestPanel({
         <div className={styles.miniChart}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={curve} margin={{ top: 4, right: 4, bottom: 0, left: -18 }}>
-              <CartesianGrid stroke="#eef2ee" vertical={false} />
+              <CartesianGrid stroke="#F2F2F0" vertical={false} />
               <XAxis
                 dataKey="ts"
                 tickFormatter={fmtDay}
-                tick={{ fontSize: 9, fill: "#8a948c" }}
+                tick={{ fontSize: 9, fill: "#8A8A8A" }}
                 minTickGap={24}
-                stroke="#d3ddd4"
+                stroke="#E5E5E3"
               />
               <YAxis
                 domain={[0, 100]}
-                tick={{ fontSize: 9, fill: "#8a948c" }}
+                tick={{ fontSize: 9, fill: "#8A8A8A" }}
                 width={30}
-                stroke="#d3ddd4"
+                stroke="#E5E5E3"
               />
               <Tooltip
                 content={({ active, payload }) => {
@@ -490,7 +490,7 @@ function HarvestPanel({
               <Line
                 type="monotone"
                 dataKey="growthRate"
-                stroke="#0b7d46"
+                stroke="#14542E"
                 strokeWidth={1.8}
                 dot={false}
                 isAnimationActive={false}
@@ -593,31 +593,31 @@ function SensorChart({
             data={display}
             margin={{ top: 6, right: 8, bottom: 0, left: -8 }}
           >
-            <CartesianGrid stroke="#eef2ee" vertical={false} />
+            <CartesianGrid stroke="#F2F2F0" vertical={false} />
             {!isLux && (
               <>
                 <ReferenceArea
                   y1={lo}
                   y2={hi}
-                  fill="#0b7d46"
+                  fill="#14542E"
                   fillOpacity={0.07}
                   stroke="none"
                 />
-                <ReferenceLine y={gLo} stroke="#e05a3a" strokeDasharray="3 4" strokeOpacity={0.5} />
-                <ReferenceLine y={gHi} stroke="#e05a3a" strokeDasharray="3 4" strokeOpacity={0.5} />
+                <ReferenceLine y={gLo} stroke="#A34A3D" strokeDasharray="3 4" strokeOpacity={0.5} />
+                <ReferenceLine y={gHi} stroke="#A34A3D" strokeDasharray="3 4" strokeOpacity={0.5} />
               </>
             )}
             {driftTs && (
               <ReferenceLine
                 x={driftTs}
-                stroke="#d6a12f"
+                stroke="#8A8A8A"
                 strokeWidth={1.5}
                 strokeDasharray="5 3"
                 label={{
                   value: "드리프트",
                   position: "top",
                   fontSize: 10,
-                  fill: "#b07d16",
+                  fill: "#8A8A8A",
                 }}
               />
             )}
@@ -627,16 +627,16 @@ function SensorChart({
               scale="time"
               domain={["dataMin", "dataMax"]}
               tickFormatter={(v) => fmtTime(v, days)}
-              tick={{ fontSize: 10, fill: "#8a948c" }}
+              tick={{ fontSize: 10, fill: "#8A8A8A" }}
               minTickGap={40}
-              stroke="#d3ddd4"
+              stroke="#E5E5E3"
             />
             <YAxis
               domain={yDomain}
-              tick={{ fontSize: 10, fill: "#8a948c" }}
+              tick={{ fontSize: 10, fill: "#8A8A8A" }}
               tickFormatter={fmtVal}
               width={38}
-              stroke="#d3ddd4"
+              stroke="#E5E5E3"
             />
             <Tooltip
               content={({ active, payload }) => {
@@ -681,7 +681,7 @@ function SensorChart({
                       cx={props.cx}
                       cy={props.cy}
                       r={3.5}
-                      fill="#e05a3a"
+                      fill="#A34A3D"
                       stroke="#fff"
                       strokeWidth={1}
                     />
