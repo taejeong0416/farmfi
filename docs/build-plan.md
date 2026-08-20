@@ -290,17 +290,17 @@ Phase A~M은 화면과 그 화면이 도는 데 필요한 최소 API를 만들�
 
 ## Phase O · 투자금 납입 실계
 
-지금은 `investments/[id]/deposit`이 입금을 즉시 확정한다. 명세 5.2·3.4의 가상계좌 경로로 바꾼다.
+명세 5.2·3.4의 가상계좌 경로로 납입한다. 동의를 마치면 건별 가상계좌를 발급하고, 은행 입금이 확인돼야 청약이 반영된다.
 
-- [ ] **O1** `InvestmentPaymentAdapter` + Mock
+- [x] **O1** `InvestmentPaymentAdapter` + Mock
   가상계좌 발급·입금 조회·웹훅 서명 검증을 인터페이스 뒤로. 도메인 코드는 어댑터만 호출한다
-- [ ] **O2** 본인 명의 계좌 확인
-  `POST /api/bank-accounts/verify-holder` · `GET·PATCH /api/me/bank-account`. C-I03이 화면만 있고 저장하는 곳이 없다
-- [ ] **O3** 가상계좌 발급·입금 상태
+- [x] **O2** 본인 명의 계좌 확인
+  `POST /api/bank-accounts/verify-holder` · `GET·PATCH /api/me/bank-account`. 계좌번호 원문 대신 토큰과 마스킹값을 저장한다
+- [x] **O3** 가상계좌 발급·입금 상태
   `POST /api/investments/[id]/virtual-account` · `GET .../deposit-status`. `AWAITING_DEPOSIT` + 입금기한
-- [ ] **O4** 은행 입금 웹훅
+- [x] **O4** 은행 입금 웹훅
   `POST /api/webhooks/bank/deposits`. 제공사 서명 검증, `providerTransactionId` unique로 중복 웹훅 1회 처리, 금액 불일치는 `AMOUNT_MISMATCH`로 관리자 큐
-- [ ] **O5** I-03E 네 분기
+- [x] **O5** I-03E 네 분기
   발급 실패 · 입금기한 만료 · 금액 불일치 · 확인 지연(`POST .../deposit-inquiry`)을 화면에서 구분
 
 ## Phase P · 체인 기록·보유 구좌 발행
