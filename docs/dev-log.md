@@ -7,6 +7,25 @@
 
 ## 2026-08-20 — 우민성
 
+### 온체인 mint가 실제로 성사됐다 — 막고 있던 것 두 개
+
+발행 파이프라인을 만든 뒤 계속 `PENDING`으로만 남았다. 원인이 둘이었고, 하나만 고쳤으면 여전히 실패했다.
+
+- **기본 Amoy RPC가 죽어 있다** — `rpc-amoy.polygon.technology`가 연결 자체를 거부한다(HTTP 000). `polygon-amoy-bor-rpc.publicnode.com`·`polygon-amoy.drpc.org`는 정상이다. `ONCHAIN_RPC_URL`을 publicnode로 바꿨다.
+- **서버 지갑에 `MINTER_ROLE`이 없었다** ← 진짜 원인. `FarmToken` 생성자가 `DEFAULT_ADMIN_ROLE`과 `REGISTRAR_ROLE`만 부여하고 `MINTER_ROLE`은 아무에게도 주지 않는다. 배포 이후 지금까지 **아무도 mint를 할 수 없는 상태**였다. 배포자가 관리자 권한을 갖고 있어 자기 자신에게 부여했다(tx `0x5f91f037…`). **새 체인에 배포하면 이 단계를 반드시 다시 해야 한다.**
+
+**확인**: 데모 1~3단계 실행 → 토스가 발급한 가상계좌 → 입금 확정 → 청약 → 수탁 지갑 → 온체인 mint 3건 전부 `CONFIRMED`.
+`0xf5585229…`(300구좌) · `0x3109748c…`(200) · `0xb57344d7…`(420).
+대사 결과 **DB 920구좌 ↔ 체인 920구좌, 불일치 0건**.
+
+### OmniOne Chain 전환은 포트가 막혀 보류
+
+Oracle 인스턴스(168.138.36.235)는 살아 있고 OpenDID 서비스가 전부 응답한다(8090·8091·8092·8094·8099 → HTTP 200). 그런데 **Besu RPC 포트가 외부에 열려 있지 않다** — 8545·8546·8645·9545·22001 전부 무응답. OpenDID 전용이라 노출할 이유가 없었을 것이다.
+
+전환하려면 순서가 이렇다: ① Oracle 보안목록 + iptables에서 8545 개방 → ② `FarmToken`·`Escrow`·`Dividend` 재배포 → ③ `ONCHAIN_*` 전환(`ONCHAIN_GAS_ZERO=true`) → ④ **`MINTER_ROLE` 부여**. ④를 빼면 위와 같은 자리에서 다시 막힌다.
+
+그때까지 프로덕션은 Amoy로 둔다. Vercel `ONCHAIN_*`가 26일 전부터 등록돼 있었는데 Sensitive라 값을 읽을 수 없어, 검증된 Amoy 설정으로 덮어썼다.
+
 ### 수탁 지갑과 보유 구좌 발행을 붙였다 (P0-8 · Phase P1~P4)
 
 명세 0장은 "Chain Relay·Outbox·eventId 멱등성이 v2.0에 이미 있으므로 파이프라인 신설은 없다"고 적었지만, 실제로는 셋 다 없었다. `confirmBankDeposit`은 팀원이 이번 주에 만들어 붙일 자리는 생겼고, 그 옆에 발행을 이어 붙였다.
