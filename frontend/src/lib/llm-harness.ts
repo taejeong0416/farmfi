@@ -121,8 +121,10 @@ function executeTool(toolName: ToolName, situation: FarmSituation): ToolOutput {
       return holtWintersForecast(situation.salesSeries);
 
     case "analyze_growth_recipe":
-      if (!situation.growthObs || situation.growthObs.length < 5) return null;
-      return analyzeGrowthRecipe(situation.growthObs);
+      // 반응표면 파라미터가 16개다. 그보다 적은 관측으로 적합하면 계수가 잡음을 그대로
+      // 옮겨 적고, 그 값이 문장으로 바뀌어 나간다 — 도구를 아예 안 쓰는 편이 낫다.
+      if (!situation.growthObs || situation.growthObs.length < 24) return null;
+      return analyzeGrowthRecipe(situation.growthObs, { cropKey: situation.cropKey });
 
     default:
       return null;
