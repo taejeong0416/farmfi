@@ -138,8 +138,8 @@ export async function judgeEligibility(params: {
 }
 
 /**
- * 납입 단계. 기존 executeSubscription을 이 흐름의 마지막 단계로 감싼다 —
- * 새 파이프라인을 만들지 않고, 성공·실패 결과만 Investment에 기록한다.
+ * 입금이 확인된 신청을 청약으로 반영한다. 기존 executeSubscription을 감싸고
+ * 성공·실패 결과만 Investment에 기록한다. 호출은 lib/deposit.ts가 한다.
  */
 export async function settleInvestment(investmentId: string) {
   const investment = await prisma.investment.findUnique({
@@ -147,8 +147,8 @@ export async function settleInvestment(investmentId: string) {
     include: { project: true, user: true },
   });
   if (!investment) return { ok: false as const, status: 404, error: "신청 내역을 찾을 수 없습니다." };
-  if (investment.status !== "AWAITING_DEPOSIT") {
-    return { ok: false as const, status: 400, error: "납입 단계가 아닙니다." };
+  if (investment.status !== "DEPOSIT_CONFIRMED") {
+    return { ok: false as const, status: 400, error: "입금이 확인되지 않았습니다." };
   }
 
   const result = await executeSubscription({

@@ -2,10 +2,10 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getServerSession } from "@/lib/auth";
 import { serializeBigInt } from "@/lib/serialize";
-import { settleInvestment } from "@/lib/investment";
+import { issueVirtualAccount } from "@/lib/deposit";
 
-// POST /api/investments/[id]/deposit — 납입 실행 (I-03 → I-04).
-// 실제 처리는 lib/investment.settleInvestment가 executeSubscription을 감싸서 한다.
+// POST /api/investments/[id]/virtual-account — 건별 가상계좌 발급 (I-03).
+// 동의를 마친 신청에만 발급하고, 이미 받은 계좌가 있으면 새 계좌로 바꾼다.
 export async function POST(
   _request: Request,
   { params }: { params: Promise<{ id: string }> },
@@ -21,13 +21,22 @@ export async function POST(
     return NextResponse.json({ error: "신청 내역을 찾을 수 없습니다." }, { status: 404 });
   }
 
-  const result = await settleInvestment(id);
+  const result = await issueVirtualAccount(id);
   if (!result.ok) {
-    return NextResponse.json({ error: result.error }, { status: result.status });
+    return NextResponse.json(
+      { error: result.error, code: result.code },
+      { status: result.status },
+    );
   }
 
+  const { bankName, accountNumber, holderName, amount, expiresAt } = result.account;
   return NextResponse.json({
-    investment: serializeBigInt(result.investment),
-    transaction: serializeBigInt(result.transaction),
+    virtualAccount: serializeBigInt({
+      bankName,
+      accountNumber,
+      holderName,
+      amount,
+      expiresAt,
+    }),
   });
 }

@@ -220,6 +220,111 @@ export function useInvestments() {
   });
 }
 
+// ─── 가상계좌 납입 (I-03 · I-03E) ───
+
+export type VirtualAccountView = {
+  bankName: string;
+  accountNumber: string;
+  holderName: string;
+  amount: number;
+  expiresAt: string;
+  status: string;
+};
+
+export type DepositState = {
+  status: string;
+  failureCode: string | null;
+  failureReason: string | null;
+  amount: number;
+  virtualAccount: VirtualAccountView | null;
+  deposit: {
+    amount: number;
+    expectedAmount: number;
+    status: string;
+    receivedAt: string;
+  } | null;
+};
+
+/** 입금 대기 화면이 상태를 따라간다. 확정되면 polling을 끈다. */
+export function useDepositStatus(id: string | null, polling: boolean) {
+  return useQuery({
+    queryKey: ["deposit-status", id],
+    queryFn: () =>
+      getJson<{ deposit: DepositState | null }>(
+        `/api/investments/${id}/deposit-status`,
+      ),
+    select: (d) => d.deposit,
+    enabled: Boolean(id),
+    refetchInterval: polling ? 4000 : false,
+    retry: false,
+  });
+}
+
+export async function issueVirtualAccount(id: string): Promise<VirtualAccountView> {
+  const data = await postJson<{ virtualAccount: VirtualAccountView }>(
+    `/api/investments/${id}/virtual-account`,
+  );
+  return data.virtualAccount;
+}
+
+export async function requestDepositInquiry(id: string): Promise<void> {
+  await postJson(`/api/investments/${id}/deposit-inquiry`);
+}
+
+export async function cancelInvestment(id: string): Promise<void> {
+  await postJson(`/api/investments/${id}/cancel`);
+}
+
+// ─── 회수·환불 계좌 (C-I03) ───
+
+export type BankAccountInfo = {
+  bankName: string;
+  maskedNumber: string;
+  holderName: string;
+  verifiedAt: string;
+};
+
+export function useBankAccount() {
+  return useQuery({
+    queryKey: ["bank-account"],
+    queryFn: () =>
+      getJson<{ bankAccount: BankAccountInfo | null }>("/api/me/bank-account"),
+    select: (d) => d.bankAccount,
+    retry: false,
+  });
+}
+
+/** 예금주 확인. 통과하면 확인된 예금주 이름을 돌려준다. */
+export async function verifyAccountHolder(
+  bankName: string,
+  accountNumber: string,
+): Promise<string> {
+  const data = await postJson<{ holderName: string }>(
+    "/api/bank-accounts/verify-holder",
+    { bankName, accountNumber },
+  );
+  return data.holderName;
+}
+
+export async function registerBankAccount(
+  bankName: string,
+  accountNumber: string,
+): Promise<BankAccountInfo> {
+  const res = await fetch("/api/me/bank-account", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ bankName, accountNumber }),
+  });
+  const data = (await res.json().catch(() => null)) as
+    | { bankAccount?: BankAccountInfo; error?: string }
+    | null;
+  if (!res.ok || !data?.bankAccount) {
+    throw new Error(data?.error ?? "요청에 실패했습니다.");
+  }
+  return data.bankAccount;
+}
+
 export type SpaceItem = {
   id: string;
   spaceType: string;

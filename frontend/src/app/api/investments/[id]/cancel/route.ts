@@ -26,6 +26,12 @@ export async function POST(
     );
   }
 
+  // 발급된 가상계좌를 함께 닫는다. 닫힌 계좌로 들어온 입금은 관리자 검토 큐로 간다.
+  await prisma.virtualAccount.updateMany({
+    where: { investmentId: id, status: "ISSUED" },
+    data: { status: "CANCELLED" },
+  });
+
   const updated = await prisma.investment.update({
     where: { id },
     data: { status: "CANCELLED" },

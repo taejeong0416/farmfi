@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button, Field, PanelShell, Select, TextInput } from "@/components/ui";
+import { registerBankAccount, verifyAccountHolder } from "../api";
 
 const BANKS = [
   "부산은행",
@@ -21,17 +22,33 @@ export function VerifyAccountScreen() {
   const [number, setNumber] = useState("");
   const [holder, setHolder] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
-  // 예금주 확인은 은행 실시간 조회 자리다. 지금은 입력한 계좌를 그대로 확인 상태로 표시한다.
-  function checkHolder() {
+  // 예금주 조회는 지급사 어댑터가 한다. 본인확인 이름과 다르면 서버가 거절한다.
+  async function checkHolder() {
     setError(null);
-    const digits = number.replace(/\D/g, "");
-    if (digits.length < 10) {
-      setError("계좌번호를 다시 확인해 주세요.");
-      setHolder(null);
-      return;
+    setHolder(null);
+    setBusy(true);
+    try {
+      setHolder(await verifyAccountHolder(bank, number));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "예금주를 확인하지 못했습니다.");
+    } finally {
+      setBusy(false);
     }
-    setHolder("본인 명의");
+  }
+
+  async function register() {
+    setError(null);
+    setBusy(true);
+    try {
+      await registerBankAccount(bank, number);
+      router.push("/verify/done");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "계좌를 등록하지 못했습니다.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   const masked =
@@ -91,13 +108,13 @@ export function VerifyAccountScreen() {
       </div>
 
       <div className="mt-4">
-        <Button full variant="ghost" onClick={checkHolder}>
-          예금주 확인
+        <Button full variant="ghost" disabled={busy} onClick={checkHolder}>
+          {busy && !holder ? "확인 중" : "예금주 확인"}
         </Button>
       </div>
 
       <div className="mt-6">
-        <Button full disabled={!holder} onClick={() => router.push("/verify/done")}>
+        <Button full disabled={!holder || busy} onClick={register}>
           계좌 확인하기
         </Button>
       </div>

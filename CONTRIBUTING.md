@@ -27,6 +27,10 @@ FarmFi 개발 가이드. 기능 범위와 화면 흐름은 [docs/feature-spec.md
    | `ONCHAIN_*` | | 체인 전환(RPC·chainId·gas0). 없으면 Amoy 폴백 |
    | `IDENTITY_*` | | OpenDID 신원인증. `stub`이면 3초 자동인증 목업 |
    | `DEMO_MODE` | | `live`(실호출) / `cached`(성공 결과 재생) |
+   | `BANK_WEBHOOK_SECRET` | | 은행 입금 웹훅 서명 검증 키. 없으면 검증을 건너뛴다 |
+   | `DEPOSIT_DEADLINE_HOURS` | | 가상계좌 입금기한 (기본 24) |
+   | `MOCK_BANK_SCENARIO` | | `normal` / `issue_failed` / `mismatch` / `delayed` — I-03E 분기 재현 |
+   | `MOCK_BANK_DEPOSIT_DELAY_SEC` | | Mock 은행이 입금하기까지 걸리는 시간 (기본 0) |
 
 3. `npm run prisma:generate` → `npm run prisma:push` → `npm run seed`
    - `prisma db push`(DDL)는 **세션 pooler(5432)** 필요 — 일반 URL이 6543(트랜잭션 pooler)이면 `--url`로 5432 오버라이드. 시드(DML)는 6543으로 OK.
