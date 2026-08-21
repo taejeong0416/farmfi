@@ -306,6 +306,9 @@ async function distributeDividends(baseUrl: string, authHeader: string) {
       category: row.category,
       amount: Number(row.amount),
       ok: body?.ok ?? false,
+      // 계정 없는 수취인은 실패가 아니라 수동 이체 대상이다. 시연에서 빨간
+      // "실패"로 뜨면 없는 문제가 있는 것처럼 보인다.
+      manual: body?.manual === true,
       reason: body?.error ?? null,
     });
   }

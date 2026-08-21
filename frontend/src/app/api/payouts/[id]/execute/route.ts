@@ -75,10 +75,32 @@ export async function POST(
     );
   }
 
-  // 수취인 계좌. 계정이 없는 수취인(건물주 파트너 등)은 등록 계좌가 없다.
-  const bankAccount = payout.payeeUserId
-    ? await prisma.bankAccount.findUnique({ where: { userId: payout.payeeUserId } })
-    : null;
+  // 계정이 없는 수취인(건물주 파트너 등)은 애초에 자동 이체 대상이 아니다.
+  // 어댑터에 넘겨 "계좌 없음"으로 실패시키면 뜻이 틀린다 — 실패가 아니라
+  // 처리 경로가 다른 것이다. 사람이 이체하고 /process로 결과를 적는다.
+  if (!payout.payeeUserId) {
+    const manual = await prisma.payout.update({
+      where: { id },
+      data: {
+        status: "scheduled",
+        failureReason: null,
+        memo: payout.memo ? `${payout.memo} · 수동 이체 대상` : "수동 이체 대상",
+      },
+    });
+    return NextResponse.json(
+      serialize({
+        ok: false,
+        code: "PAYOUT_MANUAL_REQUIRED",
+        error: "계정이 없는 수취인이라 자동 이체 대상이 아닙니다. 이체 후 결과를 등록해 주세요.",
+        payout: manual,
+        manual: true,
+      }),
+    );
+  }
+
+  const bankAccount = await prisma.bankAccount.findUnique({
+    where: { userId: payout.payeeUserId },
+  });
 
   const adapter = getPayoutAdapter();
   const result = await adapter.transfer({

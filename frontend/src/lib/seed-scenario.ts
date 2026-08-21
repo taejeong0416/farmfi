@@ -30,6 +30,7 @@ export async function seedScenario(prisma: PrismaClient) {
   // ─── 자식 → 부모 순서로 지운다. 하나라도 빠지면 project/user deleteMany가
   //     FK 위반으로 죽고 데모 리셋 자체가 안 된다.
   //     새 모델을 만들면 여기에 반드시 추가한다.
+  await prisma.setpointApplication.deleteMany();
   await prisma.holdingIssuance.deleteMany();
   await prisma.custodyWallet.deleteMany();
   await prisma.depositEvent.deleteMany();
