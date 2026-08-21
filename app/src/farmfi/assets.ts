@@ -41,6 +41,11 @@ export const PIXEL_ICON = {
   "stage-locked": require("../../assets/farmfi/icons/stage-locked.png"),
   "stage-active": require("../../assets/farmfi/icons/stage-active.png"),
   "stage-done": require("../../assets/farmfi/icons/stage-done.png"),
+  // 증빙 종류 (M-13). 계약서·영수증이 같은 벡터 아이콘을 쓰고 있어 구분이 안 됐다.
+  "evidence-contract": require("../../assets/farmfi/icons/evidence-contract.png"),
+  "evidence-receipt": require("../../assets/farmfi/icons/evidence-receipt.png"),
+  "evidence-photo": require("../../assets/farmfi/icons/evidence-photo.png"),
+  "evidence-sensor": require("../../assets/farmfi/icons/evidence-sensor.png"),
 } as const;
 
 export type PixelIconName = keyof typeof PIXEL_ICON;

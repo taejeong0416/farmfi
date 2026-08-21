@@ -325,11 +325,14 @@ export type Milestone = {
 export type MilestonesResponse = { milestones: Milestone[] };
 
 /** 증빙 종류 — requiredSignals의 코드값이 그대로 온다. */
-export const SIGNAL_META: Record<string, { label: string; icon: string; capture: boolean }> = {
-  contract: { label: "계약서", icon: "file", capture: false },
-  receipt: { label: "영수증", icon: "file", capture: true },
-  photo: { label: "현장 사진", icon: "camera", capture: true },
-  iot: { label: "센서 데이터", icon: "monitor", capture: false },
+export const SIGNAL_META: Record<
+  string,
+  { label: string; icon: "evidence-contract" | "evidence-receipt" | "evidence-photo" | "evidence-sensor"; capture: boolean }
+> = {
+  contract: { label: "계약서", icon: "evidence-contract", capture: false },
+  receipt: { label: "영수증", icon: "evidence-receipt", capture: true },
+  photo: { label: "현장 사진", icon: "evidence-photo", capture: true },
+  iot: { label: "센서 데이터", icon: "evidence-sensor", capture: false },
 };
 
 /**

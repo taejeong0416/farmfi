@@ -23,6 +23,7 @@ import { uploadImage, submitEvidence, type UploadedFile } from "@/lib/upload";
 import { describeApiError } from "@/lib/api";
 import { C, FS, FW, R, SP } from "@/farmfi/theme";
 import { AppIcon } from "@/farmfi/icons";
+import { PIXEL_ICON } from "@/farmfi/assets";
 import {
   Card,
   DetailShell,
@@ -182,7 +183,11 @@ export default function EvidenceSubmitScreen() {
             const meta = SIGNAL_META[sig];
             return (
               <View key={sig} style={st.signalCard}>
-                <AppIcon name={(meta?.icon ?? "file") as never} size={18} color={C.body} />
+                {meta ? (
+                  <Image source={PIXEL_ICON[meta.icon]} style={st.signalIcon} resizeMode="contain" />
+                ) : (
+                  <AppIcon name="file" size={26} color={C.body} />
+                )}
                 <Text style={st.signalLabel}>{meta?.label ?? sig}</Text>
                 <Text style={st.signalHint}>
                   {meta?.capture ? "촬영" : sig === "iot" ? "자동 수집" : "웹에서 PDF"}
@@ -287,6 +292,7 @@ const st = StyleSheet.create({
     flexGrow: 1, minWidth: 92, alignItems: "center", gap: 5,
     backgroundColor: C.surface, borderRadius: R.md, paddingVertical: SP.md,
   },
+  signalIcon: { width: 30, height: 30 },
   signalLabel: { fontSize: FS.sm, fontWeight: FW.semibold, color: C.ink },
   signalHint: { fontSize: FS.xs, color: C.muted },
 
