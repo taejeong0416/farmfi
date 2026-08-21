@@ -6,7 +6,7 @@
 //
 // 잠금 규칙은 서버 집행 게이트(canRelease)와 같은 판정을 쓴다. 화면에서 열어 놓고
 // 서버가 거절하면 운영자는 이유를 모른 채 막힌다.
-import { StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 
 import { useFarmProjects } from "@/farmfi/branch";
 import { useApiResource } from "@/farmfi/useApiResource";
@@ -21,7 +21,7 @@ import {
   type StageState,
 } from "@/farmfi/api";
 import { C, FS, FW, R, SP } from "@/farmfi/theme";
-import { AppIcon } from "@/farmfi/icons";
+import { PIXEL_ICON } from "@/farmfi/assets";
 import {
   AppShell,
   Card,
@@ -135,14 +135,15 @@ function StageCard({
     <View>
       <Card style={[s.stage, locked && s.stageLocked, done && s.stageDone]}>
         <View style={s.stageHead}>
-          <View style={[s.seqBadge, done && s.seqBadgeDone, locked && s.seqBadgeLocked]}>
-            {done ? (
-              <AppIcon name="check" size={14} color={C.paper} />
-            ) : locked ? (
-              <AppIcon name="lock" size={13} color={C.muted} />
-            ) : (
-              <Text style={s.seqText}>{m.seq}</Text>
-            )}
+          {/* 상태를 픽셀 아이콘으로 — 잠김·진행중·완료가 색과 형태 둘 다로 갈린다.
+              단계 번호는 아이콘 옆에 작게 둔다(아이콘만으로는 몇 단계인지 모른다). */}
+          <View style={s.stageMark}>
+            <Image
+              source={PIXEL_ICON[done ? "stage-done" : locked ? "stage-locked" : "stage-active"]}
+              style={s.stageIcon}
+              resizeMode="contain"
+            />
+            <Text style={[s.seqText, locked && s.mutedText]}>{m.seq}단계</Text>
           </View>
           <View style={s.stageTitleCol}>
             <Text style={[s.stageName, locked && s.mutedText]} numberOfLines={1}>
@@ -245,13 +246,9 @@ const s = StyleSheet.create({
   stageLocked: { opacity: 0.55 },
   stageDone: { borderColor: C.brandSoft },
   stageHead: { flexDirection: "row", alignItems: "flex-start", gap: SP.md },
-  seqBadge: {
-    width: 28, height: 28, borderRadius: 14,
-    backgroundColor: C.brandSoft, alignItems: "center", justifyContent: "center",
-  },
-  seqBadgeDone: { backgroundColor: C.brand },
-  seqBadgeLocked: { backgroundColor: C.surface },
-  seqText: { fontSize: FS.cap, fontWeight: FW.bold, color: C.brand },
+  stageMark: { width: 40, alignItems: "center", gap: 2 },
+  stageIcon: { width: 34, height: 34 },
+  seqText: { fontSize: FS.xs, fontWeight: FW.semibold, color: C.body },
   stageTitleCol: { flex: 1, gap: 3 },
   stageName: { fontSize: FS.md, fontWeight: FW.semibold, color: C.ink },
   stageCondition: { fontSize: FS.sm, color: C.muted, lineHeight: 17 },
@@ -292,7 +289,7 @@ const s = StyleSheet.create({
   doneNote: { fontSize: FS.sm, color: C.muted },
 
   connector: {
-    width: 2, height: 18, marginLeft: SP.lg + 13,
+    width: 2, height: 18, marginLeft: SP.lg + 19,
     backgroundColor: C.line, marginVertical: 2,
   },
   connectorDone: { backgroundColor: C.brand },

@@ -37,6 +37,10 @@ export const PIXEL_ICON = {
   "ui-alert": require("../../assets/farmfi/icons/ui-alert.png"),
   "ui-box": require("../../assets/farmfi/icons/ui-box.png"),
   "ui-calendar": require("../../assets/farmfi/icons/ui-calendar.png"),
+  // 마일스톤 스테이지 상태 (M-13). 벡터 자물쇠·체크는 픽셀 에셋들과 겉돌아 교체.
+  "stage-locked": require("../../assets/farmfi/icons/stage-locked.png"),
+  "stage-active": require("../../assets/farmfi/icons/stage-active.png"),
+  "stage-done": require("../../assets/farmfi/icons/stage-done.png"),
 } as const;
 
 export type PixelIconName = keyof typeof PIXEL_ICON;
