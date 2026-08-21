@@ -372,3 +372,66 @@ export function canSubmitEvidence(status: string): boolean {
     status === "manual_review"
   );
 }
+
+// ── 설정점 봉투 (Phase W2) ───────────────────────────────────────────────────
+// 학습된 레시피가 낸 목표값을 그대로 설비에 넘기지 않는다. 규칙이 먼저 판단하고
+// 학습은 규칙이 허용한 범위를 넓히지 못한다. 화면은 "모델이 뭐라 했고 우리가 뭘
+// 했나"를 나란히 보여준다 — 그 대조가 사라지면 모델을 고칠 근거도 사라진다.
+
+export type EnvelopeVerdict =
+  | "APPLIED"
+  | "CLAMPED_AGRONOMIC"
+  | "CLAMPED_EQUIPMENT"
+  | "CLAMPED_RATE"
+  | "REJECTED_SURFACE"
+  | "REJECTED_BOUNDARY"
+  | "REJECTED_INVALID";
+
+export type EnvelopeDecision = {
+  feature: string;
+  label: string;
+  unit: string;
+  proposed: number | null;
+  applied: number;
+  baseline: number | null;
+  verdict: EnvelopeVerdict;
+  reason: string;
+  bounds: [number, number];
+};
+
+export type SetpointsResponse = {
+  envelope: {
+    cropKey: string;
+    decisions: EnvelopeDecision[];
+    anyApplied: boolean;
+    adjusted: number;
+    note: string;
+  };
+  surface: string;
+  samples: number;
+  modelR2: number | null;
+  observationSource: string;
+  history: {
+    id: string;
+    cropKey: string;
+    adjusted: number;
+    surface: string;
+    samples: number;
+    note: string | null;
+    appliedAt: string;
+  }[];
+};
+
+/** 판정별 표시 — 조정·거부만 색으로 튀게 하고 통과는 조용히 둔다. */
+export const VERDICT_META: Record<
+  EnvelopeVerdict,
+  { label: string; tone: "pass" | "adjust" | "reject" }
+> = {
+  APPLIED: { label: "적용", tone: "pass" },
+  CLAMPED_AGRONOMIC: { label: "범위로 조정", tone: "adjust" },
+  CLAMPED_EQUIPMENT: { label: "설비 한계", tone: "adjust" },
+  CLAMPED_RATE: { label: "변화폭 제한", tone: "adjust" },
+  REJECTED_SURFACE: { label: "채택 안 함", tone: "reject" },
+  REJECTED_BOUNDARY: { label: "채택 안 함", tone: "reject" },
+  REJECTED_INVALID: { label: "산출 없음", tone: "reject" },
+};

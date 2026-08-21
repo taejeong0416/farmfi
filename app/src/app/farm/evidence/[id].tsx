@@ -137,9 +137,7 @@ export default function EvidenceSubmitScreen() {
     return (
       <DetailShell title="증빙 제출" subtitle={m.project.name}>
         <Card style={st.doneCard}>
-          <View style={st.doneMark}>
-            <AppIcon name="check" size={26} color={C.paper} />
-          </View>
+          <Image source={PIXEL_ICON["stage-cleared"]} style={st.doneArt} resizeMode="contain" />
           <Text style={st.doneTitle}>{m.seq}단계 증빙을 제출했어요</Text>
           <Text style={st.doneBody}>
             검증과 관리자 승인을 거치면 {formatWon(m.releaseAmount)}원이 집행됩니다.
@@ -320,10 +318,7 @@ const st = StyleSheet.create({
   submitNote: { fontSize: FS.xs, color: C.muted, lineHeight: 16, textAlign: "center" },
 
   doneCard: { padding: SP.xl, alignItems: "center", gap: SP.md },
-  doneMark: {
-    width: 52, height: 52, borderRadius: 26, backgroundColor: C.brand,
-    alignItems: "center", justifyContent: "center",
-  },
+  doneArt: { width: 120, height: 120 },
   doneTitle: { fontSize: FS.xl, fontWeight: FW.bold, color: C.ink, textAlign: "center" },
   doneBody: { fontSize: FS.sm, color: C.body, lineHeight: 19, textAlign: "center" },
 });

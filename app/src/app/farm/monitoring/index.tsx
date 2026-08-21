@@ -118,6 +118,14 @@ export default function MonitoringScreen() {
             tone="brand"
             onPress={() => go.push("/farm/monitoring/thresholds")}
           />
+          {/* 임계값은 "벗어나면 알린다"이고, 설정점은 "이 값으로 운전한다"다.
+              둘이 다른 층이라 나란히 둔다. */}
+          <GhostButton
+            label="생육 설정점"
+            icon="leaf"
+            tone="brand"
+            onPress={() => go.push("/farm/setpoints")}
+          />
         </View>
       )}
     </AppShell>

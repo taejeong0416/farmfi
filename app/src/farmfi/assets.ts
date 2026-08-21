@@ -46,6 +46,8 @@ export const PIXEL_ICON = {
   "evidence-receipt": require("../../assets/farmfi/icons/evidence-receipt.png"),
   "evidence-photo": require("../../assets/farmfi/icons/evidence-photo.png"),
   "evidence-sensor": require("../../assets/farmfi/icons/evidence-sensor.png"),
+  // 단계 통과 축하 (M-13 완료 화면). 512px — 아이콘이 아니라 삽화 크기다.
+  "stage-cleared": require("../../assets/farmfi/icons/stage-cleared.png"),
 } as const;
 
 export type PixelIconName = keyof typeof PIXEL_ICON;
