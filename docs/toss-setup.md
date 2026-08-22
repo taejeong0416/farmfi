@@ -38,8 +38,10 @@ Vercel 배포에도 같은 값을 넣는다: **Project Settings → Environment 
 개발자센터 → **웹훅** → 이벤트 `DEPOSIT_CALLBACK` 등록.
 
 ```
-https://<배포 도메인>/api/webhooks/toss/deposits
+https://farmfi.co.kr/api/webhooks/toss/deposits
 ```
+
+이 주소는 이미 살아 있다(배포 완료). 등록만 하면 된다.
 
 로컬에서 시험하려면 ngrok 같은 터널이 필요하다. 토스가 localhost로는 못 쏜다.
 
@@ -82,3 +84,18 @@ https://<배포 도메인>/api/webhooks/toss/deposits
 
 `MOCK_BANK_SCENARIO`로 실패 분기를 재현할 수 있다 —
 `issue_failed`(발급 실패) · `mismatch`(금액 불일치) · `delayed`(확인 지연).
+
+---
+
+## 시연에서 입금을 보여주는 방법
+
+테스트 키(`test_sk_`)는 실제 돈을 옮기지 않지만, **개발자센터에서 입금을 흉내낼 수 있다.**
+
+1. 앱/웹에서 투자 신청 → 가상계좌가 발급된다
+2. 개발자센터 → **테스트 결제 내역**에서 그 건을 찾아 **입금 처리**
+3. 토스가 `DEPOSIT_CALLBACK`을 우리 서버로 쏜다
+4. 화면이 "입금 확인 완료"로 자동 전환되고, 관리자 콘솔 발행 현황에 보유 구좌 발행 건이 뜬다
+
+화면 두 개(개발자센터 · 우리 앱)를 나란히 띄워 두고 버튼을 누르면 반응이 보인다.
+
+**라이브 키로 실제 입금을 받지 마라.** 명세 17.1-5가 법률 검토 전 실제 모집을 금지하고, 받으면 환불 책임이 생긴다.
