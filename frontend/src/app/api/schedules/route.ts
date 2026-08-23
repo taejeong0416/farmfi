@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
+import { operatorGate } from "@/lib/operator-scope";
 import { prisma } from "@/lib/db";
 
 // 명세 3.2 재배 일정.
@@ -16,7 +17,9 @@ function statusOf(plantedAt: Date | null, harvestAt: Date | null, now: Date): "p
 
 // GET /api/schedules?projectId=
 export async function GET(req: NextRequest) {
-  const projectId = req.nextUrl.searchParams.get("projectId");
+  const gate = await operatorGate(req);
+  if (gate instanceof Response) return gate;
+  const projectId = gate.projectId;
   if (!projectId) {
     return NextResponse.json({ error: "projectId is required" }, { status: 400 });
   }

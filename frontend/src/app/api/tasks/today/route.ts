@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { operatorGate } from "@/lib/operator-scope";
 
 // 매장 진열 재고가 이 값 미만이면 '보충' 대상.
 const RESTOCK_THRESHOLD = 5;
@@ -8,7 +9,10 @@ const RESTOCK_THRESHOLD = 5;
 // 재고-생육 연동 "오늘 할 일": 재고 상태 + 작물 성숙 시점을 결합해
 // 방문 시 수확/보충 대상을 산출한다. (지시·검증·근태 아님 — §10-5)
 export async function GET(req: NextRequest) {
-  const projectId = req.nextUrl.searchParams.get("projectId");
+  const gate = await operatorGate(req);
+  if (gate instanceof Response) return gate;
+
+  const projectId = gate.projectId;
   if (!projectId) {
     return NextResponse.json({ error: "projectId is required" }, { status: 400 });
   }

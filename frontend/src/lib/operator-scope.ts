@@ -53,3 +53,56 @@ export async function guardProject(
     { status: 403, headers: { "content-type": "application/json" } },
   );
 }
+
+/**
+ * 운영 데이터 라우트의 공통 관문.
+ *
+ * 역할 검사와 매장 소유 검사를 한 번에 한다. 라우트마다 두 줄씩 다시 쓰면
+ * 한 군데는 빠지고, 실제로 빠져 있었다 — `sales/trend`·`monitoring/[projectId]`·
+ * `tasks/today`·`notifications`가 인증조차 없이 프로덕션에 열려 있었다.
+ * projectId만 알면 남의 매장 센서 데이터가 그대로 나왔다.
+ *
+ * 성공하면 `{ session, scope }`. `scope`는 조회에 끼울 프로젝트 id 목록이고
+ * admin이면 null(전체)이다. 실패하면 Response를 돌려주므로 그대로 return한다.
+ *
+ * @example
+ *   const gate = await operatorGate(request);
+ *   if (gate instanceof Response) return gate;
+ *   const { scope } = gate;
+ */
+export async function operatorGate(
+  request: Request,
+  opts?: { projectIdFrom?: "query" | "none"; paramName?: string },
+): Promise<{ session: SessionPayload; scope: string[] | null; projectId: string | null } | Response> {
+  const { requireRole } = await import("@/lib/auth");
+
+  let session: SessionPayload;
+  try {
+    session = await requireRole("operator");
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
+
+  if (opts?.projectIdFrom === "none") {
+    return { session, scope: await allowedProjectIds(session), projectId: null };
+  }
+
+  const url = new URL(request.url);
+  const projectId = url.searchParams.get(opts?.paramName ?? "projectId");
+
+  if (projectId) {
+    const denied = await guardProject(session, projectId);
+    if (denied) return denied;
+    return { session, scope: [projectId], projectId };
+  }
+
+  // projectId를 안 주면 "내 매장 전부"로 좁힌다. 열어 두면 전 지점이 나온다.
+  return { session, scope: await allowedProjectIds(session), projectId: null };
+}
+
+/** `scope`를 prisma where 절에 끼우는 형태로. admin(null)이면 빈 객체 — 제한 없음. */
+export function scopeFilter(scope: string[] | null, field = "projectId"): Record<string, unknown> {
+  if (scope === null) return {};
+  return { [field]: { in: scope } };
+}

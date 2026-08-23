@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
+import { guardProject } from "@/lib/operator-scope";
 import { prisma } from "@/lib/db";
 
 // 명세 5.2 재고 품목 등록.
@@ -48,6 +49,10 @@ export async function POST(req: NextRequest) {
   if (!Number.isInteger(growDays) || growDays <= 0) {
     return NextResponse.json({ error: "재배일수는 1 이상 정수여야 합니다." }, { status: 400 });
   }
+
+  // 남의 매장에 품목을 밀어 넣는 경로를 막는다.
+  const denied = await guardProject(session, projectId);
+  if (denied) return denied;
 
   const project = await prisma.project.findUnique({ where: { id: projectId }, select: { id: true } });
   if (!project) return NextResponse.json({ error: "지점을 찾을 수 없습니다." }, { status: 404 });

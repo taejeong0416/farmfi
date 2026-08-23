@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
+import { operatorGate } from "@/lib/operator-scope";
 import { prisma } from "@/lib/db";
 
 // 명세 4.2 설비 제어.
@@ -14,7 +15,9 @@ import { prisma } from "@/lib/db";
 
 // GET /api/devices?projectId=&bed=
 export async function GET(req: NextRequest) {
-  const projectId = req.nextUrl.searchParams.get("projectId");
+  const gate = await operatorGate(req);
+  if (gate instanceof Response) return gate;
+  const projectId = gate.projectId;
   const bed = req.nextUrl.searchParams.get("bed");
   if (!projectId) {
     return NextResponse.json({ error: "projectId is required" }, { status: 400 });

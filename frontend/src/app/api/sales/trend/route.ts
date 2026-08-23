@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { resolveDataWindow } from "@/lib/data-window";
+import { operatorGate } from "@/lib/operator-scope";
 
 // GET /api/sales/trend?projectId=&days=14
 // 품목별 판매 추이 → 다음 재배 사이클의 품목·수량 조정 근거.
 export async function GET(req: NextRequest) {
-  const projectId = req.nextUrl.searchParams.get("projectId");
+  // 인증·매장 소유를 함께 본다. 전에는 둘 다 없어 projectId만 알면 열렸다.
+  const gate = await operatorGate(req);
+  if (gate instanceof Response) return gate;
+
+  const projectId = gate.projectId;
   if (!projectId) {
     return NextResponse.json({ error: "projectId is required" }, { status: 400 });
   }

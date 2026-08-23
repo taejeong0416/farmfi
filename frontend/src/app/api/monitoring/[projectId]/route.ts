@@ -4,6 +4,8 @@ import { analyzeGrowthMonitoring } from "@/lib/growth-monitoring";
 import { cropKeyFor } from "@/lib/crop-profiles";
 import { resolveDataWindow } from "@/lib/data-window";
 import type { IoTReading } from "@/lib/iot-health";
+import { requireRole } from "@/lib/auth";
+import { guardProject } from "@/lib/operator-scope";
 
 // GET /api/monitoring/[projectId]?days=7
 // 실시간 생육 모니터링 — 시계열 판독 + 이상탐지(Z-score/CUSUM/고장게이트/최적대) +
@@ -12,8 +14,21 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ projectId: string }> }
 ) {
+  // 센서 시계열 전체가 나가는 라우트다. 전에는 인증이 없어 projectId만 알면
+  // 남의 매장 데이터가 그대로 열렸다.
+  let session;
+  try {
+    session = await requireRole("operator");
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
+
   try {
     const { projectId } = await params;
+    const denied = await guardProject(session, projectId);
+    if (denied) return denied;
+
     const daysParam = Number(
       request.nextUrl.searchParams.get("days") ?? "7"
     );

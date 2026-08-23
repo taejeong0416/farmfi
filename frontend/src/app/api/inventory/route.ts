@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { serializeBigInt } from "@/lib/serialize";
 import { requireRole } from "@/lib/auth";
+import { allowedProjectIds, guardProject, scopeFilter } from "@/lib/operator-scope";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -24,8 +25,9 @@ function computeMaturity(
 // (모바일 매장 목록이 지점마다 요청을 반복하지 않도록).
 // 재고·수확 실적은 운영 데이터이므로 operator(또는 admin) 세션에서만 조회 가능.
 export async function GET(request: NextRequest) {
+  let session;
   try {
-    await requireRole("operator");
+    session = await requireRole("operator");
   } catch (err) {
     if (err instanceof Response) return err;
     throw err;
@@ -42,9 +44,15 @@ export async function GET(request: NextRequest) {
       if (!exists) {
         return NextResponse.json({ error: "Project not found" }, { status: 404 });
       }
+      const denied = await guardProject(session, projectId);
+      if (denied) return denied;
     }
 
-    const projectFilter = projectId ? { projectId } : {};
+    // projectId를 안 주면 "내 매장 전부"다. 전에는 전 지점이 나갔다 —
+    // 앱 매장 목록이 남의 매장까지 받아 볼 수 있었다.
+    const projectFilter = projectId
+      ? { projectId }
+      : scopeFilter(await allowedProjectIds(session));
 
     const inventories = await prisma.inventory.findMany({
       where: projectFilter,

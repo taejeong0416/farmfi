@@ -1,14 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { operatorGate, scopeFilter } from "@/lib/operator-scope";
 
 // GET /api/notifications?projectId=&unreadOnly=1 — 생육 이상 알림 조회
 export async function GET(req: NextRequest) {
-  const projectId = req.nextUrl.searchParams.get("projectId");
+  const gate = await operatorGate(req);
+  if (gate instanceof Response) return gate;
   const unreadOnly = req.nextUrl.searchParams.get("unreadOnly") === "1";
 
   const notifications = await prisma.notification.findMany({
     where: {
-      ...(projectId ? { projectId } : {}),
+      // projectId를 안 줘도 내 매장으로 좁힌다. 열어 두면 전 지점 알림이 나온다.
+      ...scopeFilter(gate.scope),
       ...(unreadOnly ? { isRead: false } : {}),
     },
     orderBy: { createdAt: "desc" },

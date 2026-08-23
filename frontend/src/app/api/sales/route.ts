@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
+import { guardProject } from "@/lib/operator-scope";
 import { resolveDataWindow } from "@/lib/data-window";
 
 // GET /api/sales?projectId=&days=30&recent=10
@@ -8,8 +9,9 @@ import { resolveDataWindow } from "@/lib/data-window";
 // 품목별 순위는 /api/sales/trend가 담당한다 (중복 집계 없음).
 // 매출은 운영 데이터이므로 operator(또는 admin) 세션에서만 조회 가능.
 export async function GET(req: NextRequest) {
+  let session;
   try {
-    await requireRole("operator");
+    session = await requireRole("operator");
   } catch (err) {
     if (err instanceof Response) return err;
     throw err;
@@ -20,6 +22,9 @@ export async function GET(req: NextRequest) {
     if (!projectId) {
       return NextResponse.json({ error: "projectId is required" }, { status: 400 });
     }
+    // 역할만 보면 아무 운영자나 남의 매장 매출을 연다.
+    const denied = await guardProject(session, projectId);
+    if (denied) return denied;
 
     const daysRaw = Number(req.nextUrl.searchParams.get("days") ?? 30);
     // 1~365일로 클램프 — 무제한 스캔 방지.
