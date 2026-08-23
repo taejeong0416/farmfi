@@ -27,7 +27,7 @@ const FILTERS = [
 ] as const;
 
 export function NotificationsScreen() {
-  const { data, isLoading } = useNotifications();
+  const { data, isLoading, isError, error } = useNotifications();
   const [filter, setFilter] = useState<string>("all");
 
   const rows = useMemo(() => {
@@ -83,7 +83,15 @@ export function NotificationsScreen() {
         ))}
       </div>
 
-      {rows.length === 0 ? (
+      {isError ? (
+        // 불러오지 못한 것을 "새 소식 없음"으로 그리면 알림이 끊긴 걸 아무도 모른다.
+        <div className="mt-6 max-w-panel">
+          <EmptyState
+            title="알림을 불러오지 못했습니다"
+            desc={error instanceof Error ? error.message : "잠시 후 다시 열어 주세요."}
+          />
+        </div>
+      ) : rows.length === 0 ? (
         <div className="mt-6 max-w-panel">
           <EmptyState title="새 소식이 없습니다" desc="투자 진행 상황이 바뀌면 여기에 쌓입니다." />
         </div>
