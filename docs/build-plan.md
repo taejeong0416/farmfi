@@ -375,6 +375,72 @@ Phase A~K는 화면과 그 화면이 도는 데 필요한 최소 API를 만들�
 
 ---
 
+## Phase X · 도면 대조로 드러난 차이
+
+`.fig`의 고정 문구가 실제 렌더에 나오는지 기계로 센다. 빠진 문구가 도면과 코드의 차이다.
+
+```
+python tools/figma/labels.py      # 덤프 → 화면별 고정 문구
+node tools/figma/audit.mjs        # 렌더와 대조 (npm run dev + npm run seed 먼저)
+```
+
+**읽는 법**: 숫자는 `빠진 문구 / 도면 문구`다. 데이터가 없어 빈 상태로 그려지는 화면은
+빠진 것처럼 세어지므로, 손대기 전에 그 화면에 보일 데이터가 있는지부터 본다.
+`audit.json`에 화면별로 어떤 문구가 빠졌는지 그대로 적힌다.
+
+기준 시점 합계 **509 / 1419**.
+
+- [ ] **O-10** 40/46 · 큼 — `/operator/milestones`
+- [ ] **O-02** 27/31 · 큼 — `/operator/spaces/[3호점]`
+- [ ] **O-03** 26/50 · 큼 — `/operator/apply`
+- [ ] **O-11E** 21/31 · 큼 — `/operator/milestones/[마일스톤]/appeal`
+- [ ] **O-07** 20/24 · 큼 — `/operator/apply/contract`
+- [ ] **O-11** 20/43 · 큼 — `/operator/milestones/[마일스톤]/evidence`
+- [ ] **A-11** 20/42 · 큼 — `/admin/settlements`
+- [ ] **B-05** 19/39 · 큼 — `/subscribe/payment`
+- [ ] **A-13** 19/43 · 큼 — `/admin/roles`
+- [ ] **A-09** 17/37 · 큼 — `/admin/expert-review`
+- [ ] **A-10** 17/40 · 큼 — `/admin/settlement-rules`
+- [ ] **A-16** 15/41 · 큼 — `/admin/ledger`
+- [ ] **A-07** 14/40 · 보통 — `/admin/projects/[1호점]/milestones`
+- [ ] **A-01** 13/34 · 보통 — `/admin`
+- [ ] **A-06** 12/38 · 보통 — `/admin/projects`
+- [ ] **A-08** 12/31 · 보통 — `/admin/evidence`
+- [ ] **A-12** 12/45 · 보통 — `/admin/audit-logs`
+- [ ] **O-13** 11/26 · 보통 — `/operator/settlements`
+- [ ] **A-02** 11/32 · 보통 — `/admin/operators`
+- [ ] **A-14** 11/40 · 보통 — `/admin/notifications`
+- [ ] **A-15** 11/38 · 보통 — `/admin/aml`
+- [ ] **A-03** 10/29 · 보통 — `/admin/certificates`
+- [ ] **B-04** 9/24 · 보통 — `/subscribe/order`
+- [ ] **O-05** 9/15 · 보통 — `/operator/apply/education`
+- [ ] **O-08** 9/28 · 보통 — `/operator/certificate`
+- [ ] **O-06** 8/21 · 보통 — `/operator/apply/confirm`
+- [ ] **O-09** 8/30 · 보통 — `/operator`
+- [ ] **O-12** 8/12 · 보통 — `/operator/milestones/[마일스톤]/done`
+- [ ] **C-01** 7/33 · 보통 — `/`
+- [ ] **B-01** 7/13 · 보통 — `/subscribe`
+- [ ] **A-04** 7/28 · 보통 — `/admin/spaces`
+- [ ] **I-05** 6/20 · 작음 — `/investor/applications`
+- [ ] **I-09** 6/16 · 작음 — `/investor/notifications`
+- [ ] **B-08** 6/19 · 작음 — `/subscriptions/change`
+- [ ] **O-04** 6/15 · 작음 — `/operator/apply/visit`
+- [ ] **O-01** 5/21 · 작음 — `/operator/spaces`
+- [ ] **B-02** 4/7 · 작음 — `/subscribe/plan`
+- [ ] **B-07** 4/17 · 작음 — `/subscriptions`
+- [ ] **I-06** 3/20 · 작음 — `/investor`
+- [ ] **I-07** 3/31 · 작음 — `/investor/holdings`
+- [ ] **B-09** 3/11 · 작음 — `/subscriptions/pickup/[회차]`
+- [ ] **C-02** 2/10 · 작음 — `/login`
+- [ ] **C-03** 2/13 · 작음 — `/signup`
+- [ ] **C-I03** 2/7 · 작음 — `/verify/account`
+- [ ] **I-01** 2/51 · 작음 — `/projects/[3호점]`
+- [ ] **I-02** 2/60 · 작음 — `/projects/[3호점]/invest/eligibility`
+- [ ] **B-06** 2/11 · 작음 — `/subscribe/done`
+- [ ] **C-I05** 1/8 · 작음 — `/verify/done`
+
+---
+
 ## 검증
 
 - 타입: `cd frontend && npx tsc --noEmit`
