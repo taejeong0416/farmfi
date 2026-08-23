@@ -120,7 +120,7 @@ export function MyPageScreen() {
           <p className="text-14 font-bold text-ink">
             투자하려면 본인확인이 필요해요
           </p>
-          <p className="mt-2 text-12 text-muted">
+          <p className="mt-2 text-15 font-semibold text-muted">
             모바일 신분증으로 확인하면 투자 한도가 함께 계산됩니다.
           </p>
           <div className="mt-5">

@@ -1,0 +1,68 @@
+FRAME "B-02 · 구매자 / 팩 크기·수령 주기"  @1605,4914 1440x900  fill=#FFFFFF  r=10
+  FRAME "TopNav"  @1605,4914 1440x64  stroke=#E5E5E3/1
+    FRAME "NavLeft"  @1659,4936 244x20
+      INSTANCE "App/Logo"  @1659,4939 61x14
+      FRAME "NavLinks"  @1776,4936 127x20
+        TEXT "정기구독"  @1776,4936 52x20  text='정기구독'  Inter Medium 13px  #14542E
+        TEXT "내 구독"  @1860,4936 43x20  text='내 구독'  Inter Regular 14px  #4A4A4A
+    FRAME "Frame 12"  @2933,4937 58x18
+      FRAME "아이콘"  @2933,4938 16x16
+        VECTOR "Vector"  @2939,4941 5x5  stroke=#8A8A8A/1
+        VECTOR "Vector"  @2936,4947 9x4  stroke=#8A8A8A/1
+      TEXT "김투자"  @2957,4937 34x18  text='이소비'  Inter Regular 12px  #4A4A4A
+  FRAME "BodyContainer"  @1605,4978 1440x668
+    FRAME "HeaderText"  @1659,5008 1332x62
+      TEXT "전포 1호에서 받을 팩 크기를 골라주세요"  @1659,5008 1332x29  text='전포 1호에서 받을 팩 크기를 골라주세요'  Inter Bold 34px  #1A1A1A
+      TEXT "선택한 지점의 생산량과 남은 구독 슬롯을 기준으로 신청할 수 있어요."  @1659,5049 1332x21  text='선택한 지점의 생산량과 남은 구독 슬롯을 기준으로 신청할 수 있어요.'  Inter Regular 14px  #8A8A8A
+    FRAME "Frame 90"  @1659,5094 93x29  fill=#F1F4F2  stroke=#E5E5E3/1  r=4
+      TEXT "로컬 픽업 전용"  @1672,5101 67x15  text='로컬 픽업 전용'  Inter Medium 12px  #14542E
+    FRAME "LocationInfo"  @1659,5147 1332x47
+      TEXT "선택 지점 부산 전포동 미니팜 1호"  @1659,5147 1332x23  text='선택 지점  부산 전포동 미니팜 1호'  Inter Bold 15px  #1A1A1A
+      TEXT "도보 8분 · 화/금 17:00–20:00"  @1659,5176 1332x18  text='도보 8분 · 화/금 17:00–20:00'  Inter Regular 13px  #8A8A8A
+    FRAME "CardsRow"  @1659,5218 1332x346
+      FRAME "Frame 103"  @1659,5218 431x346  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+        FRAME "Frame 94"  @1676,5235 110x54
+          TEXT "3종 믹스팩"  @1676,5235 110x29  text='3종 믹스팩'  Inter Bold 22px  #1A1A1A
+          TEXT "작물 3종 · 드레싱 2봉"  @1676,5271 110x18  text='작물 3종 · 드레싱 2봉'  Inter Regular 13px  #8A8A8A
+        TEXT "월 19,000원부터"  @1676,5313 177x29  text='월 19,000원부터'  Inter Medium 24px  #14542E
+        FRAME "Frame 97"  @1676,5366 214x52
+          TEXT "선택 작물 3종 + 선택 드레싱 2봉"  @1676,5366 214x20  text='선택 작물 3종 + 선택 드레싱 2봉'  Inter Medium 14px  #1A1A1A
+          TEXT "다음 단계에서 전포 1호의 작물·드레싱 선택"  @1676,5400 214x18  text='다음 단계에서 전포 1호의 작물·드레싱 선택'  Inter Regular 12px  #8A8A8A
+        FRAME "Frame 102"  @1676,5442 397x35
+          FRAME "ProgWrap"  @1676,5442 397x6
+            FRAME "Frame"  @1676,5442 397x6  fill=#EDEDEB  stroke=#EDEDEB/1  r=25
+            FRAME "Frame"  @1676,5442 238x6  fill=#14542E  stroke=#14542E/1  r=25
+          TEXT "남은 12 / 30슬롯"  @1676,5462 397x15  text='남은 12 / 30슬롯'  Inter Medium 12px  #14542E
+        FRAME "Frame 91"  @1676,5501 397x46  fill=#14542E  stroke=#14542E/1  r=6
+          TEXT "3종 구성하기"  @1835,5514 78x20  text='3종 구성하기'  Inter Medium 14px  #FFFFFF
+      FRAME "Frame 104"  @2110,5218 431x346  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+        FRAME "Frame 95"  @2127,5235 110x54
+          TEXT "5종 믹스팩"  @2127,5235 110x29  text='5종 믹스팩'  Inter Bold 22px  #1A1A1A
+          TEXT "작물 5종 · 드레싱 2봉"  @2127,5271 110x18  text='작물 5종 · 드레싱 2봉'  Inter Regular 13px  #8A8A8A
+        TEXT "월 29,000원부터"  @2127,5313 181x29  text='월 29,000원부터'  Inter Medium 24px  #14542E
+        FRAME "Frame 98"  @2127,5366 214x52
+          TEXT "선택 작물 5종 + 선택 드레싱 2봉"  @2127,5366 214x20  text='선택 작물 5종 + 선택 드레싱 2봉'  Inter Medium 14px  #1A1A1A
+          TEXT "다음 단계에서 전포 1호의 작물·드레싱 선택"  @2127,5400 214x18  text='다음 단계에서 전포 1호의 작물·드레싱 선택'  Inter Regular 12px  #8A8A8A
+        FRAME "Frame 101"  @2127,5442 397x35
+          FRAME "ProgWrap"  @2127,5442 397x6
+            FRAME "Frame"  @2127,5442 397x6  fill=#EDEDEB  stroke=#EDEDEB/1  r=25
+            FRAME "Frame"  @2127,5442 329x6  fill=#14542E  stroke=#14542E/1  r=25
+          TEXT "남은 4 / 24슬롯"  @2127,5462 397x15  text='남은 4 / 24슬롯'  Inter Medium 12px  #14542E
+        FRAME "Frame 92"  @2127,5501 397x46  fill=#14542E  stroke=#14542E/1  r=6
+          TEXT "5종 구성하기"  @2287,5514 77x20  text='5종 구성하기'  Inter Medium 14px  #FFFFFF
+      FRAME "Frame 105"  @2560,5218 431x346  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+        FRAME "Frame 96"  @2577,5235 109x54
+          TEXT "7종 믹스팩"  @2577,5235 109x29  text='7종 믹스팩'  Inter Bold 22px  #1A1A1A
+          TEXT "작물 7종 · 드레싱 2봉"  @2577,5271 109x18  text='작물 7종 · 드레싱 2봉'  Inter Regular 13px  #8A8A8A
+        TEXT "월 39,000원부터"  @2577,5313 181x29  text='월 39,000원부터'  Inter Medium 24px  #14542E
+        FRAME "Frame 99"  @2577,5366 190x52
+          TEXT "선택 작물 7종 + 선택 드레싱 2봉"  @2577,5366 190x20  text='선택 작물 7종 + 선택 드레싱 2봉'  Inter Medium 14px  #1A1A1A
+          TEXT "전포 1호 정원 마감 · 대기 신청 가능"  @2577,5400 190x18  text='전포 1호 정원 마감 · 대기 신청 가능'  Inter Regular 12px  #8A8A8A
+        FRAME "Frame 100"  @2577,5442 397x35
+          FRAME "ProgWrap"  @2577,5442 397x6
+            FRAME "Frame"  @2577,5442 397x6  fill=#EDEDEB  stroke=#EDEDEB/1  r=25
+            FRAME "Frame"  @2577,5442 397x6  fill=#8A8A8A  stroke=#8A8A8A/1  r=25
+          TEXT "대기 신청 · 정원 마감"  @2577,5462 397x15  text='대기 신청 · 정원 마감'  Inter Medium 12px  #8A8A8A
+        FRAME "Frame 93"  @2577,5501 397x46  fill=#FFFFFF  stroke=#E5E5E3/1  r=6
+          TEXT "7종 구성하기"  @2737,5514 77x20  text='7종 구성하기'  Inter Medium 14px  #1A1A1A
+    TEXT "슬롯은 팜의 주간 생산량을 넘지 않도록 제한됩니다. 결제 완료 순서로 확정됩니다."  @1659,5588 1332x18  text='슬롯은 팜의 주간 생산량을 넘지 않도록 제한됩니다. 결제 완료 순서로 확정됩니다.'  Inter Regular 12px  #8A8A8A

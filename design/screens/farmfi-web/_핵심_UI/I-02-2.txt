@@ -1,0 +1,37 @@
+FRAME "I-02 · 투자자 / 투자 적합성 확인"  @1959,1397 730x693
+  FRAME "I-02 · 투자자 / 투자 적합성 확인"  @1959,1397 730x693  fill=#FFFFFF  r=10
+    TEXT "투자 전 확인"  @1993,1431 72x20  text='투자 전 확인'  Inter Medium 14px  #14542E
+    TEXT "나에게 맞는 투자인지 먼저 확인해요"  @1993,1469 354x29  text='나에게 맞는 투자인지 먼저 확인해요'  Inter Bold 24px  #1A1A1A
+    TEXT "투자 구조와 위험을 충분히 이해했는지 함께 확인하는 과정입니다."  @1993,1516 380x21  text='투자 구조와 위험을 충분히 이해했는지 함께 확인하는 과정입니다.'  Inter Regular 14px  #4A4A4A
+    FRAME "안내"  @1993,1555 662x52  fill=#F1F4F2  stroke=#F1F4F2/1  r=10
+      TEXT "약 2분이면 끝나요!"  @2009,1571 111x20  text='약 2분이면 끝나요!'  Inter Medium 14px  #1A1A1A
+      TEXT "답변에 따라 투자 한도가 달라지거나 추가 안내가 필요할 수 있어요."  @2288,1572 332x18  text='답변에 따라 투자 한도가 달라지거나 추가 안내가 필요할 수 있어요.'  Inter Regular 12px  #4A4A4A
+    FRAME "Question"  @1993,1625 662x99  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+      FRAME "Frame 85"  @2009,1641 457x67
+        TEXT "1 이 투자금은 예금처럼 원금이 보장되나요?"  @2009,1641 256x20  text='1  이 투자금은 예금처럼 원금이 보장되나요?'  Inter Medium 14px  #1A1A1A
+        TEXT "매출과 운영 상황에 따라 회수 기간과 금액이 달라질 수 있어요."  @2009,1685 457x23  text='매출과 운영 상황에 따라 회수 기간과 금액이 달라질 수 있어요.'  Inter Bold 18px  #14542E
+      FRAME "Group 22"  @2601,1665 19x19
+        ROUNDED_RECTANGLE "면"  @2601,1665 19x19  fill=#14542E  r=4
+        FRAME "아이콘"  @2605,1669 11x11
+          VECTOR "Vector"  @2607,1672 8x6  stroke=#FFFFFF/1
+    FRAME "Question"  @1993,1742 662x99  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+      FRAME "Frame 86"  @2009,1758 350x67
+        TEXT "2 투자한 뒤 필요할 때 바로 돌려받을 수 있나요?"  @2009,1758 282x20  text='2  투자한 뒤 필요할 때 바로 돌려받을 수 있나요?'  Inter Medium 14px  #1A1A1A
+        TEXT "중도 환금이 어렵고, 약정된 회수 구조를 따라요."  @2009,1802 350x23  text='중도 환금이 어렵고, 약정된 회수 구조를 따라요.'  Inter Bold 18px  #14542E
+      FRAME "Group 22"  @2601,1782 19x19
+        ROUNDED_RECTANGLE "면"  @2601,1782 19x19  fill=#14542E  r=4
+        FRAME "아이콘"  @2605,1786 11x11
+          VECTOR "Vector"  @2607,1789 8x6  stroke=#FFFFFF/1
+    FRAME "Question"  @1993,1859 662x99  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+      FRAME "Frame 87"  @2009,1875 449x67
+        TEXT "3 손실 가능성을 감당할 수 있는 금액인가요?"  @2009,1875 262x20  text='3  손실 가능성을 감당할 수 있는 금액인가요?'  Inter Medium 14px  #1A1A1A
+        TEXT "생활에 필요한 자금과 분리된 여유 자금으로만 참여해 주세요."  @2009,1919 449x23  text='생활에 필요한 자금과 분리된 여유 자금으로만 참여해 주세요.'  Inter Bold 18px  #14542E
+      FRAME "Group 22"  @2601,1899 19x19
+        ROUNDED_RECTANGLE "면"  @2601,1899 19x19  stroke=#E5E5E3/1  r=4
+    FRAME "Frame 78"  @1993,1976 662x80
+      FRAME "Button"  @1993,1976 662x44  fill=#8D8D8D  r=6
+        TEXT "확인하고 다음으로"  @2270,1988 107x20  text='확인하고 다음으로'  Inter Medium 14px  #FFFFFF
+      TEXT "투자 위험과 적합성 기준 자세히 보기"  @2232,2038 183x18  text='투자 위험과 적합성 기준 자세히 보기'  Inter Regular 12px  #8A8A8A
+  FRAME "x"  @2631,1431 24x24
+    VECTOR "Vector"  @2637,1437 12x12  stroke=#000000/2
+    VECTOR "Vector"  @2637,1437 12x12  stroke=#000000/2

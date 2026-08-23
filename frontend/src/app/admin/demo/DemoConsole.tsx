@@ -300,7 +300,7 @@ export function DemoConsole() {
                     margin: 0,
                     fontWeight: 800,
                     fontSize: 17,
-                    color: r.ok ? "var(--green-700)" : "#A34A3D",
+                    color: r.ok ? "var(--green-700)" : "#DC2626",
                   }}
                 >
                   {r.headline}
@@ -311,7 +311,7 @@ export function DemoConsole() {
                     {r.signals.map(([name, ok]) => (
                       <li key={name}>
                         <span className="muted">{name}</span>
-                        <strong style={{ color: ok ? "var(--green-700)" : "#A34A3D" }}>
+                        <strong style={{ color: ok ? "var(--green-700)" : "#DC2626" }}>
                           {ok ? "통과 ✓" : "미통과 ✗"}
                         </strong>
                       </li>

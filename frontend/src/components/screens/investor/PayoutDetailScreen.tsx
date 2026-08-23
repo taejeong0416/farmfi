@@ -188,7 +188,7 @@ export function PayoutDetailScreen({ id }: { id: string }) {
         </div>
       </Card>
 
-      <h2 className="mt-8 text-14 font-bold text-ink">월별 회수 내역</h2>
+      <h2 className="mt-8 text-14 font-semibold text-ink">월별 회수 내역</h2>
       <div className="mt-4">
         <DataTable
           columns={columns}

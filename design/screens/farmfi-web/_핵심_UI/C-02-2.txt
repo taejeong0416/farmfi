@@ -1,0 +1,21 @@
+FRAME "C-02 · 공통 / 로그인"  @1614,-1267 465x643  fill=#FFFFFF  r=10
+  ROUNDED_RECTANGLE "Rectangle"  @1614,-1267 465x64  fill=#FFFFFF  stroke=#E5E5E3/1
+  TEXT "로그인"  @1647,-1175 50x23  text='로그인'  Inter Bold 18px  #1A1A1A
+  TEXT "이메일"  @1647,-1097 34x18  text='이메일'  Inter Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @1647,-1072 399x46  stroke=#E5E5E3/1  r=8
+  TEXT "invest@example.com"  @1662,-1058 121x18  text='invest@example.com'  Inter Regular 12px  #1A1A1A
+  TEXT "비밀번호"  @1647,-1014 45x18  text='비밀번호'  Inter Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @1647,-988 399x46  stroke=#E5E5E3/1  r=8
+  TEXT "••••••••••"  @1662,-975 68x18  text='••••••••••'  Inter Regular 12px  #4A4A4A
+  TEXT "로그인 상태 유지"  @1670,-931 85x18  text='로그인 상태 유지'  Inter Regular 12px  #4A4A4A
+  ROUNDED_RECTANGLE "면"  @1647,-928 15x15  stroke=#E5E5E3/1  r=4
+  TEXT "비밀번호 찾기"  @1978,-931 70x18  text='비밀번호 찾기'  Inter Regular 12px  #8A8A8A
+  FRAME "Frame 37"  @1647,-891 399x44  fill=#14542E  r=6
+    TEXT "로그인"  @1827,-879 39x20  text='로그인'  Inter Medium 14px  #FFFFFF
+  ROUNDED_RECTANGLE "선"  @1647,-823 399x1  fill=#EDEDEB
+  FRAME "Group 23"  @1757,-804 179x18
+    TEXT "아직 계정이 없으신가요?"  @1757,-804 124x18  text='아직 계정이 없으신가요?'  Inter Regular 12px  #8A8A8A
+    TEXT "회원가입"  @1891,-804 45x18  text='회원가입'  Inter Regular 12px  #14542E
+  FRAME "Frame"  @1641,-1149 410x34  fill=#FFFFFF  stroke=#FFFFFF/1
+  TEXT "투자, 정기구독 또는 공간 운영을 시작하려면 로그인해주세요."  @1647,-1139 303x18  text='투자, 정기구독 또는 공간 운영을 시작하려면 로그인해주세요.'  Inter Regular 12px  #8A8A8A
+  INSTANCE "App/Logo"  @1639,-1246 61x14

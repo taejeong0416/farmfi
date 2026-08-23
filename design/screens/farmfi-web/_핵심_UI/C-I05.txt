@@ -1,0 +1,24 @@
+FRAME "C-I05 · 투자자 준비 / 완료"  @7919,-1182 465x488  fill=#FFFFFF  r=10
+  FRAME "Frame 69"  @7952,-1148 399x325
+    FRAME "Frame 73"  @7952,-1148 399x221
+      TEXT "투자 준비 완료!"  @7952,-1148 399x29  text='투자 준비 완료!'  Inter Bold 20px  #1A1A1A
+      FRAME "Group 12"  @7952,-1092 394x165
+        ROUNDED_RECTANGLE "선"  @7956,-1080 1x119  fill=#E5E5E3
+        ELLIPSE "점"  @7952,-1085 9x9  fill=#14542E
+        ELLIPSE "점"  @7952,-1025 9x9  fill=#14542E
+        ELLIPSE "점"  @7952,-964 9x9  fill=#14542E
+        TEXT "운영비 반영 후 매출에 따라 회수액이 달라지며, 원금은 보장되지 않습니다."  @7974,-945 372x18  text='운영비 반영 후 매출에 따라 회수액이 달라지며, 원금은 보장되지 않습니다.'  Inter Regular 13px  #8A8A8A
+        TEXT "통과한 단계만 집행됩니다 · updated"  @7974,-1092 227x20  text='투자금이 쓰인 과정을 확인할 수 있어요'  Inter Regular 14px  #1A1A1A
+        TEXT "청약금은 에스크로에 예치되고, 마일스톤을 통… · updated"  @7974,-1066 316x18  text='계약부터 개점까지 진행 상황과 사용 내역을 차례대로 공개해요.'  Inter Regular 12px  #8A8A8A
+        TEXT "네 가지 증빙을 함께 봅니다 · updated"  @7974,-1032 211x20  text='프로젝트 진행 자료를 함께 확인해요'  Inter Regular 14px  #1A1A1A
+        TEXT "계약서 · 영수증 · 현장 사진 · 센서 신… · updated"  @7974,-1006 338x18  text='계약서·설비 설치 사진·검수 결과를 프로젝트 화면에서 볼 수 있어요.'  Inter Regular 12px  #8A8A8A
+        TEXT "분기마다 정산합니다 · updated"  @7974,-971 257x20  text='운영 결과에 따라 회수액이 달라질 수 있어요'  Inter Regular 14px  #1A1A1A
+    FRAME "Group 13"  @8136,-900 30x6
+      ELLIPSE "점"  @8136,-900 6x6  fill=#14542E
+      ELLIPSE "점"  @8148,-900 6x6  fill=#E5E5E3
+      ELLIPSE "점"  @8160,-900 6x6  fill=#E5E5E3
+    FRAME "Frame 43"  @7952,-867 399x44  fill=#14542E  r=6
+      TEXT "시작하기 · updated"  @8098,-855 107x20  text='프로젝트 둘러보기'  Inter Medium 14px  #FFFFFF
+  FRAME "x"  @8326,-1148 24x24
+    VECTOR "Vector"  @8332,-1142 12x12  stroke=#000000/2
+    VECTOR "Vector"  @8332,-1142 12x12  stroke=#000000/2

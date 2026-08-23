@@ -70,7 +70,7 @@ export function NotificationSettingsScreen() {
     <Shell>
       <div className="flex items-end justify-between">
         <div>
-          <h1 className="text-22 font-bold text-ink">받을 소식 설정</h1>
+          <h1 className="text-24 font-bold text-ink">받을 소식 설정</h1>
           <p className="mt-3 text-13 text-muted">
             투자자 · {user?.name ?? "-"} · 역할에 해당하는 이벤트만 표시됩니다
           </p>
@@ -84,7 +84,7 @@ export function NotificationSettingsScreen() {
 
       <Card className="mt-6 max-w-panel" padded={false}>
         <div className="grid grid-cols-[1fr_100px_100px_100px] border-b border-line bg-surface px-6 py-3">
-          <span className="text-11 text-muted">이벤트 유형</span>
+          <span className="text-12 text-muted">이벤트 유형</span>
           {CHANNELS.map((c) => (
             <span key={c.key} className="text-center text-11 text-muted">
               {c.label}

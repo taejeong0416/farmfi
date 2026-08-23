@@ -2,7 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Button, Card, Modal, PanelShell, SkeletonBlock } from "@/components/ui";
+import {
+  Button,
+  Card,
+  Checkbox,
+  Modal,
+  PanelShell,
+  SkeletonBlock,
+} from "@/components/ui";
 import { monthlyPrice, upcomingPickups } from "@/lib/pickup-subscription";
 import { shortDate, won } from "../api";
 import { SubscribeStepLine } from "./SubscribeStepLine";
@@ -30,9 +37,21 @@ const COUPONS = [
   },
 ];
 
+const CONSENTS = [
+  { key: "autopay", label: "정기구독 및 자동결제에 동의합니다. (필수)", required: true },
+  { key: "policy", label: "취소·환불 및 픽업 정책을 확인했습니다. (필수)", required: true },
+  { key: "marketing", label: "할인·신상품 소식 수신에 동의합니다. (선택)", required: false },
+] as const;
+
 export function OrderScreen() {
   const router = useRouter();
   const { draft, update, ready } = useSubscribeDraft();
+  const [consents, setConsents] = useState<Record<string, boolean>>({
+    autopay: false,
+    policy: false,
+    marketing: false,
+  });
+  const requiredAgreed = CONSENTS.every((c) => !c.required || consents[c.key]);
   const { data } = useCatalog(draft.projectId);
   const [couponOpen, setCouponOpen] = useState(false);
 
@@ -132,14 +151,41 @@ export function OrderScreen() {
         </div>
       </Card>
 
+      <Card className="mt-4">
+        {CONSENTS.map((c) => (
+          <div
+            key={c.key}
+            className="flex items-center justify-between gap-4 border-b border-line-soft py-3 last:border-b-0"
+          >
+            <Checkbox
+              label={c.label}
+              checked={consents[c.key]}
+              onChange={(e) =>
+                setConsents((v) => ({ ...v, [c.key]: e.target.checked }))
+              }
+            />
+            <span className="shrink-0 text-12 text-muted underline underline-offset-4">
+              약관 보기
+            </span>
+          </div>
+        ))}
+      </Card>
+
       <div className="mt-7">
-        <Button full onClick={() => router.push("/subscribe/payment")}>
-          결제수단 선택
+        <Button
+          full
+          disabled={!requiredAgreed}
+          onClick={() => router.push("/subscribe/payment")}
+        >
+          {won(total)} 결제하기
         </Button>
       </div>
 
-      <p className="mt-4 text-12 text-muted">
-        매월 1일에 자동결제되며, 결제 3일 전에 알림을 보내드립니다.
+      <p className="mt-4 text-center text-12 text-muted">
+        결제 후 남은 생산 슬롯 1개가 확정됩니다.
+      </p>
+      <p className="mt-2 text-center text-12 text-muted">
+        다음 결제 전날까지 이번 회차 건너뛰기·일시정지가 가능해요.
       </p>
 
       <Modal

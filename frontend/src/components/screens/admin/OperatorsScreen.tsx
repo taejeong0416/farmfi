@@ -58,7 +58,7 @@ export function OperatorsScreen() {
 
   if (isLoading) {
     return (
-      <AdminShell title="운영자 심사 · 가배정">
+      <AdminShell title="신청 내용을 한곳에서 검토해요">
         <SkeletonBlock height={360} />
       </AdminShell>
     );

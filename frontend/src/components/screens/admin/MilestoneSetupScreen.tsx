@@ -58,7 +58,7 @@ export function MilestoneSetupScreen({ projectId }: { projectId: string }) {
 
   if (isLoading || !project) {
     return (
-      <AdminShell title="마일스톤 설정">
+      <AdminShell title="단계별 마일스톤과 집행 조건을 설정해요">
         <SkeletonBlock height={360} />
       </AdminShell>
     );
@@ -92,7 +92,7 @@ export function MilestoneSetupScreen({ projectId }: { projectId: string }) {
 
   return (
     <AdminShell
-      title="마일스톤 설정"
+      title="단계별 마일스톤과 집행 조건을 설정해요"
       desc={`${project.name} · 총 ${milestones.length}단계 · 집행 합계 ${won(total)}`}
       action={
         <Button disabled={busy} onClick={save}>
@@ -102,6 +102,9 @@ export function MilestoneSetupScreen({ projectId }: { projectId: string }) {
     >
       {error ? <p className="mb-4 text-12 text-danger">{error}</p> : null}
       {saved ? <p className="mb-4 text-12 text-brand">저장했습니다.</p> : null}
+      <p className="mb-4 text-12 text-muted">
+        단계 순서를 바꾸거나 금액을 수정하면 모집 중 프로젝트는 재공시 대상이 됩니다.
+      </p>
 
       <Card padded={false}>
         <div className="grid grid-cols-[60px_1fr_200px_220px_110px] border-b border-line bg-surface px-5 py-3">

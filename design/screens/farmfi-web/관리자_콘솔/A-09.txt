@@ -1,0 +1,139 @@
+FRAME "A-09 · 외부 전문가 / 최종 판정"  @10570,0 1440x900  fill=#FFFFFF  r=10
+  FRAME "TopBar"  @10570,0 1440x64  stroke=#E5E5E3/1
+    FRAME "NavLeft"  @10624,22 134x20
+      FRAME "Frame 180"  @10624,22 134x20
+        INSTANCE "App/Logo"  @10624,26 55x13
+        TEXT "관리자 콘솔"  @10689,22 69x20  text='관리자 콘솔'  Inter Medium 14px  #14542E
+    FRAME "Frame 12"  @11898,23 58x18
+      FRAME "아이콘"  @11898,24 16x16
+        VECTOR "Vector"  @11904,27 5x5  stroke=#8A8A8A/1
+        VECTOR "Vector"  @11901,33 9x4  stroke=#8A8A8A/1
+      TEXT "김투자"  @11922,23 34x18  text='최관리'  Inter Regular 12px  #4A4A4A
+  FRAME "BodyRow"  @10570,64 1440x836
+    FRAME "Sidebar"  @10570,64 195x836  stroke=#EDEDEB/1
+      FRAME "NavRow"  @10595,88 154x14
+        FRAME "아이콘"  @10595,88 14x14
+          VECTOR "Vector"  @10597,90 10x10  stroke=#8A8A8A/1
+        TEXT "콘솔 홈"  @10618,89 35x12  text='콘솔 홈'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @10595,120 154x14
+        FRAME "아이콘"  @10595,120 14x14
+          VECTOR "Vector"  @10600,123 4x4  stroke=#8A8A8A/1
+          VECTOR "Vector"  @10598,128 8x4  stroke=#8A8A8A/1
+        TEXT "보증서 관리"  @10618,120 57x14  text='보증서 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @10595,152 154x14
+        FRAME "아이콘"  @10595,152 14x14
+          VECTOR "Vector"  @10597,154 10x9  stroke=#8A8A8A/1
+          VECTOR "Vector"  @10597,157 10x0  stroke=#8A8A8A/1
+        TEXT "프로젝트 관리"  @10618,153 67x12  text='프로젝트 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @10595,184 154x14
+        FRAME "아이콘"  @10595,184 14x14
+          VECTOR "Vector"  @10598,186 0x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @10598,187 8x5  stroke=#8A8A8A/1
+        TEXT "마일스톤 설정"  @10618,185 67x12  text='마일스톤 설정'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @10595,216 154x14
+        FRAME "아이콘"  @10595,216 14x14
+          VECTOR "Vector"  @10597,218 10x12  stroke=#8A8A8A/1
+        TEXT "공간·설비 관리"  @10618,216 70x14  text='공간·설비 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @10595,248 154x14
+        FRAME "아이콘"  @10595,248 14x14
+          VECTOR "Vector"  @10597,250 8x8  stroke=#8A8A8A/1
+          VECTOR "Vector"  @10604,257 2x2  stroke=#8A8A8A/1
+        TEXT "운영팀 재검증"  @10618,249 57x12  text='운영자 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @10595,280 154x14
+        FRAME "아이콘"  @10595,280 14x14
+          VECTOR "Vector"  @10598,282 8x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @10600,287 4x2  stroke=#8A8A8A/1
+        TEXT "감사 로그 조회"  @10618,281 57x12  text='증빙 재검토'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @10595,312 154x14
+        FRAME "아이콘"  @10595,312 14x14
+          VECTOR "Vector"  @10597,314 9x10  stroke=#14532D/1
+        TEXT "외부전문가 판정"  @10618,313 78x12  text='외부전문가 판정'  Inter Medium 12px  #14532D
+      FRAME "NavRow"  @10595,344 154x14
+        FRAME "아이콘"  @10595,344 14x14
+          VECTOR "Vector"  @10597,346 10x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @10601,348 3x6  stroke=#8A8A8A/1
+        TEXT "정산 규칙 설정"  @10618,345 70x12  text='정산 규칙 설정'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @10595,376 154x14
+        FRAME "아이콘"  @10595,376 14x14
+          VECTOR "Vector"  @10597,378 10x9  stroke=#8A8A8A/1
+        TEXT "정산 결과"  @10618,377 46x12  text='정산 결과'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @10595,408 154x14
+        FRAME "아이콘"  @10595,408 14x14
+          VECTOR "Vector"  @10598,410 8x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @10600,415 4x2  stroke=#8A8A8A/1
+        TEXT "감사 로그 조회"  @10618,409 70x12  text='감사 로그 조회'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @10595,440 154x14
+        FRAME "아이콘"  @10595,440 14x14
+          VECTOR "Vector"  @10600,443 4x4  stroke=#8A8A8A/1
+          VECTOR "Vector"  @10598,448 8x4  stroke=#8A8A8A/1
+        TEXT "권한 관리"  @10618,441 46x12  text='권한 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @10595,472 154x14
+        FRAME "아이콘"  @10595,472 14x14
+          VECTOR "Vector"  @10597,473 10x9  stroke=#8A8A8A/1
+          VECTOR "Vector"  @10601,484 2x1  stroke=#8A8A8A/1
+        TEXT "알림 발송"  @10618,473 46x12  text='알림 발송'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @10595,504 154x14
+        FRAME "아이콘"  @10595,504 14x14
+          VECTOR "Vector"  @10597,508 10x6  stroke=#8A8A8A/1
+        TEXT "AML · 이상거래 관리"  @10618,505 101x12  text='AML · 이상거래 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @10595,536 154x14
+        FRAME "아이콘"  @10595,536 14x14
+          VECTOR "Vector"  @10597,538 10x9  stroke=#8A8A8A/1
+        TEXT "AML · 이상거래 관리"  @10618,537 70x12  text='매출·비용 입력'  Inter Regular 12px  #4A4A4A
+      FRAME "Spacer"  @10595,568 154x276
+      FRAME "NavRow"  @10595,862 154x14
+        FRAME "아이콘"  @10595,862 14x14
+          VECTOR "Vector"  @10598,864 3x9  stroke=#8A8A8A/1
+          VECTOR "Vector"  @10604,867 2x5  stroke=#8A8A8A/1
+          VECTOR "Vector"  @10601,869 6x0  stroke=#8A8A8A/1
+        TEXT "로그아웃"  @10618,863 43x12  text='로그아웃'  Inter Regular 12px  #4A4A4A
+      ROUNDED_RECTANGLE "선"  @10581,311 2x16  fill=#14542E
+    FRAME "MainContent"  @10765,64 1245x836
+      TEXT "SectionLabel"  @10819,88 1137x17  text='외부전문가 판정'  Inter Medium 14px  #14542E
+      FRAME "PageHeaderRow"  @10819,123 1137x31
+        TEXT "외부전문가 판정"  @10819,123 310x31  text='배정된 건의 최종 판정을 내려요'  Inter Bold 24px  #1A1A1A
+        FRAME "AssigneeWrap"  @11842,130 114x18
+          TEXT "담당"  @11842,130 23x18  text='담당'  Inter Regular 12px  #8A8A8A
+          TEXT "강진현 · 설비 감정"  @11873,131 83x15  text='강진현 · 설비 감정'  Inter Medium 11px  #1A1A1A
+      ROUNDED_RECTANGLE "선"  @10819,172 1137x1  fill=#EDEDEB
+      FRAME "CaseInfoStack"  @10819,191 1137x42
+        TEXT "부산 전포동 미니팜 1호 · 3단계 설비 설…"  @10819,191 239x20  text='부산 전포동 미니팜 1호 · 3단계 설비 설치'  Inter Medium 14px  #1A1A1A
+        TEXT "배정 2026.03.16 09:20 · 판정…"  @10819,215 248x18  text='배정 2026.03.16 09:20 · 판정 기한 2026.03.18'  Inter Regular 12px  #8A8A8A
+      FRAME "ContentRow"  @10819,251 1137x218
+        FRAME "LeftColWrap"  @10819,251 402x131
+          FRAME "Spacer"  @10819,251 1x0
+          FRAME "LeftColumn"  @10819,276 402x106
+            ROUNDED_RECTANGLE "면"  @10819,276 418x106  stroke=#E5E5E3/1  r=8
+            ROUNDED_RECTANGLE "선"  @10820,310 416x1  fill=#F1F4F2
+            TEXT "이전 판정 이력"  @10834,286 67x15  text='이전 판정 이력'  Inter Medium 11px  #8A8A8A
+            ROUNDED_RECTANGLE "선"  @10820,345 416x1  fill=#F1F4F2
+            TEXT "자동 검증"  @10834,319 48x18  text='자동 검증'  Inter Regular 12px  #1A1A1A
+            TEXT "보류"  @11202,321 21x15  text='보류'  Inter Medium 11px  #DC2626
+            TEXT "운영팀 재검증"  @10834,354 70x18  text='운영팀 재검증'  Inter Regular 12px  #1A1A1A
+            TEXT "보류 유지"  @11178,356 44x15  text='보류 유지'  Inter Medium 11px  #DC2626
+        FRAME "RightColWrap"  @11241,251 241x223
+          TEXT "검토 자료"  @11241,251 56x20  text='검토 자료'  Inter Medium 14px  #1A1A1A
+          FRAME "RightColumn"  @11241,276 241x198
+            ROUNDED_RECTANGLE "사진 자리"  @11241,276 121x72  fill=#F1F4F2  stroke=#E5E5E3/1  r=6
+            ROUNDED_RECTANGLE "사진 자리"  @11370,276 121x72  fill=#F1F4F2  stroke=#E5E5E3/1  r=6
+            ROUNDED_RECTANGLE "면"  @11241,356 250x92  stroke=#E5E5E3/1  r=6
+            ROUNDED_RECTANGLE "선"  @11242,386 248x1  fill=#F1F4F2
+            TEXT "설비 계약서.pdf"  @11254,362 81x18  text='설비 계약서.pdf'  Inter Regular 12px  #1A1A1A
+            ROUNDED_RECTANGLE "선"  @11242,416 248x1  fill=#F1F4F2
+            TEXT "설비 영수증.pdf"  @11254,392 81x18  text='설비 영수증.pdf'  Inter Regular 12px  #1A1A1A
+            TEXT "변경합의서.pdf"  @11254,422 78x18  text='변경합의서.pdf'  Inter Regular 12px  #1A1A1A
+      FRAME "VerdictSection"  @10819,487 1137x166
+        TEXT "최종 판정"  @10819,487 56x20  text='최종 판정'  Inter Medium 14px  #1A1A1A
+        FRAME "VerdictButtons"  @10819,519 330x36
+          FRAME "Btn"  @10819,519 111x36  stroke=#14542E/1  r=6
+            TEXT "통과 · 집행 진행"  @10838,530 73x15  text='통과 · 집행 진행'  Inter Medium 11px  #14542E
+          FRAME "Btn"  @10938,519 91x36  stroke=#E5E5E3/1  r=6
+            TEXT "조건부 통과"  @10954,528 59x18  text='조건부 통과'  Inter Regular 12px  #4A4A4A
+          FRAME "Btn"  @11037,519 111x36  stroke=#E5E5E3/1  r=6
+            TEXT "반려 · 집행 중지"  @11053,528 80x18  text='반려 · 집행 중지'  Inter Regular 12px  #4A4A4A
+        FRAME "Textarea"  @10819,567 1137x86  stroke=#E5E5E3/1  r=8
+          TEXT "판정 의견을 입력하세요. 최종 판정과 의견은…"  @10833,581 405x18  text='판정 의견을 입력하세요. 최종 판정과 의견은 감사 로그에 불변 기록으로 남습니다.'  Inter Regular 12px  #8A8A8A
+      FRAME "FooterRow"  @10819,671 1137x38
+        TEXT "최종 판정 이후에는 동일 단계에 대한 이의제…"  @10819,681 303x18  text='최종 판정 이후에는 동일 단계에 대한 이의제기가 불가합니다.'  Inter Regular 12px  #8A8A8A
+        FRAME "SubmitBtn"  @11857,671 99x38  fill=#1B5E3F  r=6
+          TEXT "최종 판정 제출"  @11873,682 67x15  text='최종 판정 제출'  Inter Medium 11px  #FFFFFF

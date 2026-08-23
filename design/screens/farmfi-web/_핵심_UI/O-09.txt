@@ -1,0 +1,97 @@
+FRAME "O-09 · 운영자 / 개점 준비 현황"  @11498,6142 1440x900  fill=#FFFFFF  r=10
+  FRAME "TopNav"  @11498,6142 1440x64  stroke=#E5E5E3/0
+    FRAME "NavLeft"  @11530,6164 404x20
+      FRAME "Frame 180"  @11530,6168 117x13
+        INSTANCE "App/Logo"  @11530,6168 55x13
+        FRAME "Frame 6"  @11595,6168 52x13  fill=#8C6114@0.10  stroke=#8C6114/0  r=19
+          TEXT "운영자 포털"  @11602,6170 37x8  text='운영자 포털'  Pretendard SemiBold 8px  #8C6114
+      FRAME "NavLinks"  @11703,6164 231x20
+        TEXT "공간 찾기"  @11703,6164 56x20  text='공간 찾기'  Inter Regular 14px  #1A1A1A
+        TEXT "내 준비 현황"  @11791,6164 72x20  text='내 준비 현황'  Inter Medium 13px  #14542E
+        TEXT "보증서"  @11895,6164 39x20  text='보증서'  Inter Regular 14px  #1A1A1A
+    FRAME "Frame 12"  @12848,6165 58x18
+      FRAME "아이콘"  @12848,6166 16x16
+        VECTOR "Vector"  @12854,6169 5x5  stroke=#8A8A8A/1
+        VECTOR "Vector"  @12851,6175 9x4  stroke=#8A8A8A/1
+      TEXT "김투자"  @12872,6165 34x18  text='박운영'  Inter Regular 12px  #4A4A4A
+  FRAME "BodyContainer"  @11498,6206 1440x744
+    TEXT "개점까지 두 단계 남았어요"  @11530,6244 260x29  text='개점까지 두 단계 남았어요'  Inter Bold 30px  #1A1A1A
+    TEXT "부산 전포동 미니팜 1호 · 개점 목표 2026년 9월"  @11530,6291 1376x21  text='부산 전포동 미니팜 1호 · 개점 목표 2026년 9월'  Inter Regular 14px  #4A4A4A
+    FRAME "ProgressCard"  @11530,6330 1376x115  fill=#14542E  r=14
+      FRAME "LabelCol"  @11554,6354 77x67
+        TEXT "전체 준비도"  @11554,6354 69x20  text='전체 준비도'  Inter Medium 13px  #D1E0D6
+        TEXT "67%"  @11554,6378 77x43  text='67%'  Inter Bold 34px  #FFFFFF
+      FRAME "BarCol"  @11671,6366 1211x42
+        FRAME "BarWrap"  @11671,6366 1211x12
+          ROUNDED_RECTANGLE "Rectangle"  @11671,6366 1203x12  fill=#EDEDEB  r=6
+          ROUNDED_RECTANGLE "Rectangle"  @11671,6366 744x12  fill=#F2D680  r=6
+        TEXT "보증서가 발급됐어요. 이제 공간과 설비 준비를 마치면 운영을 시작할 수 있어요."  @11671,6390 1211x18  text='보증서가 발급됐어요. 이제 공간과 설비 준비를 마치면 운영을 시작할 수 있어요.'  Inter Regular 11px  #D1E0D6
+    FRAME "ContentRow"  @11530,6463 1376x449
+      FRAME "LeftColumn"  @11530,6463 760x449
+        TEXT "내가 준비할 것"  @11530,6463 108x23  text='내가 준비할 것'  Inter Semi Bold 20px  #1A1A1A
+        FRAME "StepRow"  @11530,6500 760x82  fill=#FFFFFF  stroke=#E5E5E3/1  r=12
+          FRAME "NumberCircle"  @11550,6518 46x46  fill=#F1F4F2  r=23
+            TEXT "1"  @11570,6531 7x20  text='1'  Inter Bold 14px  #14542E
+          FRAME "TextStack"  @11616,6518 585x45
+            TEXT "본인·운영 자격 확인"  @11616,6518 147x23  text='본인·운영 자격 확인'  Inter Semi Bold 15px  #1A1A1A
+            TEXT "신원과 운영 가능 여부가 확인됐어요"  @11616,6546 585x18  text='신원과 운영 가능 여부가 확인됐어요'  Inter Regular 12px  #4A4A4A
+          FRAME "Frame 141"  @12221,6528 45x27  fill=#F1F4F2  r=4
+            TEXT "완료"  @12233,6534 21x15  text='완료'  Inter Medium 12px  #14542E
+        FRAME "StepRow"  @11530,6596 760x82  fill=#FFFFFF  stroke=#E5E5E3/1  r=12
+          FRAME "NumberCircle"  @11550,6614 46x46  fill=#E5E5E3  r=23
+            TEXT "2"  @11568,6627 9x20  text='2'  Inter Bold 14px  #4A4A4A
+          FRAME "TextStack"  @11616,6614 572x45
+            TEXT "필수 교육 수료"  @11616,6614 108x23  text='필수 교육 수료'  Inter Semi Bold 15px  #1A1A1A
+            TEXT "온라인 교육 2시간 중 1시간 20분 수강"  @11616,6642 572x18  text='온라인 교육 2시간 중 1시간 20분 수강'  Inter Regular 12px  #4A4A4A
+          FRAME "Frame 142"  @12208,6624 58x27  fill=#E5E5E3  r=4
+            TEXT "진행 중"  @12220,6630 34x15  text='진행 중'  Inter Medium 12px  #4A4A4A
+        FRAME "StepRow"  @11530,6692 760x82  fill=#FFFFFF  stroke=#E5E5E3/1  r=12
+          FRAME "NumberCircle"  @11550,6710 46x46  fill=#EDEDEB  r=23
+            TEXT "3"  @11568,6723 10x20  text='3'  Inter Bold 14px  #4A4A4A
+          FRAME "TextStack"  @11616,6710 585x45
+            TEXT "운영 계약 서명"  @11616,6710 108x23  text='운영 계약 서명'  Inter Semi Bold 15px  #1A1A1A
+            TEXT "최종 배정된 공간과 조건으로 서명했어요"  @11616,6738 585x18  text='최종 배정된 공간과 조건으로 서명했어요'  Inter Regular 12px  #4A4A4A
+          FRAME "Frame 143"  @12221,6720 45x27  fill=#EDEDEB  r=4
+            TEXT "완료"  @12233,6726 21x15  text='완료'  Inter Medium 12px  #4A4A4A
+        TEXT "지금 할 일"  @11530,6788 75x23  text='지금 할 일'  Inter Semi Bold 15px  #1A1A1A
+        FRAME "TodoCard"  @11530,6825 760x87  fill=#FFFFFF  stroke=#E5E5E3/1  r=12
+          FRAME "BottomRow"  @11550,6845 720x47
+            FRAME "TextStack2"  @11550,6845 571x47
+              TEXT "필수 교육 이어 듣기"  @11550,6845 145x23  text='필수 교육 이어 듣기'  Inter Semi Bold 18px  #1A1A1A
+              TEXT "남은 시간 약 40분 · 수료 후 운영 계약 단계로 넘어가요."  @11550,6874 571x18  text='남은 시간 약 40분 · 수료 후 운영 계약 단계로 넘어가요.'  Inter Regular 12px  #4A4A4A
+            FRAME "Frame 144"  @12141,6846 129x44  fill=#14542E  r=6
+              TEXT "교육 이어보기"  @12165,6858 81x20  text='교육 이어보기'  Inter Semi Bold 13px  #FFFFFF
+      FRAME "RightColWrap"  @12330,6463 576x446
+        TEXT "공간 준비 현황"  @12330,6463 108x23  text='공간 준비 현황'  Inter Semi Bold 20px  #1A1A1A
+        FRAME "ReadinessListCard"  @12330,6500 576x251  fill=#FFFFFF  stroke=#E5E5E3/1  r=12
+          FRAME "ReadinessRow"  @12354,6520 528x52
+            FRAME "NumCircle"  @12354,6536 20x20  fill=#F1F4F2  r=10
+              TEXT "1"  @12361,6538 6x15  text='1'  Inter Bold 10px  #14542E
+            TEXT "공간 사용 협약"  @12386,6536 463x20  text='공간 사용 협약'  Inter Medium 13px  #1A1A1A
+            TEXT "완료"  @12861,6538 21x15  text='완료'  Inter Medium 12px  #14542E
+          ROUNDED_RECTANGLE "Rectangle"  @12354,6572 528x1  fill=#E5E5E3
+          FRAME "ReadinessRow"  @12354,6573 528x52
+            FRAME "NumCircle"  @12354,6589 20x20  fill=#EDEDEB  r=10
+              TEXT "2"  @12360,6592 7x15  text='2'  Inter Bold 10px  #4A4A4A
+            TEXT "리모델링 일정"  @12386,6589 437x20  text='리모델링 일정'  Inter Medium 13px  #1A1A1A
+            TEXT "8월 2주차"  @12835,6592 47x15  text='8월 2주차'  Inter Medium 12px  #4A4A4A
+          ROUNDED_RECTANGLE "Rectangle"  @12354,6625 528x1  fill=#E5E5E3
+          FRAME "ReadinessRow"  @12354,6626 528x52
+            FRAME "NumCircle"  @12354,6642 20x20  fill=#E5E5E3  r=10
+              TEXT "3"  @12360,6644 8x15  text='3'  Inter Bold 10px  #4A4A4A
+            TEXT "설비 투자 모집"  @12386,6642 460x20  text='설비 투자 모집'  Inter Medium 13px  #1A1A1A
+            TEXT "68%"  @12858,6644 24x15  text='68%'  Inter Medium 12px  #4A4A4A
+          ROUNDED_RECTANGLE "Rectangle"  @12354,6678 528x1  fill=#E5E5E3
+          FRAME "ReadinessRow"  @12354,6679 528x52
+            FRAME "NumCircle"  @12354,6695 20x20  fill=#EDEDEB  r=10
+              TEXT "4"  @12360,6698 8x15  text='4'  Inter Bold 10px  #4A4A4A
+            TEXT "설비 설치·검수"  @12386,6695 463x20  text='설비 설치·검수'  Inter Medium 13px  #1A1A1A
+            TEXT "예정"  @12861,6698 21x15  text='예정'  Inter Medium 12px  #4A4A4A
+        FRAME "CertStatusCard"  @12330,6765 576x144  fill=#F1F4F2  r=12
+          FRAME "ChecklistCol"  @12354,6789 141x96
+            TEXT "완료된 운영자 자격"  @12354,6789 141x23  text='완료된 운영자 자격'  Inter Semi Bold 15px  #14542E
+            FRAME "Checks"  @12354,6824 83x61
+              TEXT "✓ 필수 교육 수료"  @12354,6824 83x15  text='✓  필수 교육 수료'  Inter Medium 12px  #4A4A4A
+              TEXT "✓ 운영 계약 서명"  @12354,6847 83x15  text='✓  운영 계약 서명'  Inter Medium 12px  #4A4A4A
+              TEXT "✓ 공간 배정 확정"  @12354,6870 83x15  text='✓  공간 배정 확정'  Inter Medium 12px  #14542E
+          TEXT "교육·공간 확정·계약이 확인되어 보증서가 발급됐어요."  @12519,6789 363x18  text='교육·공간 확정·계약이 확인되어 보증서가 발급됐어요.'  Inter Regular 11px  #8A8A8A

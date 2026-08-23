@@ -1,0 +1,5 @@
+SYMBOL "Component 1"  @4073,658 10x107
+  ROUNDED_RECTANGLE "선"  @4078,666 1x89  fill=#E5E5E3
+  ELLIPSE "점"  @4073,658 10x10  fill=#14542E
+  ELLIPSE "점"  @4073,706 10x10  fill=#FFFFFF  stroke=#8A8A8A/1
+  ELLIPSE "점"  @4073,755 10x10  fill=#FFFFFF  stroke=#E5E5E3/1

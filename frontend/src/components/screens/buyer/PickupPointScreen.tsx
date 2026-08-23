@@ -24,7 +24,7 @@ export function PickupPointScreen() {
     <Shell>
       <SubscribeStepLine current="pickup" />
 
-      <h1 className="text-24 font-bold text-ink">먼저, 어디에서 픽업할까요?</h1>
+      <h1 className="text-28 font-bold text-ink">먼저, 어디에서 픽업할까요?</h1>
       <p className="mt-3 text-14 text-body">
         선택한 지점에서 재배하거나 보유한 작물과 드레싱만 다음 단계에 표시됩니다.
       </p>
@@ -38,7 +38,7 @@ export function PickupPointScreen() {
         </div>
       ) : (
         <>
-          <h2 className="mt-8 text-15 font-bold text-ink">가까운 픽업 지점</h2>
+          <h2 className="mt-8 text-16 font-semibold text-ink">가까운 픽업 지점</h2>
           <div className="mt-4 max-w-panel space-y-3">
             {points.map((p) => (
               <OptionCard

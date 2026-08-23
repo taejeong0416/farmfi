@@ -1,0 +1,3 @@
+FRAME "아이콘"  @0,1 16x16
+  VECTOR "Vector"  @6,4 5x5  stroke=#8A8A8A/1
+  VECTOR "Vector"  @3,10 9x4  stroke=#8A8A8A/1

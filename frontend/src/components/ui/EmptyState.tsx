@@ -32,11 +32,25 @@ export function SkeletonBlock({ height = 80 }: { height?: number }) {
 /** Figma의 `사진 자리`. 실제 이미지가 없을 때 자리를 지킨다. */
 export function PhotoSlot({
   label = "대표 공간 사진",
+  src,
   className,
 }: {
   label?: string;
+  /** 사진이 있으면 채우고, 없으면 라벨만 있는 빈 자리로 남는다. */
+  src?: string | null;
   className?: string;
 }) {
+  if (src) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={src}
+        alt={label}
+        className={`rounded-10 border border-line object-cover ${className ?? ""}`}
+      />
+    );
+  }
+
   return (
     <div
       className={`flex items-center justify-center rounded-10 border border-line bg-surface text-11 text-muted ${className ?? ""}`}

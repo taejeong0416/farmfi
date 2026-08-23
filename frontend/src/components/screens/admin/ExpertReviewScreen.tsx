@@ -50,7 +50,7 @@ export function ExpertReviewScreen() {
 
   if (isLoading) {
     return (
-      <AdminShell title="외부 전문가 최종 판정">
+      <AdminShell title="배정된 건의 최종 판정을 내려요">
         <SkeletonBlock height={360} />
       </AdminShell>
     );
@@ -58,7 +58,7 @@ export function ExpertReviewScreen() {
 
   if (isError || !data) {
     return (
-      <AdminShell title="외부 전문가 최종 판정">
+      <AdminShell title="배정된 건의 최종 판정을 내려요">
         <EmptyState
           title="이의제기 목록을 볼 수 없습니다"
           desc="관리자로 로그인한 뒤 다시 확인해 주세요."
@@ -90,7 +90,7 @@ export function ExpertReviewScreen() {
 
   return (
     <AdminShell
-      title="외부 전문가 최종 판정"
+      title="배정된 건의 최종 판정을 내려요"
       desc="운영팀 재검증에서도 결론이 나지 않은 건을 외부 전문가가 마지막으로 본다."
       action={<span className="text-12 text-muted">접수 {data.length}건</span>}
     >
@@ -161,7 +161,7 @@ export function ExpertReviewScreen() {
               <p className="mt-7 text-12 text-muted">판정 사유</p>
               <div className="mt-2">
                 <TextArea
-                  placeholder="판정 근거를 적어 주세요. 운영자와 감사 로그에 그대로 남습니다."
+                  placeholder="판정 의견을 입력하세요. 최종 판정과 의견은 감사 로그에 불변 기록으로 남습니다."
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                 />

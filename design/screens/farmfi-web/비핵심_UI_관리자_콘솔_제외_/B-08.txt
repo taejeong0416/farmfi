@@ -1,0 +1,69 @@
+FRAME "B-08 · 내 구독 / 구성·일정 변경"  @2764,3258 1440x980  fill=#FFFFFF  r=10
+  FRAME "TopNav"  @2764,3258 1440x64  stroke=#E5E5E3/1
+    FRAME "NavLeft"  @2818,3280 245x20
+      INSTANCE "App/Logo"  @2818,3284 55x13
+      FRAME "NavLinks"  @2936,3280 127x20
+        TEXT "정기구독"  @2936,3282 52x17  text='정기구독'  Inter Regular 14px  #4A4A4A
+        TEXT "내 구독"  @3020,3280 43x20  text='내 구독'  Inter Medium 14px  #14542E
+    FRAME "Frame 12"  @4092,3282 58x16
+      FRAME "아이콘"  @4092,3282 16x16
+        VECTOR "Vector"  @4098,3285 5x5  stroke=#8A8A8A/1
+        VECTOR "Vector"  @4095,3291 9x4  stroke=#8A8A8A/1
+      TEXT "이소비"  @4116,3282 34x15  text='이소비'  Inter Regular 12px  #4A4A4A
+  FRAME "BodyContainer"  @2764,3322 1440x643
+    FRAME "Greeting"  @2818,3342 1332x86
+      TEXT "내 구독"  @2818,3342 1332x20  text='내 구독'  Inter Medium 14px  #14542E
+      TEXT "다음 회차부터 바꿀 내용을 선택하세요"  @2818,3370 1332x29  text='다음 회차부터 바꿀 내용을 선택하세요'  Inter Bold 24px  #1A1A1A
+      TEXT "8월 21일 오후 6시까지 변경하면 8월 22일 픽업부터 적용됩니다."  @2818,3407 1332x21  text='8월 21일 오후 6시까지 변경하면 8월 22일 픽업부터 적용됩니다.'  Inter Regular 14px  #4A4A4A
+    FRAME "MainContentRow"  @2818,3448 1332x477
+      FRAME "LeftColumn"  @2818,3448 982x477
+        FRAME "Deadline"  @2818,3448 982x97  fill=#EDEDEB  stroke=#E5E5E3/1  r=10
+          TEXT "변경 가능 시간 1일 03:24 남음"  @2834,3464 236x23  text='변경 가능 시간  1일 03:24 남음'  Inter Bold 18px  #1A1A1A
+          TEXT "마감 이후에는 이미 수확·포장이 시작돼 다음 회차에 적용돼요."  @2834,3511 307x18  text='마감 이후에는 이미 수확·포장이 시작돼 다음 회차에 적용돼요.'  Inter Regular 12px  #4A4A4A
+        FRAME "Settings"  @2818,3569 982x183
+          FRAME "구성"  @2818,3569 484x183  stroke=#E5E5E3/1  r=10
+            TEXT "5종 믹스팩"  @2834,3585 83x23  text='5종 믹스팩'  Inter Bold 18px  #1A1A1A
+            TEXT "버터헤드 · 로메인 · 바질 · 루꼴라 · 적근대"  @2834,3624 206x18  text='버터헤드 · 로메인 · 바질 · 루꼴라 · 적근대'  Inter Regular 12px  #1A1A1A
+            TEXT "참깨 1봉 · 유자 1봉"  @2834,3658 95x18  text='참깨 1봉 · 유자 1봉'  Inter Regular 12px  #4A4A4A
+            FRAME "Button"  @2834,3692 452x44  stroke=#E5E5E3/1  r=6
+              TEXT "작물·드레싱 변경"  @3011,3704 98x20  text='작물·드레싱 변경'  Inter Medium 14px  #1A1A1A
+          FRAME "지점"  @3316,3569 484x183  stroke=#E5E5E3/1  r=10
+            TEXT "부산 전포동 미니팜 1호"  @3332,3585 171x23  text='부산 전포동 미니팜 1호'  Inter Bold 18px  #1A1A1A
+            TEXT "화·금 17:00–20:00"  @3332,3624 99x18  text='화·금 17:00–20:00'  Inter Regular 12px  #1A1A1A
+            TEXT "지점 변경 시 새 지점의 작물과 슬롯을 다시 선택해요."  @3332,3658 263x18  text='지점 변경 시 새 지점의 작물과 슬롯을 다시 선택해요.'  Inter Regular 12px  #4A4A4A
+            FRAME "Button"  @3332,3692 452x44  stroke=#E5E5E3/1  r=6
+              TEXT "픽업 지점 변경"  @3516,3704 85x20  text='픽업 지점 변경'  Inter Medium 14px  #1A1A1A
+        FRAME "More"  @2818,3776 982x149
+          FRAME "결제"  @2818,3776 484x149  stroke=#E5E5E3/1  r=10
+            TEXT "신한카드 · 1234"  @2834,3792 125x23  text='신한카드 · 1234'  Inter Bold 18px  #1A1A1A
+            TEXT "다음 결제 9월 1일 · 29,000원"  @2834,3831 151x18  text='다음 결제 9월 1일 · 29,000원'  Inter Regular 12px  #4A4A4A
+            FRAME "Button"  @2834,3865 452x44  stroke=#E5E5E3/1  r=6
+              TEXT "결제수단 변경"  @3020,3877 81x20  text='결제수단 변경'  Inter Medium 14px  #1A1A1A
+          FRAME "이용 조절"  @3316,3776 484x149  stroke=#E5E5E3/1  r=10
+            TEXT "이번 회차 건너뛰기"  @3332,3792 141x23  text='이번 회차 건너뛰기'  Inter Bold 18px  #1A1A1A
+            TEXT "또는 최대 8주까지 구독을 잠시 멈출 수 있어요."  @3332,3831 234x18  text='또는 최대 8주까지 구독을 잠시 멈출 수 있어요.'  Inter Regular 12px  #4A4A4A
+            FRAME "Button"  @3332,3865 452x44  stroke=#E5E5E3/1  r=6
+              TEXT "건너뛰기·일시정지"  @3504,3877 107x20  text='건너뛰기·일시정지'  Inter Medium 14px  #1A1A1A
+      FRAME "Frame 152"  @3832,3448 318x477
+        FRAME "품절 대체 설정"  @3832,3448 318x289  stroke=#E5E5E3/1  r=10
+          TEXT "선택한 작물이 부족할 때"  @3848,3464 179x23  text='선택한 작물이 부족할 때'  Inter Bold 18px  #1A1A1A
+          FRAME "Frame 181"  @3848,3503 286x184
+            FRAME "Frame 68"  @3848,3503 286x56  fill=#F1F4F2  stroke=#14542E/1  r=10
+              FRAME "Group 11"  @3865,3520 22x22
+                ELLIPSE "Radio/Selected"  @3865,3520 22x22  fill=#14542E
+                ELLIPSE "Ellipse"  @3872,3527 8x8  fill=#FFFFFF
+              FRAME "Frame 65"  @3911,3521 174x20
+                TEXT "비슷한 작물로 자동 대체"  @3911,3521 174x20  text='비슷한 작물로 자동 대체'  Inter Medium 14px  #1A1A1A
+            FRAME "Frame 67"  @3848,3567 286x56  stroke=#E5E5E3/1  r=10
+              ELLIPSE "Radio/Default"  @3865,3584 22x22  stroke=#8A8A8A/1
+              FRAME "Frame 66"  @3911,3585 215x20
+                TEXT "알림을 받고 직접 선택"  @3911,3585 215x20  text='알림을 받고 직접 선택'  Inter Medium 14px  #1A1A1A
+            FRAME "Frame 69"  @3848,3631 286x56  stroke=#E5E5E3/1  r=10
+              ELLIPSE "Radio/Default"  @3865,3648 22x22  stroke=#8A8A8A/1
+              FRAME "Frame 66"  @3911,3649 215x20
+                TEXT "해당 작물만 제외"  @3911,3649 215x20  text='해당 작물만 제외'  Inter Medium 14px  #1A1A1A
+          TEXT "대체가 어려우면 해당 회차 금액에서 자동 차감됩니다."  @3848,3703 286x18  text='대체가 어려우면 해당 회차 금액에서 자동 차감됩니다.'  Inter Regular 12px  #4A4A4A
+        FRAME "Frame 184"  @3832,3825 318x100
+          FRAME "Button"  @3832,3825 318x44  fill=#14542E  stroke=#14542E/1  r=6
+            TEXT "변경 내용 저장"  @3948,3837 85x20  text='변경 내용 저장'  Inter Medium 14px  #FFFFFF
+          TEXT "구독 해지는 다음 결제일 전까지 가능하며, 이미 결제된 회차는 픽업 완료 후 종료됩니다."  @3832,3889 318x36  text='구독 해지는 다음 결제일 전까지 가능하며, 이미 결제된 회차는 픽업 완료 후 종료됩니다.'  Inter Regular 12px  #8A8A8A

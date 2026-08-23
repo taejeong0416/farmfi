@@ -33,7 +33,7 @@ export function SettlementsResultScreen() {
 
   if (isLoading) {
     return (
-      <AdminShell title="정산 결과">
+      <AdminShell title="이번 정산의 결과를 확인해요">
         <SkeletonBlock height={360} />
       </AdminShell>
     );
@@ -168,8 +168,8 @@ export function SettlementsResultScreen() {
 
   return (
     <AdminShell
-      title="정산 결과"
-      desc="기간별 지급 예정·완료 내역. 확정하면 감사 로그에 남는다."
+      title="이번 정산의 결과를 확인해요"
+      desc="확정 시 지급 파일이 생성되고 각 포털에 상태가 반영됩니다."
       action={
         <Button size="sm" variant="ghost" href="/api/payouts?format=csv">
           지급 파일 내려받기

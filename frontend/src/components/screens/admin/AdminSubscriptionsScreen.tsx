@@ -59,7 +59,7 @@ export function AdminSubscriptionsScreen() {
 
   if (isLoading) {
     return (
-      <AdminShell title="구독 · 픽업 예외 관리">
+      <AdminShell label="구독·픽업 예외 관리" title="오늘 해결해야 할 예외 건입니다">
         <SkeletonBlock height={360} />
       </AdminShell>
     );
@@ -67,7 +67,7 @@ export function AdminSubscriptionsScreen() {
 
   if (isError || !data) {
     return (
-      <AdminShell title="구독 · 픽업 예외 관리">
+      <AdminShell label="구독·픽업 예외 관리" title="오늘 해결해야 할 예외 건입니다">
         <EmptyState
           title="구독 목록을 볼 수 없습니다"
           desc="관리자로 로그인한 뒤 다시 확인해 주세요."
@@ -177,6 +177,7 @@ export function AdminSubscriptionsScreen() {
 
   return (
     <AdminShell
+      label="구독·픽업 예외 관리"
       title="오늘 해결해야 할 예외 건입니다"
       desc="자동으로 넘어가지 않은 결제·재고·픽업 건만 담당자가 확인합니다."
       action={

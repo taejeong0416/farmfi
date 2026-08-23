@@ -1,0 +1,131 @@
+FRAME "A-03 · 관리자 / 운영자 보증서 발급 관리"  @2394,7430 1440x900  fill=#FFFFFF  r=10
+  FRAME "TopBar"  @2394,7430 1440x64  stroke=#E5E5E3/1
+    FRAME "NavLeft"  @2448,7452 134x20
+      FRAME "NavLeft"  @2448,7452 134x20
+        FRAME "Frame 180"  @2448,7452 134x20
+          INSTANCE "App/Logo"  @2448,7456 55x13
+          TEXT "관리자 콘솔"  @2513,7452 69x20  text='관리자 콘솔'  Inter Medium 14px  #14542E
+    FRAME "Frame 12"  @3722,7453 58x18
+      FRAME "아이콘"  @3722,7454 16x16
+        VECTOR "Vector"  @3728,7457 5x5  stroke=#8A8A8A/1
+        VECTOR "Vector"  @3725,7463 9x4  stroke=#8A8A8A/1
+      TEXT "김투자"  @3746,7453 34x18  text='최관리'  Inter Regular 12px  #4A4A4A
+  FRAME "BodyRow"  @2394,7494 1440x836
+    FRAME "Sidebar"  @2394,7494 195x836  stroke=#EDEDEB/1
+      FRAME "NavRow"  @2419,7518 154x14
+        FRAME "아이콘"  @2419,7518 14x14
+          VECTOR "Vector"  @2421,7520 10x10  stroke=#8A8A8A/1
+        TEXT "콘솔 홈"  @2442,7518 35x14  text='콘솔 홈'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @2419,7550 154x14
+        FRAME "아이콘"  @2419,7550 14x14
+          VECTOR "Vector"  @2424,7553 4x4  stroke=#14542E/1
+          VECTOR "Vector"  @2422,7558 8x4  stroke=#14542E/1
+        TEXT "보증서 관리"  @2442,7550 56x14  text='보증서 관리'  Inter Medium 12px  #14542E
+      FRAME "NavRow"  @2419,7582 154x14
+        FRAME "아이콘"  @2419,7582 14x14
+          VECTOR "Vector"  @2421,7584 10x9  stroke=#8A8A8A/1
+          VECTOR "Vector"  @2421,7587 10x0  stroke=#8A8A8A/1
+        TEXT "프로젝트 관리"  @2442,7582 67x14  text='프로젝트 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @2419,7614 154x14
+        FRAME "아이콘"  @2419,7614 14x14
+          VECTOR "Vector"  @2422,7616 0x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @2422,7617 8x5  stroke=#8A8A8A/1
+        TEXT "마일스톤 설정"  @2442,7614 67x14  text='마일스톤 설정'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @2419,7646 154x14
+        FRAME "아이콘"  @2419,7646 14x14
+          VECTOR "Vector"  @2421,7648 10x12  stroke=#8A8A8A/1
+        TEXT "공간·설비 관리"  @2442,7646 70x14  text='공간·설비 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @2419,7678 154x14
+        FRAME "아이콘"  @2419,7678 14x14
+          VECTOR "Vector"  @2421,7680 8x8  stroke=#8A8A8A/1
+          VECTOR "Vector"  @2428,7687 2x2  stroke=#8A8A8A/1
+        TEXT "운영자 관리"  @2442,7679 57x12  text='운영자 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @2419,7710 154x14
+        FRAME "아이콘"  @2419,7710 14x14
+          VECTOR "Vector"  @2421,7712 9x10  stroke=#8A8A8A/1
+        TEXT "외부전문가 판정"  @2442,7710 78x14  text='외부전문가 판정'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @2419,7742 154x14
+        FRAME "아이콘"  @2419,7742 14x14
+          VECTOR "Vector"  @2421,7744 10x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @2425,7746 3x6  stroke=#8A8A8A/1
+        TEXT "정산 규칙 설정"  @2442,7742 70x14  text='정산 규칙 설정'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @2419,7774 154x14
+        FRAME "아이콘"  @2419,7774 14x14
+          VECTOR "Vector"  @2421,7776 10x9  stroke=#8A8A8A/1
+        TEXT "정산 결과"  @2442,7774 46x14  text='정산 결과'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @2419,7806 154x14
+        FRAME "아이콘"  @2419,7806 14x14
+          VECTOR "Vector"  @2422,7808 8x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @2424,7813 4x2  stroke=#8A8A8A/1
+        TEXT "감사 로그 조회"  @2442,7806 70x14  text='감사 로그 조회'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @2419,7838 154x14
+        FRAME "아이콘"  @2419,7838 14x14
+          VECTOR "Vector"  @2424,7841 4x4  stroke=#8A8A8A/1
+          VECTOR "Vector"  @2422,7846 8x4  stroke=#8A8A8A/1
+        TEXT "권한 관리"  @2442,7838 46x14  text='권한 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @2419,7870 154x14
+        FRAME "아이콘"  @2419,7870 14x14
+          VECTOR "Vector"  @2421,7871 10x9  stroke=#8A8A8A/1
+          VECTOR "Vector"  @2425,7882 2x1  stroke=#8A8A8A/1
+        TEXT "알림 발송"  @2442,7870 46x14  text='알림 발송'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @2419,7902 154x14
+        FRAME "아이콘"  @2419,7902 14x14
+          VECTOR "Vector"  @2421,7906 10x6  stroke=#8A8A8A/1
+        TEXT "AML · 이상거래 관리"  @2442,7902 101x14  text='AML · 이상거래 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "Spacer"  @2419,7934 154x340
+      FRAME "NavRow"  @2419,8292 154x14
+        FRAME "아이콘"  @2419,8292 14x14
+          VECTOR "Vector"  @2422,8294 3x9  stroke=#8A8A8A/1
+          VECTOR "Vector"  @2428,8297 2x5  stroke=#8A8A8A/1
+          VECTOR "Vector"  @2425,8299 6x0  stroke=#8A8A8A/1
+        TEXT "로그아웃"  @2442,8292 43x14  text='로그아웃'  Inter Regular 12px  #4A4A4A
+      ROUNDED_RECTANGLE "Rectangle"  @2405,7549 2x16  fill=#14542E
+    FRAME "A-03 · 관리자 / 운영자 보증서 발급 관리"  @2589,7494 1245x836  fill=#FFFFFF
+      TEXT "보증서 관리"  @2643,7518 69x20  text='보증서 관리'  Inter Medium 14px  #14542E
+      TEXT "승인된 운영자에게 디지털 보증서를 발급해요"  @2643,7556 442x29  text='승인된 운영자에게 디지털 보증서를 발급해요'  Inter Bold 25px  #1A1A1A
+      TEXT "보증서는 운영자 앱에서 자격과 배정 지점을 확인할 때 사용됩니다. 발급·정지·재발급 이력은 감사 로그에 남아요."  @2643,7603 554x18  text='보증서는 운영자 앱에서 자격과 배정 지점을 확인할 때 사용됩니다. 발급·정지·재발급 이력은 감사 로그에 남아요.'  Inter Regular 13px  #4A4A4A
+      FRAME "Content"  @2643,7639 1137x396
+        FRAME "Left Column"  @2643,7639 697x396
+          FRAME "발급 대상"  @2643,7639 697x97  fill=#F1F4F2  stroke=#E5E5E3/1  r=10
+            TEXT "김운영 · 성수 로컬팜"  @2659,7655 151x23  text='김운영 · 성수 로컬팜'  Inter Bold 18px  #1A1A1A
+            TEXT "교육 수료 · 공간 최종 확정 · 계약 서명 완료"  @2659,7702 214x18  text='교육 수료 · 공간 최종 확정 · 계약 서명 완료'  Inter Regular 13px  #1A1A1A
+          FRAME "발급 설정"  @2643,7752 697x136  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+            TEXT "사용 범위 · 운영자 앱 로그인 및 지점 인증"  @2659,7768 248x20  text='사용 범위  ·  운영자 앱 로그인 및 지점 인증'  Inter Semi Bold 14px  #1A1A1A
+            TEXT "유효기간 · 1년 (운영 계약에 따라 갱신)"  @2659,7812 200x18  text='유효기간  ·  1년 (운영 계약에 따라 갱신)'  Inter Regular 13px  #4A4A4A
+            TEXT "상태 변경 시 운영자에게 즉시 알림"  @2659,7854 172x18  text='상태 변경 시 운영자에게 즉시 알림'  Inter Regular 13px  #4A4A4A
+          FRAME "최근 이력"  @2643,7904 697x131  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+            TEXT "FF-OP-2026-0179 · 정상 · 전포점"  @2659,7920 179x18  text='FF-OP-2026-0179 · 정상 · 전포점'  Inter Regular 13px  #1A1A1A
+            TEXT "FF-OP-2026-0172 · 정지 · 계약 종료"  @2659,7962 193x18  text='FF-OP-2026-0172 · 정지 · 계약 종료'  Inter Regular 13px  #DC2626
+            TEXT "발급 이력 전체 보기 →"  @2659,8004 104x15  text='발급 이력 전체 보기 →'  Inter Semi Bold 12px  #14542E
+        FRAME "Right Column"  @3356,7639 424x394
+          FRAME "Certificate"  @3356,7639 424x274  stroke=#D1A84D/2  r=10
+            FRAME "Frame 177"  @3377,7662 139x55
+              TEXT "FARMFI OPERATOR"  @3377,7662 101x15  text='FARMFI OPERATOR'  Inter Semi Bold 12px  #D1A84D
+              TEXT "운영자 보증서"  @3377,7688 139x29  text='운영자 보증서'  Inter Bold 25px  #FFFFFF
+            FRAME "Frame 178"  @3377,7726 382x164
+              FRAME "Frame 176"  @3377,7828 290x62
+                TEXT "김운영 · FF-OP-2026-0184"  @3377,7828 290x20  text='김운영  ·  FF-OP-2026-0184'  Inter Semi Bold 14px  #F2D680
+                TEXT "유효기간 2026.09.01 – 2027.08.31"  @3377,7872 290x18  text='유효기간 2026.09.01 – 2027.08.31'  Inter Regular 12px  #FFFFFF
+              FRAME "Group 46"  @3667,7798 92x92
+                ELLIPSE "Ellipse"  @3667,7798 92x92  stroke=#D1A84D/3
+                VECTOR "Vector"  @3695,7829 38x38
+                FRAME "Group"  @3680,7807 65x23
+                  TEXT "F"  @3680,7823 6x11  text='F'  Inter Bold 9px  #8C6114
+                  TEXT "A"  @3690,7813 7x11  text='A'  Inter Bold 9px  #8C6114
+                  TEXT "R"  @3704,7808 6x11  text='R'  Inter Bold 9px  #8C6114
+                  TEXT "M"  @3717,7807 9x11  text='M'  Inter Bold 9px  #8C6114
+                  TEXT "F"  @3733,7812 6x11  text='F'  Inter Bold 9px  #8C6114
+                  TEXT "I"  @3743,7821 3x11  text='I'  Inter Bold 9px  #8C6114
+                FRAME "Group"  @3676,7859 73x26
+                  TEXT "V"  @3684,7859 7x11  text='V'  Inter Bold 9px  #9E7324
+                  TEXT "E"  @3691,7866 6x11  text='E'  Inter Bold 9px  #9E7324
+                  TEXT "R"  @3699,7871 6x11  text='R'  Inter Bold 9px  #9E7324
+                  TEXT "I"  @3708,7873 3x11  text='I'  Inter Bold 9px  #9E7324
+                  TEXT "F"  @3714,7874 6x11  text='F'  Inter Bold 9px  #9E7324
+                  TEXT "I"  @3723,7872 3x11  text='I'  Inter Bold 9px  #9E7324
+                  TEXT "E"  @3729,7870 6x11  text='E'  Inter Bold 9px  #9E7324
+                  TEXT "D"  @3736,7864 7x11  text='D'  Inter Bold 9px  #9E7324
+          FRAME "Button"  @3356,7929 424x44  fill=#14542E  stroke=#14542E/1  r=6
+            TEXT "보증서 발급하고 알림 보내기"  @3485,7941 166x20  text='보증서 발급하고 알림 보내기'  Inter Semi Bold 13px  #FFFFFF
+          FRAME "Button"  @3356,7989 424x44  fill=#FFFFFF  stroke=#E5E5E3/1  r=6
+            TEXT "미리보기"  @3542,8001 52x20  text='미리보기'  Inter Semi Bold 13px  #1A1A1A

@@ -1,0 +1,25 @@
+FRAME "I-03E · 납입 실패 / 재시도"  @3624,1429 730x754
+  FRAME "I-03E · 납입 실패 / 재시도"  @3624,1429 730x754  fill=#FFFFFF  r=10
+    TEXT "투자 신청"  @3656,1461 56x20  text='투자 신청'  Inter Semi Bold 13px  #14542E
+    TEXT "아직 신청이 완료되지 않았어요"  @3656,1498 304x29  text='아직 신청이 완료되지 않았어요'  Inter Bold 26px  #1A1A1A
+    TEXT "아직 입금이 확인되지 않았어요. 발급된 가상계좌와 입금기한을 확인해 주세요."  @3656,1544 452x21  text='아직 입금이 확인되지 않았어요. 발급된 가상계좌와 입금기한을 확인해 주세요.'  Inter Regular 14px  #4A4A4A
+    FRAME "Failure"  @3656,1582 666x141  fill=#DC2626@0.08  stroke=#DC2626@0.15/1  r=10
+      TEXT "입금 확인 대기"  @3672,1598 108x23  text='입금 확인 대기'  Inter Bold 17px  #DC2626
+      TEXT "국민은행 · 1234 / 1,750,000원"  @3672,1645 196x20  text='국민은행 · 1234  /  1,750,000원'  Inter Semi Bold 14px  #1A1A1A
+      TEXT "마지막 확인 2026.08.18 15:42"  @3672,1689 162x18  text='마지막 확인  2026.08.18 15:42'  Inter Regular 12px  #4A4A4A
+    FRAME "해결 방법"  @3656,1740 666x140  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+      TEXT "1. 입금 계좌와 금액이 정확한지 확인해 주세요."  @3672,1756 270x21  text='1. 입금 계좌와 금액이 정확한지 확인해 주세요.'  Inter Regular 14px  #1A1A1A
+      TEXT "2. 이미 입금했다면 입금내역 확인을 요청할 수 있어요."  @3672,1801 315x21  text='2. 이미 입금했다면 입금내역 확인을 요청할 수 있어요.'  Inter Regular 14px  #1A1A1A
+      TEXT "3. 입금기한이 지났다면 새 가상계좌를 받아 주세요."  @3672,1846 256x18  text='3. 입금기한이 지났다면 새 가상계좌를 받아 주세요.'  Inter Regular 13px  #4A4A4A
+    FRAME "좌석 유지"  @3656,1897 666x97  fill=#F1F4F2  stroke=#E5E5E3/1  r=10
+      TEXT "남은 시간 24:18"  @3672,1913 129x23  text='남은 시간  24:18'  Inter Bold 18px  #14542E
+      TEXT "시간이 지나면 투자 가능 금액이 다른 신청자에게 열릴 수 있어요."  @3672,1960 321x18  text='시간이 지나면 투자 가능 금액이 다른 신청자에게 열릴 수 있어요.'  Inter Regular 12px  #4A4A4A
+    FRAME "Frame 80"  @3656,2011 666x140
+      FRAME "Button"  @3656,2011 666x44  fill=#14542E  stroke=#14542E/1  r=6
+        TEXT "입금내역 확인 요청"  @3934,2023 111x20  text='입금내역 확인 요청'  Inter Semi Bold 14px  #FFFFFF
+      FRAME "Button"  @3656,2072 666x44  fill=#FFFFFF  stroke=#E5E5E3/1  r=6
+        TEXT "새 입금 계좌 받기"  @3938,2084 102x20  text='새 입금 계좌 받기'  Inter Semi Bold 14px  #1A1A1A
+      TEXT "신청 취소 · 프로젝트로 돌아가기"  @3908,2133 161x18  text='신청 취소 · 프로젝트로 돌아가기'  Inter Regular 12px  #8A8A8A
+  FRAME "x"  @4296,1463 24x24
+    VECTOR "Vector"  @4302,1469 12x12  stroke=#000000/2
+    VECTOR "Vector"  @4302,1469 12x12  stroke=#000000/2

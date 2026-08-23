@@ -19,6 +19,12 @@ import {
 import { canCancel, canChangePickup } from "@/lib/subscription-window";
 import { useCatalog } from "./useSubscribeDraft";
 
+const SHORTAGE_OPTIONS = [
+  "비슷한 작물로 자동 대체",
+  "알림을 받고 직접 선택",
+  "해당 작물만 제외",
+];
+
 export function ChangeScreen() {
   const { data: subscriptions, isLoading, refetch } = useSubscriptions();
   const active = (subscriptions ?? []).find((s) => s.status !== "cancelled");
@@ -30,6 +36,7 @@ export function ChangeScreen() {
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [confirmCancel, setConfirmCancel] = useState(false);
+  const [shortage, setShortage] = useState<string>(SHORTAGE_OPTIONS[0]);
 
   useEffect(() => {
     if (!active) return;
@@ -121,7 +128,7 @@ export function ChangeScreen() {
       </p>
 
       <Card className="mt-7 bg-brand-soft">
-        <p className="text-14 font-bold text-brand">
+        <p className="text-12 text-brand">
           마감 이후에는 이미 수확·포장이 시작돼 다음 회차에 적용돼요.
         </p>
         <p className="mt-2 text-12 text-body">
@@ -238,6 +245,29 @@ export function ChangeScreen() {
             결제수단 변경
           </Button>
         </div>
+      </Card>
+
+      <Card className="mt-4">
+        <p className="text-18 font-bold text-ink">선택한 작물이 부족할 때</p>
+        <div className="mt-4 space-y-3">
+          {SHORTAGE_OPTIONS.map((o) => (
+            <button
+              key={o}
+              type="button"
+              onClick={() => setShortage(o)}
+              className={`block w-full rounded-10 border px-5 py-4 text-left text-13 ${
+                shortage === o
+                  ? "border-brand font-medium text-brand"
+                  : "border-line text-body hover:bg-surface"
+              }`}
+            >
+              {o}
+            </button>
+          ))}
+        </div>
+        <p className="mt-3 text-12 text-muted">
+          대체가 어려우면 해당 회차 금액에서 자동 차감됩니다.
+        </p>
       </Card>
 
       <Card className="mt-4">

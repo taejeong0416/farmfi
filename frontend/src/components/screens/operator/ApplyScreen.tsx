@@ -118,8 +118,11 @@ export function ApplyScreen() {
     <PanelShell>
       <ApplyStepLine application={application ?? null} current="docs" />
 
-      <h1 className="text-24 font-bold text-ink">운영 자격을 확인해요</h1>
+      <h1 className="text-24 font-bold text-ink">운영 자격을 인증해주세요</h1>
       <p className="mt-3 text-14 text-body">
+        자격 요건을 확인하고 보완 서류를 제출해주세요.
+      </p>
+      <p className="mt-2 text-12 text-muted">
         {user?.name ?? "운영자"} · 신청 요건 6가지 중 {met}가지를 채웠습니다.
       </p>
 
@@ -206,7 +209,7 @@ export function ApplyScreen() {
         onClick={() => fileRef.current?.click()}
         className="mt-4 flex h-[90px] w-full flex-col items-center justify-center rounded-10 border border-dashed border-line bg-surface"
       >
-        <span className="text-13 font-medium text-brand">
+        <span className="text-14 font-medium text-brand">
           파일을 끌어다 놓거나 선택하세요
         </span>
         <span className="mt-1.5 text-12 text-muted">

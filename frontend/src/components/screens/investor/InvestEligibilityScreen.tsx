@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button, Card, PanelShell } from "@/components/ui";
@@ -8,11 +9,11 @@ import { postJson, shortDate, won, type Investment } from "../api";
 const QUESTIONS = [
   {
     q: "이 투자금은 예금처럼 원금이 보장되나요?",
-    a: "아니요. 매출과 운영 상황에 따라 회수 기간과 금액이 달라질 수 있어요.",
+    a: "매출과 운영 상황에 따라 회수 기간과 금액이 달라질 수 있어요.",
   },
   {
     q: "투자한 뒤 필요할 때 바로 돌려받을 수 있나요?",
-    a: "아니요. 중도 환금이 어렵고, 약정된 회수 구조를 따라요.",
+    a: "중도 환금이 어렵고, 약정된 회수 구조를 따라요.",
   },
   {
     q: "손실 가능성을 감당할 수 있는 금액인가요?",
@@ -76,68 +77,74 @@ export function InvestEligibilityScreen({ projectId }: { projectId: string }) {
   const allChecked = checked.every(Boolean);
 
   return (
-    <PanelShell>
-      <p className="text-13 font-medium text-brand">투자 전 확인</p>
-      <h1 className="mt-3 text-24 font-bold text-ink">
-        나에게 맞는 투자인지 먼저 확인해요
-      </h1>
-      <p className="mt-3 text-14 leading-6 text-body">
-        정답을 맞히는 절차가 아니라, 투자 구조와 위험을 충분히 이해했는지 함께 확인하는 과정입니다.
-      </p>
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-ink/70 p-6">
+      <div className="relative w-full max-w-[730px] rounded-10 bg-white px-[34px] py-[34px]">
+        <Link
+          href={`/projects/${projectId}`}
+          aria-label="닫기"
+          className="absolute right-7 top-8 text-16 text-ink"
+        >
+          ✕
+        </Link>
 
-      <div className="mt-7 rounded-14 bg-brand-soft px-6 py-5">
-        <p className="text-15 font-bold text-brand">약 2분이면 끝나요</p>
-        <p className="mt-2 text-13 text-body">
-          답변에 따라 투자 한도가 달라지거나 추가 안내가 필요할 수 있어요.
+        <p className="text-14 font-medium text-brand">투자 전 확인</p>
+        <h1 className="mt-4 text-24 font-bold text-ink">
+          나에게 맞는 투자인지 먼저 확인해요
+        </h1>
+        <p className="mt-3 text-14 text-body">
+          투자 구조와 위험을 충분히 이해했는지 함께 확인하는 과정입니다.
+        </p>
+
+        <div className="mt-5 flex items-center justify-between gap-6 rounded-10 bg-surface px-4 py-4">
+          <p className="text-14 font-medium text-ink">약 2분이면 끝나요!</p>
+          <p className="text-12 text-body">
+            답변에 따라 투자 한도가 달라지거나 추가 안내가 필요할 수 있어요.
+          </p>
+        </div>
+
+        <div className="mt-[18px] space-y-[18px]">
+          {QUESTIONS.map((item, i) => (
+            <button
+              key={item.q}
+              type="button"
+              aria-pressed={checked[i]}
+              onClick={() =>
+                setChecked((c) => c.map((v, idx) => (idx === i ? !v : v)))
+              }
+              className="flex w-full items-center gap-4 rounded-10 border border-line bg-white px-4 py-4 text-left"
+            >
+              <span className="flex-1">
+                <span className="block text-18 font-bold text-ink">
+                  {i + 1}&nbsp;&nbsp;{item.q}
+                </span>
+                <span className="mt-2 block text-14 font-medium text-brand">
+                  {item.a}
+                </span>
+              </span>
+              <span
+                className={`flex h-[19px] w-[19px] shrink-0 items-center justify-center rounded-4 border text-11 text-white ${
+                  checked[i] ? "border-brand bg-brand" : "border-line bg-white"
+                }`}
+              >
+                {checked[i] ? "✓" : ""}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        {error ? <p className="mt-4 text-12 text-danger">{error}</p> : null}
+
+        <div className="mt-[18px]">
+          <Button full disabled={!allChecked || !investment || busy} onClick={submit}>
+            {busy ? "확인 중" : "확인하고 다음으로"}
+          </Button>
+        </div>
+
+        <p className="mt-[18px] text-center text-12 text-muted">
+          투자 위험과 적합성 기준 자세히 보기
         </p>
       </div>
-
-      <div className="mt-5 space-y-3">
-        {QUESTIONS.map((item, i) => (
-          <button
-            key={item.q}
-            type="button"
-            onClick={() =>
-              setChecked((c) => c.map((v, idx) => (idx === i ? !v : v)))
-            }
-            className={`block w-full rounded-14 border px-6 py-5 text-left transition-colors ${
-              checked[i] ? "border-brand bg-brand-soft" : "border-line bg-white"
-            }`}
-          >
-            <p className="text-15 font-medium text-ink">
-              {i + 1} {item.q}
-            </p>
-            <p
-              className={`mt-2 text-13 ${checked[i] ? "text-brand" : "text-muted"}`}
-            >
-              {checked[i] ? "선택됨 · " : ""}
-              {item.a}
-            </p>
-          </button>
-        ))}
-      </div>
-
-      <Card className="mt-5">
-        <div className="flex items-center justify-between">
-          <span className="text-13 text-muted">신청 금액</span>
-          <span className="font-num text-15 font-medium text-ink">
-            {won(amount)}
-          </span>
-        </div>
-      </Card>
-
-      {error ? <p className="mt-4 text-12 text-danger">{error}</p> : null}
-
-      <div className="mt-6">
-        <Button full disabled={!allChecked || !investment || busy} onClick={submit}>
-          {busy ? "확인 중" : "확인하고 다음으로"}
-        </Button>
-      </div>
-
-      <p className="mt-5 text-12 text-muted">
-        투자 위험과 적합성 기준 자세히 보기
-      </p>
-    </PanelShell>
+    </div>
   );
 }
 
@@ -154,7 +161,7 @@ function IneligibleView({
 
   return (
     <PanelShell className="max-w-modal">
-      <h1 className="text-20 font-bold text-ink">지금은 투자 신청이 어려워요</h1>
+      <h1 className="text-24 font-bold text-ink">지금은 투자 신청이 어려워요</h1>
       <p className="mt-3 text-13 leading-6 text-muted">
         {investment.eligibilityMemo ?? "신청 조건을 충족하지 못했습니다."}
       </p>
@@ -201,7 +208,7 @@ function IneligibleView({
         </Button>
       </div>
 
-      <p className="mt-5 text-11 text-muted">
+      <p className="mt-5 text-12 text-muted">
         표시된 한도가 실제와 다르면 한도 안내에서 확인을 요청할 수 있어요. 판정 결과는 투자 신청 기록에 남습니다.
       </p>
     </PanelShell>

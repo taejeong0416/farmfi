@@ -1,0 +1,161 @@
+FRAME "A-14 · 관리자 / 알림 발송"  @18120,0 1440x900  fill=#FFFFFF  r=10
+  FRAME "TopBar"  @18120,0 1440x64  stroke=#E5E5E3/1
+    FRAME "NavLeft"  @18174,22 134x20
+      FRAME "Frame 180"  @18174,22 134x20
+        INSTANCE "App/Logo"  @18174,26 55x13
+        TEXT "관리자 콘솔"  @18239,22 69x20  text='관리자 콘솔'  Inter Medium 14px  #14542E
+    FRAME "Frame 12"  @19448,23 58x18
+      FRAME "아이콘"  @19448,24 16x16
+        VECTOR "Vector"  @19454,27 5x5  stroke=#8A8A8A/1
+        VECTOR "Vector"  @19451,33 9x4  stroke=#8A8A8A/1
+      TEXT "김투자"  @19472,23 34x18  text='최관리'  Inter Regular 12px  #4A4A4A
+  FRAME "BodyRow"  @18120,64 1440x836
+    FRAME "Sidebar"  @18120,64 195x836  stroke=#EDEDEB/1
+      FRAME "NavRow"  @18145,88 154x14
+        FRAME "아이콘"  @18145,88 14x14
+          VECTOR "Vector"  @18147,90 10x10  stroke=#8A8A8A/1
+        TEXT "콘솔 홈"  @18168,89 35x12  text='콘솔 홈'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @18145,120 154x14
+        FRAME "아이콘"  @18145,120 14x14
+          VECTOR "Vector"  @18150,123 4x4  stroke=#8A8A8A/1
+          VECTOR "Vector"  @18148,128 8x4  stroke=#8A8A8A/1
+        TEXT "보증서 관리"  @18168,120 57x14  text='보증서 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @18145,152 154x14
+        FRAME "아이콘"  @18145,152 14x14
+          VECTOR "Vector"  @18147,154 10x9  stroke=#8A8A8A/1
+          VECTOR "Vector"  @18147,157 10x0  stroke=#8A8A8A/1
+        TEXT "프로젝트 관리"  @18168,153 67x12  text='프로젝트 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @18145,184 154x14
+        FRAME "아이콘"  @18145,184 14x14
+          VECTOR "Vector"  @18148,186 0x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @18148,187 8x5  stroke=#8A8A8A/1
+        TEXT "마일스톤 설정"  @18168,185 67x12  text='마일스톤 설정'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @18145,216 154x14
+        FRAME "아이콘"  @18145,216 14x14
+          VECTOR "Vector"  @18147,218 10x12  stroke=#8A8A8A/1
+        TEXT "공간·설비 관리"  @18168,216 70x14  text='공간·설비 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @18145,248 154x14
+        FRAME "아이콘"  @18145,248 14x14
+          VECTOR "Vector"  @18147,250 8x8  stroke=#8A8A8A/1
+          VECTOR "Vector"  @18154,257 2x2  stroke=#8A8A8A/1
+        TEXT "운영팀 재검증"  @18168,249 57x12  text='운영자 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @18145,280 154x14
+        FRAME "아이콘"  @18145,280 14x14
+          VECTOR "Vector"  @18148,282 8x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @18150,287 4x2  stroke=#8A8A8A/1
+        TEXT "감사 로그 조회"  @18168,281 57x12  text='증빙 재검토'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @18145,312 154x14
+        FRAME "아이콘"  @18145,312 14x14
+          VECTOR "Vector"  @18147,314 9x10  stroke=#8A8A8A/1
+        TEXT "외부전문가 판정"  @18168,313 78x12  text='외부전문가 판정'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @18145,344 154x14
+        FRAME "아이콘"  @18145,344 14x14
+          VECTOR "Vector"  @18147,346 10x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @18151,348 3x6  stroke=#8A8A8A/1
+        TEXT "정산 규칙 설정"  @18168,345 70x12  text='정산 규칙 설정'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @18145,376 154x14
+        FRAME "아이콘"  @18145,376 14x14
+          VECTOR "Vector"  @18147,378 10x9  stroke=#8A8A8A/1
+        TEXT "정산 결과"  @18168,377 46x12  text='정산 결과'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @18145,408 154x14
+        FRAME "아이콘"  @18145,408 14x14
+          VECTOR "Vector"  @18148,410 8x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @18150,415 4x2  stroke=#8A8A8A/1
+        TEXT "감사 로그 조회"  @18168,409 70x12  text='감사 로그 조회'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @18145,440 154x14
+        FRAME "아이콘"  @18145,440 14x14
+          VECTOR "Vector"  @18150,443 4x4  stroke=#8A8A8A/1
+          VECTOR "Vector"  @18148,448 8x4  stroke=#8A8A8A/1
+        TEXT "권한 관리"  @18168,441 46x12  text='권한 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @18145,472 154x14
+        FRAME "아이콘"  @18145,472 14x14
+          VECTOR "Vector"  @18147,473 10x9  stroke=#14532D/1
+          VECTOR "Vector"  @18151,484 2x1  stroke=#14532D/1
+        TEXT "알림 발송"  @18168,473 46x12  text='알림 발송'  Inter Medium 12px  #14532D
+      FRAME "NavRow"  @18145,504 154x14
+        FRAME "아이콘"  @18145,504 14x14
+          VECTOR "Vector"  @18147,508 10x6  stroke=#8A8A8A/1
+        TEXT "AML · 이상거래 관리"  @18168,505 101x12  text='AML · 이상거래 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @18145,536 154x14
+        FRAME "아이콘"  @18145,536 14x14
+          VECTOR "Vector"  @18147,538 10x9  stroke=#8A8A8A/1
+        TEXT "AML · 이상거래 관리"  @18168,537 70x12  text='매출·비용 입력'  Inter Regular 12px  #4A4A4A
+      FRAME "Spacer"  @18145,568 154x276
+      FRAME "NavRow"  @18145,862 154x14
+        FRAME "아이콘"  @18145,862 14x14
+          VECTOR "Vector"  @18148,864 3x9  stroke=#8A8A8A/1
+          VECTOR "Vector"  @18154,867 2x5  stroke=#8A8A8A/1
+          VECTOR "Vector"  @18151,869 6x0  stroke=#8A8A8A/1
+        TEXT "로그아웃"  @18168,863 43x12  text='로그아웃'  Inter Regular 12px  #4A4A4A
+      ROUNDED_RECTANGLE "선"  @18131,471 2x16  fill=#14542E
+    FRAME "MainContent"  @18315,64 1245x836
+      TEXT "SectionLabel"  @18369,88 1137x17  text='알림 발송'  Inter Medium 14px  #14542E
+      FRAME "PageHeaderRow"  @18369,123 1137x34
+        TEXT "알림 발송"  @18369,124 304x31  text='필요한 대상에게 알림을 보내요'  Inter Bold 24px  #1A1A1A
+        FRAME "HistoryBtn"  @19432,123 74x34  stroke=#E5E5E3/1  r=6
+          TEXT "발송 이력"  @19447,132 44x15  text='발송 이력'  Inter Medium 11px  #1A1A1A
+      ROUNDED_RECTANGLE "선"  @18369,175 1137x1  fill=#EDEDEB
+      FRAME "ContentRow"  @18369,194 1137x518
+        FRAME "LeftColumn"  @18369,194 692x518
+          FRAME "RecipientBlock"  @18369,194 692x60  fill=#FFFFFF
+            TEXT "수신 대상"  @18369,194 692x18  text='수신 대상'  Inter Regular 12px  #8A8A8A
+            FRAME "RecipientChipRow"  @18369,222 692x32  fill=#FFFFFF
+              FRAME "InvestorChip"  @18369,222 56x32  fill=#14542E  r=16
+                TEXT "투자자"  @18381,230 31x15  text='투자자'  Inter Medium 11px  #FFFFFF
+              FRAME "OperatorChip"  @18433,222 58x32  stroke=#E5E5E3/1  r=16
+                TEXT "운영자"  @18445,229 34x18  text='운영자'  Inter Regular 12px  #4A4A4A
+              FRAME "AllChip"  @18499,222 48x32  stroke=#E5E5E3/1  r=16
+                TEXT "전체"  @18511,229 23x18  text='전체'  Inter Regular 12px  #4A4A4A
+          FRAME "ScopeBlock"  @18369,278 692x65  fill=#FFFFFF
+            TEXT "범위"  @18369,278 692x18  text='범위'  Inter Regular 12px  #8A8A8A
+            FRAME "ScopeSelector"  @18369,306 692x37  stroke=#E5E5E3/1  r=8
+              TEXT "부산 전포동 미니팜 1호 참여자 238명"  @18383,318 189x12  text='부산 전포동 미니팜 1호 참여자 238명'  Inter Regular 12px  #1A1A1A
+              FRAME "아이콘"  @18739,318 13x13
+                VECTOR "Vector"  @18742,323 6x3  stroke=#8A8A8A/1
+          FRAME "ChannelBlock"  @18369,367 692x46  fill=#FFFFFF
+            TEXT "채널"  @18369,367 692x18  text='채널'  Inter Regular 12px  #8A8A8A
+            FRAME "ChannelRow"  @18369,395 692x18  fill=#FFFFFF
+              FRAME "AppChannel"  @18369,395 71x18  fill=#FFFFFF
+                ROUNDED_RECTANGLE "면"  @18369,397 14x14  fill=#14542E  r=4
+                VECTOR "Vector"  @18373,402 5x4  stroke=#FFFFFF/1
+                TEXT "앱 내 알림"  @18389,395 51x18  text='앱 내 알림'  Inter Regular 12px  #1A1A1A
+              FRAME "EmailChannel"  @18464,395 54x18  fill=#FFFFFF
+                ROUNDED_RECTANGLE "면"  @18464,397 14x14  fill=#14542E  r=4
+                VECTOR "Vector"  @18469,402 5x4  stroke=#FFFFFF/1
+                TEXT "이메일"  @18484,395 34x18  text='이메일'  Inter Regular 12px  #1A1A1A
+              FRAME "SmsChannel"  @18542,395 48x18  fill=#FFFFFF
+                ROUNDED_RECTANGLE "면"  @18542,396 16x16  stroke=#E5E5E3/1  r=4
+                TEXT "SMS"  @18564,395 26x18  text='SMS'  Inter Regular 12px  #8A8A8A
+          FRAME "TitleBlock"  @18369,437 692x64  fill=#FFFFFF
+            TEXT "제목"  @18369,437 692x18  text='제목'  Inter Regular 12px  #8A8A8A
+            FRAME "TitleInput"  @18369,465 692x36  stroke=#E5E5E3/1  r=8
+              TEXT "3단계 설비 설치 검증 결과 안내"  @18383,477 157x12  text='3단계 설비 설치 검증 결과 안내'  Inter Regular 12px  #1A1A1A
+          FRAME "BodyBlock"  @18369,526 692x124  fill=#FFFFFF
+            TEXT "내용"  @18369,526 692x18  text='내용'  Inter Regular 12px  #8A8A8A
+            FRAME "BodyTextarea"  @18369,554 692x96  stroke=#E5E5E3/1  r=8
+              TEXT "3단계 설비 설치 검증이 보류되어 재검증이 …"  @18383,569 621x12  text='3단계 설비 설치 검증이 보류되어 재검증이 진행 중입니다. 진행 상황은 프로젝트 상세의 집행 레일에서 확인하실 수 있습니다.'  Inter Regular 12px  #1A1A1A
+          FRAME "ActionBtnRow"  @18369,674 692x38  fill=#FFFFFF
+            FRAME "TestSendBtn"  @18369,674 341x38  stroke=#E5E5E3/1  r=6
+              TEXT "테스트 발송"  @18512,685 54x15  text='테스트 발송'  Inter Medium 11px  #1A1A1A
+            FRAME "SendBtn"  @18720,674 341x36  fill=#1B5E3F  r=6
+              TEXT "발송"  @18880,684 21x15  text='발송'  Inter Medium 11px  #FFFFFF
+        FRAME "RightColumn"  @19093,194 413x248
+          FRAME "PreviewBlock"  @19093,194 413x115  fill=#FFFFFF
+            TEXT "미리보기"  @19093,194 41x15  text='미리보기'  Inter Medium 11px  #1A1A1A
+            FRAME "PreviewCard"  @19093,221 413x88  stroke=#E5E5E3/1  r=8
+              ELLIPSE "점"  @19107,240 6x6  fill=#14542E
+              TEXT "3단계 설비 설치 검증 결과 안내"  @19121,236 365x15  text='3단계 설비 설치 검증 결과 안내'  Inter Medium 11px  #1A1A1A
+              TEXT "검증이 보류되어 재검증이 진행 중입니다."  @19121,258 365x18  text='검증이 보류되어 재검증이 진행 중입니다.'  Inter Regular 12px  #8A8A8A
+              TEXT "지금 · 부산 전포동 1호"  @19121,279 111x18  text='지금 · 부산 전포동 1호'  Inter Regular 12px  #8A8A8A
+          FRAME "SummaryBlock"  @19093,333 413x109  fill=#FFFFFF
+            TEXT "발송 요약"  @19093,333 44x15  text='발송 요약'  Inter Medium 11px  #1A1A1A
+            FRAME "SummaryList"  @19093,360 413x82  fill=#FFFFFF
+              FRAME "Frame"  @19093,360 413x18  fill=#FFFFFF
+                TEXT "예상 수신자"  @19093,360 59x18  text='예상 수신자'  Inter Regular 12px  #8A8A8A
+                TEXT "238명"  @19475,361 31x15  text='238명'  Inter Medium 11px  #1A1A1A
+              FRAME "Frame"  @19093,392 413x18  fill=#FFFFFF
+                TEXT "채널"  @19093,392 23x18  text='채널'  Inter Regular 12px  #8A8A8A
+                TEXT "앱 · 이메일"  @19456,393 50x15  text='앱 · 이메일'  Inter Medium 11px  #1A1A1A
+              FRAME "Frame"  @19093,424 413x18  fill=#FFFFFF
+                TEXT "발송 예정"  @19093,424 48x18  text='발송 예정'  Inter Regular 12px  #8A8A8A
+                TEXT "즉시"  @19485,425 21x15  text='즉시'  Inter Medium 11px  #1A1A1A

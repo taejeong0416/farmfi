@@ -1,0 +1,101 @@
+FRAME "O-02 · 운영자 / 공간 상세·신청 시작"  @894,6142 1440x1201  fill=#FFFFFF  r=10
+  FRAME "TopNav"  @894,6142 1440x64  stroke=#E5E5E3/1
+    FRAME "NavLeft"  @948,6164 405x20
+      FRAME "Frame 180"  @948,6168 117x13
+        INSTANCE "App/Logo"  @948,6168 55x13
+        FRAME "Frame 6"  @1013,6168 52x13  fill=#8C6114@0.10  stroke=#8C6114/0  r=19
+          TEXT "운영자 포털"  @1020,6170 37x8  text='운영자 포털'  Pretendard SemiBold 8px  #8C6114
+      FRAME "NavLinks"  @1121,6164 232x20
+        TEXT "공간 찾기"  @1121,6164 56x20  text='공간 찾기'  Inter Medium 14px  #14542E
+        TEXT "내 준비 현황"  @1209,6164 73x20  text='내 준비 현황'  Inter Regular 14px  #4A4A4A
+        TEXT "보증서"  @1314,6164 39x20  text='보증서'  Inter Regular 14px  #4A4A4A
+    FRAME "Frame 12"  @2222,6165 58x18
+      FRAME "아이콘"  @2222,6166 16x16
+        VECTOR "Vector"  @2228,6169 5x5  stroke=#8A8A8A/1
+        VECTOR "Vector"  @2225,6175 9x4  stroke=#8A8A8A/1
+      TEXT "김투자"  @2246,6165 34x18  text='박운영'  Inter Regular 12px  #4A4A4A
+  FRAME "BodyContainer"  @894,6206 1440x1137
+    FRAME "HeaderBlock"  @948,6230 1332x90
+      TEXT "← 공간 목록"  @948,6230 73x20  text='← 공간 목록'  Inter Medium 13px  #14542E
+      FRAME "TitleRow"  @948,6260 308x29
+        TEXT "부산 전포동 미니팜 1호"  @948,6260 228x29  text='부산 전포동 미니팜 1호'  Inter Bold 30px  #1A1A1A
+        FRAME "Frame 131"  @1188,6261 68x27  fill=#F1F4F2  r=4
+          TEXT "신청 가능"  @1200,6267 44x15  text='신청 가능'  Inter Medium 11px  #14542E
+      TEXT "부산 부산진구 전포대로 · 25평 · 개점 목표 2026년 9월"  @948,6299 1332x21  text='부산 부산진구 전포대로 · 25평 · 개점 목표 2026년 9월'  Inter Regular 14px  #4A4A4A
+    FRAME "MapSidebarRow"  @948,6344 1332x562
+      FRAME "MapArea"  @948,6344 900x330  fill=#EDEDEB  stroke=#E5E5E3/1  r=14
+        ROUNDED_RECTANGLE "Rectangle"  @974,6362 10x280  fill=#FFFFFF  r=5
+        ROUNDED_RECTANGLE "Rectangle"  @1079,6362 10x280  fill=#FFFFFF  r=5
+        ROUNDED_RECTANGLE "Rectangle"  @1184,6362 10x280  fill=#FFFFFF  r=5
+        ROUNDED_RECTANGLE "Rectangle"  @1289,6362 10x280  fill=#FFFFFF  r=5
+        ROUNDED_RECTANGLE "Rectangle"  @1394,6362 10x280  fill=#FFFFFF  r=5
+        ROUNDED_RECTANGLE "Rectangle"  @1499,6362 10x280  fill=#FFFFFF  r=5
+        ROUNDED_RECTANGLE "Rectangle"  @1604,6362 10x280  fill=#FFFFFF  r=5
+        ROUNDED_RECTANGLE "Rectangle"  @1709,6362 10x280  fill=#FFFFFF  r=5
+        ROUNDED_RECTANGLE "Rectangle"  @976,6422 830x10  fill=#FFFFFF  r=5
+        ROUNDED_RECTANGLE "Rectangle"  @976,6512 830x10  fill=#FFFFFF  r=5
+        ROUNDED_RECTANGLE "Rectangle"  @976,6602 830x10  fill=#FFFFFF  r=5
+        ELLIPSE "Ellipse"  @1364,6476 42x42  fill=#14542E  stroke=#FFFFFF/5
+        TEXT "전포역 6번 출구에서 도보 4분"  @968,6638 138x15  text='전포역 6번 출구에서 도보 4분'  Inter Medium 12px  #4A4A4A
+      FRAME "Frame 135"  @1880,6344 400x562  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+        FRAME "Group 38"  @1902,6368 356x399
+          TEXT "운영 조건"  @1902,6368 71x23  text='운영 조건'  Inter Semi Bold 18px  #1A1A1A
+          TEXT "예상 운영 시간"  @1902,6416 73x18  text='예상 운영 시간'  Inter Regular 12px  #4A4A4A
+          TEXT "하루 약 3.5시간"  @2163,6416 94x20  text='하루 약 3.5시간'  Inter Medium 13px  #1A1A1A
+          ROUNDED_RECTANGLE "Rectangle"  @1902,6450 356x1  fill=#E5E5E3
+          TEXT "표준 회수 플랜"  @1902,6474 73x18  text='표준 회수 플랜'  Inter Regular 12px  #4A4A4A
+          TEXT "15개월"  @2215,6474 42x20  text='15개월'  Inter Medium 13px  #1A1A1A
+          ROUNDED_RECTANGLE "Rectangle"  @1902,6508 356x1  fill=#E5E5E3
+          TEXT "예상 월 실수령"  @1902,6532 73x18  text='예상 월 실수령'  Inter Regular 12px  #4A4A4A
+          TEXT "약 150만원"  @2190,6532 67x20  text='약 150만원'  Inter Medium 13px  #1A1A1A
+          ROUNDED_RECTANGLE "Rectangle"  @1902,6566 356x1  fill=#E5E5E3
+          TEXT "필수 교육"  @1902,6590 48x18  text='필수 교육'  Inter Regular 12px  #4A4A4A
+          TEXT "온라인 2시간 + 현장 1회"  @2115,6590 143x20  text='온라인 2시간 + 현장 1회'  Inter Medium 13px  #1A1A1A
+          ROUNDED_RECTANGLE "Rectangle"  @1902,6624 356x1  fill=#E5E5E3
+          TEXT "운영 시작"  @1902,6648 48x18  text='운영 시작'  Inter Regular 12px  #4A4A4A
+          TEXT "2026년 9월 예정"  @2154,6648 103x20  text='2026년 9월 예정'  Inter Medium 13px  #1A1A1A
+          ROUNDED_RECTANGLE "Rectangle"  @1902,6682 356x1  fill=#E5E5E3
+          FRAME "Frame 134"  @1902,6697 356x70  fill=#F1F4F2  r=10
+            TEXT "수익은 실제 매출과 운영비에 따라 달라져요."  @1918,6714 219x18  text='수익은 실제 매출과 운영비에 따라 달라져요.'  Inter Medium 12px  #14542E
+            TEXT "표준안은 일 40봉 판매 기준입니다."  @1918,6736 161x15  text='표준안은 일 40봉 판매 기준입니다.'  Inter Regular 11px  #4A4A4A
+        FRAME "Group 39"  @1902,6800 356x82
+          FRAME "Frame 133"  @1902,6800 356x44  fill=#14542E  r=6
+            TEXT "이 공간에 운영 신청하기"  @2010,6812 140x20  text='이 공간에 운영 신청하기'  Inter Semi Bold 14px  #FFFFFF
+          TEXT "신청 후 자격 확인과 교육 일정이 이어집니다."  @1969,6864 223x18  text='신청 후 자격 확인과 교육 일정이 이어집니다.'  Inter Regular 11px  #8A8A8A
+    TEXT "이 공간은 여기까지 준비됐어요"  @948,6930 228x23  text='이 공간은 여기까지 준비됐어요'  Inter Semi Bold 20px  #1A1A1A
+    FRAME "StepGrid"  @948,6977 1332x147
+      FRAME "Group 33"  @948,6977 320x147  stroke=#E5E5E3/1  r=12
+        FRAME "NumberBadge"  @966,6995 28x28  fill=#F1F4F2  r=14
+          TEXT "1"  @977,7002 6x15  text='1'  Inter Semi Bold 11px  #14542E
+        TEXT "공간 협약"  @966,7033 284x20  text='공간 협약'  Inter Semi Bold 14px  #1A1A1A
+        TEXT "완료"  @966,7063 284x15  text='완료'  Inter Medium 12px  #4A4A4A
+        TEXT "부산진구와 사용 협약 완료"  @966,7088 284x18  text='부산진구와 사용 협약 완료'  Inter Regular 11px  #4A4A4A
+      FRAME "Group 34"  @1286,6977 320x147  stroke=#E5E5E3/1  r=12
+        FRAME "NumberBadge"  @1304,6995 28x28  fill=#F1F4F2  r=14
+          TEXT "2"  @1314,7002 7x15  text='2'  Inter Semi Bold 11px  #14542E
+        TEXT "리모델링"  @1304,7033 284x20  text='리모델링'  Inter Semi Bold 14px  #1A1A1A
+        TEXT "일정 확정"  @1304,7063 284x15  text='일정 확정'  Inter Medium 12px  #4A4A4A
+        TEXT "8월 2주차 착공 예정"  @1304,7088 284x18  text='8월 2주차 착공 예정'  Inter Regular 11px  #4A4A4A
+      FRAME "Group 35"  @1623,6977 320x147  stroke=#E5E5E3/1  r=12
+        FRAME "NumberBadge"  @1641,6995 28x28  fill=#E5E5E3  r=14
+          TEXT "3"  @1651,7002 8x15  text='3'  Inter Semi Bold 11px  #4A4A4A
+        TEXT "스마트팜 설비"  @1641,7033 284x20  text='스마트팜 설비'  Inter Semi Bold 14px  #1A1A1A
+        TEXT "투자 모집 중"  @1641,7063 284x15  text='투자 모집 중'  Inter Medium 12px  #4A4A4A
+        TEXT "설비 1,750만원 모집"  @1641,7088 284x18  text='설비 1,750만원 모집'  Inter Regular 11px  #4A4A4A
+      FRAME "Group 36"  @1960,6977 320x147  stroke=#E5E5E3/1  r=12
+        FRAME "NumberBadge"  @1978,6995 28x28  fill=#E5E5E3  r=14
+          TEXT "4"  @1988,7002 8x15  text='4'  Inter Semi Bold 11px  #4A4A4A
+        TEXT "운영자 매칭"  @1978,7033 284x20  text='운영자 매칭'  Inter Semi Bold 14px  #1A1A1A
+        TEXT "신청 가능"  @1978,7063 284x15  text='신청 가능'  Inter Medium 12px  #14542E
+        TEXT "지금 신청할 수 있어요"  @1978,7088 284x18  text='지금 신청할 수 있어요'  Inter Regular 11px  #4A4A4A
+    FRAME "PreCard"  @948,7148 1332x87  fill=#FFFFFF  stroke=#E5E5E3/1  r=14
+      FRAME "PreCardText"  @968,7168 1161x47
+        TEXT "공간을 선택하기 전에"  @968,7168 158x23  text='공간을 선택하기 전에'  Inter Semi Bold 15px  #1A1A1A
+        TEXT "현장 방문을 예약하면 전력·급수 조건, 운영 동선, 주변 상권을 직접 확인할 수 있어요."  @968,7197 1161x18  text='현장 방문을 예약하면 전력·급수 조건, 운영 동선, 주변 상권을 직접 확인할 수 있어요.'  Inter Regular 13px  #4A4A4A
+      FRAME "Frame 132"  @2129,7168 131x46  fill=#FFFFFF  stroke=#14542E/1  r=6
+        TEXT "현장 방문 예약"  @2152,7182 85x20  text='현장 방문 예약'  Inter Semi Bold 13px  #14542E
+    FRAME "Step navigation"  @948,7259 275x44  fill=#FFFFFF
+      FRAME "Button/secondary"  @948,7259 121x44  fill=#FFFFFF  stroke=#E5E5E3/1  r=6
+        TEXT "← 이전 단계"  @972,7271 73x20  text='← 이전 단계'  Inter Semi Bold 13px  #1A1A1A
+      FRAME "Button/ghost"  @1081,7259 142x44  fill=#F1F4F2  stroke=#F1F4F2/1  r=6
+        TEXT "저장하고 나가기"  @1105,7271 94x20  text='저장하고 나가기'  Inter Semi Bold 13px  #14542E

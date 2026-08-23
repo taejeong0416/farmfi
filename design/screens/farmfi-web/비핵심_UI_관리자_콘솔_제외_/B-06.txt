@@ -1,0 +1,37 @@
+FRAME "B-06 · 정기구독 신청 완료"  @-367,2299 1440x900  fill=#FFFFFF  r=10
+  FRAME "TopNav"  @-367,2299 1440x64  stroke=#E5E5E3/1
+    FRAME "NavLeft"  @-313,2321 244x20
+      INSTANCE "App/Logo"  @-313,2324 61x14
+      FRAME "NavLinks"  @-196,2321 127x20
+        TEXT "정기구독"  @-196,2321 52x20  text='정기구독'  Inter Medium 14px  #14542E
+        TEXT "내 구독"  @-112,2321 43x20  text='내 구독'  Inter Regular 14px  #1A1A1A
+    FRAME "Frame 12"  @961,2322 58x18
+      FRAME "아이콘"  @961,2323 16x16
+        VECTOR "Vector"  @967,2326 5x5  stroke=#8A8A8A/1
+        VECTOR "Vector"  @964,2332 9x4  stroke=#8A8A8A/1
+      TEXT "김투자"  @985,2322 34x18  text='이소비'  Inter Regular 12px  #4A4A4A
+  FRAME "BodyContainer"  @-367,2363 1440x703
+    FRAME "BodyStack"  @79,2423 548x583
+      FRAME "HeaderBlock"  @185,2423 336x202
+        FRAME "SuccessIcon"  @293,2423 120x120  fill=#F1F4F2  r=60
+          TEXT "✓"  @337,2462 32x43  text='✓'  Inter Bold 36px  #14542E
+        TEXT "정기구독이 시작됐어요"  @240,2559 227x29  text='정기구독이 시작됐어요'  Inter Bold 24px  #1A1A1A
+        TEXT "첫 픽업 전에 작물과 드레싱 구성을 한 번 더 알려드릴게요."  @185,2604 336x21  text='첫 픽업 전에 작물과 드레싱 구성을 한 번 더 알려드릴게요.'  Inter Regular 14px  #4A4A4A
+      FRAME "PickupCard"  @79,2665 548x221  stroke=#E5E5E3/1  r=14
+        TEXT "첫 픽업"  @111,2693 54x23  text='첫 픽업'  Inter Bold 18px  #1A1A1A
+        TEXT "9월 1일 화요일 · 17:00–20:00"  @111,2728 484x23  text='9월 1일 화요일 · 17:00–20:00'  Inter Bold 18px  #1A1A1A
+        TEXT "부산 전포동 미니팜 1호 · 도보 8분"  @111,2763 484x18  text='부산 전포동 미니팜 1호 · 도보 8분'  Inter Regular 12px  #4A4A4A
+        ROUNDED_RECTANGLE "Rectangle"  @111,2793 484x1  fill=#E5E5E3
+        FRAME "CompRow"  @111,2806 484x20
+          TEXT "구성"  @111,2807 23x18  text='구성'  Inter Regular 12px  #4A4A4A
+          TEXT "5종 믹스팩 + 참깨·유자 드레싱 각 1봉"  @376,2806 219x20  text='5종 믹스팩 + 참깨·유자 드레싱 각 1봉'  Inter Medium 14px  #1A1A1A
+        FRAME "PayRow"  @111,2838 484x20
+          TEXT "오늘 결제"  @111,2839 48x18  text='오늘 결제'  Inter Regular 12px  #4A4A4A
+          TEXT "44,000원 · 신한카드 **** 4821"  @400,2838 195x20  text='44,000원 · 신한카드 **** 4821'  Inter Medium 14px  #1A1A1A
+      FRAME "BottomGroup"  @79,2926 548x80
+        FRAME "ButtonRow"  @79,2926 548x46
+          FRAME "Frame 116"  @79,2926 332x46  fill=#14542E  r=6
+            TEXT "내 구독 확인"  @209,2939 72x20  text='내 구독 확인'  Inter Medium 14px  #FFFFFF
+          FRAME "Frame 118"  @423,2926 204x46  stroke=#14542E/1  r=6
+            TEXT "영수증 출력하기"  @478,2939 94x20  text='영수증 출력하기'  Inter Medium 14px  #14542E
+        TEXT "작물·드레싱 변경 · 이번 회차 건너뛰기 · 일시정지 · 결제수단 변경"  @171,2988 364x18  text='작물·드레싱 변경   ·   이번 회차 건너뛰기   ·   일시정지   ·   결제수단 변경'  Inter Regular 12px  #4A4A4A

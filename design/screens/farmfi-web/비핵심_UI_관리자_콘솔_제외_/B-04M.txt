@@ -1,0 +1,25 @@
+FRAME "B-04M · 쿠폰 선택 모달"  @-1177,3258 730x713
+  FRAME "B-04M · 쿠폰 선택 모달"  @-1177,3258 730x713  fill=#FFFFFF  r=10
+    TEXT "쿠폰"  @-1143,3292 26x20  text='쿠폰'  Inter Medium 14px  #14542E
+    TEXT "사용할 혜택을 골라 주세요"  @-1143,3330 260x29  text='사용할 혜택을 골라 주세요'  Inter Bold 24px  #1A1A1A
+    TEXT "한 주문에 쿠폰 1개를 사용할 수 있어요. 가장 큰 혜택이 위에 표시됩니다."  @-1143,3377 419x21  text='한 주문에 쿠폰 1개를 사용할 수 있어요. 가장 큰 혜택이 위에 표시됩니다.'  Inter Regular 14px  #4A4A4A
+    FRAME "Coupon"  @-1143,3416 662x141  fill=#F1F4F2  stroke=#E5E5E3/1  r=10
+      TEXT "추천 · 첫 구독 5,000원 할인"  @-1127,3432 212x23  text='추천 · 첫 구독 5,000원 할인'  Inter Bold 18px  #1A1A1A
+      TEXT "20,000원 이상 · 오늘까지"  @-1127,3479 131x18  text='20,000원 이상 · 오늘까지'  Inter Regular 12px  #4A4A4A
+      TEXT "적용하면 17,800원"  @-1127,3521 112x20  text='적용하면 17,800원'  Inter Medium 14px  #14542E
+    FRAME "Coupon"  @-1143,3575 662x141  stroke=#E5E5E3/1  r=10
+      TEXT "픽업 친구 추천 3,000원"  @-1127,3591 183x23  text='픽업 친구 추천 3,000원'  Inter Bold 18px  #1A1A1A
+      TEXT "15,000원 이상 · 8월 31일까지"  @-1127,3638 153x18  text='15,000원 이상 · 8월 31일까지'  Inter Regular 12px  #4A4A4A
+      TEXT "적용하면 19,800원"  @-1127,3680 114x20  text='적용하면 19,800원'  Inter Medium 14px  #14542E
+    FRAME "Coupon"  @-1143,3734 662x141  stroke=#E5E5E3/1  r=10
+      TEXT "드레싱 2봉 무료"  @-1127,3750 120x23  text='드레싱 2봉 무료'  Inter Bold 18px  #1A1A1A
+      TEXT "다음 2회차까지"  @-1127,3797 77x18  text='다음 2회차까지'  Inter Regular 12px  #4A4A4A
+      TEXT "상품 혜택"  @-1127,3839 56x20  text='상품 혜택'  Inter Medium 14px  #14542E
+    FRAME "Frame 158"  @-1143,3893 662x44
+      FRAME "Button"  @-1143,3893 322x44  fill=#14542E  stroke=#14542E/1  r=6
+        TEXT "이 쿠폰 적용하기"  @-1031,3905 98x20  text='이 쿠폰 적용하기'  Inter Medium 14px  #FFFFFF
+      FRAME "Button"  @-803,3893 322x44  stroke=#E5E5E3/1  r=6
+        TEXT "쿠폰 없이 진행"  @-684,3905 85x20  text='쿠폰 없이 진행'  Inter Medium 14px  #1A1A1A
+  FRAME "x"  @-505,3292 24x24
+    VECTOR "Vector"  @-499,3298 12x12  stroke=#000000/2
+    VECTOR "Vector"  @-499,3298 12x12  stroke=#000000/2

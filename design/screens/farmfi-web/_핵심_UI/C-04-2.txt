@@ -1,0 +1,35 @@
+FRAME "C-04 · 공통 / 이용 목적 선택"  @4669,179 1440x900  r=20
+  ROUNDED_RECTANGLE "Rectangle 1"  @4669,179 1440x900  fill=#000000@0.50
+  FRAME "App/Logo"  @5331,297 117x27
+    VECTOR "Vector"  @5330,297 117x27  fill=#FFFFFF
+  FRAME "C-04 · 공통 / 이용 목적 선택"  @5024,360 730x643  fill=#FFFFFF  r=10
+    ROUNDED_RECTANGLE "Rectangle"  @5024,360 730x64  fill=#FFFFFF  stroke=#E5E5E3/1
+    TEXT "어떤 서비스를 이용할까요?"  @5056,454 268x29  text='어떤 서비스를 이용할까요?'  Inter Bold 24px  #1A1A1A
+    TEXT "로그인한 계정으로 투자, 정기구독, 운영 서비스를 이용할 수 있어요."  @5056,497 391x21  text='로그인한 계정으로 투자, 정기구독, 운영 서비스를 이용할 수 있어요.'  Inter Regular 14px  #8A8A8A
+    FRAME "Frame 59"  @5056,543 666x201
+      FRAME "Frame 55"  @5056,543 319x201  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+        FRAME "Frame 51"  @5073,560 285x167
+          TEXT "투자자로 이용"  @5073,560 285x23  text='투자자로 이용'  Inter Bold 18px  #1A1A1A
+          FRAME "Frame 54"  @5073,599 285x128
+            TEXT "검증된 단계에만 집행되는 공실 전환 프로젝트에 투자해요."  @5073,599 157x36  text='검증된 단계에만 집행되는\n공실 전환 프로젝트에 투자해요.'  Inter Regular 12px  #8A8A8A
+            TEXT "프로젝트 보기 · 내 투자 확인"  @5073,649 285x18  text='프로젝트 보기 · 내 투자 확인'  Inter Regular 12px  #14542E
+            FRAME "Frame 39"  @5073,681 285x46  fill=#14542E  stroke=#14542E/1  r=6
+              TEXT "투자자 화면으로"  @5168,694 94x20  text='투자자 화면으로'  Inter Medium 14px  #FFFFFF
+      FRAME "Frame 56"  @5403,543 319x201  fill=#F1F4F2  stroke=#E5E5E3/1  r=10
+        FRAME "Frame 52"  @5420,560 285x167
+          TEXT "구매자로 이용"  @5420,560 285x23  text='구매자로 이용'  Inter Bold 18px  #1A1A1A
+          FRAME "Frame 53"  @5420,599 285x128
+            TEXT "가까운 미니팜에서 수확한 선택한 작물을 믹스팩으로 정기 픽업해요."  @5420,599 205x36  text='가까운 미니팜에서 수확한\n선택한 작물을 믹스팩으로 정기 픽업해요.'  Inter Regular 12px  #8A8A8A
+            TEXT "플랜 보기 · 내 픽업 관리"  @5420,649 285x18  text='플랜 보기 · 내 픽업 관리'  Inter Regular 12px  #14542E
+            FRAME "Frame 40"  @5420,681 285x46  fill=#14542E  stroke=#14542E/1  r=6
+              TEXT "구매자 화면으로"  @5516,694 94x20  text='구매자 화면으로'  Inter Medium 14px  #FFFFFF
+    TEXT "나중에 상단 메뉴에서 언제든 바꿀 수 있습니다."  @5272,956 234x18  text='나중에 상단 메뉴에서 언제든 바꿀 수 있습니다.'  Inter Regular 12px  #8A8A8A
+    FRAME "Frame 61"  @5056,761 666x181  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+      FRAME "Frame 58"  @5073,778 632x147
+        TEXT "운영자로 이용"  @5073,778 632x23  text='운영자로 이용'  Inter Bold 18px  #1A1A1A
+        FRAME "Frame 57"  @5073,817 632x108
+          TEXT "지도에서 운영할 공간을 찾고, 개점 준비와 보증서를 관리해요."  @5073,817 632x18  text='지도에서 운영할 공간을 찾고, 개점 준비와 보증서를 관리해요.'  Inter Regular 12px  #4A4A4A
+          TEXT "운영 자격 확인이 필요해요"  @5073,849 632x18  text='운영 자격 확인이 필요해요'  Inter Regular 12px  #14542E
+          FRAME "Frame 41"  @5073,881 632x44  fill=#14542E  r=6
+            TEXT "운영자 화면으로"  @5342,893 94x20  text='운영자 화면으로'  Inter Medium 14px  #FFFFFF
+    INSTANCE "App/Logo"  @5056,388 61x14

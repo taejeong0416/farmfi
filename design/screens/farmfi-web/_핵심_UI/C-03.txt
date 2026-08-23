@@ -1,0 +1,35 @@
+FRAME "C-03 · 공통 / 회원가입"  @2149,-1267 465x643  fill=#FFFFFF  r=10
+  ROUNDED_RECTANGLE "Rectangle"  @2149,-1267 465x64  fill=#FFFFFF  stroke=#E5E5E3/1
+  TEXT "회원가입"  @2182,-1175 67x23  text='회원가입'  Inter Bold 20px  #1A1A1A
+  TEXT "이메일"  @2182,-1097 34x18  text='이메일'  Inter Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @2182,-1072 399x46  stroke=#E5E5E3/1  r=8
+  TEXT "이메일 주소를 입력하세요"  @2197,-1058 129x18  text='이메일 주소를 입력하세요'  Inter Regular 13px  #8A8A8A
+  TEXT "비밀번호"  @2182,-1014 45x18  text='비밀번호'  Inter Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @2182,-988 399x46  stroke=#E5E5E3/1  r=8
+  TEXT "영문 · 숫자 · 특수문자 포함 10자 이상"  @2197,-975 187x18  text='영문 · 숫자 · 특수문자 포함 10자 이상'  Inter Regular 13px  #8A8A8A
+  TEXT "비밀번호 확인"  @2182,-930 70x18  text='비밀번호 확인'  Inter Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "면"  @2182,-905 399x46  stroke=#E5E5E3/1  r=8
+  TEXT "한 번 더 입력하세요"  @2197,-891 99x18  text='한 번 더 입력하세요'  Inter Regular 13px  #8A8A8A
+  ROUNDED_RECTANGLE "선"  @2182,-839 399x1  fill=#EDEDEB
+  ROUNDED_RECTANGLE "선"  @2182,-799 399x1  fill=#F1F4F2
+  FRAME "Group 21"  @2182,-826 15x15
+    ROUNDED_RECTANGLE "면"  @2182,-826 15x15  fill=#14542E  r=4
+    FRAME "아이콘"  @2185,-823 9x9
+      VECTOR "Vector"  @2186,-820 6x4  stroke=#FFFFFF/1
+  TEXT "서비스 이용약관 동의"  @2206,-828 107x18  text='서비스 이용약관 동의'  Inter Regular 12px  #1A1A1A
+  TEXT "필수"  @2561,-826 21x15  text='필수'  Inter Medium 12px  #14542E
+  ROUNDED_RECTANGLE "선"  @2182,-759 399x1  fill=#F1F4F2
+  FRAME "Group 22"  @2182,-786 15x15
+    ROUNDED_RECTANGLE "면"  @2182,-786 15x15  fill=#14542E  r=4
+    FRAME "아이콘"  @2185,-783 9x9
+      VECTOR "Vector"  @2186,-780 6x4  stroke=#FFFFFF/1
+  TEXT "개인정보 수집 · 이용 동의"  @2206,-788 128x18  text='개인정보 수집 · 이용 동의'  Inter Regular 12px  #1A1A1A
+  TEXT "필수"  @2561,-786 21x15  text='필수'  Inter Medium 12px  #14542E
+  ROUNDED_RECTANGLE "면"  @2182,-746 15x15  stroke=#E5E5E3/1  r=4
+  TEXT "마케팅 정보 수신 동의"  @2206,-748 110x18  text='마케팅 정보 수신 동의'  Inter Regular 12px  #4A4A4A
+  TEXT "선택"  @2561,-748 23x18  text='선택'  Inter Regular 12px  #8A8A8A
+  FRAME "Frame 38"  @2182,-699 399x44  fill=#14542E  r=6
+    TEXT "가입하고 신원 확인하기"  @2313,-687 137x20  text='가입하고 신원 확인하기'  Inter Medium 14px  #FFFFFF
+  FRAME "Frame"  @2176,-1149 410x34  fill=#FFFFFF  stroke=#FFFFFF/1
+  TEXT "가입 후 투자자 또는 구매자로 이용할 서비스를 선택할 수 있어요."  @2182,-1139 321x18  text='가입 후 투자자 또는 구매자로 이용할 서비스를 선택할 수 있어요.'  Inter Regular 13px  #8A8A8A
+  INSTANCE "App/Logo"  @2174,-1246 61x14

@@ -98,12 +98,12 @@ export function ApplyVisitScreen() {
       <ApplyStepLine application={application} current="visit" />
 
       <h1 className="text-24 font-bold text-ink">직접 보고 결정할 수 있어요</h1>
-      <p className="mt-3 text-14 leading-6 text-body">
+      <p className="mt-3 text-15 leading-6 text-body">
         채광, 전력, 급배수와 픽업 동선을 담당 매니저와 함께 확인합니다. 방문 뒤에도 신청을 취소할 수 있어요.
       </p>
 
       {visit ? (
-        <Card className="mt-7 rounded-14 border-brand bg-brand-soft">
+        <Card className="mt-7 rounded-10 border-brand bg-brand-soft">
           <p className="text-15 font-bold text-ink">
             {new Date(visit.scheduledAt).getMonth() + 1}월{" "}
             {new Date(visit.scheduledAt).getDate()}일 {visit.slot} 예약됨
@@ -114,7 +114,7 @@ export function ApplyVisitScreen() {
         </Card>
       ) : null}
 
-      <Card className="mt-7 rounded-14">
+      <Card className="mt-7 rounded-10">
         <h2 className="text-17 font-bold text-ink">예약 날짜</h2>
         <div className="mt-5 grid grid-cols-7 gap-2">
           {days.map((d) => {
@@ -150,7 +150,7 @@ export function ApplyVisitScreen() {
         </p>
       </Card>
 
-      <Card className="mt-4 rounded-14">
+      <Card className="mt-4 rounded-10">
         <h2 className="text-15 font-bold text-ink">방문 시간</h2>
         <div className="mt-4 space-y-3">
           {SLOTS.map((s) => (
@@ -158,7 +158,7 @@ export function ApplyVisitScreen() {
               key={s.time}
               type="button"
               onClick={() => setSlot(s.time)}
-              className={`flex h-[60px] w-full items-center rounded-14 border px-5 text-left ${
+              className={`flex h-[60px] w-full items-center rounded-10 border px-5 text-left ${
                 slot === s.time
                   ? "border-brand bg-brand-soft"
                   : "border-line bg-white hover:bg-surface"
@@ -175,7 +175,7 @@ export function ApplyVisitScreen() {
         </div>
       </Card>
 
-      <Card className="mt-4 rounded-14">
+      <Card className="mt-4 rounded-10">
         <p className="text-15 font-bold text-ink">{application.region} 후보지</p>
         <p className="mt-2 text-13 text-muted">
           담당 매니저가 방문 전날 문자와 알림으로 안내해 드려요.

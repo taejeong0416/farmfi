@@ -1,0 +1,32 @@
+FRAME "C-I01 · 투자자 준비 / 본인확인 방법 선택"  @6284,-1182 465x643  fill=#FFFFFF  r=10
+  FRAME "Frame 46"  @6317,-1152 399x567
+    FRAME "Frame 44"  @6317,-1152 399x187
+      TEXT "투자 준비 1 / 3 · 본인확인"  @6317,-1152 399x21  text='투자 준비 1 / 3 · 본인확인'  Inter Regular 14px  #14542E
+      TEXT "먼저 본인확인 방법을 선택해 주세요."  @6317,-1116 399x29  text='먼저 본인확인 방법을 선택해 주세요.'  Inter Bold 24px  #1A1A1A
+      FRAME "공식 앱 안내"  @6317,-1072 399x107  fill=#F1F4F2  r=10
+        FRAME "Frame"  @6333,-1056 230x75
+          TEXT "💡 첫 투자 전에 필요한 확인!"  @6333,-1056 211x23  text='💡 첫 투자 전에 필요한 확인!'  Inter Bold 18px  #1A1A1A
+          TEXT "모바일 신분증이 있으면 바로 진행할 수 있어요"  @6333,-1026 230x18  text='모바일 신분증이 있으면 바로 진행할 수 있어요'  Inter Regular 12px  #1A1A1A
+          TEXT "→ 필요한 것 · 본인 명의 휴대폰"  @6333,-1001 182x20  text='→ 필요한 것 · 본인 명의 휴대폰'  Inter Regular 12px  #14542E
+    FRAME "Frame 45"  @6317,-938 399x205
+      TEXT "본인확인 방법"  @6317,-938 399x23  text='본인확인 방법'  Inter Bold 17px  #1A1A1A
+      FRAME "Frame 68"  @6317,-901 399x77  fill=#F1F4F2  stroke=#14542E/1  r=10
+        FRAME "Group 11"  @6334,-874 22x22
+          ELLIPSE "Radio/Selected"  @6334,-874 22x22  fill=#14542E
+          ELLIPSE "Ellipse"  @6341,-866 8x8  fill=#FFFFFF
+        FRAME "Frame 65"  @6380,-884 174x43
+          TEXT "모바일 신분증으로 확인"  @6380,-884 174x20  text='모바일 신분증으로 확인'  Inter Semi Bold 15px  #1A1A1A
+          TEXT "첫 투자까지 한 번에 준비 · 권장"  @6380,-859 174x18  text='첫 투자까지 한 번에 준비 · 권장'  Inter Regular 12px  #8A8A8A
+      FRAME "Frame 67"  @6317,-810 399x77  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+        ELLIPSE "Radio/Default"  @6334,-782 22x22  fill=#FFFFFF  stroke=#8A8A8A/1
+        FRAME "Frame 66"  @6380,-793 215x43
+          TEXT "간편인증으로 로그인"  @6380,-793 215x20  text='간편인증으로 로그인'  Inter Semi Bold 15px  #1A1A1A
+          TEXT "둘러보기 가능 · 투자 전 모바일 신분증 확인"  @6380,-768 215x18  text='둘러보기 가능 · 투자 전 모바일 신분증 확인'  Inter Regular 12px  #8A8A8A
+    FRAME "Frame 47"  @6317,-706 399x76
+      FRAME "Frame 42"  @6317,-706 399x44  fill=#14542E  r=6
+        TEXT "모바일 신분증으로 계속"  @6448,-694 137x20  text='모바일 신분증으로 계속'  Inter Semi Bold 14px  #FFFFFF
+      TEXT "나중에 확인하고 프로젝트 둘러보기"  @6317,-648 399x18  text='나중에 확인하고 프로젝트 둘러보기'  Inter Semi Bold 13px  #14542E
+    TEXT "선택한 방법은 다음 화면에서 변경할 수 있어요."  @6317,-603 399x18  text='선택한 방법은 다음 화면에서 변경할 수 있어요.'  Inter Regular 11px  #8A8A8A
+  FRAME "x"  @6691,-1148 24x24
+    VECTOR "Vector"  @6697,-1142 12x12  stroke=#000000/2
+    VECTOR "Vector"  @6697,-1142 12x12  stroke=#000000/2

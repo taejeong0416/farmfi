@@ -1,0 +1,95 @@
+FRAME "O-11E · 증빙 보완·이의제기"  @5804,4458 1440x900  fill=#FFFFFF  r=10
+  FRAME "TopNav"  @5804,4458 1440x64  stroke=#E5E5E3/1
+    FRAME "NavLeft"  @5858,4482 404x17
+      FRAME "Frame 180"  @5858,4484 117x13
+        INSTANCE "App/Logo"  @5858,4484 55x13
+        FRAME "Frame 6"  @5923,4484 52x13  fill=#8C6114@0.10  stroke=#8C6114/0  r=19
+          TEXT "운영자 포털"  @5930,4486 37x8  text='운영자 포털'  Pretendard SemiBold 8px  #8C6114
+      FRAME "NavLinks"  @6031,4482 231x17
+        TEXT "공간 찾기"  @6031,4482 56x17  text='공간 찾기'  Inter Regular 14px  #4A4A4A
+        TEXT "내 준비 현황"  @6119,4482 72x17  text='내 준비 현황'  Inter Medium 14px  #14542E
+        TEXT "보증서"  @6223,4482 39x17  text='보증서'  Inter Regular 14px  #4A4A4A
+    FRAME "Frame 12"  @7074,4481 116x18
+      FRAME "아이콘"  @7074,4482 16x16
+        VECTOR "Vector"  @7080,4485 5x5  stroke=#8A8A8A/1
+        VECTOR "Vector"  @7077,4491 9x4  stroke=#8A8A8A/1
+      TEXT "그린테이블 이운영"  @7098,4481 92x18  text='그린테이블 이운영'  Inter Regular 12px  #4A4A4A
+  FRAME "BodyContainer"  @5804,4522 1440x836
+    FRAME "ContentRow"  @5858,4542 1332x650
+      FRAME "LeftColumn"  @5858,4542 300x504
+        TEXT "필수 증빙"  @5858,4542 300x23  text='필수 증빙'  Inter Bold 18px  #1A1A1A
+        FRAME "ChecklistCard"  @5858,4585 300x171  stroke=#E5E5E3/1  r=8
+          FRAME "ChecklistRow"  @5858,4585 300x42
+            TEXT "설비 계약서"  @5875,4597 59x18  text='설비 계약서'  Inter Regular 12px  #1A1A1A
+            FRAME "StatusGroup"  @6087,4598 54x15
+              ELLIPSE "점"  @6087,4602 7x7  fill=#14542E
+              TEXT "제출완료"  @6100,4598 41x15  text='제출완료'  Inter Medium 11px  #14542E
+          ROUNDED_RECTANGLE "선"  @5858,4627 298x1  fill=#F1F4F2
+          FRAME "ChecklistRow"  @5858,4628 300x42
+            TEXT "설비 영수증"  @5875,4640 59x18  text='설비 영수증'  Inter Regular 12px  #1A1A1A
+            FRAME "StatusGroup"  @6084,4642 57x15
+              ELLIPSE "점"  @6084,4646 7x7  fill=#DC2626
+              TEXT "보완 요청"  @6097,4642 44x15  text='보완 요청'  Inter Medium 11px  #DC2626
+          ROUNDED_RECTANGLE "선"  @5858,4670 298x1  fill=#F1F4F2
+          FRAME "ChecklistRow"  @5858,4671 300x42
+            TEXT "현장 사진 2장"  @5875,4683 70x18  text='현장 사진 2장'  Inter Regular 12px  #1A1A1A
+            FRAME "StatusGroup"  @6087,4684 54x15
+              ELLIPSE "점"  @6087,4688 7x7  fill=#14542E
+              TEXT "제출완료"  @6100,4684 41x15  text='제출완료'  Inter Medium 11px  #14542E
+          ROUNDED_RECTANGLE "선"  @5858,4713 298x1  fill=#F1F4F2
+          FRAME "ChecklistRow"  @5858,4714 300x42
+            TEXT "센서 데이터"  @5875,4726 59x18  text='센서 데이터'  Inter Regular 12px  #4A4A4A
+            FRAME "StatusGroup"  @6080,4726 61x18
+              ELLIPSE "점"  @6080,4732 7x7  fill=#8A8A8A
+              TEXT "연동 대기"  @6093,4726 48x18  text='연동 대기'  Inter Regular 12px  #8A8A8A
+        FRAME "RequestReasonCard"  @5858,4776 300x122  stroke=#EDEDEB/1  r=8
+          TEXT "보완 요청 사유"  @5875,4792 85x20  text='보완 요청 사유'  Inter Medium 14px  #DC2626
+          TEXT "영수증 금액이 계약서와 다릅니다. 변경합의서…"  @5875,4820 268x36  text='영수증 금액이 계약서와 다릅니다. 변경합의서가 있다면 함께 올려주세요.'  Inter Regular 12px  #8A8A8A
+          TEXT "2026.03.15 15:30 · 박운영"  @5875,4864 140x18  text='2026.03.15 15:30 · 박운영'  Inter Regular 12px  #8A8A8A
+        TEXT "제출 이력"  @5858,4918 300x23  text='제출 이력'  Inter Bold 18px  #1A1A1A
+        FRAME "HistoryCard"  @5858,4961 300x85  stroke=#E5E5E3/1  r=8
+          FRAME "HistoryRow"  @5858,4961 300x42
+            TEXT "1차 제출"  @5875,4973 43x18  text='1차 제출'  Inter Regular 12px  #1A1A1A
+            TEXT "03.14 18:20"  @6076,4973 65x18  text='03.14 18:20'  Inter Regular 12px  #8A8A8A
+          ROUNDED_RECTANGLE "선"  @5858,5003 298x1  fill=#F1F4F2
+          FRAME "HistoryRow"  @5858,5004 300x42
+            TEXT "보완 요청 접수"  @5875,5016 73x18  text='보완 요청 접수'  Inter Regular 12px  #4A4A4A
+            TEXT "03.15 15:30"  @6076,5016 65x18  text='03.15 15:30'  Inter Regular 12px  #8A8A8A
+      FRAME "RightColumn"  @6190,4542 1000x650  r=10
+        FRAME "HeaderRow"  @6215,4542 950x53
+          FRAME "TitleStack"  @6215,4542 303x53
+            TEXT "재제출 · 이의제기"  @6215,4542 116x18  text='부산 전포동 미니팜 1호'  Inter Regular 12px  #8A8A8A
+            TEXT "부산 전포동 미니팜 1호 · 3단계 설비 설…"  @6215,4566 303x29  text='3단계 설비 설치 증빙 이의제기'  Inter Bold 24px  #1A1A1A
+          FRAME "BtnGroup"  @6941,4546 224x44
+            FRAME "BtnGroup"  @6941,4546 224x44
+              FRAME "TempSaveBtn"  @6941,4546 104x44  stroke=#E5E5E3/1  r=6
+                TEXT "임시 저장"  @6965,4558 56x20  text='임시 저장'  Inter Medium 14px  #1A1A1A
+              FRAME "SubmitBtn"  @7065,4546 100x44  fill=#14542E  r=6
+                TEXT "제출하기"  @7089,4558 52x20  text='제출하기'  Inter Medium 14px  #FFFFFF
+        FRAME "VerdictCard"  @6215,4619 950x65  stroke=#EDEDEB/1  r=8
+          TEXT "판정 : 보류 유지 · 운영팀 재검증"  @6232,4632 146x15  text='판정 : 보류 유지 · 운영팀 재검증'  Inter Medium 11px  #DC2626
+          TEXT "설비 금액 불일치 2건과 현장 신호 미충족 …"  @6232,4653 347x18  text='설비 금액 불일치 2건과 현장 신호 미충족 2건이 해소되지 않았습니다.'  Inter Regular 12px  #8A8A8A
+        FRAME "TimelineBlock"  @6215,4708 950x232
+          TEXT "코멘트 스레드"  @6215,4708 81x20  text='코멘트 스레드'  Inter Medium 14px  #1A1A1A
+          ROUNDED_RECTANGLE "선"  @6219,4747 1x188  fill=#E5E5E3
+          ELLIPSE "점"  @6215,4743 9x9  fill=#14542E
+          TEXT "이운영"  @6237,4735 39x20  text='이운영'  Inter Medium 14px  #1A1A1A
+          TEXT "· 운영자"  @6278,4736 40x18  text='· 운영자'  Inter Regular 12px  #8A8A8A
+          TEXT "03.15 16:10"  @7102,4736 63x18  text='03.15 16:10'  Inter Regular 12px  #8A8A8A
+          TEXT "계약 후 공급처와 금액을 조정했고 변경합의서…"  @6237,4761 522x18  text='계약 후 공급처와 금액을 조정했고 변경합의서를 첨부합니다. 발주 일자는 합의서 기준 03.06이 맞습니다.'  Inter Regular 12px  #4A4A4A
+          ELLIPSE "점"  @6215,4843 9x9  fill=#14542E
+          TEXT "박운영"  @6237,4835 39x20  text='박운영'  Inter Medium 14px  #1A1A1A
+          TEXT "· 플랫폼 운영팀"  @6278,4836 77x18  text='· 플랫폼 운영팀'  Inter Regular 12px  #8A8A8A
+          TEXT "03.15 17:02"  @7101,4836 64x18  text='03.15 17:02'  Inter Regular 12px  #8A8A8A
+          TEXT "합의서는 확인했습니다. LED 점등 사진이 …"  @6237,4861 435x18  text='합의서는 확인했습니다. LED 점등 사진이 흐려 판독되지 않으니 재촬영본을 올려주세요.'  Inter Regular 12px  #4A4A4A
+          ELLIPSE "점"  @6215,4904 9x9  stroke=#8A8A8A/1
+          TEXT "외부 전문가 강진현"  @6237,4896 111x20  text='외부 전문가 강진현'  Inter Medium 14px  #4A4A4A
+          TEXT "03.18 예정"  @7109,4897 56x18  text='03.18 예정'  Inter Regular 12px  #8A8A8A
+          TEXT "최종 판정 대기"  @6237,4922 73x18  text='최종 판정 대기'  Inter Regular 12px  #8A8A8A
+          FRAME "FileChip"  @6237,4791 104x30  stroke=#E5E5E3/1  r=6
+            TEXT "변경합의서.pdf"  @6250,4797 78x18  text='변경합의서.pdf'  Inter Regular 12px  #4A4A4A
+        FRAME "TextareaBox"  @6215,4964 950x94  stroke=#E5E5E3/1  r=8
+          TEXT "추가 설명을 입력하세요. 입력한 내용은 운영…"  @6230,4978 424x18  text='추가 설명을 입력하세요. 입력한 내용은 운영팀과 외부 전문가에게 그대로 전달됩니다.'  Inter Regular 12px  #8A8A8A
+        TEXT "외부 전문가 최종 판정 이후에는 동일 단계에…"  @6215,5082 950x18  text='외부 전문가 최종 판정 이후에는 동일 단계에 대한 이의제기가 불가합니다.'  Inter Regular 12px  #8A8A8A
+        FRAME "Frame 118"  @6215,5124 950x46  stroke=#14542E/1  r=6
+          TEXT "파일 첨부하기"  @6650,5136 81x20  text='파일 첨부하기'  Inter Medium 14px  #14542E

@@ -133,7 +133,7 @@ export function SettlementRulesScreen() {
 
   return (
     <AdminShell
-      title="정산 규칙"
+      title="정산에 적용할 규칙을 설정해요"
       desc={data ? `${data.projectName} · 다음 정산부터 적용` : "프로젝트를 고르세요"}
       action={
         <Button disabled={busy || !projectId} onClick={save}>
@@ -166,7 +166,7 @@ export function SettlementRulesScreen() {
           <Card padded={false}>
             <div className="grid grid-cols-[1fr_200px_1fr] border-b border-line bg-surface px-6 py-3">
               <span className="text-11 text-muted">항목</span>
-              <span className="text-right text-11 text-muted">비율 · 금액</span>
+              <span className="text-right text-12 text-muted">비율 · 금액</span>
               <span className="pl-6 text-11 text-muted">비고</span>
             </div>
             {FIELDS.map((f) => (

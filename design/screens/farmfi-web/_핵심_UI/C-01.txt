@@ -1,0 +1,147 @@
+FRAME "C-01 · 공통 진입 / 서비스 홈"  @84,178 1440x1162  fill=#FFFFFF  r=10
+  FRAME "TopNav"  @84,178 1440x64  stroke=#E5E5E3/1
+    FRAME "NavLeft"  @138,200 494x20
+      SYMBOL "App/Logo"  @138,203 61x14
+        VECTOR "Vector"  @138,203 61x14  fill=#217248
+      FRAME "NavLinks"  @255,200 377x20
+        TEXT "홈"  @255,200 13x20  text='홈'  Inter Medium 14px  #14542E
+        TEXT "PUBLIC NAV / 정기구독"  @300,200 78x20  text='정기구독하기'  Inter Regular 14px  #4A4A4A
+        TEXT "PUBLIC NAV / 투자"  @410,200 95x20  text='투자자 시작하기'  Inter Regular 14px  #4A4A4A
+        TEXT "운영자 시작하기"  @537,200 95x20  text='운영자 시작하기'  Inter Regular 14px  #4A4A4A
+    FRAME "NavRight"  @1333,192 137x35
+      TEXT "PUBLIC NAV / 회원가입"  @1333,201 45x18  text='회원가입'  Inter Regular 13px  #4A4A4A
+      FRAME "Frame 2"  @1403,192 67x35  stroke=#D6D6D4/1  r=6
+        TEXT "로그인"  @1420,204 33x13  text='로그인'  Pretendard Medium 12px  #1A1A1A
+  FRAME "Frame 168"  @84,242 1449x407
+    FRAME "HeroText"  @138,287 1332x317
+      TEXT "도심의 빈 공간이, 새로운 가치로 자랍니다"  @138,287 1332x86  text='도심의 빈 공간이,\n새로운 가치로 자랍니다'  Inter Bold 36px  #FFFFFF
+      FRAME "Frame 169"  @138,463 1332x141
+        TEXT "비어 있던 상가가 미니 스마트팜으로 바뀌는 여정에 함께하세요. 투자금은 확인된 단계마다 차근차근 집행됩니다."  @138,463 1332x42  text='비어 있던 상가가 미니 스마트팜으로 바뀌는 여정에 함께하세요.\n투자금은 확인된 단계마다 차근차근 집행됩니다.'  Inter Regular 14px  #FFFFFF
+        FRAME "HeroButtons"  @138,524 330x46
+          FRAME "Frame 13"  @138,524 157x46  stroke=#FFFFFF/1  r=6
+            TEXT "프로젝트 둘러보기"  @163,537 107x20  text='프로젝트 둘러보기'  Inter Medium 14px  #FFFFFF
+          FRAME "Frame 14"  @307,524 161x46  fill=#FFFFFF  stroke=#14542E/1  r=6
+            TEXT "신선 구독 만나보기"  @332,537 111x20  text='신선 구독 만나보기'  Inter Medium 14px  #14542E
+        TEXT "공간을 직접 운영하고 싶나요? 운영 가능한 공간 보기 →"  @138,589 1332x15  text='공간을 직접 운영하고 싶나요?  운영 가능한 공간 보기 →'  Inter Medium 11px  #FFFFFF
+  FRAME "BodyContainer"  @84,649 1440x691
+    FRAME "KpiSection"  @138,681 1332x85
+      ROUNDED_RECTANGLE "선"  @138,681 1332x1  fill=#EDEDEB
+      FRAME "KpiRow"  @138,682 1332x83
+        FRAME "KPI-total"  @138,696 251x55
+          TEXT "전체 프로젝트"  @138,696 251x18  text='전체 프로젝트'  Inter Regular 12px  #8A8A8A
+          TEXT "12개"  @138,722 251x29  text='12개'  Inter Medium 22px  #1A1A1A
+        ROUNDED_RECTANGLE "선"  @398,682 1x83  fill=#EDEDEB
+        FRAME "KPI-recruiting"  @408,696 251x55
+          TEXT "모집 중"  @408,696 251x18  text='모집 중'  Inter Regular 12px  #8A8A8A
+          TEXT "4개"  @408,722 251x29  text='4개'  Inter Medium 22px  #1A1A1A
+        ROUNDED_RECTANGLE "선"  @668,682 1x83  fill=#EDEDEB
+        FRAME "KPI-yield"  @678,696 251x55
+          TEXT "평균 예상 수익률 · updated"  @678,696 251x18  text='예상 회수기간'  Inter Regular 12px  #8A8A8A
+          TEXT "7.4 · updated"  @678,722 251x29  text='15개월'  Inter Medium 22px  #14542E
+        ROUNDED_RECTANGLE "선"  @939,682 1x83  fill=#EDEDEB
+        FRAME "KPI-invested"  @949,696 251x55
+          TEXT "누적 투자금"  @949,696 251x18  text='누적 투자금'  Inter Regular 12px  #8A8A8A
+          FRAME "ValueRow"  @949,722 251x29
+            TEXT "842,600,000"  @949,722 159x29  text='842,600,000'  Inter Medium 22px  #1A1A1A
+            TEXT "원"  @1110,729 13x21  text='원'  Inter Regular 15px  #4A4A4A
+        ROUNDED_RECTANGLE "선"  @1209,682 1x83  fill=#EDEDEB
+        FRAME "KPI-spaces"  @1219,696 251x55
+          TEXT "등록 공간"  @1219,696 251x18  text='등록 공간'  Inter Regular 12px  #8A8A8A
+          TEXT "27개"  @1219,722 251x29  text='27개'  Inter Medium 22px  #1A1A1A
+      ROUNDED_RECTANGLE "선"  @138,765 1332x1  fill=#EDEDEB
+    FRAME "FilterBar"  @138,806 1332x34
+      TEXT "진행 중 프로젝트"  @138,812 125x23  text='진행 중 프로젝트'  Inter Bold 15px  #1A1A1A
+      FRAME "Frame 162"  @630,806 840x34
+        FRAME "FilterChips"  @630,806 466x34
+          FRAME "Frame 1"  @630,806 69x34  stroke=#14542E/1  r=6
+            TEXT "모집 중"  @647,817 35x12  text='모집 중'  Pretendard Medium 12px  #14542E
+          FRAME "Frame 33"  @707,806 79x34  stroke=#E5E5E3/1  r=6
+            TEXT "지역 전체"  @724,817 45x12  text='지역 전체'  Pretendard Regular 12px  #4A4A4A
+          FRAME "Frame 34"  @794,806 79x34  stroke=#E5E5E3/1  r=6
+            TEXT "단계 전체"  @811,817 45x12  text='단계 전체'  Pretendard Regular 12px  #4A4A4A
+          FRAME "Frame 35"  @881,806 104x34  stroke=#E5E5E3/1  r=6
+            TEXT "예상 수익률 전체 · updated"  @898,817 70x12  text='회수기간 전체'  Inter Regular 12px  #4A4A4A
+          FRAME "Frame 36"  @993,806 103x34  stroke=#E5E5E3/1  r=6
+            TEXT "운영 상태 전체"  @1010,817 69x12  text='운영 상태 전체'  Pretendard Regular 12px  #4A4A4A
+        FRAME "Frame"  @1117,806 353x34  stroke=#E5E5E3/1  r=6
+          TEXT "프로젝트 · 위치 검색"  @1133,816 102x15  text='프로젝트 · 위치 검색'  Inter Regular 12px  #B5B5B5
+    FRAME "Frame 32"  @138,880 1332x370
+      FRAME "Group 1"  @138,880 431x370
+        ROUNDED_RECTANGLE "사진 자리"  @139,881 429x151
+        ROUNDED_RECTANGLE "면"  @138,880 431x370  stroke=#E5E5E3/1  r=10
+        ROUNDED_RECTANGLE "선"  @139,1031 429x1  fill=#E5E5E3
+        FRAME "Frame 21"  @151,893 56x27  fill=#14542E  r=4
+          TEXT "모집 중"  @162,899 34x15  text='모집 중'  Inter Medium 11px  #FFFFFF
+        TEXT "부산 전포동 미니팜 1호"  @154,1048 171x23  text='부산 전포동 미니팜 1호'  Inter Bold 15px  #1A1A1A
+        TEXT "부산 부산진구 · 공간 (주)전포자산 · 운…"  @154,1072 260x18  text='부산 부산진구 · 공간 (주)전포자산 · 운영 그린테이블'  Inter Regular 12px  #8A8A8A
+        FRAME "Frame 29"  @154,1104 398x5  fill=#EDEDEB  r=22
+          ROUNDED_RECTANGLE "면"  @154,1104 279x5  fill=#14542E  r=22
+        TEXT "모금률 68.0%"  @154,1124 85x20  text='모금률 68.0%'  Inter Medium 13px  #14542E
+        ROUNDED_RECTANGLE "선"  @154,1146 398x1  fill=#EDEDEB
+        TEXT "단계"  @287,1158 23x18  text='단계'  Inter Regular 11px  #8A8A8A
+        TEXT "2단계 진행중"  @287,1179 77x20  text='2단계 진행중'  Inter Medium 13px  #1A1A1A
+        TEXT "ESG"  @420,1158 24x18  text='ESG'  Inter Regular 11px  #8A8A8A
+        TEXT "공실 재생"  @420,1179 56x20  text='공실 재생'  Inter Medium 13px  #1A1A1A
+        ROUNDED_RECTANGLE "선"  @154,1206 398x1  fill=#EDEDEB
+        FRAME "Frame 24"  @448,893 111x27  fill=#FFFFFF  stroke=#E5E5E3/1  r=4
+          TEXT "목표 115% · 비보장"  @459,899 89x15  text='목표 115% · 비보장'  Inter Medium 10px  #14542E
+        TEXT "예상 수익률 · updated"  @154,1158 70x18  text='예상 회수기간'  Inter Regular 11px  #8A8A8A
+        TEXT "7.8% · updated"  @154,1179 42x20  text='15개월'  Inter Medium 13px  #1A1A1A
+        TEXT "81,600,000 / 120,000,000… · updated"  @409,1118 146x18  text='11,900,000 / 17,500,000원'  Inter Regular 12px  #4A4A4A
+        TEXT "참여자"  @154,1223 32x12  text='참여자'  Inter Regular 12px  #8A8A8A
+        TEXT "최소 청약 · updated"  @439,1223 46x12  text='최소 투자'  Inter Regular 12px  #8A8A8A
+        TEXT "238명 · updated"  @191,1223 18x12  text='7명'  Inter Medium 12px  #1A1A1A
+        TEXT "100,000원 · updated"  @489,1223 65x12  text='1,750,000원'  Inter Medium 12px  #1A1A1A
+      FRAME "Group 2"  @589,880 431x370
+        ROUNDED_RECTANGLE "사진 자리"  @589,881 430x151
+        ROUNDED_RECTANGLE "면"  @589,880 431x370  stroke=#E5E5E3/1  r=10
+        ROUNDED_RECTANGLE "선"  @590,1031 429x1  fill=#E5E5E3
+        FRAME "Frame 22"  @602,893 56x27  fill=#14542E  r=4
+          TEXT "모집 중"  @613,899 34x15  text='모집 중'  Inter Medium 11px  #FFFFFF
+        TEXT "서울 성수동 미니팜 2호"  @605,1048 173x23  text='서울 성수동 미니팜 2호'  Inter Bold 15px  #1A1A1A
+        TEXT "서울 성동구 · 공간 성수홀딩스 · 운영 어…"  @605,1072 229x18  text='서울 성동구 · 공간 성수홀딩스 · 운영 어반팜스'  Inter Regular 12px  #8A8A8A
+        FRAME "Frame 30"  @605,1104 398x5  fill=#EDEDEB  r=22
+          ROUNDED_RECTANGLE "면"  @605,1104 172x5  fill=#14542E  r=22
+        TEXT "모금률 42.0%"  @605,1124 85x20  text='모금률 42.0%'  Inter Medium 13px  #14542E
+        ROUNDED_RECTANGLE "선"  @605,1146 398x1  fill=#EDEDEB
+        TEXT "단계"  @738,1158 23x18  text='단계'  Inter Regular 11px  #8A8A8A
+        TEXT "1단계 진행중"  @738,1179 75x20  text='1단계 진행중'  Inter Medium 13px  #1A1A1A
+        TEXT "ESG"  @870,1158 24x18  text='ESG'  Inter Regular 11px  #8A8A8A
+        TEXT "로컬 유통"  @870,1179 56x20  text='로컬 유통'  Inter Medium 13px  #1A1A1A
+        ROUNDED_RECTANGLE "선"  @605,1206 398x1  fill=#EDEDEB
+        FRAME "Frame 25"  @898,893 111x27  fill=#FFFFFF  stroke=#E5E5E3/1  r=4
+          TEXT "목표 118% · 비보장"  @909,899 89x15  text='목표 118% · 비보장'  Inter Medium 10px  #14542E
+        TEXT "예상 수익률 · updated"  @605,1158 70x18  text='예상 회수기간'  Inter Regular 11px  #8A8A8A
+        TEXT "6.9% · updated"  @605,1179 42x20  text='18개월'  Inter Medium 13px  #1A1A1A
+        TEXT "37,800,000 / 90,000,000원 · updated"  @864,1118 140x18  text='7,350,000 / 17,500,000원'  Inter Regular 12px  #4A4A4A
+        TEXT "참여자"  @605,1223 32x12  text='참여자'  Inter Regular 12px  #8A8A8A
+        TEXT "최소 청약 · updated"  @890,1223 46x12  text='최소 투자'  Inter Regular 12px  #8A8A8A
+        TEXT "142명 · updated"  @642,1223 18x12  text='5명'  Inter Medium 12px  #1A1A1A
+        TEXT "100,000원 · updated"  @940,1223 65x12  text='1,750,000원'  Inter Medium 12px  #1A1A1A
+      FRAME "Group 3"  @1040,880 429x370
+        ROUNDED_RECTANGLE "사진 자리"  @1040,881 428x151
+        ROUNDED_RECTANGLE "면"  @1040,880 429x370  stroke=#E5E5E3/1  r=10
+        ROUNDED_RECTANGLE "선"  @1040,1031 428x1  fill=#E5E5E3
+        FRAME "Frame 23"  @1052,893 65x27  fill=#EDEDEB  r=4
+          TEXT "모집 마감"  @1062,899 44x15  text='모집 마감'  Inter Medium 11px  #4A4A4A
+        TEXT "대전 둔산동 미니팜 1호"  @1056,1048 171x23  text='대전 둔산동 미니팜 1호'  Inter Bold 15px  #1A1A1A
+        TEXT "대전 서구 · 공간 둔산상가조합 · 운영 그…"  @1056,1072 240x18  text='대전 서구 · 공간 둔산상가조합 · 운영 그린테이블'  Inter Regular 12px  #8A8A8A
+        FRAME "Frame 31"  @1056,1104 397x5  fill=#EDEDEB  r=22
+          ROUNDED_RECTANGLE "면"  @1056,1104 333x5  fill=#14542E  r=22
+        TEXT "모금률 81.0%"  @1056,1124 82x20  text='모금률 81.0%'  Inter Medium 13px  #14542E
+        ROUNDED_RECTANGLE "선"  @1056,1146 397x1  fill=#EDEDEB
+        TEXT "단계"  @1188,1158 23x18  text='단계'  Inter Regular 11px  #8A8A8A
+        TEXT "3단계 진행중"  @1188,1179 78x20  text='3단계 진행중'  Inter Medium 13px  #1A1A1A
+        TEXT "ESG"  @1320,1158 24x18  text='ESG'  Inter Regular 11px  #8A8A8A
+        TEXT "에너지 절감"  @1320,1179 69x20  text='에너지 절감'  Inter Medium 13px  #1A1A1A
+        ROUNDED_RECTANGLE "선"  @1056,1206 397x1  fill=#EDEDEB
+        FRAME "Frame 26"  @1348,893 111x27  fill=#FFFFFF  stroke=#E5E5E3/1  r=4
+          TEXT "목표 112% · 비보장"  @1359,899 89x15  text='목표 112% · 비보장'  Inter Medium 10px  #14542E
+        TEXT "예상 수익률 · updated"  @1056,1158 70x18  text='예상 회수기간'  Inter Regular 11px  #8A8A8A
+        TEXT "8.1% · updated"  @1056,1179 41x20  text='12개월'  Inter Medium 13px  #1A1A1A
+        TEXT "64,800,000 / 80,000,000원 · updated"  @1312,1118 144x18  text='14,175,000 / 17,500,000원'  Inter Regular 12px  #4A4A4A
+        TEXT "참여자"  @1056,1223 32x12  text='참여자'  Inter Regular 12px  #8A8A8A
+        TEXT "최소 청약 · updated"  @1340,1223 46x12  text='최소 투자'  Inter Regular 12px  #8A8A8A
+        TEXT "191명 · updated"  @1092,1223 18x12  text='8명'  Inter Medium 12px  #1A1A1A
+        TEXT "50,000원 · updated"  @1390,1223 65x12  text='1,750,000원'  Inter Medium 12px  #1A1A1A
+    TEXT "회수기간과 목표 총 회수율은 각 점포의 사업계획 기준 예상치이며, 실제 매출과 운영비에 따라 달라질 수 있습니다."  @138,1290 1332x18  text='회수기간과 목표 총 회수율은 각 점포의 사업계획 기준 예상치이며, 실제 매출과 운영비에 따라 달라질 수 있습니다.'  Inter Regular 11px  #8A8A8A

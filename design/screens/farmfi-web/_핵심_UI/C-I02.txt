@@ -1,0 +1,37 @@
+FRAME "C-I02 · 투자자 준비 / 모바일 신분증 확인"  @6829,-1182 465x830  fill=#FFFFFF  r=10
+  FRAME "Frame 50"  @6853,-1152 417x756
+    FRAME "Frame 49"  @6853,-1152 417x94
+      TEXT "투자 준비 2 / 3 · 모바일 신분증 확인"  @6853,-1152 417x21  text='투자 준비 2 / 3 · 모바일 신분증 확인'  Inter Regular 18px  #14542E
+      TEXT "휴대폰에서 모바일 신분증을 열고 요청된 정보를 확인해 주세요."  @6853,-1116 417x58  text='휴대폰에서 모바일 신분증을 열고\u2028요청된 정보를 확인해 주세요.'  Inter Regular 13px  #4A4A4A
+    FRAME "Group 7"  @6853,-1031 417x296
+      ROUNDED_RECTANGLE "면"  @6853,-1031 417x296  stroke=#E5E5E3/1  r=10
+      ROUNDED_RECTANGLE "사진 자리"  @6975,-1006 173x174  fill=#F1F4F2  stroke=#E5E5E3/1  r=10
+      TEXT "일회성 QR"  @7037,-855 56x18  text='일회성 QR'  Inter Regular 10px  #8A8A8A
+      TEXT "유효시간"  @7019,-822 47x18  text='유효시간'  Inter Regular 12px  #8A8A8A
+      TEXT "04:32"  @7068,-820 33x15  text='04:32'  Inter Medium 12px  #1A1A1A
+      FRAME "Frame 48"  @7010,-794 96x37  stroke=#E5E5E3/1  r=6
+        TEXT "QR 새로 발급"  @7027,-782 62x15  text='QR 새로 발급'  Inter Medium 12px  #1A1A1A
+    FRAME "Group 10"  @6853,-708 417x249
+      ROUNDED_RECTANGLE "선"  @6853,-563 415x1  fill=#EDEDEB
+      FRAME "Group 9"  @6853,-554 417x95
+        ROUNDED_RECTANGLE "선"  @6853,-525 415x1  fill=#F1F4F2
+        TEXT "실명 확인"  @6853,-553 50x18  text='실명 확인'  Inter Regular 13px  #1A1A1A
+        TEXT "확인 전"  @7231,-554 39x18  text='확인 전'  Inter Regular 12px  #8A8A8A
+        ROUNDED_RECTANGLE "선"  @6853,-487 415x1  fill=#F1F4F2
+        TEXT "성인 여부"  @6853,-515 50x18  text='성인 여부'  Inter Regular 13px  #1A1A1A
+        TEXT "확인 전"  @7231,-516 39x18  text='확인 전'  Inter Regular 12px  #8A8A8A
+        TEXT "투자 한도"  @6853,-477 50x18  text='투자 한도'  Inter Regular 13px  #1A1A1A
+        TEXT "확인 전"  @7231,-478 39x18  text='확인 전'  Inter Regular 12px  #8A8A8A
+      FRAME "Group 14"  @6853,-708 391x117
+        FRAME "Component 2"  @6853,-702 10x107
+          ROUNDED_RECTANGLE "선"  @6858,-694 1x89  fill=#E5E5E3
+          ELLIPSE "점"  @6853,-702 10x10  fill=#14542E
+          ELLIPSE "점"  @6853,-654 10x10  fill=#FFFFFF  stroke=#8A8A8A/1
+          ELLIPSE "점"  @6853,-605 10x10  fill=#FFFFFF  stroke=#E5E5E3/1
+        TEXT "1 본인확인 요청 시작"  @6875,-708 273x20  text='1  본인확인 요청 시작'  Inter Semi Bold 13px  #1A1A1A
+        TEXT "2 모바일 신분증 앱에서 확인"  @6875,-660 369x20  text='2  모바일 신분증 앱에서 확인'  Inter Semi Bold 13px  #1A1A1A
+        TEXT "3 본인확인 결과 수신"  @6875,-610 277x20  text='3  본인확인 결과 수신'  Inter Semi Bold 13px  #1A1A1A
+    TEXT "FarmFi는 실명·성인 여부 등 필요한 확인값만 저장하고 신분증 원문은 보관하지 않아요."  @6853,-432 417x36  text='FarmFi는 실명·성인 여부 등 필요한 확인값만 저장하고\n신분증 원문은 보관하지 않아요.'  Inter Regular 12px  #8A8A8A
+  FRAME "x"  @7236,-1148 24x24
+    VECTOR "Vector"  @7242,-1142 12x12  stroke=#000000/2
+    VECTOR "Vector"  @7242,-1142 12x12  stroke=#000000/2

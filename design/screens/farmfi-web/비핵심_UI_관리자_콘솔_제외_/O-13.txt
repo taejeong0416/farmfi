@@ -1,0 +1,102 @@
+FRAME "O-13 · 운영자 정산·지급 내역"  @8750,4458 1440x900  fill=#FFFFFF  r=10
+  FRAME "TopNav"  @8750,4458 1440x64  stroke=#E5E5E3/1
+    FRAME "NavLeft"  @8804,4482 404x17
+      FRAME "Frame 180"  @8804,4484 117x13
+        INSTANCE "App/Logo"  @8804,4484 55x13
+        FRAME "Frame 6"  @8869,4484 52x13  fill=#8C6114@0.10  stroke=#8C6114/0  r=19
+          TEXT "운영자 포털"  @8876,4486 37x8  text='운영자 포털'  Pretendard SemiBold 8px  #8C6114
+      FRAME "NavLinks"  @8977,4482 231x17
+        TEXT "공간 찾기"  @8977,4482 56x17  text='공간 찾기'  Inter Regular 14px  #4A4A4A
+        TEXT "내 준비 현황"  @9065,4482 72x17  text='내 준비 현황'  Inter Medium 14px  #14542E
+        TEXT "보증서"  @9169,4482 39x17  text='보증서'  Inter Regular 14px  #4A4A4A
+    FRAME "Frame 12"  @10020,4481 116x18
+      FRAME "아이콘"  @10020,4482 16x16
+        VECTOR "Vector"  @10026,4485 5x5  stroke=#8A8A8A/1
+        VECTOR "Vector"  @10023,4491 9x4  stroke=#8A8A8A/1
+      TEXT "그린테이블 이운영"  @10044,4481 92x18  text='그린테이블 이운영'  Inter Regular 12px  #4A4A4A
+  FRAME "BodyContainer"  @8750,4522 1440x836
+    FRAME "PageHeaderRow"  @8804,4542 1332x45
+      FRAME "TitleStack"  @8804,4542 181x45
+        TEXT "정산 · 지급 내역"  @8804,4542 118x23  text='정산 · 지급 내역'  Inter Bold 18px  #1A1A1A
+        TEXT "그린테이블 · 부산 전포동 미니팜 1호"  @8804,4569 181x18  text='그린테이블 · 부산 전포동 미니팜 1호'  Inter Regular 12px  #8A8A8A
+      FRAME "ExportButton"  @10048,4550 88x30  stroke=#E5E5E3/1  r=6
+        TEXT "내역 내보내기"  @10060,4557 64x15  text='내역 내보내기'  Inter Medium 11px  #1A1A1A
+    FRAME "Frame 183"  @8804,4605 1332x79  stroke=#E5E5E3/1  r=10
+      FRAME "KpiRow"  @8825,4617 1287x55
+        FRAME "Stat1"  @8825,4617 416x55
+          TEXT "누적 집행 수령액"  @8825,4617 85x18  text='누적 집행 수령액'  Inter Regular 12px  #8A8A8A
+          FRAME "ValueRow1"  @8825,4643 157x29
+            TEXT "20,200,000"  @8825,4643 142x29  text='20,200,000'  Inter Bold 24px  #1A1A1A
+            TEXT "원"  @8969,4650 13x21  text='원'  Inter Regular 14px  #4A4A4A
+        ROUNDED_RECTANGLE "선"  @9250,4617 1x55  fill=#EDEDEB
+        FRAME "Stat2"  @9260,4617 416x55
+          TEXT "이번 분기 잔여수익 · updated"  @9260,4617 110x18  text='이번 달 운영자 실수령'  Inter Regular 12px  #8A8A8A
+          FRAME "ValueRow2"  @9260,4643 120x29
+            TEXT "480,000"  @9260,4643 105x29  text='480,000'  Inter Bold 24px  #14542E
+            TEXT "원"  @9367,4650 13x21  text='원'  Inter Regular 14px  #4A4A4A
+        ROUNDED_RECTANGLE "선"  @9686,4617 1x55  fill=#EDEDEB
+        FRAME "Stat3"  @9696,4617 416x55
+          TEXT "다음 지급 예정"  @9696,4617 73x18  text='다음 지급 예정'  Inter Regular 12px  #8A8A8A
+          TEXT "04.10"  @9696,4643 66x29  text='04.10'  Inter Bold 24px  #1A1A1A
+    FRAME "PaymentTable"  @8804,4702 1332x193
+      TEXT "단계별 집행 지급"  @8804,4702 1332x23  text='단계별 집행 지급'  Inter Bold 18px  #1A1A1A
+      FRAME "TableWrap"  @8804,4737 1332x158
+        FRAME "TableHeaderRow"  @8804,4737 1332x34
+          TEXT "단계"  @8825,4745 860x18  text='단계'  Inter Regular 12px  #8A8A8A
+          FRAME "HRight"  @9685,4745 430x18
+            TEXT "집행 금액"  @9705,4745 48x18  text='집행 금액'  Inter Regular 12px  #8A8A8A
+            TEXT "지급일"  @9851,4745 34x18  text='지급일'  Inter Regular 12px  #8A8A8A
+            TEXT "상태"  @9976,4745 23x18  text='상태'  Inter Regular 12px  #8A8A8A
+            TEXT "증빙"  @10069,4745 23x18  text='증빙'  Inter Regular 12px  #8A8A8A
+        ROUNDED_RECTANGLE "선"  @8804,4771 1332x1  fill=#EDEDEB
+        FRAME "TableDataRow"  @8804,4772 1332x40
+          TEXT "1단계 계약 체결"  @8825,4783 860x18  text='1단계 계약 체결'  Inter Regular 12px  #1A1A1A
+          FRAME "RowRight"  @9685,4782 430x20
+            TEXT "12,000,000원"  @9685,4782 90x20  text='12,000,000원'  Inter Medium 14px  #1A1A1A
+            TEXT "2026.02.21"  @9832,4782 64x18  text='2026.02.21'  Inter Regular 12px  #4A4A4A
+            TEXT "지급완료"  @9965,4782 41x15  text='지급완료'  Inter Medium 11px  #14542E
+            TEXT "세금계산서"  @10054,4782 51x15  text='세금계산서'  Inter Medium 11px  #14542E
+        ROUNDED_RECTANGLE "선"  @8804,4812 1332x1  fill=#F1F4F2
+        FRAME "TableDataRow"  @8804,4813 1332x40
+          TEXT "2단계 설비 발주"  @8825,4824 860x18  text='2단계 설비 발주'  Inter Regular 12px  #1A1A1A
+          FRAME "RowRight"  @9685,4823 430x20
+            TEXT "8,200,000원"  @9692,4823 83x20  text='8,200,000원'  Inter Medium 14px  #1A1A1A
+            TEXT "2026.03.14"  @9832,4823 63x18  text='2026.03.14'  Inter Regular 12px  #4A4A4A
+            TEXT "지급완료"  @9965,4823 41x15  text='지급완료'  Inter Medium 11px  #14542E
+            TEXT "세금계산서"  @10054,4823 51x15  text='세금계산서'  Inter Medium 11px  #14542E
+        ROUNDED_RECTANGLE "선"  @8804,4853 1332x1  fill=#F1F4F2
+        FRAME "TableDataRow"  @8804,4854 1332x40
+          TEXT "3단계 설비 설치"  @8825,4865 860x18  text='3단계 설비 설치'  Inter Regular 12px  #1A1A1A
+          FRAME "RowRight"  @9685,4864 430x20
+            TEXT "18,000,000원"  @9685,4864 90x20  text='18,000,000원'  Inter Medium 14px  #1A1A1A
+            TEXT "—"  @9832,4864 12x18  text='—'  Inter Regular 12px  #E5E5E3
+            TEXT "보류"  @9975,4864 21x15  text='보류'  Inter Medium 11px  #DC2626
+            TEXT "—"  @10054,4864 12x18  text='—'  Inter Regular 12px  #E5E5E3
+        ROUNDED_RECTANGLE "선"  @8804,4894 1332x1  fill=#EDEDEB
+    FRAME "RevenueSection"  @8804,4913 1332x157
+      TEXT "잔여수익 배분 · updated"  @8804,4913 1332x23  text='월 매출 정산'  Inter Bold 18px  #1A1A1A
+      FRAME "RevenueCard"  @8804,4948 245x122  r=8
+        FRAME "Row1"  @8804,4948 245x40
+          TEXT "2026년 1분기 분배 대상 · updated"  @8821,4959 125x18  text='2026년 4월 배분 가능액'  Inter Regular 12px  #1A1A1A
+          TEXT "4,800,000원"  @8949,4958 83x20  text='4,800,000원'  Inter Medium 14px  #1A1A1A
+        ROUNDED_RECTANGLE "선"  @8804,4988 245x1  fill=#F1F4F2
+        FRAME "Row2"  @8804,4989 245x40
+          TEXT "적용 규칙 · updated"  @8821,5000 85x18  text='선택한 회수 조건'  Inter Regular 12px  #1A1A1A
+          TEXT "적자 구간 운영자 20% · updated"  @8906,4999 126x20  text='15개월 · 연 12% 단리'  Inter Medium 14px  #1A1A1A
+        ROUNDED_RECTANGLE "선"  @8804,5029 245x1  fill=#F1F4F2
+        FRAME "Row3"  @8804,5030 245x40
+          TEXT "운영자 잔여수익 · updated"  @8821,5040 81x20  text='운영자 실수령'  Inter Medium 14px  #1A1A1A
+          FRAME "ValueWrap"  @8906,5040 126x20
+            TEXT "480,000원"  @8906,5040 71x20  text='480,000원'  Inter Medium 14px  #14542E
+            TEXT "· 지급예정"  @8981,5041 51x18  text='· 지급예정'  Inter Regular 12px  #4A4A4A
+    FRAME "EvidenceSection"  @8804,5088 1332x112
+      TEXT "증빙 관리"  @8804,5088 1332x23  text='증빙 관리'  Inter Bold 18px  #1A1A1A
+      FRAME "EvidenceCard"  @8804,5123 1332x77  r=8
+        FRAME "Row1"  @8804,5123 1332x38
+          TEXT "세금계산서_2단계.pdf"  @8821,5133 113x18  text='세금계산서_2단계.pdf'  Inter Regular 12px  #1A1A1A
+          TEXT "03.14 발행"  @10063,5133 56x18  text='03.14 발행'  Inter Regular 12px  #8A8A8A
+        ROUNDED_RECTANGLE "선"  @8804,5161 1332x1  fill=#F1F4F2
+        FRAME "Row2"  @8804,5162 1332x38
+          TEXT "1분기 잔여수익 세금계산서 · updated"  @8821,5172 125x18  text='4월 운영수익 세금계산서'  Inter Regular 12px  #4A4A4A
+          TEXT "발행 등록"  @10075,5174 44x15  text='발행 등록'  Inter Medium 11px  #14542E
+    TEXT "지급은 정산 확정 후 생성된 지급 파일 기준…"  @8804,5218 1332x18  text='지급은 정산 확정 후 생성된 지급 파일 기준으로 처리되며, 보류 단계는 판정이 끝난 뒤 지급 대상에 포함됩니다.'  Inter Regular 12px  #8A8A8A

@@ -1,0 +1,170 @@
+FRAME "A-01 · 관리자 / 콘솔 홈"  @0,0 1440x900  fill=#FFFFFF  r=10
+  FRAME "TopBar"  @0,0 1440x64  stroke=#E5E5E3/1
+    FRAME "NavLeft"  @54,22 134x20
+      FRAME "Frame 180"  @54,22 134x20
+        INSTANCE "App/Logo"  @54,26 55x13
+        TEXT "관리자 콘솔"  @119,22 69x20  text='관리자 콘솔'  Inter Medium 14px  #14542E
+    FRAME "Frame 12"  @1328,23 58x18
+      FRAME "아이콘"  @1328,24 16x16
+        VECTOR "Vector"  @1334,27 5x5  stroke=#8A8A8A/1
+        VECTOR "Vector"  @1331,33 9x4  stroke=#8A8A8A/1
+      TEXT "김투자"  @1352,23 34x18  text='최관리'  Inter Regular 12px  #4A4A4A
+  FRAME "BodyRow"  @0,64 1440x836
+    FRAME "Sidebar"  @0,64 195x836  stroke=#EDEDEB/1
+      FRAME "NavRow"  @25,88 154x14
+        FRAME "아이콘"  @25,88 14x14
+          VECTOR "Vector"  @27,90 10x10  stroke=#14532D/1
+        TEXT "콘솔 홈"  @48,89 35x12  text='콘솔 홈'  Inter Medium 12px  #14542E
+      FRAME "NavRow"  @25,120 154x14
+        FRAME "아이콘"  @25,120 14x14
+          VECTOR "Vector"  @30,123 4x4  stroke=#8A8A8A/1
+          VECTOR "Vector"  @28,128 8x4  stroke=#8A8A8A/1
+        TEXT "보증서 관리"  @48,120 57x14  text='보증서 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @25,152 154x14
+        FRAME "아이콘"  @25,152 14x14
+          VECTOR "Vector"  @27,154 10x9  stroke=#8A8A8A/1
+          VECTOR "Vector"  @27,157 10x0  stroke=#8A8A8A/1
+        TEXT "프로젝트 관리"  @48,153 67x12  text='프로젝트 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @25,184 154x14
+        FRAME "아이콘"  @25,184 14x14
+          VECTOR "Vector"  @28,186 0x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @28,187 8x5  stroke=#8A8A8A/1
+        TEXT "마일스톤 설정"  @48,185 67x12  text='마일스톤 설정'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @25,216 154x14
+        FRAME "아이콘"  @25,216 14x14
+          VECTOR "Vector"  @27,218 10x12  stroke=#8D8D8D/1
+        TEXT "공간·설비 관리"  @48,216 70x14  text='공간·설비 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @25,248 154x14
+        FRAME "아이콘"  @25,248 14x14
+          VECTOR "Vector"  @27,250 8x8  stroke=#8A8A8A/1
+          VECTOR "Vector"  @34,257 2x2  stroke=#8A8A8A/1
+        TEXT "운영팀 재검증"  @48,249 57x12  text='운영자 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @25,280 154x14
+        FRAME "아이콘"  @25,280 14x14
+          VECTOR "Vector"  @28,282 8x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @30,287 4x2  stroke=#8A8A8A/1
+        TEXT "감사 로그 조회"  @48,281 57x12  text='증빙 재검토'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @25,312 154x14
+        FRAME "아이콘"  @25,312 14x14
+          VECTOR "Vector"  @27,314 9x10  stroke=#8A8A8A/1
+        TEXT "외부전문가 판정"  @48,313 78x12  text='외부전문가 판정'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @25,344 154x14
+        FRAME "아이콘"  @25,344 14x14
+          VECTOR "Vector"  @27,346 10x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @31,348 3x6  stroke=#8A8A8A/1
+        TEXT "정산 규칙 설정"  @48,345 70x12  text='정산 규칙 설정'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @25,376 154x14
+        FRAME "아이콘"  @25,376 14x14
+          VECTOR "Vector"  @27,378 10x9  stroke=#8A8A8A/1
+        TEXT "정산 결과"  @48,377 46x12  text='정산 결과'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @25,408 154x14
+        FRAME "아이콘"  @25,408 14x14
+          VECTOR "Vector"  @28,410 8x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @30,415 4x2  stroke=#8A8A8A/1
+        TEXT "감사 로그 조회"  @48,409 70x12  text='감사 로그 조회'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @25,440 154x14
+        FRAME "아이콘"  @25,440 14x14
+          VECTOR "Vector"  @30,443 4x4  stroke=#8A8A8A/1
+          VECTOR "Vector"  @28,448 8x4  stroke=#8A8A8A/1
+        TEXT "권한 관리"  @48,441 46x12  text='권한 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @25,472 154x14
+        FRAME "아이콘"  @25,472 14x14
+          VECTOR "Vector"  @27,473 10x9  stroke=#8A8A8A/1
+          VECTOR "Vector"  @31,484 2x1  stroke=#8A8A8A/1
+        TEXT "알림 발송"  @48,473 46x12  text='알림 발송'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @25,504 154x14
+        FRAME "아이콘"  @25,504 14x14
+          VECTOR "Vector"  @27,508 10x6  stroke=#8A8A8A/1
+        TEXT "AML · 이상거래 관리"  @48,505 101x12  text='AML · 이상거래 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @25,536 154x14
+        FRAME "아이콘"  @25,536 14x14
+          VECTOR "Vector"  @27,538 10x9  stroke=#8A8A8A/1
+        TEXT "AML · 이상거래 관리"  @48,537 70x12  text='매출·비용 입력'  Inter Regular 12px  #4A4A4A
+      FRAME "Spacer"  @25,568 154x276
+      FRAME "NavRow"  @25,862 154x14
+        FRAME "아이콘"  @25,862 14x14
+          VECTOR "Vector"  @28,864 3x9  stroke=#8A8A8A/1
+          VECTOR "Vector"  @34,867 2x5  stroke=#8A8A8A/1
+          VECTOR "Vector"  @31,869 6x0  stroke=#8A8A8A/1
+        TEXT "로그아웃"  @48,863 43x12  text='로그아웃'  Inter Regular 12px  #4A4A4A
+      ROUNDED_RECTANGLE "선"  @11,87 2x16  fill=#14542E
+    FRAME "A-01 · 관리자 / 콘솔 홈"  @195,64 1245x836
+      FRAME "Frame 146"  @249,88 1137x399
+        TEXT "콘솔 홈"  @249,88 43x20  text='콘솔 홈'  Inter Medium 14px  #14542E
+        FRAME "Frame 148"  @249,126 1137x29
+          TEXT "콘솔 홈"  @249,126 290x29  text='최관리 관리자님, 안녕하세요.'  Inter Bold 24px  #1A1A1A
+          FRAME "Frame 147"  @1300,134 86x13
+            TEXT "운영자 박운영"  @1300,134 70x12  text='운영자 박운영'  Inter Regular 12px  #4A4A4A
+            FRAME "아이콘"  @1373,134 13x13
+              VECTOR "Vector"  @1376,139 6x3  stroke=#B6B6B4/1
+        FRAME "Frame"  @249,173 1137x20
+          FRAME "Frame"  @249,173 194x20
+            FRAME "Frame"  @249,173 194x20
+              TEXT "처리 대기 26건"  @249,173 90x20  text='처리 대기 26건'  Inter Medium 14px  #1A1A1A
+              TEXT "·"  @347,174 4x18  text='·'  Inter Regular 12px  #E5E5E3
+              TEXT "이상거래 탐지 2건"  @359,176 84x15  text='이상거래 탐지 2건'  Inter Medium 11px  #DC2626
+          FRAME "Frame"  @1193,177 193x12
+            FRAME "Frame 4"  @1193,177 86x12
+              TEXT "처리 대기 목록"  @1193,177 73x12  text='처리 대기 목록'  Inter Regular 12px  #4A4A4A
+              FRAME "아이콘"  @1267,177 12x12
+                VECTOR "Vector"  @1272,180 3x6  stroke=#B6B6B4/1
+            FRAME "Frame 5"  @1303,177 83x12
+              TEXT "이상거래 목록"  @1303,177 70x12  text='이상거래 목록'  Inter Regular 12px  #4A4A4A
+              FRAME "아이콘"  @1374,177 12x12
+                VECTOR "Vector"  @1378,180 3x6  stroke=#B6B6B4/1
+        FRAME "Task Queue Card"  @249,211 1137x276  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+          FRAME "Frame 145"  @265,227 1105x230
+            TEXT "처리 대기 목록"  @265,227 85x20  text='처리 대기 목록'  Inter Medium 14px  #1A1A1A
+            FRAME "Frame"  @265,259 1105x18
+              TEXT "유형"  @265,259 90x18  text='유형'  Inter Regular 12px  #8A8A8A
+              TEXT "프로젝트명"  @371,259 170x18  text='프로젝트명'  Inter Regular 12px  #8A8A8A
+              TEXT "내용"  @557,259 475x18  text='내용'  Inter Regular 12px  #8A8A8A
+              TEXT "접수 시각"  @1048,259 140x18  text='접수 시각'  Inter Regular 12px  #8A8A8A
+              TEXT "경과"  @1204,259 90x18  text='경과'  Inter Regular 12px  #8A8A8A
+              TEXT "바로가기"  @1310,259 60x18  text='바로가기'  Inter Regular 12px  #8A8A8A
+            FRAME "Frame"  @265,289 1105x18
+              TEXT "보완 요청"  @265,289 90x18  text='보완 요청'  Inter Regular 12px  #1A1A1A
+              TEXT "부산 전포동 미니팜 1호"  @371,289 170x18  text='부산 전포동 미니팜 1호'  Inter Regular 12px  #1A1A1A
+              TEXT "3단계 설비 설치 · 금액 불일치"  @557,289 475x18  text='3단계 설비 설치 · 금액 불일치'  Inter Regular 12px  #4A4A4A
+              TEXT "2026.03.15 15:30"  @1048,289 140x18  text='2026.03.15 15:30'  Inter Regular 12px  #4A4A4A
+              TEXT "2시간 35분"  @1204,289 90x18  text='2시간 35분'  Inter Regular 12px  #1A1A1A
+              TEXT "이동"  @1310,290 60x15  text='이동'  Inter Medium 11px  #14542E
+            FRAME "Frame"  @265,319 1105x18
+              TEXT "보완 요청"  @265,319 90x18  text='보완 요청'  Inter Regular 12px  #1A1A1A
+              TEXT "대전 둔산동 미니팜 1호"  @371,319 170x18  text='대전 둔산동 미니팜 1호'  Inter Regular 12px  #1A1A1A
+              TEXT "2단계 설비 발주 · 영수증 누락"  @557,319 475x18  text='2단계 설비 발주 · 영수증 누락'  Inter Regular 12px  #4A4A4A
+              TEXT "2026.03.15 13:10"  @1048,319 140x18  text='2026.03.15 13:10'  Inter Regular 12px  #4A4A4A
+              TEXT "4시간 55분"  @1204,319 90x18  text='4시간 55분'  Inter Regular 12px  #DC2626
+              TEXT "이동"  @1310,320 60x15  text='이동'  Inter Medium 11px  #14542E
+            FRAME "Frame"  @265,349 1105x18
+              TEXT "재검증 요청"  @265,349 90x18  text='재검증 요청'  Inter Regular 12px  #1A1A1A
+              TEXT "부산 전포동 미니팜 1호"  @371,349 170x18  text='부산 전포동 미니팜 1호'  Inter Regular 12px  #1A1A1A
+              TEXT "3단계 설비 설치 · 재검증 요청"  @557,349 475x18  text='3단계 설비 설치 · 재검증 요청'  Inter Regular 12px  #4A4A4A
+              TEXT "2026.03.15 11:20"  @1048,349 140x18  text='2026.03.15 11:20'  Inter Regular 12px  #4A4A4A
+              TEXT "6시간 45분"  @1204,349 90x18  text='6시간 45분'  Inter Regular 12px  #DC2626
+              TEXT "이동"  @1310,350 60x15  text='이동'  Inter Medium 11px  #14542E
+            FRAME "Frame"  @265,379 1105x18
+              TEXT "지급 대기"  @265,379 90x18  text='지급 대기'  Inter Regular 12px  #1A1A1A
+              TEXT "서울 성수동 미니팜 2호"  @371,379 170x18  text='서울 성수동 미니팜 2호'  Inter Regular 12px  #1A1A1A
+              TEXT "2단계 설비 발주 · 지급 준비"  @557,379 475x18  text='2단계 설비 발주 · 지급 준비'  Inter Regular 12px  #4A4A4A
+              TEXT "2026.03.15 10:05"  @1048,379 140x18  text='2026.03.15 10:05'  Inter Regular 12px  #4A4A4A
+              TEXT "8시간 00분"  @1204,379 90x18  text='8시간 00분'  Inter Regular 12px  #DC2626
+              TEXT "이동"  @1310,380 60x15  text='이동'  Inter Medium 11px  #14542E
+            FRAME "Frame"  @265,409 1105x18
+              TEXT "승인 대기"  @265,409 90x18  text='승인 대기'  Inter Regular 12px  #1A1A1A
+              TEXT "부산 전포동 미니팜 1호"  @371,409 170x18  text='부산 전포동 미니팜 1호'  Inter Regular 12px  #1A1A1A
+              TEXT "4단계 시운전 및 검수 · 승인 대기"  @557,409 475x18  text='4단계 시운전 및 검수 · 승인 대기'  Inter Regular 12px  #4A4A4A
+              TEXT "2026.03.14 17:40"  @1048,409 140x18  text='2026.03.14 17:40'  Inter Regular 12px  #4A4A4A
+              TEXT "20시간 25분"  @1204,409 90x18  text='20시간 25분'  Inter Regular 12px  #DC2626
+              TEXT "이동"  @1310,410 60x15  text='이동'  Inter Medium 11px  #14542E
+            FRAME "Frame"  @265,439 1105x18
+              TEXT "보완 요청"  @265,439 90x18  text='보완 요청'  Inter Regular 12px  #1A1A1A
+              TEXT "대전 둔산동 미니팜 1호"  @371,439 170x18  text='대전 둔산동 미니팜 1호'  Inter Regular 12px  #1A1A1A
+              TEXT "3단계 설비 설치 · 현장 사진 누락"  @557,439 475x18  text='3단계 설비 설치 · 현장 사진 누락'  Inter Regular 12px  #4A4A4A
+              TEXT "2026.03.14 16:30"  @1048,439 140x18  text='2026.03.14 16:30'  Inter Regular 12px  #4A4A4A
+              TEXT "21시간 35분"  @1204,439 90x18  text='21시간 35분'  Inter Regular 12px  #DC2626
+              FRAME "Frame"  @1310,439 60x18
+      FRAME "Frame"  @249,505 50x18
+        TEXT "더보기"  @249,505 34x18  text='더보기'  Inter Regular 12px  #4A4A4A
+        FRAME "아이콘"  @287,508 12x12
+          VECTOR "Vector"  @292,511 3x6  stroke=#8A8A8A/1

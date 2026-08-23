@@ -1,0 +1,28 @@
+FRAME "I-03 · 투자자 / 최종 확인·전자서명·납입"  @2814,1429 730x898
+  FRAME "I-03 · 투자자 / 최종 확인·전자서명·납입"  @2814,1429 730x898  fill=#FFFFFF  r=10
+    TEXT "마지막 단계"  @2848,1463 69x20  text='마지막 단계'  Inter Semi Bold 13px  #14542E
+    TEXT "신청 내용을 한 번 더 확인해 주세요"  @2848,1501 343x29  text='신청 내용을 한 번 더 확인해 주세요'  Inter Bold 26px  #1A1A1A
+    TEXT "계약을 확인하면 입금할 가상계좌를 안내해 드려요. 입금 후 신청 상태를 확인할 수 있습니다."  @2848,1548 532x21  text='계약을 확인하면 입금할 가상계좌를 안내해 드려요. 입금 후 신청 상태를 확인할 수 있습니다.'  Inter Regular 14px  #4A4A4A
+    FRAME "투자 요약"  @2848,1587 662x189  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+      TEXT "전포 로컬팜 1호"  @2864,1603 117x23  text='전포 로컬팜 1호'  Inter Bold 18px  #1A1A1A
+      TEXT "투자금액 1,750,000원"  @2864,1650 181x23  text='투자금액  1,750,000원'  Inter Semi Bold 15px  #14542E
+      TEXT "예상 회수 · 지점별 기준 시나리오 보기"  @2864,1697 229x21  text='예상 회수  ·  지점별 기준 시나리오 보기'  Inter Regular 14px  #1A1A1A
+      TEXT "예상치는 매출과 비용에 따라 달라지며 원금과 수익을 보장하지 않습니다."  @2864,1742 362x18  text='예상치는 매출과 비용에 따라 달라지며 원금과 수익을 보장하지 않습니다.'  Inter Regular 12px  #4A4A4A
+    FRAME "납입 수단"  @2848,1794 662x139  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+      TEXT "회수금을 받을 계좌"  @2864,1810 96x18  text='회수금을 받을 계좌'  Inter Regular 13px  #4A4A4A
+      TEXT "국민은행 · 1234"  @2864,1852 125x23  text='국민은행 · 1234'  Inter Semi Bold 16px  #1A1A1A
+      TEXT "계약 동의 후 입금할 가상계좌가 발급됩니다."  @2864,1899 219x18  text='계약 동의 후 입금할 가상계좌가 발급됩니다.'  Inter Regular 12px  #4A4A4A
+    FRAME "전자문서"  @2848,1951 662x182  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+      TEXT "✓ 투자계약서"  @2864,1967 81x20  text='✓ 투자계약서'  Inter Semi Bold 14px  #1A1A1A
+      TEXT "✓ 핵심위험 안내서"  @2864,2011 110x20  text='✓ 핵심위험 안내서'  Inter Semi Bold 14px  #1A1A1A
+      TEXT "✓ 개인정보 제공 동의"  @2864,2055 127x20  text='✓ 개인정보 제공 동의'  Inter Semi Bold 14px  #1A1A1A
+      TEXT "계약서와 위험 안내를 확인한 뒤 동의해 주세요. 동의와 입금 확인 내역은 변경하기 어렵게 기록됩니다."  @2864,2099 504x18  text='계약서와 위험 안내를 확인한 뒤 동의해 주세요. 동의와 입금 확인 내역은 변경하기 어렵게 기록됩니다.'  Inter Regular 12px  #4A4A4A
+    FRAME "Frame 79"  @2848,2151 662x142
+      FRAME "Button"  @2848,2151 662x44  fill=#14542E  stroke=#14542E/1  r=6
+        TEXT "계약 동의 후 입금 계좌 받기"  @3098,2163 161x20  text='계약 동의 후 입금 계좌 받기'  Inter Semi Bold 14px  #FFFFFF
+      FRAME "Button"  @2848,2213 662x44  fill=#FFFFFF  stroke=#E5E5E3/1  r=6
+        TEXT "신청 내용 수정"  @3136,2225 85x20  text='신청 내용 수정'  Inter Semi Bold 14px  #1A1A1A
+      TEXT "입금 확인이 늦어지면 입금내역 확인을 요청할 수 있어요."  @3038,2275 281x18  text='입금 확인이 늦어지면 입금내역 확인을 요청할 수 있어요.'  Inter Regular 12px  #8A8A8A
+  FRAME "x"  @3486,1463 24x24
+    VECTOR "Vector"  @3492,1469 12x12  stroke=#000000/2
+    VECTOR "Vector"  @3492,1469 12x12  stroke=#000000/2

@@ -1,0 +1,84 @@
+FRAME "I-09 · 투자자 알림함"  @3795,977 1440x900  fill=#FFFFFF  r=10
+  FRAME "TopNav"  @3795,977 1440x64
+    FRAME "NavLeft"  @3849,999 356x20
+      FRAME "Frame 180"  @3849,1002 115x13
+        INSTANCE "App/Logo"  @3849,1002 55x13
+        FRAME "Frame 7"  @3912,1002 52x13  fill=#207349@0.10  stroke=#207349/0  r=19
+          TEXT "운영자 포털"  @3920,1005 37x8  text='투자자 포털'  Pretendard SemiBold 8px  #207349
+      FRAME "NavLinks"  @4020,999 185x20
+        TEXT "프로젝트"  @4020,999 52x20  text='프로젝트'  Inter Regular 14px  #4A4A4A
+        TEXT "내 투자"  @4104,999 43x20  text='내 투자'  Inter Regular 14px  #4A4A4A
+        TEXT "알림"  @4179,999 26x20  text='알림'  Inter Medium 14px  #14542E
+    FRAME "Frame 12"  @5123,1000 58x18
+      FRAME "아이콘"  @5123,1001 16x16
+        VECTOR "Vector"  @5129,1004 5x5  stroke=#8A8A8A/1
+        VECTOR "Vector"  @5126,1010 9x4  stroke=#8A8A8A/1
+      TEXT "그린테이블 이운영"  @5147,1000 34x18  text='김투자'  Inter Regular 12px  #4A4A4A
+  FRAME "BodyContainer"  @3795,1041 1440x836
+    FRAME "HeaderWrap"  @3795,1061 1440x56
+      FRAME "HeaderRow"  @3849,1061 1332x34
+        TEXT "FRIENDLY COPY / 10:864"  @3849,1064 94x29  text='투자 소식'  Inter Bold 24px  #1A1A1A
+        FRAME "FilterChips"  @4781,1061 400x34
+          FRAME "Chip"  @4781,1061 55x34  stroke=#14542E/1  r=6
+            TEXT "전체"  @4797,1071 23x14  text='전체'  Inter Medium 14px  #14542E
+          FRAME "Chip"  @4844,1061 80x34  stroke=#E5E5E3/1  r=6
+            TEXT "FRIENDLY COPY / 10:869"  @4860,1071 48x14  text='투자 신청'  Inter Regular 14px  #4A4A4A
+          FRAME "Chip"  @4932,1061 87x34  stroke=#E5E5E3/1  r=6
+            TEXT "집행 · 검증"  @4948,1071 55x14  text='집행 · 검증'  Inter Regular 14px  #4A4A4A
+          FRAME "Chip"  @5027,1061 66x34  stroke=#E5E5E3/1  r=6
+            TEXT "배당"  @5043,1071 34x14  text='회수금'  Inter Regular 12px  #4A4A4A
+          FRAME "Chip"  @5101,1061 80x34  stroke=#E5E5E3/1  r=6
+            TEXT "모두 읽음"  @5117,1071 48x14  text='모두 읽음'  Inter Regular 12px  #4A4A4A
+      TEXT "안읽음 3건"  @3849,1099 56x18  text='안읽음 3건'  Inter Regular 12px  #8A8A8A
+    FRAME "NotificationList"  @3795,1125 1440x345
+      FRAME "NotifRow"  @3795,1125 1440x68
+        ROUNDED_RECTANGLE "면"  @3849,1137 3x44  fill=#14542E
+        FRAME "Col"  @3864,1137 1317x44
+          FRAME "TopLine"  @3864,1137 1317x20
+            FRAME "LabelTitle"  @3864,1137 261x20
+              TEXT "집행"  @3864,1138 23x18  text='집행'  Inter Regular 12px  #8A8A8A
+              TEXT "2단계 설비 발주 집행이 완료되었습니다"  @3895,1137 230x20  text='2단계 설비 발주 집행이 완료되었습니다'  Inter Medium 14px  #1A1A1A
+            TEXT "03.14 11:02"  @5117,1138 64x18  text='03.14 11:02'  Inter Regular 12px  #8A8A8A
+          TEXT "서울 성수동 미니팜 2호 · 8,200,00…"  @3864,1163 1317x18  text='서울 성수동 미니팜 2호 · 8,200,000원이 공급처로 지급되었습니다.'  Inter Regular 12px  #8A8A8A
+      ROUNDED_RECTANGLE "선"  @3795,1193 1440x1  fill=#F1F4F2
+      FRAME "NotifRow"  @3795,1194 1440x68
+        ROUNDED_RECTANGLE "면"  @3849,1206 3x44  fill=#14542E
+        FRAME "Col"  @3864,1206 1317x44
+          FRAME "TopLine"  @3864,1206 1317x20
+            FRAME "LabelTitle"  @3864,1206 202x20
+              TEXT "검증"  @3864,1207 23x18  text='검증'  Inter Regular 12px  #8A8A8A
+              TEXT "3단계 검증이 보류되었습니다"  @3895,1206 171x20  text='3단계 검증이 보류되었습니다'  Inter Medium 14px  #1A1A1A
+            TEXT "03.15 15:30"  @5116,1207 65x18  text='03.15 15:30'  Inter Regular 12px  #8A8A8A
+          TEXT "대전 둔산동 미니팜 1호 · 재검증이 진행 …"  @3864,1232 1317x18  text='대전 둔산동 미니팜 1호 · 재검증이 진행 중이며 집행은 보류됩니다.'  Inter Regular 12px  #8A8A8A
+      ROUNDED_RECTANGLE "선"  @3795,1262 1440x1  fill=#F1F4F2
+      FRAME "NotifRow"  @3795,1263 1440x69
+        ROUNDED_RECTANGLE "면"  @3849,1275 3x45  fill=#14542E
+        FRAME "Col"  @3864,1275 1317x45
+          FRAME "TopLine"  @3864,1275 1317x21
+            FRAME "LabelTitle"  @3864,1275 228x21
+              TEXT "배당"  @3864,1276 34x18  text='회수금'  Inter Regular 12px  #8A8A8A
+              TEXT "1분기 배당 지급이 예정되었습니다"  @3906,1275 186x21  text='1분기 회수금 지급이 예정됐어요'  Inter Regular 14px  #1A1A1A
+            TEXT "03.10 09:00"  @5114,1276 67x18  text='03.10 09:00'  Inter Regular 12px  #8A8A8A
+          TEXT "부산 전포동 미니팜 1호 · 86,400원 …"  @3864,1302 1317x18  text='부산 전포동 미니팜 1호 · 86,400원 · 지급 예정일 04.10'  Inter Regular 12px  #8A8A8A
+      ROUNDED_RECTANGLE "선"  @3795,1332 1440x1  fill=#F1F4F2
+      FRAME "NotifRow"  @3795,1333 1440x68
+        FRAME "Col"  @3849,1345 1332x44
+          FRAME "TopLine"  @3849,1345 1332x20
+            FRAME "LabelTitle"  @3849,1345 193x20
+              TEXT "FRIENDLY COPY / 10:895"  @3849,1346 48x18  text='투자 신청'  Inter Regular 12px  #8A8A8A
+              TEXT "FRIENDLY COPY / 10:896"  @3905,1345 137x20  text='투자 신청이 완료됐어요'  Inter Medium 14px  #4A4A4A
+            TEXT "03.09 16:20"  @5113,1346 68x18  text='03.09 16:20'  Inter Regular 12px  #8A8A8A
+          TEXT "부산 전포동 미니팜 1호 · 1,000,00…"  @3849,1371 1332x18  text='부산 전포동 미니팜 1호 · 1,000,000원 · 입금 확인 완료'  Inter Regular 12px  #8A8A8A
+      ROUNDED_RECTANGLE "선"  @3795,1401 1440x1  fill=#EDEDEB
+      FRAME "NotifRow"  @3795,1402 1440x68
+        FRAME "Col"  @3849,1414 1332x44
+          FRAME "TopLine"  @3849,1414 1332x20
+            FRAME "LabelTitle"  @3849,1414 152x20
+              TEXT "공지"  @3849,1415 23x18  text='공지'  Inter Regular 12px  #8A8A8A
+              TEXT "1분기 정산 일정 안내"  @3880,1414 121x20  text='1분기 정산 일정 안내'  Inter Medium 14px  #4A4A4A
+            TEXT "03.02 10:00"  @5113,1415 68x18  text='03.02 10:00'  Inter Regular 12px  #8A8A8A
+          TEXT "분기 종료 후 10일 이내 정산 결과가 공개…"  @3849,1440 1332x18  text='분기 종료 후 10일 이내 정산 결과가 공개됩니다.'  Inter Regular 12px  #8A8A8A
+    FRAME "PaginationFooter"  @3795,1478 1440x40
+      TEXT "전체 42건 중 1 - 5"  @3849,1489 95x18  text='전체 42건 중 1 - 5'  Inter Regular 12px  #8A8A8A
+      FRAME "Button/secondary"  @5090,1478 91x40  stroke=#E5E5E3/1  r=6
+        TEXT "다음 →"  @5114,1488 43x20  text='다음 →'  Inter Medium 14px  #1A1A1A

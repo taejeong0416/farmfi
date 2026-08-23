@@ -68,7 +68,7 @@ export function NotifyScreen() {
 
   return (
     <AdminShell
-      title="알림 발송"
+      title="필요한 대상에게 알림을 보내요"
       desc="집행·검증 결과 외의 공지를 보낸다. 발송 이력은 감사 로그에 남는다."
     >
       <div className="flex items-start gap-8">

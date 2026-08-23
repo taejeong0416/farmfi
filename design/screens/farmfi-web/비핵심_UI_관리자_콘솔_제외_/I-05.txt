@@ -1,0 +1,74 @@
+FRAME "I-05 · 투자 신청·취소 내역"  @2314,977 1440x900  fill=#FFFFFF  r=10
+  FRAME "TopNav"  @2314,977 1440x64
+    FRAME "NavLeft"  @2368,999 356x20
+      FRAME "Frame 180"  @2368,1002 115x13
+        INSTANCE "App/Logo"  @2368,1002 55x13
+        FRAME "Frame 7"  @2431,1002 52x13  fill=#207349@0.10  stroke=#207349/0  r=19
+          TEXT "운영자 포털"  @2438,1005 37x8  text='투자자 포털'  Pretendard SemiBold 8px  #207349
+      FRAME "NavLinks"  @2539,999 185x20
+        TEXT "프로젝트"  @2539,999 52x20  text='프로젝트'  Inter Regular 14px  #4A4A4A
+        TEXT "내 투자"  @2623,999 43x20  text='내 투자'  Inter Medium 14px  #14542E
+        TEXT "알림"  @2698,999 26x20  text='알림'  Inter Regular 14px  #4A4A4A
+    FRAME "Frame 12"  @3642,1000 58x18
+      FRAME "아이콘"  @3642,1001 16x16
+        VECTOR "Vector"  @3648,1004 5x5  stroke=#8A8A8A/1
+        VECTOR "Vector"  @3645,1010 9x4  stroke=#8A8A8A/1
+      TEXT "그린테이블 이운영"  @3666,1000 34x18  text='김투자'  Inter Regular 12px  #4A4A4A
+  FRAME "BodyContainer"  @2314,1041 1440x836
+    FRAME "Frame 189"  @2368,1061 1332x51
+      FRAME "Frame 188"  @2368,1061 144x51
+        TEXT "FRIENDLY COPY / 10:993"  @2368,1061 144x29  text='투자 신청 내역'  Inter Bold 24px  #1A1A1A
+        TEXT "김투자 · 전체 5건"  @2368,1094 87x18  text='김투자 · 전체 5건'  Inter Regular 12px  #8A8A8A
+      FRAME "HeaderRow"  @2524,1061 1176x36
+        FRAME "FilterChips"  @3405,1061 295x36
+          FRAME "Chip"  @3405,1061 57x36  stroke=#14542E/1  r=6
+            TEXT "전체"  @3422,1072 23x14  text='전체'  Inter Medium 14px  #14542E
+          FRAME "Chip"  @3470,1061 57x36  stroke=#E5E5E3/1  r=6
+            TEXT "배정"  @3487,1072 23x14  text='배정'  Inter Regular 14px  #4A4A4A
+          FRAME "Chip"  @3535,1061 100x36  stroke=#E5E5E3/1  r=6
+            TEXT "미배정 · 환불"  @3552,1072 66x14  text='미배정 · 환불'  Inter Regular 12px  #4A4A4A
+          FRAME "Chip"  @3643,1061 57x36  stroke=#E5E5E3/1  r=6
+            TEXT "취소"  @3660,1072 23x14  text='취소'  Inter Regular 12px  #4A4A4A
+    FRAME "TableCard"  @2368,1124 1332x259
+      FRAME "HeaderRow"  @2368,1124 1332x34
+        TEXT "프로젝트"  @2368,1132 140x18  text='프로젝트'  Inter Regular 12px  #8A8A8A
+        TEXT "FRIENDLY COPY / 10:1006"  @2508,1132 90x18  text='투자 금액'  Inter Regular 12px  #8A8A8A
+        TEXT "신청일"  @2598,1132 80x18  text='신청일'  Inter Regular 12px  #8A8A8A
+        TEXT "상태"  @2678,1132 90x18  text='상태'  Inter Regular 12px  #8A8A8A
+        TEXT "처리"  @2768,1132 932x18  text='처리'  Inter Regular 12px  #8A8A8A
+      ROUNDED_RECTANGLE "선"  @2368,1158 1332x1  fill=#EDEDEB
+      FRAME "DataRow"  @2368,1159 1332x44
+        TEXT "부산 전포동 미니팜 1호"  @2368,1172 140x18  text='부산 전포동 미니팜 1호'  Inter Regular 12px  #1A1A1A
+        TEXT "1,000,000원"  @2508,1171 90x20  text='1,000,000원'  Inter Medium 14px  #1A1A1A
+        TEXT "2026.03.09"  @2598,1172 80x18  text='2026.03.09'  Inter Regular 12px  #4A4A4A
+        TEXT "배정 완료"  @2678,1174 90x15  text='배정 완료'  Inter Medium 11px  #14542E
+        TEXT "상세"  @2768,1174 932x15  text='상세'  Inter Medium 11px  #14542E
+      ROUNDED_RECTANGLE "선"  @2368,1203 1332x1  fill=#F1F4F2
+      FRAME "DataRow"  @2368,1204 1332x44
+        TEXT "서울 성수동 미니팜 2호"  @2368,1217 140x18  text='서울 성수동 미니팜 2호'  Inter Regular 12px  #1A1A1A
+        TEXT "1,400,000원"  @2508,1216 90x20  text='1,400,000원'  Inter Medium 14px  #1A1A1A
+        TEXT "2026.03.02"  @2598,1217 80x18  text='2026.03.02'  Inter Regular 12px  #4A4A4A
+        TEXT "배정 대기"  @2678,1217 90x18  text='배정 대기'  Inter Regular 12px  #4A4A4A
+        TEXT "FRIENDLY COPY / 10:1021"  @2768,1218 932x15  text='신청 취소'  Inter Medium 11px  #14542E
+      ROUNDED_RECTANGLE "선"  @2368,1248 1332x1  fill=#F1F4F2
+      FRAME "DataRow"  @2368,1249 1332x44
+        TEXT "대전 둔산동 미니팜 1호"  @2368,1262 140x18  text='대전 둔산동 미니팜 1호'  Inter Regular 12px  #1A1A1A
+        TEXT "1,000,000원"  @2508,1261 90x20  text='1,000,000원'  Inter Medium 14px  #1A1A1A
+        TEXT "2026.01.15"  @2598,1262 80x18  text='2026.01.15'  Inter Regular 12px  #4A4A4A
+        TEXT "배정 완료"  @2678,1264 90x15  text='배정 완료'  Inter Medium 11px  #14542E
+        TEXT "상세"  @2768,1264 932x15  text='상세'  Inter Medium 11px  #14542E
+      ROUNDED_RECTANGLE "선"  @2368,1293 1332x1  fill=#F1F4F2
+      FRAME "DataRow"  @2368,1294 1332x44
+        TEXT "광주 충장로 미니팜 1호"  @2368,1307 140x18  text='광주 충장로 미니팜 1호'  Inter Regular 12px  #1A1A1A
+        TEXT "500,000원"  @2508,1306 90x20  text='500,000원'  Inter Medium 14px  #1A1A1A
+        TEXT "2026.02.20"  @2598,1307 80x18  text='2026.02.20'  Inter Regular 12px  #4A4A4A
+        TEXT "미배정 · 환불"  @2678,1307 90x18  text='미배정 · 환불'  Inter Regular 12px  #8A8A8A
+        TEXT "환불 내역"  @2768,1307 932x18  text='환불 내역'  Inter Regular 12px  #8A8A8A
+      ROUNDED_RECTANGLE "선"  @2368,1338 1332x1  fill=#F1F4F2
+      FRAME "DataRow"  @2368,1339 1332x44
+        TEXT "대구 동성로 미니팜 1호"  @2368,1352 140x18  text='대구 동성로 미니팜 1호'  Inter Regular 12px  #1A1A1A
+        TEXT "300,000원"  @2508,1351 90x20  text='300,000원'  Inter Medium 14px  #1A1A1A
+        TEXT "2026.02.11"  @2598,1352 80x18  text='2026.02.11'  Inter Regular 12px  #4A4A4A
+        TEXT "FRIENDLY COPY / 10:1038"  @2678,1352 90x18  text='신청 취소'  Inter Regular 12px  #8A8A8A
+        TEXT "내역"  @2768,1352 932x18  text='내역'  Inter Regular 12px  #8A8A8A
+    TEXT "FRIENDLY COPY / 10:1040"  @2368,1395 1332x18  text='신청 취소는 모집 마감 전까지만 가능합니다. 미배정분은 마감 후 3영업일 이내 연결 계좌로 환불됩니다.'  Inter Regular 12px  #8A8A8A

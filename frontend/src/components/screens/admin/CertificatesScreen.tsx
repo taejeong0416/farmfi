@@ -88,7 +88,7 @@ export function CertificatesScreen() {
 
   if (isLoading) {
     return (
-      <AdminShell title="보증서 관리">
+      <AdminShell title="승인된 운영자에게 디지털 보증서를 발급해요">
         <SkeletonBlock height={360} />
       </AdminShell>
     );
@@ -219,8 +219,8 @@ export function CertificatesScreen() {
 
   return (
     <AdminShell
-      title="승인된 운영자에게 보증서를 발급해요"
-      desc="운영자 앱은 이 보증서를 확인해 운영 기능을 열고 닫습니다. 정지·폐기는 사유가 있어야 하고, 모든 처리는 감사 로그에 남습니다."
+      title="승인된 운영자에게 디지털 보증서를 발급해요"
+      desc="보증서는 운영자 앱에서 자격과 배정 지점을 확인할 때 사용됩니다. 발급·정지·재발급 이력은 감사 로그에 남아요."
     >
       {error ? <p className="mb-4 text-12 text-danger">{error}</p> : null}
 

@@ -58,7 +58,7 @@ export function ApplyConfirmScreen() {
         현장 방문 결과와 교육 수료가 확인됐습니다. 계약서에 들어갈 공간과 운영 조건을 마지막으로 확인해 주세요.
       </p>
 
-      <div className="mt-7 rounded-14 bg-brand-soft px-6 py-6">
+      <div className="mt-7 rounded-10 bg-brand-soft px-6 py-6">
         <p className="text-22 font-bold text-ink">
           {space?.address ?? application.region} 후보지
         </p>
@@ -71,7 +71,7 @@ export function ApplyConfirmScreen() {
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-4">
-        <Card className="rounded-14">
+        <Card className="rounded-10">
           <h2 className="text-13 text-muted">공간 조건</h2>
           <div className="mt-3">
             <InfoRow label="전력" value={space?.electricity ?? "-"} />
@@ -79,7 +79,7 @@ export function ApplyConfirmScreen() {
             <InfoRow label="면적" value={space?.area ?? "-"} />
           </div>
         </Card>
-        <Card className="rounded-14">
+        <Card className="rounded-10">
           <h2 className="text-13 text-muted">비용과 책임</h2>
           <div className="mt-3">
             <InfoRow label="운영 조건" value="계약서에서 최종 확인" />
@@ -95,11 +95,11 @@ export function ApplyConfirmScreen() {
         </Card>
       </div>
 
-      <Card className="mt-4 rounded-14">
-        <p className="text-15 font-bold text-brand">
+      <Card className="mt-4 rounded-10">
+        <p className="text-18 font-bold text-brand">
           공간을 확정하면 7일 동안 다른 운영자에게 배정되지 않아요.
         </p>
-        <p className="mt-2 text-13 text-muted">
+        <p className="mt-2 text-12 text-muted">
           그 안에 계약을 서명하지 않으면 담당자 확인 후 가배정 상태로 돌아갈 수 있습니다.
         </p>
       </Card>

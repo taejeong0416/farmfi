@@ -29,7 +29,7 @@ export function AdminSpacesScreen() {
 
   if (isLoading) {
     return (
-      <AdminShell title="공간 · 설비 구성">
+      <AdminShell title="공간에 들어갈 설비를 먼저 구성해요">
         <SkeletonBlock height={360} />
       </AdminShell>
     );
@@ -37,7 +37,7 @@ export function AdminSpacesScreen() {
 
   if (isError) {
     return (
-      <AdminShell title="공간 · 설비 구성">
+      <AdminShell title="공간에 들어갈 설비를 먼저 구성해요">
         <EmptyState
           title="공간 목록을 볼 수 없습니다"
           desc="관리자로 로그인한 뒤 다시 확인해 주세요."
@@ -153,7 +153,7 @@ export function AdminSpacesScreen() {
       <Card className="mt-6">
         <p className="text-14 font-bold text-ink">운영 가능 전환 조건</p>
         <p className="mt-2 text-12 text-muted">
-          필수 설비 연결 100% · 통신 테스트 통과 · 센서값 정상. 운영자 앱에서 설비 코드를 스캔하면 이 공간에 자동 연결됩니다.
+          필수 설비 연결 100% · 통신 테스트 통과 · 센서값 정상. 운영자 앱에서 설비의 QR/바코드를 스캔하면 이 공간에 자동 연결됩니다.
         </p>
       </Card>
     </AdminShell>

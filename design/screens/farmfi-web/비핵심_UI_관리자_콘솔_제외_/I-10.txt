@@ -1,0 +1,95 @@
+FRAME "I-10 · 투자자 알림 설정"  @5328,977 1440x900  fill=#FFFFFF  r=10
+  FRAME "TopNav"  @5328,977 1440x64
+    FRAME "NavLeft"  @5382,999 356x20
+      FRAME "Frame 180"  @5382,1002 115x13
+        INSTANCE "App/Logo"  @5382,1002 55x13
+        FRAME "Frame 7"  @5445,1002 52x13  fill=#207349@0.10  stroke=#207349/0  r=19
+          TEXT "운영자 포털"  @5452,1005 37x8  text='투자자 포털'  Pretendard SemiBold 8px  #207349
+      FRAME "NavLinks"  @5553,999 185x20
+        TEXT "프로젝트"  @5553,999 52x20  text='프로젝트'  Inter Regular 14px  #4A4A4A
+        TEXT "내 투자"  @5637,999 43x20  text='내 투자'  Inter Regular 14px  #4A4A4A
+        TEXT "알림"  @5712,999 26x20  text='알림'  Inter Medium 14px  #14542E
+    FRAME "Frame 12"  @6656,1000 58x18
+      FRAME "아이콘"  @6656,1001 16x16
+        VECTOR "Vector"  @6662,1004 5x5  stroke=#8A8A8A/1
+        VECTOR "Vector"  @6659,1010 9x4  stroke=#8A8A8A/1
+      TEXT "그린테이블 이운영"  @6680,1000 34x18  text='김투자'  Inter Regular 12px  #4A4A4A
+  FRAME "BodyContainer"  @5328,1041 1440x836
+    FRAME "PageHeaderRow"  @5382,1061 1332x51
+      FRAME "TitleStack"  @5382,1061 274x51
+        TEXT "FRIENDLY COPY / 10:909"  @5382,1061 144x29  text='받을 소식 설정'  Inter Bold 24px  #1A1A1A
+        TEXT "투자자 · 김투자 · 역할에 해당하는 이벤트…"  @5382,1094 274x18  text='투자자 · 김투자 · 역할에 해당하는 이벤트만 표시됩니다'  Inter Regular 12px  #8A8A8A
+      FRAME "SaveButton"  @6665,1070 49x32  fill=#14542E  r=6
+        TEXT "저장"  @6679,1079 21x15  text='저장'  Inter Medium 11px  #FFFFFF
+    FRAME "SettingsTable"  @5382,1128 1332x330  stroke=#EDEDEB/1
+      FRAME "ColHeaderRow"  @5382,1128 1332x34
+        TEXT "이벤트 유형"  @5403,1136 1037x18  text='이벤트 유형'  Inter Regular 12px  #8A8A8A
+        FRAME "ColLabelsGroup"  @6440,1136 253x18
+          TEXT "앱 내 알림"  @6440,1136 51x18  text='앱 내 알림'  Inter Regular 12px  #8A8A8A
+          TEXT "이메일"  @6558,1136 34x18  text='이메일'  Inter Regular 12px  #8A8A8A
+          TEXT "SMS"  @6667,1136 26x18  text='SMS'  Inter Regular 12px  #8A8A8A
+      FRAME "Divider"  @5382,1162 1332x1  fill=#EDEDEB
+      FRAME "DataRow"  @5382,1163 1332x58
+        FRAME "LabelStack"  @5403,1173 1048x38
+          TEXT "FRIENDLY COPY / 10:920"  @5403,1173 131x18  text='투자 신청 접수 · 배정 결과'  Inter Regular 12px  #1A1A1A
+          TEXT "FRIENDLY COPY / 10:921"  @5403,1193 149x18  text='투자 신청, 배정 · 미배정, 환불'  Inter Regular 12px  #8A8A8A
+        FRAME "CheckboxGroup"  @6463,1184 230x15
+          ROUNDED_RECTANGLE "면"  @6462,1188 15x15  fill=#14542E  r=4
+          FRAME "아이콘"  @6466,1190 9x9
+            VECTOR "Vector"  @6468,1192 6x4  stroke=#FFFFFF/1
+          ROUNDED_RECTANGLE "면"  @6572,1188 15x15  fill=#14542E  r=4
+          FRAME "아이콘"  @6576,1190 9x9
+            VECTOR "Vector"  @6578,1192 6x4  stroke=#FFFFFF/1
+          ROUNDED_RECTANGLE "면"  @6678,1184 15x15  stroke=#E5E5E3/1  r=4
+      ROUNDED_RECTANGLE "선"  @5382,1221 1332x1  fill=#F1F4F2
+      FRAME "DataRow"  @5382,1222 1332x58
+        FRAME "LabelStack"  @5403,1232 1048x38
+          TEXT "집행 완료"  @5403,1232 48x18  text='집행 완료'  Inter Regular 12px  #1A1A1A
+          TEXT "단계별 지급 완료"  @5403,1252 85x18  text='단계별 지급 완료'  Inter Regular 12px  #8A8A8A
+        FRAME "CheckboxGroup"  @6463,1244 230x15
+          ROUNDED_RECTANGLE "면"  @6462,1246 15x15  fill=#14542E  r=4
+          FRAME "아이콘"  @6466,1250 9x9
+            VECTOR "Vector"  @6467,1252 6x4  stroke=#FFFFFF/1
+          ROUNDED_RECTANGLE "면"  @6572,1244 15x15  stroke=#E5E5E3/1  r=4
+          ROUNDED_RECTANGLE "면"  @6678,1244 15x15  stroke=#E5E5E3/1  r=4
+      ROUNDED_RECTANGLE "선"  @5382,1280 1332x1  fill=#F1F4F2
+      FRAME "DataRow"  @5382,1281 1332x58
+        FRAME "LabelStack"  @5403,1291 1048x38
+          TEXT "검증 보류 · 반려"  @5403,1291 80x18  text='검증 보류 · 반려'  Inter Regular 12px  #1A1A1A
+          TEXT "집행이 멈추는 상태 변화"  @5403,1311 121x18  text='집행이 멈추는 상태 변화'  Inter Regular 12px  #8A8A8A
+        FRAME "CheckboxGroup"  @6463,1302 230x15
+          ROUNDED_RECTANGLE "면"  @6462,1302 15x15  fill=#14542E  r=4
+          FRAME "아이콘"  @6466,1306 9x9
+            VECTOR "Vector"  @6467,1308 6x4  stroke=#FFFFFF/1
+          ROUNDED_RECTANGLE "면"  @6572,1302 15x15  fill=#14542E  r=4
+          FRAME "아이콘"  @6576,1306 9x9
+            VECTOR "Vector"  @6577,1308 6x4  stroke=#FFFFFF/1
+          ROUNDED_RECTANGLE "면"  @6678,1302 15x15  fill=#14542E  r=4
+          FRAME "아이콘"  @6680,1306 9x9
+            VECTOR "Vector"  @6682,1308 6x4  stroke=#FFFFFF/1
+      ROUNDED_RECTANGLE "선"  @5382,1339 1332x1  fill=#EDEDEB
+      FRAME "DataRow"  @5382,1340 1332x58
+        FRAME "LabelStack"  @5403,1350 1048x38
+          TEXT "배당 지급"  @5403,1350 59x18  text='회수금 지급'  Inter Regular 12px  #1A1A1A
+          TEXT "지급예정 · 지급완료 · 지급실패"  @5403,1370 153x18  text='지급예정 · 지급완료 · 지급실패'  Inter Regular 12px  #8A8A8A
+        FRAME "CheckboxGroup"  @6463,1362 230x15
+          ROUNDED_RECTANGLE "면"  @6462,1364 15x15  fill=#14542E  r=4
+          FRAME "아이콘"  @6466,1368 9x9
+            VECTOR "Vector"  @6467,1370 6x4  stroke=#FFFFFF/1
+          ROUNDED_RECTANGLE "면"  @6572,1364 15x15  fill=#14542E  r=4
+          FRAME "아이콘"  @6576,1368 9x9
+            VECTOR "Vector"  @6577,1370 6x4  stroke=#FFFFFF/1
+          ROUNDED_RECTANGLE "면"  @6678,1362 15x15  stroke=#E5E5E3/1  r=4
+      ROUNDED_RECTANGLE "선"  @5382,1398 1332x1  fill=#F1F4F2
+      FRAME "DataRow"  @5382,1399 1332x58
+        FRAME "LabelStack"  @5403,1409 1048x38
+          TEXT "공지 · 안내"  @5403,1409 55x18  text='공지 · 안내'  Inter Regular 12px  #4A4A4A
+          TEXT "정산 일정, 서비스 공지"  @5403,1429 113x18  text='정산 일정, 서비스 공지'  Inter Regular 12px  #8A8A8A
+        FRAME "CheckboxGroup"  @6463,1420 230x15
+          ROUNDED_RECTANGLE "면"  @6462,1424 15x15  fill=#14542E  r=4
+          FRAME "아이콘"  @6466,1426 9x9
+            VECTOR "Vector"  @6467,1429 6x4  stroke=#FFFFFF/1
+          ROUNDED_RECTANGLE "면"  @6572,1420 15x15  stroke=#E5E5E3/1  r=4
+          ROUNDED_RECTANGLE "면"  @6678,1420 15x15  stroke=#E5E5E3/1  r=4
+      ROUNDED_RECTANGLE "선"  @5382,1457 1332x1  fill=#F1F4F2
+    TEXT "집행이 멈추는 상태 변화(보류 · 반려)는 …"  @5382,1474 1332x18  text='집행이 멈추는 상태 변화(보류 · 반려)는 앱 내 알림을 끌 수 없습니다.'  Inter Regular 12px  #8A8A8A

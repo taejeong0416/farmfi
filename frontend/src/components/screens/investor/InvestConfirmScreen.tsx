@@ -136,7 +136,7 @@ export function InvestConfirmScreen({ projectId }: { projectId: string }) {
 
   return (
     <PanelShell>
-      <p className="text-13 font-medium text-brand">마지막 단계</p>
+      <p className="text-13 font-semibold text-brand">마지막 단계</p>
       <h1 className="mt-3 text-24 font-bold text-ink">
         신청 내용을 한 번 더 확인해 주세요
       </h1>
@@ -144,7 +144,7 @@ export function InvestConfirmScreen({ projectId }: { projectId: string }) {
         계약에 동의하면 이 신청 건에만 쓰는 입금 계좌를 받습니다. 입금이 확인되면 신청이 완료됩니다.
       </p>
 
-      <Card className="mt-7 rounded-14">
+      <Card className="mt-7 rounded-10">
         <p className="text-17 font-bold text-ink">
           {investment.project?.name ?? "프로젝트"}
         </p>
@@ -159,7 +159,7 @@ export function InvestConfirmScreen({ projectId }: { projectId: string }) {
         </p>
       </Card>
 
-      <Card className="mt-4 rounded-14">
+      <Card className="mt-4 rounded-10">
         <p className="text-13 text-muted">회수금을 받을 계좌</p>
         {bankAccount ? (
           <>
@@ -187,7 +187,7 @@ export function InvestConfirmScreen({ projectId }: { projectId: string }) {
         </p>
       </Card>
 
-      <Card className="mt-4 rounded-14">
+      <Card className="mt-4 rounded-10">
         <div className="space-y-3">
           {(agreements ?? []).map((a) => (
             <div key={a.id} className="flex items-center justify-between gap-4">
@@ -342,7 +342,7 @@ function DepositView({
       </h1>
       <p className="mt-3 text-14 leading-6 text-body">{lead}</p>
 
-      <Card className="mt-7 rounded-14">
+      <Card className="mt-7 rounded-10">
         <p className="text-13 text-muted">{projectName}</p>
         <p className="mt-2 text-15 font-medium text-ink">
           신청 금액 <span className="font-num">{won(amount)}</span>

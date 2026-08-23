@@ -85,7 +85,7 @@ export function VerifyMobileIdScreen() {
 
   return (
     <PanelShell className="max-w-modal">
-      <p className="text-15 font-medium text-brand">
+      <p className="text-18 text-brand">
         투자 준비 2 / 3 · 모바일 신분증 확인
       </p>
       <p className="mt-3 text-13 text-body">
@@ -200,7 +200,7 @@ function FailureView({
 }) {
   return (
     <PanelShell className="max-w-modal">
-      <h1 className="text-22 font-bold text-ink">
+      <h1 className="text-24 font-bold text-ink">
         모바일 신분증 확인을 완료하지 못했어요
       </h1>
       <p className="mt-4 text-14 leading-6 text-body">

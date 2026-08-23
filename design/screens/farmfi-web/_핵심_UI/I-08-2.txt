@@ -1,0 +1,201 @@
+FRAME "I-08 · 투자금 회수 상세"  @9469,2530 1440x900  fill=#FFFFFF  r=20
+  FRAME "I-07 · 보유 투자·연결 계좌"  @9469,2530 1440x900  fill=#FFFFFF  r=10
+    FRAME "TopNav"  @9469,2530 1440x64  stroke=#E5E5E3/1
+      FRAME "NavLeft"  @9523,2552 358x20
+        FRAME "Frame 180"  @9523,2556 117x13
+          INSTANCE "App/Logo"  @9523,2556 55x13
+          FRAME "Frame 6"  @9588,2556 52x13  fill=#207349@0.10  stroke=#207349/0  r=19
+            TEXT "운영자 포털"  @9596,2558 37x8  text='투자자 포털'  Pretendard SemiBold 8px  #207349
+        FRAME "NavLinks"  @9696,2552 185x20
+          TEXT "프로젝트"  @9696,2552 52x20  text='프로젝트'  Inter Regular 14px  #4A4A4A
+          TEXT "내 투자"  @9780,2552 43x20  text='내 투자'  Inter Medium 14px  #14542E
+          TEXT "알림"  @9855,2552 26x20  text='알림'  Inter Regular 14px  #4A4A4A
+      FRAME "Frame 12"  @10797,2553 58x18
+        FRAME "아이콘"  @10797,2554 16x16
+          VECTOR "Vector"  @10803,2557 5x5  stroke=#8A8A8A/1
+          VECTOR "Vector"  @10800,2563 9x4  stroke=#8A8A8A/1
+        TEXT "김투자"  @10821,2553 34x18  text='김투자'  Inter Regular 12px  #4A4A4A
+    FRAME "BodyContainer"  @9469,2594 1440x631
+      FRAME "Greeting"  @9523,2619 1332x55
+        TEXT "FRIENDLY COPY / 10:712"  @9523,2619 271x29  text='내 투자 진행 상황 전체 보기'  Inter Bold 24px  #1A1A1A
+        TEXT "FRIENDLY COPY / 10:713"  @9523,2656 274x18  text='2026.03.15 기준 · 투자한 원금을 기준으로 보여드려요'  Inter Regular 12px  #8A8A8A
+      FRAME "MainContentRow"  @9523,2694 1332x491
+        FRAME "LeftColumn"  @9523,2694 982x491
+          FRAME "HomeKpiCard"  @9523,2694 982x117  stroke=#E5E5E3/1  r=10
+            FRAME "HomeKpiRow"  @9553,2711 922x83
+              FRAME "KPI-invested"  @9553,2725 216x55
+                TEXT "FRIENDLY COPY / 10:555"  @9553,2725 216x18  text='지금까지 투자한 금액'  Inter Regular 12px  #8A8A8A
+                FRAME "ValueUnit"  @9553,2751 216x29
+                  TEXT "3,400,000"  @9553,2751 128x29  text='3,400,000'  Inter Bold 24px  #1A1A1A
+                  TEXT "원"  @9683,2758 13x21  text='원'  Inter Regular 14px  #4A4A4A
+              ROUNDED_RECTANGLE "선"  @9778,2711 1x83  fill=#EDEDEB
+              FRAME "KPI-projects"  @9788,2725 216x55
+                TEXT "FRIENDLY COPY / 10:559"  @9788,2725 216x18  text='함께한 프로젝트'  Inter Regular 12px  #8A8A8A
+                FRAME "ValueUnit"  @9788,2751 216x29
+                  TEXT "3"  @9788,2751 16x29  text='3'  Inter Bold 24px  #1A1A1A
+                  TEXT "개"  @9806,2758 13x21  text='개'  Inter Regular 14px  #4A4A4A
+              ROUNDED_RECTANGLE "선"  @10014,2711 1x83  fill=#EDEDEB
+              FRAME "KPI-dividend"  @10024,2725 216x55
+                TEXT "배당 예정액"  @10024,2725 216x18  text='예상 회수액'  Inter Regular 12px  #8A8A8A
+                FRAME "ValueUnit"  @10024,2751 216x29
+                  TEXT "86,400"  @10024,2751 88x29  text='86,400'  Inter Bold 24px  #14542E
+                  TEXT "원"  @10114,2758 13x21  text='원'  Inter Regular 14px  #4A4A4A
+              ROUNDED_RECTANGLE "선"  @10249,2711 1x83  fill=#EDEDEB
+              FRAME "KPI-paid"  @10259,2725 216x55
+                TEXT "지급 완료액"  @10259,2725 216x18  text='지급 완료액'  Inter Regular 12px  #8A8A8A
+                FRAME "ValueUnit"  @10259,2751 216x29
+                  TEXT "124,800"  @10259,2751 98x29  text='124,800'  Inter Bold 24px  #1A1A1A
+                  TEXT "원"  @10359,2758 13x21  text='원'  Inter Regular 14px  #4A4A4A
+          TEXT "프로젝트별 보유 현황"  @9523,2835 982x23  text='투자 현황'  Inter Bold 18px  #1A1A1A
+          FRAME "HoldingsCard"  @9523,2882 982x261  stroke=#E5E5E3/1  r=10
+            FRAME "TableHeader"  @9544,2892 940x30
+              TEXT "프로젝트"  @9544,2896 406x18  text='프로젝트'  Inter Regular 12px  #8A8A8A
+              TEXT "FRIENDLY COPY / 10:735"  @9966,2896 100x18  text='투자 금액'  Inter Regular 12px  #8A8A8A
+              TEXT "보유 수량"  @10082,2896 44x18  text='비중'  Inter Regular 12px  #8A8A8A
+              TEXT "현재 단계"  @10142,2896 100x18  text='현재 단계'  Inter Regular 12px  #8A8A8A
+              TEXT "마일스톤 진행률"  @10258,2896 130x18  text='마일스톤'  Inter Regular 12px  #8A8A8A
+              TEXT "배당 상태"  @10404,2896 80x18  text='회수 상태'  Inter Regular 12px  #8A8A8A
+            ROUNDED_RECTANGLE "선"  @9544,2922 940x1  fill=#EDEDEB
+            FRAME "HoldRow1"  @9544,2923 940x63
+              TEXT "부산 전포동 미니팜 1호"  @9544,2946 406x18  text='부산 전포동 미니팜 1호'  Inter Regular 12px  #1A1A1A
+              TEXT "1,000,000원"  @9966,2944 100x20  text='1,000,000원'  Inter Medium 14px  #1A1A1A
+              TEXT "1,000"  @10082,2944 44x21  text='29%'  Inter Regular 14px  #1A1A1A
+              TEXT "3단계 검증중"  @10142,2946 100x18  text='3단계 검증중'  Inter Regular 12px  #4A4A4A
+              FRAME "ProgCol"  @10258,2939 130x31
+                FRAME "ProgWrap"  @10258,2939 130x5
+                  ROUNDED_RECTANGLE "면"  @10258,2939 130x5  fill=#EDEDEB  r=19
+                  ROUNDED_RECTANGLE "면"  @10258,2939 44x5  fill=#14542E  r=19
+                TEXT "2 / 5단계"  @10258,2952 48x18  text='2 / 5단계'  Inter Regular 12px  #8A8A8A
+              TEXT "지급예정"  @10404,2947 80x15  text='지급예정'  Inter Medium 11px  #4A4A4A
+            ROUNDED_RECTANGLE "선"  @9544,2986 940x1  fill=#F1F4F2
+            FRAME "HoldRow2"  @9544,2987 940x63
+              TEXT "서울 성수동 미니팜 2호"  @9544,3010 406x18  text='서울 성수동 미니팜 2호'  Inter Regular 12px  #1A1A1A
+              TEXT "1,400,000원"  @9966,3008 100x20  text='1,400,000원'  Inter Medium 14px  #1A1A1A
+              TEXT "1,400"  @10082,3008 44x21  text='41%'  Inter Regular 14px  #1A1A1A
+              TEXT "2단계 통과"  @10142,3010 100x18  text='2단계 통과'  Inter Regular 12px  #4A4A4A
+              FRAME "ProgCol"  @10258,3003 130x31
+                FRAME "ProgWrap"  @10258,3003 130x5
+                  ROUNDED_RECTANGLE "면"  @10258,3003 130x5  fill=#EDEDEB  r=19
+                  ROUNDED_RECTANGLE "면"  @10258,3003 22x5  fill=#14542E  r=19
+                TEXT "1 / 5단계"  @10258,3016 46x18  text='1 / 5단계'  Inter Regular 12px  #8A8A8A
+              TEXT "해당 없음"  @10404,3010 80x18  text='해당 없음'  Inter Regular 12px  #8A8A8A
+            ROUNDED_RECTANGLE "선"  @9544,3050 940x1  fill=#F1F4F2
+            FRAME "HoldRow3"  @9544,3051 940x55
+              TEXT "대전 둔산동 미니팜 1호"  @9544,3074 406x18  text='대전 둔산동 미니팜 1호'  Inter Regular 12px  #1A1A1A
+              TEXT "1,000,000원"  @9966,3072 100x20  text='1,000,000원'  Inter Medium 14px  #1A1A1A
+              TEXT "1,000"  @10082,3072 44x21  text='29%'  Inter Regular 14px  #1A1A1A
+              TEXT "3단계 보류"  @10142,3074 100x18  text='3단계 보류'  Inter Regular 12px  #DC2626
+              FRAME "ProgCol"  @10258,3067 130x31
+                FRAME "ProgWrap"  @10258,3067 130x5
+                  ROUNDED_RECTANGLE "면"  @10258,3067 130x5  fill=#EDEDEB  r=19
+                  ROUNDED_RECTANGLE "면"  @10258,3067 66x5  fill=#14542E  r=19
+                TEXT "3 / 5단계"  @10258,3080 49x18  text='3 / 5단계'  Inter Regular 12px  #8A8A8A
+              TEXT "지급완료"  @10404,3075 80x15  text='지급완료'  Inter Medium 11px  #14542E
+            ROUNDED_RECTANGLE "선"  @9544,3106 940x1  fill=#EDEDEB
+            FRAME "BottomLinkRow"  @9544,3107 940x26
+              TEXT "FRIENDLY COPY / 10:768"  @9544,3115 128x18  text='투자 신청 · 취소 내역 3건'  Inter Regular 12px  #8A8A8A
+              TEXT "FRIENDLY COPY / 10:769"  @10394,3116 90x15  text='투자 신청 내역 보기'  Inter Medium 11px  #14542E
+          TEXT "배당 예정액은 확정 전 금액이며 정산 확정 …"  @9523,3167 982x18  text='예상 회수액은 매출과 운영비 정산 결과에 따라 달라질 수 있습니다.'  Inter Regular 12px  #8A8A8A
+        FRAME "Sidebar"  @10537,2694 318x460
+          FRAME "ConnectedAccountCard"  @10537,2694 318x228  stroke=#E5E5E3/1  r=10
+            TEXT "연결 계좌"  @10556,2707 280x20  text='연결 계좌'  Inter Medium 14px  #1A1A1A
+            ROUNDED_RECTANGLE "선"  @10556,2739 280x1  fill=#EDEDEB
+            FRAME "BankRow"  @10556,2752 280x20
+              TEXT "은행"  @10556,2753 23x18  text='은행'  Inter Regular 12px  #8A8A8A
+              TEXT "부산은행"  @10784,2752 52x20  text='부산은행'  Inter Medium 14px  #1A1A1A
+            FRAME "AcctRow"  @10556,2784 280x20
+              TEXT "계좌 끝자리"  @10556,2785 59x18  text='계좌 끝자리'  Inter Regular 12px  #8A8A8A
+              TEXT "···4821"  @10790,2784 46x20  text='···4821'  Inter Medium 14px  #1A1A1A
+            FRAME "StatusRow"  @10556,2816 280x20
+              TEXT "연결 상태"  @10556,2817 48x18  text='연결 상태'  Inter Regular 12px  #8A8A8A
+              TEXT "연결됨"  @10797,2816 39x20  text='연결됨'  Inter Medium 14px  #14542E
+            FRAME "TimeRow"  @10556,2848 280x18
+              TEXT "확인 시각"  @10556,2848 48x18  text='확인 시각'  Inter Regular 12px  #8A8A8A
+              TEXT "2026.03.10 09:14"  @10738,2848 98x18  text='2026.03.10 09:14'  Inter Regular 12px  #4A4A4A
+            ROUNDED_RECTANGLE "선"  @10556,2878 280x1  fill=#F1F4F2
+            FRAME "ChangeRow"  @10556,2891 280x18
+              TEXT "지갑 주소 0x8F3A···92B7"  @10556,2891 137x18  text='회수 계좌  국민은행 · 1234'  Inter Regular 12px  #1A1A1A
+              TEXT "재바인딩"  @10813,2891 23x18  text='변경'  Inter Regular 12px  #14542E
+          FRAME "ScheduleCard"  @10537,2946 318x208  stroke=#E5E5E3/1  r=10
+            FRAME "SchedHeader"  @10556,2959 280x20
+              TEXT "배당 캘린더"  @10556,2959 56x20  text='회수 일정'  Inter Medium 14px  #1A1A1A
+              TEXT "2026"  @10806,2960 30x18  text='2026'  Inter Regular 12px  #8A8A8A
+            ROUNDED_RECTANGLE "선"  @10556,2989 280x1  fill=#EDEDEB
+            FRAME "SchedRow1"  @10556,3000 280x20
+              TEXT "04.10"  @10556,3001 31x18  text='04.10'  Inter Regular 12px  #8A8A8A
+              TEXT "부산 전포동 1호 · 1분기"  @10595,3001 171x18  text='부산 전포동 1호 · 1분기'  Inter Regular 12px  #1A1A1A
+              TEXT "86,400원"  @10774,3000 62x20  text='86,400원'  Inter Medium 14px  #1A1A1A
+            ROUNDED_RECTANGLE "선"  @10556,3030 280x1  fill=#F1F4F2
+            FRAME "SchedRow2"  @10556,3041 280x20
+              TEXT "01.10"  @10556,3042 28x18  text='01.10'  Inter Regular 12px  #8A8A8A
+              TEXT "대전 둔산동 1호 · 4분기"  @10592,3042 175x18  text='대전 둔산동 1호 · 4분기'  Inter Regular 12px  #4A4A4A
+              TEXT "72,000원"  @10775,3041 61x20  text='72,000원'  Inter Medium 14px  #1A1A1A
+            ROUNDED_RECTANGLE "선"  @10556,3071 280x1  fill=#F1F4F2
+            FRAME "SchedRow3"  @10556,3082 280x20
+              TEXT "10.10"  @10556,3083 29x18  text='10.10'  Inter Regular 12px  #8A8A8A
+              TEXT "대전 둔산동 1호 · 3분기"  @10593,3083 174x18  text='대전 둔산동 1호 · 3분기'  Inter Regular 12px  #4A4A4A
+              TEXT "52,800원"  @10775,3082 61x20  text='52,800원'  Inter Medium 14px  #1A1A1A
+            ROUNDED_RECTANGLE "선"  @10556,3112 280x1  fill=#F1F4F2
+            FRAME "SeeAllRow"  @10556,3123 280x18
+              TEXT "전체 배당 내역"  @10556,3123 73x18  text='전체 회수 내역'  Inter Regular 12px  #4A4A4A
+              FRAME "아이콘"  @10823,3126 13x13
+                VECTOR "Vector"  @10828,3129 3x6  stroke=#8A8A8A/1
+  ROUNDED_RECTANGLE "Rectangle 2"  @9469,2530 1440x900  fill=#000000@0.70
+  FRAME "I-08 · 투자금 회수 상세"  @9824,2659 730x643  fill=#FFFFFF  r=10
+    ROUNDED_RECTANGLE "선"  @9825,2734 728x1  fill=#EDEDEB
+    FRAME "Frame 83"  @10376,2687 98x37  stroke=#E5E5E3/1  r=6
+      TEXT "내역 내보내기"  @10393,2698 64x15  text='내역 내보내기'  Inter Medium 11px  #1A1A1A
+    ROUNDED_RECTANGLE "선"  @9825,2818 728x1  fill=#EDEDEB
+    TEXT "원"  @9939,2780 13x21  text='원'  Inter Regular 14px  #4A4A4A
+    ROUNDED_RECTANGLE "선"  @10068,2734 1x83  fill=#EDEDEB
+    TEXT "04.10"  @10089,2772 66x29  text='04.10'  Inter Bold 24px  #1A1A1A
+    ROUNDED_RECTANGLE "선"  @10310,2734 1x83  fill=#EDEDEB
+    TEXT "상태"  @10331,2750 23x18  text='상태'  Inter Regular 12px  #8A8A8A
+    ELLIPSE "점"  @10331,2782 7x7  fill=#8A8A8A
+    TEXT "산정 근거"  @9845,2836 56x20  text='산정 근거'  Inter Medium 14px  #1A1A1A
+    ROUNDED_RECTANGLE "면"  @9845,2866 688x206  stroke=#E5E5E3/1  r=8
+    ROUNDED_RECTANGLE "선"  @9846,2908 686x1  fill=#F1F4F2
+    ROUNDED_RECTANGLE "선"  @9846,2948 686x1  fill=#F1F4F2
+    ROUNDED_RECTANGLE "선"  @9846,2990 686x1  fill=#F1F4F2
+    ROUNDED_RECTANGLE "선"  @9846,3030 686x1  fill=#F1F4F2
+    ROUNDED_RECTANGLE "선"  @9825,3156 728x1  fill=#EDEDEB
+    TEXT "기간"  @9845,3130 23x18  text='기간'  Inter Regular 12px  #8A8A8A
+    TEXT "지급일"  @10399,3130 34x18  text='지급일'  Inter Regular 12px  #8A8A8A
+    TEXT "상태"  @10510,3130 23x18  text='상태'  Inter Regular 12px  #8A8A8A
+    ROUNDED_RECTANGLE "선"  @9825,3196 728x1  fill=#F1F4F2
+    TEXT "2026.04.10"  @10370,3168 63x18  text='2026.04.10'  Inter Regular 12px  #4A4A4A
+    ROUNDED_RECTANGLE "선"  @9825,3238 728x1  fill=#F1F4F2
+    TEXT "72,000원"  @10267,3208 61x20  text='72,000원'  Inter Medium 14px  #1A1A1A
+    TEXT "2026.01.10"  @10372,3208 61x18  text='2026.01.10'  Inter Regular 12px  #4A4A4A
+    TEXT "지급완료"  @10490,3210 41x15  text='지급완료'  Inter Medium 11px  #14542E
+    ROUNDED_RECTANGLE "선"  @9825,3278 728x1  fill=#EDEDEB
+    TEXT "52,800원"  @10267,3248 61x20  text='52,800원'  Inter Medium 14px  #1A1A1A
+    TEXT "2025.10.12"  @10373,3250 60x18  text='2025.10.12'  Inter Regular 12px  #4A4A4A
+    TEXT "지급실패"  @10490,3252 41x15  text='지급실패'  Inter Medium 11px  #DC2626
+    TEXT "FRIENDLY COPY / 10:807"  @9845,2686 162x23  text='받은 수익 자세히 보기'  Inter Bold 18px  #1A1A1A
+    TEXT "부산 전포동 미니팜 1호 · 2026년 1분… · updated"  @9845,2707 188x18  text='부산 전포동 미니팜 1호 · 2026년 4월'  Inter Regular 12px  #8A8A8A
+    TEXT "지급 예정액 · updated"  @9845,2752 99x18  text='이번 달 예상 회수액'  Inter Regular 12px  #8A8A8A
+    TEXT "지급 예정일 · updated"  @10089,2752 59x18  text='회수 예정일'  Inter Regular 12px  #8A8A8A
+    TEXT "지급예정 · updated"  @10474,2778 41x15  text='회수예정'  Inter Medium 11px  #4A4A4A
+    TEXT "분배 대상 금액 · updated"  @9862,2880 73x18  text='월 배분 가능액'  Inter Regular 12px  #1A1A1A
+    TEXT "적용 규칙 · updated"  @9862,2921 85x18  text='선택한 회수 조건'  Inter Regular 12px  #1A1A1A
+    TEXT "적자 구간 우선 배분 80% · updated"  @10358,2920 162x21  text='기준 시나리오 · 지점별 변동'  Inter Regular 14px  #1A1A1A
+    TEXT "투자자 배당 총액 · updated"  @9862,2962 110x18  text='이번 달 투자자 회수액'  Inter Regular 12px  #1A1A1A
+    TEXT "내 보유 비중 · updated"  @9862,3003 62x18  text='내 투자 비중'  Inter Regular 12px  #1A1A1A
+    TEXT "내 배당액 · updated"  @9862,3043 85x20  text='내 예상 회수액'  Inter Medium 14px  #1A1A1A
+    TEXT "지급 이력 · updated"  @9845,3094 85x20  text='월별 회수 내역'  Inter Medium 14px  #1A1A1A
+    TEXT "배당액 · updated"  @10294,3132 34x18  text='회수액'  Inter Regular 12px  #8A8A8A
+    TEXT "2026년 1분기 · updated"  @9845,3166 63x18  text='2026년 4월'  Inter Regular 12px  #1A1A1A
+    TEXT "지급예정 · updated"  @10486,3170 45x18  text='회수예정'  Inter Regular 12px  #4A4A4A
+    TEXT "2025년 4분기 · updated"  @9845,3207 63x18  text='2026년 3월'  Inter Regular 12px  #1A1A1A
+    TEXT "2025년 3분기 · updated"  @9845,3248 63x18  text='2026년 2월'  Inter Regular 12px  #1A1A1A
+    TEXT "지급실패 건은 연결 계좌 확인 후 다음 정산… · updated"  @9845,3294 456x18  text='매출이 낮은 달에는 회수액도 함께 줄어들 수 있습니다. 표시 금액은 원천징수 전 기준입니다.'  Inter Regular 12px  #8A8A8A
+    TEXT "86,400 · updated"  @9845,2772 91x29  text='134,167'  Inter Bold 24px  #14542E
+    TEXT "4,800,000원 · updated"  @10437,2880 83x20  text='2,849,000원'  Inter Medium 14px  #1A1A1A
+    TEXT "1,920,000원 · updated"  @10443,2962 77x20  text='1,341,667원'  Inter Medium 14px  #1A1A1A
+    TEXT "1,000 / 22,222 토큰 · 4.5% · updated"  @10395,3002 125x20  text='설비 투자금의 10.0%'  Inter Medium 14px  #1A1A1A
+    TEXT "86,400원 · updated"  @10456,3044 64x20  text='134,167원'  Inter Medium 14px  #14542E
+    TEXT "86,400원 · updated"  @10264,3168 64x20  text='134,167원'  Inter Medium 14px  #1A1A1A
+    FRAME "x"  @10496,2693 24x24
+      VECTOR "Vector"  @10502,2699 12x12  stroke=#000000/2
+      VECTOR "Vector"  @10502,2699 12x12  stroke=#000000/2

@@ -295,7 +295,7 @@ export function MilestoneVerifyPanel() {
                 {milestone.evidenceNote ? ` · ${milestone.evidenceNote}` : ""}
               </p>
             ) : (
-              <p className="muted" style={{ color: "var(--danger, #A34A3D)" }}>
+              <p className="muted" style={{ color: "var(--danger, #DC2626)" }}>
                 운영자 증빙이 아직 제출되지 않았습니다. 증빙 없이는 검증·집행할 수
                 없습니다 (O-11 제출 대기).
               </p>

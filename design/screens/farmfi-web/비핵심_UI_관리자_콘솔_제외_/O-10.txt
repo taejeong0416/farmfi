@@ -1,0 +1,213 @@
+FRAME "O-10 · 운영자 / 마일스톤 검증 현황"  @2764,4458 1440x936  fill=#FFFFFF  r=10
+  FRAME "TopNav"  @2764,4458 1440x64  stroke=#E5E5E3/1
+    FRAME "NavLeft"  @2818,4482 404x17
+      FRAME "Frame 180"  @2818,4484 117x13
+        INSTANCE "App/Logo"  @2818,4484 55x13
+        FRAME "Frame 6"  @2883,4484 52x13  fill=#8C6114@0.10  stroke=#8C6114/0  r=19
+          TEXT "운영자 포털"  @2890,4486 37x8  text='운영자 포털'  Pretendard SemiBold 8px  #8C6114
+      FRAME "NavLinks"  @2991,4482 231x17
+        TEXT "공간 찾기"  @2991,4482 56x17  text='공간 찾기'  Inter Regular 14px  #4A4A4A
+        TEXT "내 준비 현황"  @3079,4482 72x17  text='내 준비 현황'  Inter Medium 14px  #14542E
+        TEXT "보증서"  @3183,4482 39x17  text='보증서'  Inter Regular 14px  #4A4A4A
+    FRAME "Frame 12"  @4034,4481 116x18
+      FRAME "아이콘"  @4034,4482 16x16
+        VECTOR "Vector"  @4040,4485 5x5  stroke=#8A8A8A/1
+        VECTOR "Vector"  @4037,4491 9x4  stroke=#8A8A8A/1
+      TEXT "그린테이블 이운영"  @4058,4481 92x18  text='그린테이블 이운영'  Inter Regular 12px  #4A4A4A
+  FRAME "BodyContainer"  @2764,4522 1440x856
+    FRAME "ContentRow"  @2818,4542 1332x809
+      FRAME "LeftColumn"  @2818,4542 349x809
+        FRAME "Frame 187"  @2818,4542 349x176
+          FRAME "SectionHeader"  @2818,4542 349x23
+            TEXT "보완 요청 건"  @2818,4542 92x23  text='보완 요청 건'  Inter Bold 18px  #1A1A1A
+            TEXT "더보기"  @3133,4544 34x18  text='더보기'  Inter Regular 12px  #8A8A8A
+          FRAME "RequestListCard"  @2818,4585 349x133  stroke=#E5E5E3/1  r=8
+            FRAME "AccentRow"  @2818,4585 349x66
+              ROUNDED_RECTANGLE "면"  @2818,4597 3x42  fill=#14542E
+              FRAME "RequestItem"  @2835,4597 320x42
+                TEXT "부산 전포동 미니팜 1호"  @2835,4597 134x20  text='부산 전포동 미니팜 1호'  Inter Medium 14px  #1A1A1A
+                FRAME "SubRow"  @2835,4621 320x18
+                  TEXT "3단계 설비 설치 · 보완 요청"  @2835,4621 139x18  text='3단계 설비 설치 · 보완 요청'  Inter Regular 12px  #8A8A8A
+                  TEXT "2026.03.15"  @3092,4621 63x18  text='2026.03.15'  Inter Regular 12px  #8A8A8A
+            ROUNDED_RECTANGLE "선"  @2818,4651 328x1  fill=#F1F4F2
+            FRAME "PlainRow"  @2818,4652 349x66
+              FRAME "RequestItem"  @2844,4664 311x42
+                TEXT "대전 둔산동 미니팜 1호"  @2844,4664 134x20  text='대전 둔산동 미니팜 1호'  Inter Medium 14px  #1A1A1A
+                FRAME "SubRow"  @2844,4688 311x18
+                  TEXT "2단계 설비 발주 · 보완 요청"  @2844,4688 138x18  text='2단계 설비 발주 · 보완 요청'  Inter Regular 12px  #8A8A8A
+                  TEXT "2026.03.14"  @3092,4688 63x18  text='2026.03.14'  Inter Regular 12px  #8A8A8A
+        FRAME "Frame 186"  @2818,4738 349x307
+          FRAME "SectionHeader"  @2818,4738 349x23
+            TEXT "마일스톤 현황"  @2818,4738 104x23  text='마일스톤 현황'  Inter Bold 18px  #1A1A1A
+          FRAME "MilestoneListCard"  @2818,4781 349x198  stroke=#E5E5E3/1  r=8
+            FRAME "Row"  @2818,4781 349x64
+              FRAME "MilestoneItem"  @2835,4793 320x40
+                TEXT "부산 전포동 미니팜 1호"  @2835,4793 116x18  text='부산 전포동 미니팜 1호'  Inter Regular 12px  #4A4A4A
+                FRAME "DescRow"  @2835,4815 320x18
+                  TEXT "3단계 설비 설치 ·"  @2835,4815 88x18  text='3단계 설비 설치 ·'  Inter Regular 12px  #1A1A1A
+                  TEXT "검증중"  @2927,4815 34x18  text='검증중'  Inter Regular 12px  #4A4A4A
+            ROUNDED_RECTANGLE "선"  @2818,4845 328x1  fill=#F1F4F2
+            FRAME "Row"  @2818,4846 349x66
+              FRAME "MilestoneItem"  @2835,4858 320x42
+                TEXT "서울 성수동 미니팜 2호"  @2835,4858 117x18  text='서울 성수동 미니팜 2호'  Inter Regular 12px  #4A4A4A
+                FRAME "DescRow"  @2835,4880 320x20
+                  TEXT "2단계 설비 발주 ·"  @2835,4881 87x18  text='2단계 설비 발주 ·'  Inter Regular 12px  #1A1A1A
+                  TEXT "통과"  @2926,4880 26x20  text='통과'  Inter Medium 14px  #14542E
+            ROUNDED_RECTANGLE "선"  @2818,4912 328x1  fill=#F1F4F2
+            FRAME "Row"  @2818,4913 349x66
+              FRAME "MilestoneItem"  @2835,4925 320x42
+                TEXT "대전 둔산동 미니팜 1호"  @2835,4925 116x18  text='대전 둔산동 미니팜 1호'  Inter Regular 12px  #4A4A4A
+                FRAME "DescRow"  @2835,4947 320x20
+                  TEXT "3단계 설비 설치 ·"  @2835,4948 88x18  text='3단계 설비 설치 ·'  Inter Regular 12px  #1A1A1A
+                  TEXT "보류"  @2927,4947 26x20  text='보류'  Inter Medium 14px  #DC2626
+          FRAME "SubmitEvidenceBtn"  @2818,4999 349x46  stroke=#14542E/1  r=6
+            TEXT "증빙 제출하기"  @2952,5012 81x20  text='증빙 제출하기'  Inter Medium 14px  #14542E
+        FRAME "Frame 185"  @2818,5065 349x286
+          FRAME "DisputeTimelineBlock"  @2818,5065 349x286
+            TEXT "분쟁 / 재검증 현황"  @2839,5065 136x23  text='분쟁 / 재검증 현황'  Inter Bold 18px  #1A1A1A
+            ROUNDED_RECTANGLE "선"  @2822,5108 1x230  fill=#E5E5E3
+            ELLIPSE "점"  @2818,5104 9x9  fill=#14542E
+            TEXT "2026.03.15 10:45"  @2861,5097 97x18  text='2026.03.15 10:45'  Inter Regular 12px  #8A8A8A
+            TEXT "운영팀 검토 시작"  @2861,5116 98x20  text='운영팀 검토 시작'  Inter Medium 14px  #1A1A1A
+            TEXT "검토자 박운영"  @2861,5139 70x18  text='검토자 박운영'  Inter Regular 12px  #8A8A8A
+            ELLIPSE "점"  @2818,5176 9x9  fill=#14542E
+            TEXT "2026.03.15 15:30"  @2861,5169 97x18  text='2026.03.15 15:30'  Inter Regular 12px  #8A8A8A
+            TEXT "운영팀 재검증 완료"  @2861,5188 111x20  text='운영팀 재검증 완료'  Inter Medium 14px  #1A1A1A
+            TEXT "재검토 결과 : 보류 유지"  @2861,5211 117x18  text='재검토 결과 : 보류 유지'  Inter Regular 12px  #8A8A8A
+            ELLIPSE "점"  @2818,5248 9x9  stroke=#8A8A8A/1
+            TEXT "2026.03.16 09:20"  @2861,5241 99x18  text='2026.03.16 09:20'  Inter Regular 12px  #8A8A8A
+            TEXT "외부 전문가 배정"  @2861,5260 98x20  text='외부 전문가 배정'  Inter Medium 14px  #1A1A1A
+            TEXT "전문가 강진현 배정"  @2861,5282 96x18  text='전문가 강진현 배정'  Inter Regular 12px  #8A8A8A
+            ELLIPSE "점"  @2818,5319 9x9  stroke=#E5E5E3/1
+            TEXT "2026.03.18 예정"  @2861,5312 88x18  text='2026.03.18 예정'  Inter Regular 12px  #8A8A8A
+            TEXT "외부 전문가 최종 판정"  @2861,5331 128x20  text='외부 전문가 최종 판정'  Inter Medium 14px  #4A4A4A
+      FRAME "RightColumn"  @3195,4542 955x663
+        FRAME "HeaderRow"  @3220,4542 905x53
+          FRAME "TitleBlock"  @3220,4542 223x53
+            TEXT "부산 전포동 미니팜 1호"  @3220,4542 116x18  text='부산 전포동 미니팜 1호'  Inter Regular 12px  #8A8A8A
+            FRAME "TitleRow"  @3220,4566 223x29
+              TEXT "3단계 설비 설치"  @3220,4566 160x29  text='3단계 설비 설치'  Inter Bold 24px  #1A1A1A
+              TEXT "·"  @3386,4570 4x21  text='·'  Inter Regular 14px  #E5E5E3
+              FRAME "StatusBadge"  @3396,4566 47x29  fill=#DC2626@0.08  stroke=#DC2626@0.15/1  r=4
+                TEXT "보류"  @3409,4573 21x15  text='보류'  Inter Medium 11px  #DC2626
+          FRAME "BtnGroup"  @3874,4546 251x44
+            FRAME "ResubmitBtn"  @3874,4546 113x44  fill=#14542E  r=6
+              TEXT "재제출하기"  @3898,4558 65x20  text='재제출하기'  Inter Medium 14px  #FFFFFF
+            FRAME "DisputeBtn"  @3999,4546 126x44  stroke=#E5E5E3/1  r=6
+              TEXT "이의제기하기"  @4023,4558 78x20  text='이의제기하기'  Inter Medium 14px  #1A1A1A
+        TEXT "금액과 발주 일자가 계약서와 맞지 않고, 현…"  @3220,4613 905x18  text='금액과 발주 일자가 계약서와 맞지 않고, 현장 신호 2건이 확인되지 않았습니다.수정한 영수증을 다시 올리거나, 판정에 이의가 있으면 이의제기하세요.'  Inter Regular 12px  #8A8A8A
+        TEXT "불일치 항목 (3건)"  @3220,4649 905x23  text='불일치 항목 (3건)'  Inter Bold 18px  #1A1A1A
+        FRAME "MismatchTableCard"  @3220,4690 905x223  stroke=#E5E5E3/1  r=8
+          FRAME "ColHeaderRow"  @3220,4690 905x42
+            FRAME "Col"  @3234,4702 452x18
+              TEXT "항목"  @3234,4702 23x18  text='항목'  Inter Regular 12px  #8A8A8A
+            FRAME "Col"  @3686,4702 160x18
+              TEXT "계약서"  @3686,4702 34x18  text='계약서'  Inter Regular 12px  #8A8A8A
+            FRAME "Col"  @3846,4702 160x18
+              TEXT "영수증"  @3846,4702 34x18  text='영수증'  Inter Regular 12px  #8A8A8A
+            FRAME "Col"  @4006,4702 100x18
+              TEXT "판정"  @4006,4702 23x18  text='판정'  Inter Regular 12px  #8A8A8A
+          ROUNDED_RECTANGLE "선"  @3220,4732 905x1  fill=#EDEDEB
+          FRAME "MismatchRow"  @3220,4733 905x45
+            ROUNDED_RECTANGLE "선"  @3206,4733 2x45  fill=#DC2626
+            FRAME "Col"  @3234,4745 452x21
+              TEXT "설비 금액"  @3234,4745 56x21  text='설비 금액'  Inter Regular 14px  #1A1A1A
+            FRAME "Col"  @3686,4746 160x20
+              TEXT "20,000,000원"  @3686,4746 92x20  text='20,000,000원'  Inter Medium 14px  #1A1A1A
+            FRAME "Col"  @3846,4746 160x20
+              TEXT "18,500,000원"  @3846,4746 90x20  text='18,500,000원'  Inter Medium 14px  #1A1A1A
+            FRAME "Col"  @4006,4746 100x20
+              FRAME "VerdictGroup"  @4006,4746 52x20
+                ELLIPSE "점"  @4006,4752 7x7  fill=#DC2626
+                TEXT "불일치"  @4019,4746 39x20  text='불일치'  Inter Medium 14px  #DC2626
+          ROUNDED_RECTANGLE "선"  @3220,4778 905x1  fill=#F1F4F2
+          FRAME "MismatchRow"  @3220,4779 905x45
+            ROUNDED_RECTANGLE "선"  @3206,4779 2x45  fill=#DC2626
+            FRAME "Col"  @3234,4791 452x21
+              TEXT "발주 일자"  @3234,4791 56x21  text='발주 일자'  Inter Regular 14px  #1A1A1A
+            FRAME "Col"  @3686,4792 160x20
+              TEXT "2026.03.05"  @3686,4792 78x20  text='2026.03.05'  Inter Medium 14px  #1A1A1A
+            FRAME "Col"  @3846,4792 160x20
+              TEXT "2026.03.06"  @3846,4792 78x20  text='2026.03.06'  Inter Medium 14px  #1A1A1A
+            FRAME "Col"  @4006,4792 100x20
+              FRAME "VerdictGroup"  @4006,4792 52x20
+                ELLIPSE "점"  @4006,4798 7x7  fill=#DC2626
+                TEXT "불일치"  @4019,4792 39x20  text='불일치'  Inter Medium 14px  #DC2626
+          ROUNDED_RECTANGLE "선"  @3220,4824 905x1  fill=#F1F4F2
+          FRAME "MatchRow"  @3220,4825 905x45
+            FRAME "Col"  @3234,4837 452x21
+              TEXT "공급처"  @3234,4837 39x21  text='공급처'  Inter Regular 14px  #1A1A1A
+            FRAME "Col"  @3686,4838 160x20
+              TEXT "(주)그린테이블"  @3686,4838 88x20  text='(주)그린테이블'  Inter Medium 14px  #1A1A1A
+            FRAME "Col"  @3846,4838 160x20
+              TEXT "(주)그린테이블"  @3846,4838 88x20  text='(주)그린테이블'  Inter Medium 14px  #1A1A1A
+            FRAME "Col"  @4006,4837 100x21
+              FRAME "VerdictGroup"  @4006,4837 39x21
+                ELLIPSE "점"  @4006,4844 7x7  fill=#8A8A8A
+                TEXT "일치"  @4019,4837 26x21  text='일치'  Inter Regular 14px  #8A8A8A
+          ROUNDED_RECTANGLE "선"  @3220,4870 905x1  fill=#F1F4F2
+          FRAME "ExpandRow"  @3220,4871 905x42
+            TEXT "일치 항목 4건 보기"  @3239,4883 96x18  text='일치 항목 4건 보기'  Inter Regular 12px  #4A4A4A
+            FRAME "아이콘"  @4092,4885 14x14
+              VECTOR "Vector"  @4096,4890 7x4  stroke=#8A8A8A/1
+        FRAME "SignalEvidenceRow"  @3220,4931 905x252
+          FRAME "SignalBlock"  @3220,4931 593x203
+            TEXT "현장 신호 요약"  @3220,4931 108x23  text='현장 신호 요약'  Inter Bold 18px  #1A1A1A
+            FRAME "SignalCard"  @3220,4966 593x168
+              ROUNDED_RECTANGLE "선"  @3220,4966 638x1  fill=#EDEDEB
+              FRAME "SignalRow"  @3220,4967 593x41
+                FRAME "Col"  @3220,4977 198x21
+                  TEXT "설비 전원 가동"  @3220,4977 86x21  text='설비 전원 가동'  Inter Regular 14px  #1A1A1A
+                FRAME "Col"  @3418,4978 198x20
+                  FRAME "StatusGroup"  @3418,4978 39x20
+                    ELLIPSE "점"  @3418,4984 7x7  fill=#14542E
+                    TEXT "충족"  @3431,4978 26x20  text='충족'  Inter Medium 14px  #14542E
+                FRAME "Col"  @3615,4978 198x18
+                  TEXT "신뢰도 높음"  @3615,4978 59x18  text='신뢰도 높음'  Inter Regular 12px  #8A8A8A
+              ROUNDED_RECTANGLE "선"  @3220,5008 638x1  fill=#F1F4F2
+              FRAME "SignalRow"  @3220,5009 593x41
+                FRAME "Col"  @3220,5019 198x21
+                  TEXT "온습도 센서 정상"  @3220,5019 99x21  text='온습도 센서 정상'  Inter Regular 14px  #1A1A1A
+                FRAME "Col"  @3418,5020 198x20
+                  FRAME "StatusGroup"  @3418,5020 39x20
+                    ELLIPSE "점"  @3418,5026 7x7  fill=#14542E
+                    TEXT "충족"  @3431,5020 26x20  text='충족'  Inter Medium 14px  #14542E
+                FRAME "Col"  @3615,5020 198x18
+                  TEXT "신뢰도 높음"  @3615,5020 59x18  text='신뢰도 높음'  Inter Regular 12px  #8A8A8A
+              ROUNDED_RECTANGLE "선"  @3220,5050 638x1  fill=#F1F4F2
+              FRAME "SignalRow"  @3220,5051 593x41
+                FRAME "Col"  @3220,5061 198x21
+                  TEXT "양액 순환 확인"  @3220,5061 86x21  text='양액 순환 확인'  Inter Regular 14px  #1A1A1A
+                FRAME "Col"  @3418,5061 198x21
+                  FRAME "StatusGroup"  @3418,5061 69x21
+                    ELLIPSE "점"  @3418,5068 7x7  fill=#8A8A8A
+                    TEXT "확인 필요"  @3431,5061 56x21  text='확인 필요'  Inter Regular 14px  #4A4A4A
+                FRAME "Col"  @3615,5062 198x18
+                  TEXT "신뢰도 보통"  @3615,5062 59x18  text='신뢰도 보통'  Inter Regular 12px  #8A8A8A
+              ROUNDED_RECTANGLE "선"  @3220,5092 638x1  fill=#F1F4F2
+              FRAME "SignalRow"  @3220,5093 593x41
+                FRAME "Col"  @3220,5103 198x21
+                  TEXT "LED 점등 확인"  @3220,5103 86x21  text='LED 점등 확인'  Inter Regular 14px  #1A1A1A
+                FRAME "Col"  @3418,5104 198x20
+                  FRAME "StatusGroup"  @3418,5104 52x20
+                    ELLIPSE "점"  @3418,5110 7x7  fill=#DC2626
+                    TEXT "미충족"  @3431,5104 39x20  text='미충족'  Inter Medium 14px  #DC2626
+                FRAME "Col"  @3615,5104 198x18
+                  TEXT "신뢰도 낮음 · 재촬영 필요"  @3615,5104 128x18  text='신뢰도 낮음 · 재촬영 필요'  Inter Regular 12px  #8A8A8A
+          FRAME "EvidenceBlock"  @3837,4931 288x252
+            TEXT "제출된 증빙"  @3837,4931 87x23  text='제출된 증빙'  Inter Bold 18px  #1A1A1A
+            FRAME "PhotoRow"  @3837,4966 288x132
+              FRAME "Photo1"  @3837,4966 145x132
+                ROUNDED_RECTANGLE "사진 자리"  @3837,4966 145x106  stroke=#E5E5E3/1  r=8
+                TEXT "현장 사진 1"  @3837,5080 57x18  text='현장 사진 1'  Inter Regular 12px  #8A8A8A
+              FRAME "Photo2"  @3997,4966 128x132
+                ROUNDED_RECTANGLE "사진 자리"  @3997,4966 128x106  stroke=#E5E5E3/1  r=8
+                TEXT "현장 사진 2"  @3997,5080 59x18  text='현장 사진 2'  Inter Regular 12px  #8A8A8A
+            FRAME "FileListCard"  @3837,5110 288x73  stroke=#E5E5E3/1  r=8
+              FRAME "FileRow"  @3837,5110 288x36
+                TEXT "설비 계약서.pdf"  @3852,5119 81x18  text='설비 계약서.pdf'  Inter Regular 12px  #1A1A1A
+                TEXT "03.05"  @4077,5119 33x18  text='03.05'  Inter Regular 12px  #8A8A8A
+              ROUNDED_RECTANGLE "선"  @3837,5146 288x1  fill=#F1F4F2
+              FRAME "FileRow"  @3837,5147 288x36
+                TEXT "설비 영수증.pdf"  @3852,5156 81x18  text='설비 영수증.pdf'  Inter Regular 12px  #1A1A1A
+                TEXT "03.14"  @4079,5156 31x18  text='03.14'  Inter Regular 12px  #8A8A8A

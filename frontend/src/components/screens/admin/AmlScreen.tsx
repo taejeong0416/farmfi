@@ -132,8 +132,8 @@ export function AmlScreen() {
 
   return (
     <AdminShell
-      title="AML · 이상거래 관리"
-      desc="감사 기록에서 사람이 확인해야 할 흐름만 골라낸다."
+      title="의심 거래를 탐지하고 조치해요"
+      desc="탐지 건은 청약 · 집행을 자동 차단하지 않으며, 검토 결과에 따라 계정 정지 또는 청약 제한이 적용됩니다."
       action={
         <span className="text-12 text-muted">
           미처리 {high.length}건 · 전체 {flags.length}건

@@ -139,8 +139,9 @@ export function InstitutionReportScreen() {
 
   return (
     <AdminShell
-      title="기관 성과 리포트"
-      desc="도입 기관별 공간 활용·생산·판매 실적. 기간은 마지막 기록을 끝점으로 잡는다."
+      label="기관 성과 리포트"
+      title="기관별 공간 활용과 실적을 확인해요"
+      desc="기간은 마지막 기록을 끝점으로 잡습니다."
       action={
         institutionId ? (
           <Button

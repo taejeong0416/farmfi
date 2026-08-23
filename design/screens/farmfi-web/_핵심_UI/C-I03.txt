@@ -1,0 +1,28 @@
+FRAME "C-I03 · 투자자 준비 / 본인 명의 계좌 확인"  @7374,-1182 465x621
+  FRAME "C-I03 · 투자자 준비 / 본인 명의 계좌 확인"  @7374,-1182 465x621  fill=#FFFFFF  r=10
+    FRAME "Frame 70"  @7407,-1148 399x547
+      FRAME "Frame 49"  @7407,-1148 399x94
+        TEXT "투자 준비 3 / 3 · 본인 계좌 확인"  @7407,-1148 399x21  text='투자 준비 3 / 3 · 본인 계좌 확인'  Inter Regular 14px  #14542E
+        TEXT "회수금과 환불을 받을 본인 명의 계좌를 확인해 주세요."  @7407,-1112 399x58  text='회수금과 환불을 받을\n본인 명의 계좌를 확인해 주세요.'  Inter Bold 24px  #4A4A4A
+      FRAME "Frame 72"  @7407,-1027 399x297
+        FRAME "공식 앱 안내"  @7407,-1027 399x105  fill=#F1F4F2  r=10
+          FRAME "Frame"  @7423,-1011 174x73
+            TEXT "은행 선택 · 부산은행 ▾"  @7423,-1011 174x23  text='은행 선택  ·  부산은행  ▾'  Inter Bold 15px  #1A1A1A
+            TEXT "계좌번호 · 123-****-7890"  @7423,-981 146x18  text='계좌번호  ·  123-****-7890'  Inter Regular 12px  #1A1A1A
+            TEXT "예금주 · 김동일 · 확인 전"  @7423,-956 137x18  text='예금주  ·  김동일  ·  확인 전'  Inter Regular 12px  #14542E
+        FRAME "설치 순서"  @7407,-908 399x178  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+          TEXT "본인 명의 계좌를 확인해요"  @7423,-892 153x20  text='본인 명의 계좌를 확인해요'  Inter Bold 14px  #1A1A1A
+          TEXT "1 은행을 선택하고 계좌번호 입력"  @7423,-848 166x18  text='1  은행을 선택하고 계좌번호 입력'  Inter Regular 13px  #8A8A8A
+          TEXT "2 계좌번호 입력 후 예금주 확인"  @7423,-806 160x18  text='2  계좌번호 입력 후 예금주 확인'  Inter Regular 13px  #8A8A8A
+          TEXT "3 확인된 계좌를 회수 계좌로 등록"  @7423,-764 172x18  text='3  확인된 계좌를 회수 계좌로 등록'  Inter Regular 13px  #8A8A8A
+      FRAME "Frame 71"  @7407,-703 399x102
+        FRAME "스토어 버튼"  @7407,-703 399x44  fill=#FFFFFF
+          FRAME "Frame"  @7407,-703 190x44  fill=#FFFFFF  stroke=#E5E5E3/1  r=6
+            TEXT "계좌번호 입력"  @7467,-690 70x18  text='계좌번호 입력'  Inter Regular 13px  #1A1A1A
+          FRAME "Frame"  @7616,-703 190x44  fill=#FFFFFF  stroke=#E5E5E3/1  r=6
+            TEXT "예금주 확인"  @7681,-690 59x18  text='예금주 확인'  Inter Regular 13px  #1A1A1A
+        FRAME "Frame"  @7407,-645 399x44  fill=#14542E  r=6
+          TEXT "계좌 확인하기"  @7566,-633 81x20  text='계좌 확인하기'  Inter Bold 14px  #FFFFFF
+  FRAME "x"  @7781,-1148 24x24
+    VECTOR "Vector"  @7787,-1142 12x12  stroke=#000000/2
+    VECTOR "Vector"  @7787,-1142 12x12  stroke=#000000/2

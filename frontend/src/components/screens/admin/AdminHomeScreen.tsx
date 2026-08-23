@@ -9,6 +9,7 @@ import {
   type Column,
 } from "@/components/ui";
 import { formatDate } from "@/lib/format";
+import { useAuth } from "@/lib/useAuth";
 import {
   MILESTONE_STATUS_LABEL,
   PROJECT_STATUS_LABEL,
@@ -30,6 +31,7 @@ type PendingMilestone = {
 };
 
 export function AdminHomeScreen() {
+  const { user } = useAuth();
   const { data: projects, isLoading } = useProjects();
   const { data: pending } = useQuery({
     queryKey: ["milestones", "pendingReview"],
@@ -105,7 +107,7 @@ export function AdminHomeScreen() {
 
   return (
     <AdminShell
-      title="콘솔 홈"
+      title={`${user?.name ?? "관리자"} 관리자님, 안녕하세요.`}
       desc={`처리 대기 ${pending?.length ?? 0}건`}
     >
       {isLoading ? (

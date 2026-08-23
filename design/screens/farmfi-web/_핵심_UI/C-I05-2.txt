@@ -1,0 +1,60 @@
+FRAME "C-I05 · 투자자 준비 / 완료"  @10626,178 1440x900  r=20
+  ROUNDED_RECTANGLE "Rectangle 1"  @10626,178 1440x900  fill=#000000@0.50
+  FRAME "App/Logo"  @11288,296 117x27
+    VECTOR "Vector"  @11287,296 117x27  fill=#FFFFFF
+  FRAME "C-04 · 공통 / 이용 목적 선택"  @10981,359 730x643  fill=#FFFFFF  r=10
+    ROUNDED_RECTANGLE "Rectangle"  @10981,359 730x64  fill=#FFFFFF  stroke=#E5E5E3/1
+    TEXT "어떤 서비스를 이용할까요?"  @11013,453 268x29  text='어떤 서비스를 이용할까요?'  Inter Bold 24px  #1A1A1A
+    TEXT "로그인한 계정으로 투자, 정기구독, 운영 서비스를 이용할 수 있어요."  @11013,496 391x21  text='로그인한 계정으로 투자, 정기구독, 운영 서비스를 이용할 수 있어요.'  Inter Regular 14px  #8A8A8A
+    FRAME "Frame 59"  @11013,542 666x201
+      FRAME "Frame 55"  @11013,542 319x201  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+        FRAME "Frame 51"  @11030,559 285x167
+          TEXT "투자자로 이용"  @11030,559 285x23  text='투자자로 이용'  Inter Bold 18px  #1A1A1A
+          FRAME "Frame 54"  @11030,598 285x128
+            TEXT "검증된 단계에만 집행되는 공실 전환 프로젝트에 투자해요."  @11030,598 157x36  text='검증된 단계에만 집행되는\n공실 전환 프로젝트에 투자해요.'  Inter Regular 12px  #8A8A8A
+            TEXT "프로젝트 보기 · 내 투자 확인"  @11030,648 285x18  text='프로젝트 보기 · 내 투자 확인'  Inter Regular 12px  #14542E
+            FRAME "Frame 39"  @11030,680 285x46  fill=#14542E  stroke=#14542E/1  r=6
+              TEXT "투자자 화면으로"  @11126,693 94x20  text='투자자 화면으로'  Inter Medium 14px  #FFFFFF
+      FRAME "Frame 56"  @11360,542 319x201  fill=#F1F4F2  stroke=#E5E5E3/1  r=10
+        FRAME "Frame 52"  @11377,559 285x167
+          TEXT "구매자로 이용"  @11377,559 285x23  text='구매자로 이용'  Inter Bold 18px  #1A1A1A
+          FRAME "Frame 53"  @11377,598 285x128
+            TEXT "가까운 미니팜에서 수확한 선택한 작물을 믹스팩으로 정기 픽업해요."  @11377,598 205x36  text='가까운 미니팜에서 수확한\n선택한 작물을 믹스팩으로 정기 픽업해요.'  Inter Regular 12px  #8A8A8A
+            TEXT "플랜 보기 · 내 픽업 관리"  @11377,648 285x18  text='플랜 보기 · 내 픽업 관리'  Inter Regular 12px  #14542E
+            FRAME "Frame 40"  @11377,680 285x46  fill=#14542E  stroke=#14542E/1  r=6
+              TEXT "구매자 화면으로"  @11472,693 94x20  text='구매자 화면으로'  Inter Medium 14px  #FFFFFF
+    TEXT "나중에 상단 메뉴에서 언제든 바꿀 수 있습니다."  @11229,955 234x18  text='나중에 상단 메뉴에서 언제든 바꿀 수 있습니다.'  Inter Regular 12px  #8A8A8A
+    FRAME "Frame 61"  @11013,760 666x181  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+      FRAME "Frame 58"  @11030,777 632x147
+        TEXT "운영자로 이용"  @11030,777 632x23  text='운영자로 이용'  Inter Bold 18px  #1A1A1A
+        FRAME "Frame 57"  @11030,816 632x108
+          TEXT "지도에서 운영할 공간을 찾고, 개점 준비와 보증서를 관리해요."  @11030,816 632x18  text='지도에서 운영할 공간을 찾고, 개점 준비와 보증서를 관리해요.'  Inter Regular 12px  #4A4A4A
+          TEXT "운영 자격 확인이 필요해요"  @11030,848 632x18  text='운영 자격 확인이 필요해요'  Inter Regular 12px  #14542E
+          FRAME "Frame 41"  @11030,880 632x44  fill=#14542E  r=6
+            TEXT "운영자 화면으로"  @11299,892 94x20  text='운영자 화면으로'  Inter Medium 14px  #FFFFFF
+    INSTANCE "App/Logo"  @11013,388 61x14
+  ROUNDED_RECTANGLE "Rectangle 2"  @10626,178 1440x900  fill=#000000@0.70
+  FRAME "C-I05 · 투자자 준비 / 완료"  @11114,307 465x643  fill=#FFFFFF  r=10
+    FRAME "Frame 69"  @11147,341 399x325
+      FRAME "Frame 73"  @11147,341 399x221
+        TEXT "투자 준비 완료!"  @11147,341 399x29  text='투자 준비 완료!'  Inter Bold 24px  #1A1A1A
+        FRAME "Group 12"  @11147,397 394x165
+          ROUNDED_RECTANGLE "선"  @11151,409 1x119  fill=#E5E5E3
+          ELLIPSE "점"  @11147,404 9x9  fill=#14542E
+          ELLIPSE "점"  @11147,464 9x9  fill=#14542E
+          ELLIPSE "점"  @11147,525 9x9  fill=#14542E
+          TEXT "운영비 반영 후 매출에 따라 회수액이 달라지며, 원금은 보장되지 않습니다."  @11169,544 372x18  text='운영비 반영 후 매출에 따라 회수액이 달라지며, 원금은 보장되지 않습니다.'  Inter Regular 12px  #8A8A8A
+          TEXT "통과한 단계만 집행됩니다 · updated"  @11169,397 227x20  text='투자금이 쓰인 과정을 확인할 수 있어요'  Inter Medium 14px  #1A1A1A
+          TEXT "청약금은 에스크로에 예치되고, 마일스톤을 통… · updated"  @11169,424 316x18  text='계약부터 개점까지 진행 상황과 사용 내역을 차례대로 공개해요.'  Inter Regular 12px  #8A8A8A
+          TEXT "네 가지 증빙을 함께 봅니다 · updated"  @11169,457 211x20  text='프로젝트 진행 자료를 함께 확인해요'  Inter Medium 14px  #1A1A1A
+          TEXT "계약서 · 영수증 · 현장 사진 · 센서 신… · updated"  @11169,484 338x18  text='계약서·설비 설치 사진·검수 결과를 프로젝트 화면에서 볼 수 있어요.'  Inter Regular 12px  #8A8A8A
+          TEXT "분기마다 정산합니다 · updated"  @11169,518 257x20  text='운영 결과에 따라 회수액이 달라질 수 있어요'  Inter Medium 14px  #1A1A1A
+      FRAME "Group 13"  @11332,589 30x6
+        ELLIPSE "점"  @11332,589 6x6  fill=#14542E
+        ELLIPSE "점"  @11344,589 6x6  fill=#E5E5E3
+        ELLIPSE "점"  @11356,589 6x6  fill=#E5E5E3
+      FRAME "Frame 43"  @11147,622 399x44  fill=#14542E  r=6
+        TEXT "시작하기 · updated"  @11293,634 107x20  text='프로젝트 둘러보기'  Inter Medium 14px  #FFFFFF
+    FRAME "x"  @11521,341 24x24
+      VECTOR "Vector"  @11527,347 12x12  stroke=#000000/2
+      VECTOR "Vector"  @11527,347 12x12  stroke=#000000/2

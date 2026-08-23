@@ -1,0 +1,77 @@
+FRAME "B-09 · 픽업 바코드 확인증"  @10981,3691 730x1027
+  FRAME "B-09 · 픽업 바코드 확인증"  @10981,3691 730x1027  fill=#FFFFFF  r=10
+    TEXT "이번 픽업"  @11015,3725 56x20  text='이번 픽업'  Inter Semi Bold 13px  #14542E
+    TEXT "준비되면 알림으로 알려드릴게요"  @11015,3763 321x29  text='준비되면 알림으로 알려드릴게요'  Inter Bold 26px  #1A1A1A
+    TEXT "매장에서 아래 바코드를 보여 주세요. 웹을 다시 열기 어려울 수 있으니 출발 전에 이미지로 저장해 주세요."  @11015,3810 608x21  text='매장에서 아래 바코드를 보여 주세요. 웹을 다시 열기 어려울 수 있으니 출발 전에 이미지로 저장해 주세요.'  Inter Regular 14px  #4A4A4A
+    FRAME "Pickup Pass"  @11015,3849 662x197  fill=#F1F4F2  stroke=#E5E5E3/1  r=10
+      TEXT "8월 22일(토) 14:00–18:00"  @11031,3865 219x23  text='8월 22일(토) 14:00–18:00'  Inter Bold 17px  #1A1A1A
+      TEXT "성수 로컬팜 · 서울 성동구 연무장길 00"  @11031,3912 226x21  text='성수 로컬팜 · 서울 성동구 연무장길 00'  Inter Regular 14px  #1A1A1A
+      TEXT "5종 믹스팩 · 드레싱 2봉"  @11031,3957 140x20  text='5종 믹스팩 · 드레싱 2봉'  Inter Semi Bold 14px  #14542E
+      TEXT "확인번호 F7K2-184"  @11031,4001 215x29  text='확인번호  F7K2-184'  Inter Bold 22px  #1A1A1A
+    FRAME "QR"  @11015,4064 662x207  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+      TEXT "픽업 바코드"  @11031,4080 87x23  text='픽업 바코드'  Inter Bold 16px  #1A1A1A
+      FRAME "Pickup Barcode"  @11031,4127 630x86
+        VECTOR "Vector"  @11031,4127 630x86  fill=#FFFFFF
+        FRAME "Group"  @11051,4136 579x58
+          VECTOR "Vector"  @11051,4136 4x58  fill=#1A1A1A
+          VECTOR "Vector"  @11061,4136 2x58  fill=#1A1A1A
+          VECTOR "Vector"  @11069,4136 8x58  fill=#1A1A1A
+          VECTOR "Vector"  @11084,4136 3x58  fill=#1A1A1A
+          VECTOR "Vector"  @11094,4136 10x58  fill=#1A1A1A
+          VECTOR "Vector"  @11110,4136 3x58  fill=#1A1A1A
+          VECTOR "Vector"  @11121,4136 6x58  fill=#1A1A1A
+          VECTOR "Vector"  @11133,4136 2x58  fill=#1A1A1A
+          VECTOR "Vector"  @11142,4136 9x58  fill=#1A1A1A
+          VECTOR "Vector"  @11159,4136 4x58  fill=#1A1A1A
+          VECTOR "Vector"  @11170,4136 11x58  fill=#1A1A1A
+          VECTOR "Vector"  @11188,4136 3x58  fill=#1A1A1A
+          VECTOR "Vector"  @11199,4136 7x58  fill=#1A1A1A
+          VECTOR "Vector"  @11212,4136 2x58  fill=#1A1A1A
+          VECTOR "Vector"  @11221,4136 10x58  fill=#1A1A1A
+          VECTOR "Vector"  @11238,4136 4x58  fill=#1A1A1A
+          VECTOR "Vector"  @11249,4136 8x58  fill=#1A1A1A
+          VECTOR "Vector"  @11264,4136 3x58  fill=#1A1A1A
+          VECTOR "Vector"  @11274,4136 12x58  fill=#1A1A1A
+          VECTOR "Vector"  @11294,4136 4x58  fill=#1A1A1A
+          VECTOR "Vector"  @11306,4136 2x58  fill=#1A1A1A
+          VECTOR "Vector"  @11315,4136 9x58  fill=#1A1A1A
+          VECTOR "Vector"  @11330,4136 3x58  fill=#1A1A1A
+          VECTOR "Vector"  @11341,4136 11x58  fill=#1A1A1A
+          VECTOR "Vector"  @11360,4136 4x58  fill=#1A1A1A
+          VECTOR "Vector"  @11371,4136 7x58  fill=#1A1A1A
+          VECTOR "Vector"  @11384,4136 2x58  fill=#1A1A1A
+          VECTOR "Vector"  @11393,4136 10x58  fill=#1A1A1A
+          VECTOR "Vector"  @11410,4136 6x58  fill=#1A1A1A
+          VECTOR "Vector"  @11422,4136 3x58  fill=#1A1A1A
+          VECTOR "Vector"  @11433,4136 12x58  fill=#1A1A1A
+          VECTOR "Vector"  @11453,4136 2x58  fill=#1A1A1A
+          VECTOR "Vector"  @11462,4136 8x58  fill=#1A1A1A
+          VECTOR "Vector"  @11476,4136 4x58  fill=#1A1A1A
+          VECTOR "Vector"  @11488,4136 10x58  fill=#1A1A1A
+          VECTOR "Vector"  @11505,4136 3x58  fill=#1A1A1A
+          VECTOR "Vector"  @11515,4136 7x58  fill=#1A1A1A
+          VECTOR "Vector"  @11528,4136 2x58  fill=#1A1A1A
+          VECTOR "Vector"  @11537,4136 11x58  fill=#1A1A1A
+          VECTOR "Vector"  @11555,4136 4x58  fill=#1A1A1A
+          VECTOR "Vector"  @11567,4136 9x58  fill=#1A1A1A
+          VECTOR "Vector"  @11582,4136 3x58  fill=#1A1A1A
+          VECTOR "Vector"  @11592,4136 12x58  fill=#1A1A1A
+          VECTOR "Vector"  @11612,4136 4x58  fill=#1A1A1A
+          VECTOR "Vector"  @11623,4136 8x58  fill=#1A1A1A
+        TEXT "F7K2 184 0822"  @11297,4196 97x18  text='F7K2 184 0822'  Inter Regular 11px  #4A4A4A
+      TEXT "직원이 바코드를 스캔하면 수령 완료로 바뀝니다. 밝기를 높이면 더 잘 인식돼요."  @11031,4237 394x18  text='직원이 바코드를 스캔하면 수령 완료로 바뀝니다. 밝기를 높이면 더 잘 인식돼요.'  Inter Regular 12px  #4A4A4A
+    FRAME "Save guidance"  @11015,4289 662x94  fill=#F1F4F2  r=10
+      TEXT "매장에서는 웹 접속이 원활하지 않을 수 있어요."  @11031,4305 271x20  text='매장에서는 웹 접속이 원활하지 않을 수 있어요.'  Inter Semi Bold 14px  #1A1A1A
+      TEXT "‘바코드 이미지 저장’을 누르거나 이 화면을 캡처해 사진첩에 보관해 주세요."  @11031,4349 370x18  text='‘바코드 이미지 저장’을 누르거나 이 화면을 캡처해 사진첩에 보관해 주세요.'  Inter Regular 12px  #4A4A4A
+    FRAME "Button/Save barcode"  @11015,4401 662x44  fill=#14542E  r=6
+      TEXT "바코드 이미지 저장"  @11290,4413 111x20  text='바코드 이미지 저장'  Inter Semi Bold 14px  #FFFFFF
+    FRAME "변경 안내"  @11015,4463 662x97  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+      TEXT "오늘 받기 어렵다면"  @11031,4479 141x23  text='오늘 받기 어렵다면'  Inter Semi Bold 15px  #1A1A1A
+      TEXT "픽업 시작 3시간 전까지 일정 변경 또는 이번 회차 건너뛰기가 가능해요."  @11031,4526 354x18  text='픽업 시작 3시간 전까지 일정 변경 또는 이번 회차 건너뛰기가 가능해요.'  Inter Regular 13px  #4A4A4A
+    FRAME "Button"  @11015,4578 662x44  fill=#14542E  stroke=#14542E/1  r=6
+      TEXT "픽업 일정 변경"  @11304,4590 85x20  text='픽업 일정 변경'  Inter Semi Bold 14px  #FFFFFF
+    FRAME "Button"  @11015,4640 662x44  fill=#FFFFFF  stroke=#E5E5E3/1  r=6
+      TEXT "이번 회차 건너뛰기"  @11290,4652 111x20  text='이번 회차 건너뛰기'  Inter Semi Bold 14px  #1A1A1A
+  FRAME "x"  @11653,3725 24x24
+    VECTOR "Vector"  @11659,3731 12x12  stroke=#000000/2
+    VECTOR "Vector"  @11659,3731 12x12  stroke=#000000/2

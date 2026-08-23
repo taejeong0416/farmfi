@@ -161,8 +161,8 @@ export function PickupPassScreen({ pickupId }: { pickupId: string }) {
       <h1 className="mt-3 text-22 font-bold text-ink">
         준비되면 알림으로 알려드릴게요
       </h1>
-      <p className="mt-3 text-13 leading-6 text-muted">
-        매장에서 아래 바코드를 보여 주세요. 웹을 다시 열기 어려울 수 있으니 출발 전에 화면을 저장해 주세요.
+      <p className="mt-3 text-14 leading-6 text-muted">
+        매장에서 아래 바코드를 보여 주세요. 웹을 다시 열기 어려울 수 있으니 출발 전에 이미지로 저장해 주세요.
       </p>
 
       <Card className="mt-7">
@@ -188,8 +188,8 @@ export function PickupPassScreen({ pickupId }: { pickupId: string }) {
                 {barcode.code}
               </p>
             </div>
-            <p className="mt-4 text-11 text-muted">
-              직원이 바코드를 확인하면 수령 완료로 바뀝니다. 밝기를 높이면 더 잘 보여요.
+            <p className="mt-4 text-12 text-muted">
+              직원이 바코드를 스캔하면 수령 완료로 바뀝니다. 밝기를 높이면 더 잘 인식돼요.
             </p>
             <div className="mt-5">
               <Button
@@ -223,8 +223,8 @@ export function PickupPassScreen({ pickupId }: { pickupId: string }) {
       {error ? <p className="mt-4 text-12 text-danger">{error}</p> : null}
 
       <Card className="mt-5">
-        <p className="text-14 font-bold text-ink">오늘 받기 어렵다면</p>
-        <p className="mt-2 text-12 text-muted">
+        <p className="text-15 font-semibold text-ink">오늘 받기 어렵다면</p>
+        <p className="mt-2 text-13 text-muted">
           픽업 시작 3시간 전까지 일정 변경 또는 이번 회차 건너뛰기가 가능해요.
         </p>
         <div className="mt-5 grid grid-cols-2 gap-3">

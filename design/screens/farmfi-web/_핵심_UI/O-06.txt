@@ -1,0 +1,51 @@
+FRAME "O-06 · 운영자 / 공간 최종 확정"  @6974,6142 1440x905  fill=#FFFFFF  r=10
+  FRAME "TopNav"  @6974,6142 1440x64  stroke=#E5E5E3/0
+    FRAME "NavLeft"  @7028,6164 405x20
+      FRAME "Frame 180"  @7028,6168 117x13
+        INSTANCE "App/Logo"  @7028,6168 55x13
+        FRAME "Frame 6"  @7093,6168 52x13  fill=#8C6114@0.10  stroke=#8C6114/0  r=19
+          TEXT "운영자 포털"  @7100,6170 37x8  text='운영자 포털'  Pretendard SemiBold 8px  #8C6114
+      FRAME "NavLinks"  @7201,6164 232x20
+        TEXT "공간 찾기"  @7201,6164 56x20  text='공간 찾기'  Inter Medium 14px  #14542E
+        TEXT "내 준비 현황"  @7289,6164 73x20  text='내 준비 현황'  Inter Regular 14px  #4A4A4A
+        TEXT "보증서"  @7394,6164 39x20  text='보증서'  Inter Regular 14px  #4A4A4A
+    FRAME "Frame 12"  @8302,6165 58x18
+      FRAME "아이콘"  @8302,6166 16x16
+        VECTOR "Vector"  @8308,6169 5x5  stroke=#8A8A8A/1
+        VECTOR "Vector"  @8305,6175 9x4  stroke=#8A8A8A/1
+      TEXT "김투자"  @8326,6165 34x18  text='박운영'  Inter Regular 12px  #4A4A4A
+  FRAME "O-06 · 운영자 / 공간 최종 확정"  @6974,6206 1440x841  r=10
+    FRAME "Autosave status"  @7028,6244 132x30  fill=#F1F4F2  r=999
+      TEXT "✓ 자동 저장됨"  @7040,6252 67x15  text='✓ 자동 저장됨'  Inter Medium 11px  #14542E
+      TEXT "방금 전"  @7111,6250 37x18  text='방금 전'  Inter Regular 12px  #4A4A4A
+    TEXT "운영 신청 4 / 5"  @7028,6292 90x20  text='운영 신청 4 / 5'  Inter Medium 14px  #14542E
+    TEXT "확인한 공간을 최종 배정받아요"  @7028,6330 304x29  text='확인한 공간을 최종 배정받아요'  Inter Bold 24px  #1A1A1A
+    TEXT "현장 방문 결과와 교육 수료가 확인됐습니다. 계약서에 들어갈 공간과 운영 조건을 마지막으로 확인해 주세요."  @7028,6377 1332x21  text='현장 방문 결과와 교육 수료가 확인됐습니다. 계약서에 들어갈 공간과 운영 조건을 마지막으로 확인해 주세요.'  Inter Regular 14px  #4A4A4A
+    FRAME "공간 요약"  @7028,6416 1332x150  fill=#F1F4F2  stroke=#E5E5E3/1  r=10
+      TEXT "성수 로컬팜 후보지 A"  @7044,6432 212x29  text='성수 로컬팜 후보지 A'  Inter Bold 24px  #1A1A1A
+      TEXT "서울 성동구 연무장길 00 · 전용 82㎡"  @7044,6485 218x21  text='서울 성동구 연무장길 00 · 전용 82㎡'  Inter Regular 14px  #1A1A1A
+      TEXT "현장 확인 완료 · 2026.08.25"  @7044,6530 174x20  text='현장 확인 완료 · 2026.08.25'  Inter Medium 14px  #14542E
+    FRAME "Details"  @7028,6584 1332x186  fill=#FFFFFF
+      FRAME "공간 조건"  @7028,6584 658x186  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+        TEXT "운영 시작 예정일"  @7044,6600 85x18  text='운영 시작 예정일'  Inter Regular 12px  #4A4A4A
+        TEXT "2026년 9월 14일"  @7044,6642 138x23  text='2026년 9월 14일'  Inter Bold 18px  #1A1A1A
+        TEXT "스마트팜 구역"  @7044,6689 70x18  text='스마트팜 구역'  Inter Regular 12px  #4A4A4A
+        TEXT "재배존 3개 · 포장존 1개"  @7044,6731 176x23  text='재배존 3개 · 포장존 1개'  Inter Bold 18px  #1A1A1A
+      FRAME "비용과 책임"  @7702,6584 658x186  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+        TEXT "운영 조건"  @7718,6600 48x18  text='운영 조건'  Inter Regular 12px  #4A4A4A
+        TEXT "계약서에서 최종 확인"  @7718,6642 158x23  text='계약서에서 최종 확인'  Inter Bold 18px  #1A1A1A
+        TEXT "시설 이상"  @7718,6689 48x18  text='시설 이상'  Inter Regular 12px  #4A4A4A
+        TEXT "FarmFi 관리자에게 접수"  @7718,6731 185x23  text='FarmFi 관리자에게 접수'  Inter Bold 18px  #1A1A1A
+    FRAME "확정 안내"  @7028,6788 1332x97  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+      TEXT "공간을 확정하면 7일 동안 다른 운영자에게 배정되지 않아요."  @7044,6804 443x23  text='공간을 확정하면 7일 동안 다른 운영자에게 배정되지 않아요.'  Inter Bold 18px  #1A1A1A
+      TEXT "그 안에 계약을 서명하지 않으면 담당자 확인 후 가배정 상태로 돌아갈 수 있습니다."  @7044,6851 409x18  text='그 안에 계약을 서명하지 않으면 담당자 확인 후 가배정 상태로 돌아갈 수 있습니다.'  Inter Regular 12px  #4A4A4A
+    FRAME "Frame 156"  @7028,6903 1332x44
+      FRAME "Button"  @7028,6903 657x44  fill=#14542E  stroke=#14542E/1  r=6
+        TEXT "이 공간으로 최종 확정"  @7292,6915 128x20  text='이 공간으로 최종 확정'  Inter Medium 14px  #FFFFFF
+      FRAME "Button"  @7703,6903 657x44  fill=#FFFFFF  stroke=#E5E5E3/1  r=6
+        TEXT "다른 공간 상담하기"  @7976,6915 111x20  text='다른 공간 상담하기'  Inter Medium 14px  #1A1A1A
+    FRAME "Step navigation"  @7028,6965 275x44  fill=#FFFFFF
+      FRAME "Button/secondary"  @7028,6965 121x44  fill=#FFFFFF  stroke=#E5E5E3/1  r=6
+        TEXT "← 이전 단계"  @7052,6977 73x20  text='← 이전 단계'  Inter Medium 14px  #1A1A1A
+      FRAME "Button/ghost"  @7161,6965 142x44  fill=#F1F4F2  stroke=#F1F4F2/1  r=6
+        TEXT "저장하고 나가기"  @7185,6977 94x20  text='저장하고 나가기'  Inter Medium 14px  #14542E

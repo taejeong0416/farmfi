@@ -1,0 +1,36 @@
+FRAME "I-02E · 투자 부적격·한도 초과 / 안내"  @-1261,1265 465x610
+  FRAME "I-02E · 투자 부적격·한도 초과 / 안내"  @-1261,1265 465x610  fill=#FFFFFF  r=10
+    FRAME "BodyContainer"  @-1261,1265 465x610
+      TEXT "FRIENDLY COPY / 10:632"  @-1229,1297 282x29  text='지금은 투자 신청이 어려워요'  Inter Bold 24px  #1A1A1A
+      TEXT "FRIENDLY COPY / 10:633"  @-1229,1342 401x36  text='이번 분기 투자 한도를 넘어섭니다.\n한도가 갱신되면 다시 투자 신청할 수 있습니다.'  Inter Regular 12px  #8A8A8A
+      FRAME "TableCard"  @-1229,1394 401x128  stroke=#E5E5E3/1  r=8
+        FRAME "Row"  @-1229,1394 401x42
+          TEXT "성인 여부"  @-1213,1406 48x18  text='성인 여부'  Inter Regular 12px  #1A1A1A
+          FRAME "StatusWrap"  @-878,1408 34x15
+            ELLIPSE "점"  @-878,1412 7x7  fill=#14542E
+            TEXT "충족"  @-865,1408 21x15  text='충족'  Inter Medium 11px  #14542E
+        ROUNDED_RECTANGLE "선"  @-1229,1436 401x1  fill=#F1F4F2
+        FRAME "Row"  @-1229,1437 401x42
+          TEXT "실명 확인"  @-1213,1449 48x18  text='실명 확인'  Inter Regular 12px  #1A1A1A
+          FRAME "StatusWrap"  @-878,1450 34x15
+            ELLIPSE "점"  @-878,1454 7x7  fill=#14542E
+            TEXT "충족"  @-865,1450 21x15  text='충족'  Inter Medium 11px  #14542E
+        ROUNDED_RECTANGLE "선"  @-1229,1479 401x1  fill=#F1F4F2
+        FRAME "Row"  @-1229,1480 401x42
+          TEXT "연간 투자 한도"  @-1213,1492 73x18  text='연간 투자 한도'  Inter Regular 12px  #1A1A1A
+          FRAME "StatusWrap"  @-878,1494 34x15
+            ELLIPSE "점"  @-878,1498 7x7  fill=#DC2626
+            TEXT "초과"  @-865,1494 21x15  text='초과'  Inter Medium 11px  #DC2626
+      FRAME "Frame"  @-1229,1538 401x96  fill=#F1F4F2  stroke=#E5E5E3/1  r=8
+        TEXT "한도는 2026.07.01에 자동으로 갱신돼요"  @-1213,1554 239x20  text='한도는 2026.07.01에 자동으로 갱신돼요'  Inter Medium 14px  #14542E
+        TEXT "지금은 추가 투자가 어려워요. 한도가 갱신되는 날짜를 확인하고 다시 시도해 주세요."  @-1213,1582 369x36  text='지금은 추가 투자가 어려워요. 한도가 갱신되는 날짜를 확인하고 다시 시도해 주세요.'  Inter Regular 12px  #8A8A8A
+      FRAME "Frame"  @-1229,1650 401x46  fill=#14542E  stroke=#14542E/1  r=6
+        TEXT "갱신일 알림 받기"  @-1078,1663 98x20  text='갱신일 알림 받기'  Inter Medium 14px  #FFFFFF
+      FRAME "Frame"  @-1229,1712 401x44  stroke=#E5E5E3/1  r=6
+        TEXT "투자 한도 안내 보기"  @-1086,1724 115x20  text='투자 한도 안내 보기'  Inter Medium 14px  #1A1A1A
+      FRAME "Frame"  @-1229,1772 401x44  stroke=#E5E5E3/1  r=6
+        TEXT "프로젝트로 돌아가기"  @-1088,1784 120x20  text='프로젝트로 돌아가기'  Inter Medium 14px  #1A1A1A
+      TEXT "표시된 한도가 실제와 다르면 한도 안내에서 확인을 요청할 수 있어요."  @-1229,1832 401x18  text='표시된 한도가 실제와 다르면 한도 안내에서 확인을 요청할 수 있어요.'  Inter Regular 12px  #8A8A8A
+  FRAME "x"  @-854,1299 24x24
+    VECTOR "Vector"  @-848,1305 12x12  stroke=#000000/2
+    VECTOR "Vector"  @-848,1305 12x12  stroke=#000000/2

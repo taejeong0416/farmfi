@@ -108,7 +108,7 @@ export function CertificateScreen() {
         </div>
 
         <Card className="w-[400px] shrink-0">
-          <h2 className="text-17 font-bold text-ink">보증서 사용 방법</h2>
+          <h2 className="text-18 font-semibold text-ink">보증서 사용 방법</h2>
           <ol className="mt-5 space-y-5">
             {HOW_TO.map((t, i) => (
               <li key={t} className="flex items-start gap-3">

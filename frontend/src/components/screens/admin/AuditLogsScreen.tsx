@@ -126,7 +126,7 @@ export function AuditLogsScreen() {
 
   return (
     <AdminShell
-      title="감사 로그 조회"
+      title="모든 변경 이력을 감사 로그로 확인해요"
       desc="청약·검증·집행·정산·권한 변경 기록. 지우거나 고칠 수 없다."
       action={
         <Button size="sm" variant="ghost" href="/api/audit-logs?format=csv">

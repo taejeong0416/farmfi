@@ -1,0 +1,139 @@
+FRAME "O-03 · 운영자 / 자격·서류 신청"  @2398,6142 1440x948  fill=#FFFFFF  r=10
+  FRAME "TopNav"  @2398,6142 1440x64  stroke=#E5E5E3/0
+    FRAME "NavLeft"  @2452,6164 405x20
+      FRAME "Frame 180"  @2452,6168 117x13
+        INSTANCE "App/Logo"  @2452,6168 55x13
+        FRAME "Frame 6"  @2517,6168 52x13  fill=#8C6114@0.10  stroke=#8C6114/0  r=19
+          TEXT "운영자 포털"  @2524,6170 37x8  text='운영자 포털'  Pretendard SemiBold 8px  #8C6114
+      FRAME "NavLinks"  @2625,6164 232x20
+        TEXT "공간 찾기"  @2625,6164 56x20  text='공간 찾기'  Inter Medium 14px  #14542E
+        TEXT "내 준비 현황"  @2713,6164 73x20  text='내 준비 현황'  Inter Regular 14px  #4A4A4A
+        TEXT "보증서"  @2818,6164 39x20  text='보증서'  Inter Regular 14px  #4A4A4A
+    FRAME "Frame 12"  @3726,6165 58x18
+      FRAME "아이콘"  @3726,6166 16x16
+        VECTOR "Vector"  @3732,6169 5x5  stroke=#8A8A8A/1
+        VECTOR "Vector"  @3729,6175 9x4  stroke=#8A8A8A/1
+      TEXT "김투자"  @3750,6165 34x18  text='박운영'  Inter Regular 12px  #4A4A4A
+  FRAME "O-03 · 운영자 / 자격·서류 신청"  @2398,6206 1440x884
+    FRAME "Frame 137"  @2452,6244 241x34
+      TEXT "운영 신청 1 / 5"  @2452,6251 87x20  text='운영 신청 1 / 5'  Inter Medium 14px  #14542E
+      FRAME "Autosave status"  @2557,6244 136x34  fill=#F1F4F2  r=999
+        TEXT "✓ 자동 저장됨"  @2569,6254 67x15  text='✓ 자동 저장됨'  Inter Medium 11px  #14542E
+        TEXT "방금 전"  @2644,6252 37x18  text='방금 전'  Inter Regular 12px  #4A4A4A
+    FRAME "Frame"  @2452,6296 1332x68
+      FRAME "Title Stack"  @2452,6296 400x68
+        TEXT "운영 자격을 인증해주세요"  @2452,6296 400x29  text='운영 자격을 인증해주세요'  Inter Bold 24px  #1A1A1A
+        TEXT "자격 요건을 확인하고 보완 서류를 제출해주세요."  @2452,6343 400x21  text='자격 요건을 확인하고 보완 서류를 제출해주세요.'  Inter Regular 14px  #4A4A4A
+      FRAME "Frame"  @3602,6312 182x37
+        FRAME "Frame 136"  @3602,6312 78x37  stroke=#E5E5E3/1  r=6
+          TEXT "임시 저장"  @3619,6322 44x15  text='임시 저장'  Inter Medium 11px  #1A1A1A
+        FRAME "Frame 138"  @3688,6314 96x32  fill=#14542E  r=6
+          TEXT "자격 심사 요청"  @3703,6322 67x15  text='자격 심사 요청'  Inter Medium 11px  #FFFFFF
+    FRAME "Content"  @2452,6382 1332x616
+      FRAME "Left Column"  @2452,6382 658x610
+        FRAME "Status Stats Card"  @2452,6382 658x85  stroke=#E5E5E3/1  r=10
+          FRAME "Frame"  @2468,6398 193x44
+            TEXT "심사 상태"  @2468,6398 48x18  text='심사 상태'  Inter Regular 12px  #8A8A8A
+            FRAME "Frame"  @2468,6422 67x20
+              ELLIPSE "점"  @2468,6428 7x7  fill=#DC2626
+              TEXT "보완 필요"  @2479,6422 56x20  text='보완 필요'  Inter Medium 14px  #DC2626
+          FRAME "Frame"  @2685,6398 193x53
+            TEXT "충족 요건"  @2685,6398 48x18  text='충족 요건'  Inter Regular 12px  #8A8A8A
+            FRAME "Frame"  @2685,6422 39x29
+              TEXT "4"  @2685,6422 17x29  text='4'  Inter Bold 24px  #1A1A1A
+              TEXT "/ 6"  @2706,6426 18x21  text='/ 6'  Inter Regular 14px  #4A4A4A
+          FRAME "Frame"  @2901,6398 193x53
+            TEXT "인증 유효기간"  @2901,6398 70x18  text='인증 유효기간'  Inter Regular 12px  #8A8A8A
+            FRAME "Frame"  @2901,6422 33x29
+              TEXT "2"  @2901,6422 16x29  text='2'  Inter Bold 24px  #1A1A1A
+              TEXT "년"  @2921,6426 13x21  text='년'  Inter Regular 14px  #4A4A4A
+        FRAME "Requirements Card"  @2452,6491 658x346  stroke=#E5E5E3/1  r=10
+          TEXT "자격 요건"  @2468,6507 56x20  text='자격 요건'  Inter Medium 14px  #1A1A1A
+          FRAME "Frame"  @2468,6551 626x18
+            TEXT "요건"  @2468,6551 140x18  text='요건'  Inter Regular 12px  #8A8A8A
+            TEXT "제출 서류"  @2620,6551 382x18  text='제출 서류'  Inter Regular 12px  #8A8A8A
+            TEXT "상태"  @3014,6551 80x18  text='상태'  Inter Regular 12px  #8A8A8A
+          FRAME "Group 45 Row"  @2468,6593 626x18
+            TEXT "사업자 등록"  @2468,6593 140x18  text='사업자 등록'  Inter Regular 12px  #1A1A1A
+            TEXT "사업자등록증.pdf"  @2620,6593 362x18  text='사업자등록증.pdf'  Inter Regular 12px  #4A4A4A
+            FRAME "StatusWrap"  @2994,6594 100x15
+              ELLIPSE "점"  @2994,6598 7x7  fill=#14542E
+              TEXT "제출완료"  @3007,6594 44x15  text='제출 완료'  Inter Medium 11px  #14542E
+          FRAME "Group 44 Row"  @2468,6635 626x18
+            TEXT "대표자 실명 확인"  @2468,6635 140x18  text='대표자 실명 확인'  Inter Regular 12px  #1A1A1A
+            TEXT "모바일 신분증 · 본인확인 완료"  @2620,6636 362x15  text='모바일 신분증 · 본인확인 완료'  Inter Medium 11px  #14542E
+            FRAME "StatusWrap"  @2994,6636 100x15
+              ELLIPSE "점"  @2994,6640 7x7  fill=#14542E
+              TEXT "확인 완료"  @3007,6636 44x15  text='확인 완료'  Inter Medium 11px  #14542E
+          FRAME "Group 43 Row"  @2468,6677 626x18
+            TEXT "스마트팜 운영 이력"  @2468,6677 140x18  text='스마트팜 운영 이력'  Inter Regular 12px  #1A1A1A
+            TEXT "운영 실적 자료 2건"  @2620,6677 362x18  text='운영 실적 자료 2건'  Inter Regular 12px  #4A4A4A
+            FRAME "StatusWrap"  @2994,6678 100x15
+              ELLIPSE "점"  @2994,6682 7x7  fill=#14542E
+              TEXT "제출완료"  @3007,6678 44x15  text='제출 완료'  Inter Medium 11px  #14542E
+          FRAME "Group 42 Row"  @2468,6719 626x18
+            TEXT "교육 이수"  @2468,6719 140x18  text='교육 이수'  Inter Regular 12px  #1A1A1A
+            TEXT "스마트팜 교육 이수증 · 만료"  @2620,6719 362x18  text='스마트팜 교육 이수증 · 만료'  Inter Regular 12px  #4A4A4A
+            FRAME "StatusWrap"  @2994,6720 100x15
+              ELLIPSE "점"  @2994,6724 7x7  fill=#DC2626
+              TEXT "보완 요청"  @3007,6720 44x15  text='보완 요청'  Inter Medium 11px  #DC2626
+          FRAME "Group 40 Row"  @2468,6761 626x18
+            TEXT "세무 신고"  @2468,6761 140x18  text='세무 신고'  Inter Regular 12px  #1A1A1A
+            TEXT "국세 납세증명서 미제출"  @2620,6761 362x18  text='국세 납세증명서 미제출'  Inter Regular 12px  #8A8A8A
+            FRAME "StatusWrap"  @2994,6762 100x15
+              ELLIPSE "점"  @2994,6766 7x7  fill=#8A8A8A
+              TEXT "확인 전"  @3007,6762 34x15  text='확인 전'  Inter Regular 12px  #4A4A4A
+          FRAME "Group 41 Row"  @2468,6803 626x18
+            TEXT "배상 책임보험"  @2468,6803 140x18  text='배상 책임보험'  Inter Regular 12px  #1A1A1A
+            TEXT "보험 가입증명서.pdf"  @2620,6803 362x18  text='보험 가입증명서.pdf'  Inter Regular 12px  #4A4A4A
+            FRAME "StatusWrap"  @2994,6804 100x15
+              ELLIPSE "점"  @2994,6808 7x7  fill=#14542E
+              TEXT "제출완료"  @3007,6804 41x15  text='제출완료'  Inter Medium 11px  #14542E
+        FRAME "Correction Reason Card"  @2452,6861 658x131  fill=#F1F4F2  r=10
+          TEXT "보완 요청 사유"  @2468,6877 67x15  text='보완 요청 사유'  Inter Medium 11px  #DC2626
+          TEXT "제출한 교육 이수증의 유효기간이 지났습니다.…"  @2468,6916 626x18  text='제출한 교육 이수증의 유효기간이 지났습니다. 최근 2년 이내 이수 내역을 올리고, 국세 납세증명서를 함께 제출하세요.'  Inter Regular 12px  #8A8A8A
+          TEXT "2026.03.05 11:20 · 심사자 정…"  @2468,6958 178x18  text='2026.03.05 11:20 · 심사자 정심사'  Inter Regular 12px  #8A8A8A
+      FRAME "Right Column"  @3126,6382 658x616
+        FRAME "Review Timeline Card"  @3126,6382 658x338  stroke=#E5E5E3/1  r=10
+          TEXT "심사 진행"  @3142,6398 56x20  text='심사 진행'  Inter Medium 14px  #1A1A1A
+          FRAME "Frame"  @3142,6442 121x42
+            ELLIPSE "점"  @3142,6458 9x9  fill=#14542E
+            FRAME "Frame"  @3161,6442 102x42
+              TEXT "2026.03.02 09:40"  @3161,6442 102x18  text='2026.03.02 09:40'  Inter Regular 12px  #8A8A8A
+              FRAME "Frame"  @3161,6464 94x20
+                TEXT "신청 접수"  @3161,6464 56x20  text='신청 접수'  Inter Medium 14px  #1A1A1A
+                TEXT "· 통과"  @3221,6464 34x20  text='· 통과'  Inter Medium 14px  #14542E
+          FRAME "Frame"  @3142,6508 177x64
+            ELLIPSE "점"  @3142,6536 9x9  fill=#FFFFFF  stroke=#8A8A8A/1
+            FRAME "Frame"  @3161,6508 158x64
+              TEXT "2026.03.05 11:20"  @3161,6508 98x18  text='2026.03.05 11:20'  Inter Regular 12px  #8A8A8A
+              FRAME "Frame"  @3161,6530 123x20
+                TEXT "서류 확인"  @3161,6530 56x20  text='서류 확인'  Inter Medium 14px  #1A1A1A
+                TEXT "· 보완 요청"  @3221,6530 63x20  text='· 보완 요청'  Inter Medium 14px  #DC2626
+              TEXT "보완 제출 시 심사가 이어집니다"  @3161,6554 158x18  text='보완 제출 시 심사가 이어집니다'  Inter Regular 12px  #8A8A8A
+          FRAME "Frame"  @3142,6596 137x42
+            ELLIPSE "점"  @3142,6612 9x9  fill=#FFFFFF  stroke=#E5E5E3/1
+            FRAME "Frame"  @3161,6596 118x42
+              TEXT "—"  @3161,6596 12x18  text='—'  Inter Regular 12px  #8A8A8A
+              FRAME "Frame"  @3161,6618 118x20
+                TEXT "운영 이력 검토"  @3161,6618 85x20  text='운영 이력 검토'  Inter Medium 14px  #4A4A4A
+                TEXT "· 예정"  @3250,6618 29x18  text='· 예정'  Inter Regular 12px  #8A8A8A
+          FRAME "Frame"  @3142,6662 108x42
+            ELLIPSE "점"  @3142,6678 9x9  fill=#FFFFFF  stroke=#E5E5E3/1
+            FRAME "Frame"  @3161,6662 89x42
+              TEXT "—"  @3161,6662 12x18  text='—'  Inter Regular 12px  #8A8A8A
+              FRAME "Frame"  @3161,6684 89x20
+                TEXT "자격 승인"  @3161,6684 56x20  text='자격 승인'  Inter Medium 14px  #4A4A4A
+                TEXT "· 예정"  @3221,6684 29x18  text='· 예정'  Inter Regular 12px  #8A8A8A
+        FRAME "Upload Card"  @3126,6744 658x254  stroke=#E5E5E3/1  r=10
+          TEXT "보완 서류 제출"  @3142,6760 85x20  text='보완 서류 제출'  Inter Medium 14px  #1A1A1A
+          FRAME "Frame"  @3142,6804 626x90  fill=#F1F4F2  stroke=#E5E5E3/1  r=8
+            TEXT "파일을 끌어다 놓거나 선택하세요"  @3359,6828 192x20  text='파일을 끌어다 놓거나 선택하세요'  Inter Medium 14px  #14542E
+            TEXT "PDF · JPG · PNG · 1건당 20…"  @3359,6852 192x18  text='PDF · JPG · PNG · 1건당 20MB 이하'  Inter Regular 12px  #8A8A8A
+          FRAME "Frame"  @3142,6918 626x20
+            TEXT "스마트팜_교육이수증_2025.pdf"  @3142,6919 162x18  text='스마트팜_교육이수증_2025.pdf'  Inter Regular 12px  #1A1A1A
+            TEXT "방금 첨부"  @3720,6919 48x18  text='방금 첨부'  Inter Regular 12px  #14542E
+          FRAME "Frame"  @3142,6962 626x20
+            TEXT "국세 납세증명서"  @3142,6963 81x18  text='국세 납세증명서'  Inter Regular 12px  #8A8A8A
+            TEXT "미첨부"  @3734,6963 34x18  text='미첨부'  Inter Regular 12px  #8A8A8A
+    TEXT "자격 인증은 승인일로부터 2년간 유효하며 만…"  @2452,7016 1332x36  text='자격 인증은 승인일로부터 2년간 유효하며 만료 60일 전에 갱신 안내가 발송됩니다.\u2028인증이 없으면 프로젝트 등록과 마일스톤 집행 신청을 할 수 없습니다.'  Inter Regular 12px  #8A8A8A

@@ -1,0 +1,115 @@
+FRAME "A-04 · 관리자 / 공간·설비 구성"  @3884,7430 1440x900  fill=#FFFFFF  r=10
+  FRAME "TopBar"  @3884,7430 1440x64  stroke=#E5E5E3/1
+    FRAME "NavLeft"  @3938,7452 134x20
+      FRAME "NavLeft"  @3938,7452 134x20
+        FRAME "Frame 180"  @3938,7452 134x20
+          INSTANCE "App/Logo"  @3938,7456 55x13
+          TEXT "관리자 콘솔"  @4003,7452 69x20  text='관리자 콘솔'  Inter Medium 14px  #14542E
+    FRAME "Frame 12"  @5212,7453 58x18
+      FRAME "아이콘"  @5212,7454 16x16
+        VECTOR "Vector"  @5218,7457 5x5  stroke=#8A8A8A/1
+        VECTOR "Vector"  @5215,7463 9x4  stroke=#8A8A8A/1
+      TEXT "김투자"  @5236,7453 34x18  text='최관리'  Inter Regular 12px  #4A4A4A
+  FRAME "BodyRow"  @3884,7494 1440x836
+    FRAME "Sidebar"  @3884,7494 195x836  stroke=#EDEDEB/1
+      FRAME "NavRow"  @3909,7518 154x14
+        FRAME "아이콘"  @3909,7518 14x14
+          VECTOR "Vector"  @3911,7520 10x10  stroke=#8A8A8A/1
+        TEXT "콘솔 홈"  @3932,7518 35x14  text='콘솔 홈'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @3909,7550 154x14
+        FRAME "아이콘"  @3909,7550 14x14
+          VECTOR "Vector"  @3914,7553 4x4  stroke=#8A8A8A/1
+          VECTOR "Vector"  @3912,7558 8x4  stroke=#8A8A8A/1
+        TEXT "보증서 관리"  @3932,7550 57x14  text='보증서 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @3909,7582 154x14
+        FRAME "아이콘"  @3909,7582 14x14
+          VECTOR "Vector"  @3911,7584 10x9  stroke=#8A8A8A/1
+          VECTOR "Vector"  @3911,7587 10x0  stroke=#8A8A8A/1
+        TEXT "프로젝트 관리"  @3932,7582 67x14  text='프로젝트 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @3909,7614 154x14
+        FRAME "아이콘"  @3909,7614 14x14
+          VECTOR "Vector"  @3912,7616 0x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @3912,7617 8x5  stroke=#8A8A8A/1
+        TEXT "마일스톤 설정"  @3932,7614 67x14  text='마일스톤 설정'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @3909,7646 154x14
+        FRAME "아이콘"  @3909,7646 14x14
+          VECTOR "Vector"  @3911,7648 10x12  stroke=#14542E/1
+        TEXT "공간·설비 관리"  @3932,7646 70x14  text='공간·설비 관리'  Inter Medium 12px  #14542E
+      FRAME "NavRow"  @3909,7678 154x14
+        FRAME "아이콘"  @3909,7678 14x14
+          VECTOR "Vector"  @3911,7680 8x8  stroke=#8A8A8A/1
+          VECTOR "Vector"  @3918,7687 2x2  stroke=#8A8A8A/1
+        TEXT "운영자 관리"  @3932,7679 57x12  text='운영자 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @3909,7710 154x14
+        FRAME "아이콘"  @3909,7710 14x14
+          VECTOR "Vector"  @3911,7712 9x10  stroke=#8A8A8A/1
+        TEXT "외부전문가 판정"  @3932,7710 78x14  text='외부전문가 판정'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @3909,7742 154x14
+        FRAME "아이콘"  @3909,7742 14x14
+          VECTOR "Vector"  @3911,7744 10x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @3915,7746 3x6  stroke=#8A8A8A/1
+        TEXT "정산 규칙 설정"  @3932,7742 70x14  text='정산 규칙 설정'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @3909,7774 154x14
+        FRAME "아이콘"  @3909,7774 14x14
+          VECTOR "Vector"  @3911,7776 10x9  stroke=#8A8A8A/1
+        TEXT "정산 결과"  @3932,7774 46x14  text='정산 결과'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @3909,7806 154x14
+        FRAME "아이콘"  @3909,7806 14x14
+          VECTOR "Vector"  @3912,7808 8x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @3914,7813 4x2  stroke=#8A8A8A/1
+        TEXT "감사 로그 조회"  @3932,7806 70x14  text='감사 로그 조회'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @3909,7838 154x14
+        FRAME "아이콘"  @3909,7838 14x14
+          VECTOR "Vector"  @3914,7841 4x4  stroke=#8A8A8A/1
+          VECTOR "Vector"  @3912,7846 8x4  stroke=#8A8A8A/1
+        TEXT "권한 관리"  @3932,7838 46x14  text='권한 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @3909,7870 154x14
+        FRAME "아이콘"  @3909,7870 14x14
+          VECTOR "Vector"  @3911,7871 10x9  stroke=#8A8A8A/1
+          VECTOR "Vector"  @3915,7882 2x1  stroke=#8A8A8A/1
+        TEXT "알림 발송"  @3932,7870 46x14  text='알림 발송'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @3909,7902 154x14
+        FRAME "아이콘"  @3909,7902 14x14
+          VECTOR "Vector"  @3911,7906 10x6  stroke=#8A8A8A/1
+        TEXT "AML · 이상거래 관리"  @3932,7902 101x14  text='AML · 이상거래 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "Spacer"  @3909,7934 154x340
+      FRAME "NavRow"  @3909,8292 154x14
+        FRAME "아이콘"  @3909,8292 14x14
+          VECTOR "Vector"  @3912,8294 3x9  stroke=#8A8A8A/1
+          VECTOR "Vector"  @3918,8297 2x5  stroke=#8A8A8A/1
+          VECTOR "Vector"  @3915,8299 6x0  stroke=#8A8A8A/1
+        TEXT "로그아웃"  @3932,8292 43x14  text='로그아웃'  Inter Regular 12px  #4A4A4A
+      ROUNDED_RECTANGLE "Rectangle"  @3895,7645 2x16  fill=#14542E
+    FRAME "A-04 · 관리자 / 공간·설비 구성"  @4079,7494 1245x836  fill=#FFFFFF
+      TEXT "공간·설비 관리"  @4133,7518 85x20  text='공간·설비 관리'  Inter Semi Bold 13px  #14542E
+      TEXT "공간에 들어갈 설비를 먼저 구성해요"  @4133,7556 354x29  text='공간에 들어갈 설비를 먼저 구성해요'  Inter Bold 25px  #1A1A1A
+      TEXT "웹에서는 종류·수량·배치를 관리하고, 현장 운영자는 앱으로 설비 코드를 스캔해 실제 장치와 연결합니다."  @4133,7603 515x18  text='웹에서는 종류·수량·배치를 관리하고, 현장 운영자는 앱으로 설비 코드를 스캔해 실제 장치와 연결합니다.'  Inter Regular 13px  #4A4A4A
+      FRAME "Content"  @4133,7639 1137x553
+        FRAME "Left Column"  @4133,7639 697x553
+          FRAME "공간 선택"  @4133,7639 697x97  fill=#F1F4F2  stroke=#E5E5E3/1  r=10
+            TEXT "성수 로컬팜 후보지 A · 전용 82㎡"  @4149,7655 251x23  text='성수 로컬팜 후보지 A · 전용 82㎡'  Inter Bold 17px  #1A1A1A
+            TEXT "개점 준비 중 · 운영자 김운영"  @4149,7702 142x18  text='개점 준비 중 · 운영자 김운영'  Inter Regular 13px  #1A1A1A
+          FRAME "Zone"  @4133,7752 697x136  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+            TEXT "재배존 A"  @4149,7768 68x23  text='재배존 A'  Inter Semi Bold 15px  #1A1A1A
+            TEXT "수경재배 랙 4대 · LED 12개"  @4149,7815 141x18  text='수경재배 랙 4대 · LED 12개'  Inter Regular 13px  #1A1A1A
+            TEXT "연결 12 / 16"  @4149,7857 58x15  text='연결 12 / 16'  Inter Semi Bold 12px  #1B5E3F
+          FRAME "Zone"  @4133,7904 697x136  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+            TEXT "재배존 B"  @4149,7920 66x23  text='재배존 B'  Inter Semi Bold 15px  #1A1A1A
+            TEXT "수경재배 랙 3대 · LED 9개"  @4149,7967 136x18  text='수경재배 랙 3대 · LED 9개'  Inter Regular 13px  #1A1A1A
+            TEXT "연결 12 / 12"  @4149,8009 57x15  text='연결 12 / 12'  Inter Semi Bold 12px  #14542E
+          FRAME "Zone"  @4133,8056 697x136  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+            TEXT "환경·공용"  @4149,8072 72x23  text='환경·공용'  Inter Semi Bold 15px  #1A1A1A
+            TEXT "온습도 3개 · CO₂ 2개 · 허브 1대"  @4149,8119 162x18  text='온습도 3개 · CO₂ 2개 · 허브 1대'  Inter Regular 13px  #1A1A1A
+            TEXT "연결 5 / 6"  @4149,8161 47x15  text='연결 5 / 6'  Inter Semi Bold 12px  #1B5E3F
+        FRAME "Right Column"  @4846,7639 424x369
+          FRAME "미연결 설비"  @4846,7639 424x139  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+            TEXT "연결 대기 5개"  @4862,7655 103x23  text='연결 대기 5개'  Inter Bold 16px  #1A1A1A
+            TEXT "LED-013~016 · HUB-001"  @4862,7702 139x18  text='LED-013~016 · HUB-001'  Inter Regular 13px  #4A4A4A
+            TEXT "운영자 앱에서 설비의 QR/바코드를 스캔하면 이 공간에 자동 연결됩니다."  @4862,7744 361x18  text='운영자 앱에서 설비의 QR/바코드를 스캔하면 이 공간에 자동 연결됩니다.'  Inter Regular 12px  #4A4A4A
+          FRAME "Button"  @4846,7794 424x44  fill=#14542E  stroke=#14542E/1  r=6
+            TEXT "앱 연결용 작업 열기"  @5000,7806 115x20  text='앱 연결용 작업 열기'  Inter Semi Bold 13px  #FFFFFF
+          FRAME "Button"  @4846,7854 424x44  fill=#FFFFFF  stroke=#E5E5E3/1  r=6
+            TEXT "설비 구성 수정"  @5016,7866 85x20  text='설비 구성 수정'  Inter Semi Bold 13px  #1A1A1A
+          FRAME "운영 전 점검"  @4846,7914 424x94  fill=#F1F4F2  stroke=#E5E5E3/1  r=10
+            TEXT "운영 가능 전환 조건"  @4862,7930 115x20  text='운영 가능 전환 조건'  Inter Semi Bold 14px  #1A1A1A
+            TEXT "필수 설비 연결 100% · 통신 테스트 통과 · 센서값 정상"  @4862,7974 270x18  text='필수 설비 연결 100% · 통신 테스트 통과 · 센서값 정상'  Inter Regular 12px  #4A4A4A

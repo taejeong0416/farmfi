@@ -1,0 +1,27 @@
+FRAME "B-00E · 구독 없음 / 빈 상태"  @-367,3258 1440x900  fill=#FFFFFF  r=10
+  FRAME "TopNav"  @-367,3258 1440x64  stroke=#E5E5E3/1
+    FRAME "NavLeft"  @-313,3280 251x20
+      INSTANCE "App/Logo"  @-313,3283 61x14
+      FRAME "NavLinks"  @-189,3280 127x20
+        TEXT "정기구독"  @-189,3280 52x20  text='정기구독'  Inter Medium 14px  #14542E
+        TEXT "내 구독"  @-105,3280 43x20  text='내 구독'  Inter Regular 14px  #4A4A4A
+    FRAME "Frame 12"  @961,3282 58x16
+      FRAME "아이콘"  @961,3282 16x16
+        VECTOR "Vector"  @967,3285 5x5  stroke=#8A8A8A/1
+        VECTOR "Vector"  @964,3291 9x4  stroke=#8A8A8A/1
+      TEXT "이소비"  @985,3282 34x15  text='이소비'  Inter Regular 12px  #4A4A4A
+  FRAME "BodyContainer"  @-367,3322 1440x836
+    TEXT "내 구독"  @-313,3354 72x29  text='내 구독'  Inter Bold 24px  #1A1A1A
+    FRAME "CenterRow"  @-313,3415 1332x398
+      FRAME "CenterWrap"  @121,3415 464x398
+        FRAME "Frame"  @121,3415 464x398  r=12
+          FRAME "alert-triangle"  @293,3447 120x120  fill=#F1F4F2  r=60
+            BOOLEAN_OPERATION "Union"  @324,3480 57x50  fill=#14542E
+              VECTOR "Vector"  @327,3482 52x45  stroke=#14542E/4
+              VECTOR "Vector"  @353,3498 0x10  stroke=#000000/4
+              VECTOR "Vector"  @353,3518 0x0  stroke=#000000/4
+          TEXT "아직 이용 중인 구독이 없어요"  @209,3591 288x29  text='아직 이용 중인 구독이 없어요'  Inter Bold 24px  #1A1A1A
+          TEXT "가까운 팜의 생산 슬롯을 확인하고, 필요한 만큼만 정기 픽업해보세요."  @153,3644 400x21  text='가까운 팜의 생산 슬롯을 확인하고, 필요한 만큼만 정기 픽업해보세요.'  Inter Regular 14px  #8A8A8A
+          FRAME "Button"  @213,3689 280x50  fill=#14542E  r=6
+            TEXT "정기구독 플랜 둘러보기"  @284,3704 137x20  text='정기구독 플랜 둘러보기'  Inter Medium 14px  #FFFFFF
+          TEXT "배송 상품이 아니라 지정한 팜에서 직접 픽업하는 서비스입니다."  @196,3763 314x18  text='배송 상품이 아니라 지정한 팜에서 직접 픽업하는 서비스입니다.'  Inter Regular 12px  #8A8A8A

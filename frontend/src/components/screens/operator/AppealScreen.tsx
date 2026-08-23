@@ -2,23 +2,18 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Button,
   Card,
   EmptyState,
-  InfoRow,
   PanelShell,
+  Shell,
   SkeletonBlock,
   TextArea,
 } from "@/components/ui";
 import { formatDate } from "@/lib/format";
-import {
-  MILESTONE_STATUS_LABEL,
-  getJson,
-  postJson,
-  won,
-} from "../api";
+import { MILESTONE_STATUS_LABEL, getJson, postJson, won } from "../api";
 
 type MilestoneDetail = {
   id: string;
@@ -31,25 +26,68 @@ type MilestoneDetail = {
   project: { id: string; name: string; location: string | null };
 };
 
+type AppealComment = {
+  id: string;
+  authorRole: string;
+  body: string;
+  attachmentUrl: string | null;
+  createdAt: string;
+};
+
+type AppealDetail = {
+  id: string;
+  reason: string;
+  status: string;
+  decision: string | null;
+  decidedAt: string | null;
+  createdAt: string;
+  comments: AppealComment[];
+};
+
+const ROLE_LABEL: Record<string, string> = {
+  operator: "운영자",
+  admin: "플랫폼 운영팀",
+  auditor: "외부 전문가",
+};
+
 export function AppealScreen({ milestoneId }: { milestoneId: string }) {
   const router = useRouter();
-  const { data, isLoading } = useQuery({
+  const qc = useQueryClient();
+
+  const { data: milestone, isLoading } = useQuery({
     queryKey: ["milestone", milestoneId],
     queryFn: () =>
       getJson<{ milestone: MilestoneDetail }>(`/api/milestones/${milestoneId}`),
     select: (d) => d.milestone,
   });
 
-  const [reason, setReason] = useState("");
+  // 이미 접수된 건이 있으면 스레드를 이어서 보여준다.
+  const { data: appealId } = useQuery({
+    queryKey: ["appeals", milestoneId],
+    queryFn: () =>
+      getJson<{ appeals: { id: string }[] }>(
+        `/api/appeals?milestoneId=${milestoneId}`,
+      ),
+    select: (d) => d.appeals[0]?.id ?? null,
+  });
+
+  const { data: appeal } = useQuery({
+    queryKey: ["appeal", appealId],
+    enabled: !!appealId,
+    queryFn: () => getJson<{ appeal: AppealDetail }>(`/api/appeals/${appealId}`),
+    select: (d) => d.appeal,
+  });
+
+  const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
 
-  if (isLoading || !data) {
+  if (isLoading || !milestone) {
     return (
-      <PanelShell>
-        <SkeletonBlock height={360} />
-      </PanelShell>
+      <Shell>
+        <SkeletonBlock height={420} />
+      </Shell>
     );
   }
 
@@ -57,10 +95,16 @@ export function AppealScreen({ milestoneId }: { milestoneId: string }) {
     setBusy(true);
     setError(null);
     try {
-      await postJson(`/api/milestones/${milestoneId}/appeals`, {
-        reason: reason.trim(),
-      });
-      setDone(true);
+      if (appealId) {
+        await postJson(`/api/appeals/${appealId}/comments`, { body: text.trim() });
+        setText("");
+        await qc.invalidateQueries({ queryKey: ["appeal", appealId] });
+      } else {
+        await postJson(`/api/milestones/${milestoneId}/appeals`, {
+          reason: text.trim(),
+        });
+        setDone(true);
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "접수에 실패했습니다.");
     } finally {
@@ -85,62 +129,124 @@ export function AppealScreen({ milestoneId }: { milestoneId: string }) {
   }
 
   return (
-    <PanelShell>
-      <h1 className="text-22 font-bold text-ink">증빙 보완 · 이의제기</h1>
-      <p className="mt-3 text-14 text-body">
-        판정에 이견이 있으면 근거를 적어 다시 검토를 요청할 수 있습니다.
-      </p>
-
-      <Card className="mt-7">
-        <p className="text-15 font-bold text-ink">
-          {data.project.name} · {data.seq}단계 {data.name}
-        </p>
-        <div className="mt-4">
-          <InfoRow
-            label="현재 상태"
-            value={MILESTONE_STATUS_LABEL[data.status] ?? data.status}
-          />
-          <InfoRow label="집행 예정액" value={won(data.releaseAmount)} />
-          <InfoRow
-            label="최근 제출"
-            value={
-              data.evidenceSubmittedAt
-                ? formatDate(data.evidenceSubmittedAt)
-                : "없음"
-            }
-          />
-        </div>
-        {data.reviewNote ? (
-          <div className="mt-5 rounded-8 border border-line bg-surface px-5 py-4">
-            <p className="text-12 font-medium text-danger">판정 사유</p>
-            <p className="mt-2 text-12 leading-5 text-body">{data.reviewNote}</p>
-          </div>
-        ) : null}
-      </Card>
-
-      <Card className="mt-4">
-        <p className="text-14 font-bold text-ink">이의제기 사유</p>
-        <div className="mt-3">
-          <TextArea
-            placeholder="어떤 부분이 사실과 다른지, 어떤 자료로 확인할 수 있는지 적어 주세요."
-            value={reason}
-            onChange={(e) => setReason(e.target.value)}
-          />
-        </div>
-        {error ? <p className="mt-4 text-12 text-danger">{error}</p> : null}
-        <div className="mt-5 grid grid-cols-2 gap-3">
-          <Button full disabled={busy || !reason.trim()} onClick={submit}>
-            {busy ? "접수 중" : "이의제기 접수"}
-          </Button>
-          <Button
-            full
-            variant="ghost"
-            href={`/operator/milestones/${milestoneId}/evidence`}
-          >
+    <Shell>
+      <p className="text-12 text-muted">{milestone.project.name}</p>
+      <div className="mt-2 flex items-end justify-between gap-6">
+        <h1 className="text-24 font-bold text-ink">
+          {milestone.seq}단계 {milestone.name} 증빙 이의제기
+        </h1>
+        <div className="flex gap-2">
+          <Button variant="ghost" href={`/operator/milestones/${milestoneId}/evidence`}>
             증빙 다시 제출
           </Button>
+          <Button disabled={busy || !text.trim()} onClick={submit}>
+            {busy ? "보내는 중" : appealId ? "코멘트 남기기" : "이의제기 접수"}
+          </Button>
         </div>
-      </Card>
-    </PanelShell>
+      </div>
+
+      <div className="mt-7 grid grid-cols-[1fr_460px] gap-6">
+        <div className="space-y-4">
+          <Card>
+            <p className="text-14 font-bold text-ink">보완 요청 사유</p>
+            <p className="mt-3 text-12 leading-5 text-body">
+              {milestone.reviewNote ?? "기록된 보완 요청 사유가 없습니다."}
+            </p>
+            {milestone.evidenceSubmittedAt ? (
+              <p className="mt-3 text-12 text-muted">
+                {formatDate(milestone.evidenceSubmittedAt)}
+              </p>
+            ) : null}
+          </Card>
+
+          <Card>
+            <p className="text-14 font-bold text-ink">제출 이력</p>
+            <div className="mt-4 space-y-3">
+              <HistoryRow
+                label="1차 제출"
+                at={milestone.evidenceSubmittedAt}
+              />
+              <HistoryRow label="보완 요청 접수" at={appeal?.createdAt ?? null} />
+            </div>
+          </Card>
+
+          <Card>
+            <p className="text-14 font-bold text-ink">단계 정보</p>
+            <div className="mt-4 space-y-3">
+              <HistoryRow
+                label="현재 상태"
+                text={MILESTONE_STATUS_LABEL[milestone.status] ?? milestone.status}
+              />
+              <HistoryRow label="집행 예정액" text={won(milestone.releaseAmount)} />
+            </div>
+          </Card>
+        </div>
+
+        <div className="space-y-4">
+          <Card>
+            <p className="text-14 font-bold text-ink">판정</p>
+            <p className="mt-3 text-12 leading-5 text-body">
+              {appeal?.decision ??
+                "아직 최종 판정이 나오지 않았습니다. 운영팀 재검증이 진행 중입니다."}
+            </p>
+          </Card>
+
+          <Card>
+            <p className="text-14 font-medium text-ink">코멘트 스레드</p>
+            {appeal?.comments.length ? (
+              <div className="mt-4 space-y-5">
+                {appeal.comments.map((c) => (
+                  <div key={c.id}>
+                    <p className="text-12 text-muted">
+                      {ROLE_LABEL[c.authorRole] ?? c.authorRole} ·{" "}
+                      {formatDate(c.createdAt)}
+                    </p>
+                    <p className="mt-1.5 text-12 leading-5 text-ink">{c.body}</p>
+                    {c.attachmentUrl ? (
+                      <p className="mt-1.5 text-12 text-brand">{c.attachmentUrl}</p>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-3 text-12 text-muted">
+                아직 오간 의견이 없습니다.
+              </p>
+            )}
+
+            <div className="mt-5">
+              <TextArea
+                placeholder="추가 설명을 입력하세요. 입력한 내용은 운영팀과 외부 전문가에게 그대로 전달됩니다."
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+              />
+            </div>
+            {error ? <p className="mt-3 text-12 text-danger">{error}</p> : null}
+            <p className="mt-3 text-12 text-muted">
+              외부 전문가 최종 판정 이후에는 동일 단계에 대한 이의제기가 불가합니다.
+            </p>
+          </Card>
+        </div>
+      </div>
+    </Shell>
+  );
+}
+
+function HistoryRow({
+  label,
+  at,
+  text,
+}: {
+  label: string;
+  at?: string | null;
+  text?: string;
+}) {
+  return (
+    <div className="flex items-center justify-between">
+      <span className="text-12 text-muted">{label}</span>
+      <span className="text-12 font-medium text-ink">
+        {text ?? (at ? formatDate(at) : "—")}
+      </span>
+    </div>
   );
 }

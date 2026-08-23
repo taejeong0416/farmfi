@@ -74,6 +74,9 @@ export function ComposeScreen() {
         이 지점에서 이번 주 수확·보유 중인 작물 {packSize}개와 드레싱{" "}
         {DRESSING_COUNT}봉을 선택하세요.
       </p>
+      <p className="mt-2 text-12 text-muted">
+        작물 수급에 따라 품절된 작물은 비슷한 품목으로 변경을 제안할 수 있어요.
+      </p>
 
       <div className="mt-8 flex items-center justify-between">
         <h2 className="text-15 font-bold text-ink">작물 선택</h2>

@@ -41,20 +41,19 @@ export function StartScreen() {
             />
           </div>
 
-          <div className="mt-6 flex items-center gap-5 rounded-12 border border-line px-6 py-6">
-            <span className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full bg-brand-soft text-13 font-bold text-brand">
-              운
-            </span>
-            <div className="flex-1">
-              <p className="text-15 font-bold text-ink">운영자로 이용</p>
-              <p className="mt-2 text-12 text-muted">
-                지도에서 운영할 공간을 찾고, 개점 준비와 보증서를 관리해요.
-              </p>
-              <p className="mt-2.5 text-11 font-medium text-brand">
-                운영 자격 확인이 필요해요
-              </p>
+          <div className="mt-6 rounded-10 border border-line px-[17px] py-[17px]">
+            <p className="text-18 font-semibold text-ink">운영자로 이용</p>
+            <p className="mt-4 text-12 text-body">
+              지도에서 운영할 공간을 찾고, 개점 준비와 보증서를 관리해요.
+            </p>
+            <p className="mt-3.5 text-11 font-medium text-brand">
+              운영 자격 확인이 필요해요
+            </p>
+            <div className="mt-3.5">
+              <Button href="/operator/spaces" full>
+                운영자 화면으로
+              </Button>
             </div>
-            <Button href="/operator/spaces">운영자 화면으로</Button>
           </div>
 
           <p className="mt-8 text-center text-12 text-muted">

@@ -177,7 +177,7 @@ export function ApplicationsScreen() {
       </div>
 
       <p className="mt-5 text-12 text-muted">
-        모집 마감 전까지만 취소할 수 있으며, 마감 이후에는 취소나 환불을 요청할 수 없습니다.
+        신청 취소는 모집 마감 전까지만 가능합니다. 미배정분은 마감 후 3영업일 이내 연결 계좌로 환불됩니다.
       </p>
     </Shell>
   );

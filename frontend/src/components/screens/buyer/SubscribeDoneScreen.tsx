@@ -46,7 +46,7 @@ export function SubscribeDoneScreen() {
         </span>
         <h1 className="text-22 font-bold text-ink">정기구독이 시작됐어요</h1>
       </div>
-      <p className="mt-3 text-13 text-muted">
+      <p className="mt-3 text-14 text-muted">
         첫 픽업 전에 작물과 드레싱 구성을 한 번 더 알려드릴게요.
       </p>
 

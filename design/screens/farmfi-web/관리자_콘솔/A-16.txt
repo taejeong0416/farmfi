@@ -1,0 +1,207 @@
+FRAME "A-16 · 관리자 / 매출·비용 입력"  @21140,0 1440x971  fill=#FFFFFF  r=10
+  FRAME "TopBar"  @21140,0 1440x64  stroke=#E5E5E3/1
+    FRAME "NavLeft"  @21194,22 134x20
+      FRAME "Frame 180"  @21194,22 134x20
+        INSTANCE "App/Logo"  @21194,26 55x13
+        TEXT "관리자 콘솔"  @21259,22 69x20  text='관리자 콘솔'  Inter Medium 14px  #14542E
+    FRAME "Frame 12"  @22468,23 58x18
+      FRAME "아이콘"  @22468,24 16x16
+        VECTOR "Vector"  @22474,27 5x5  stroke=#8A8A8A/1
+        VECTOR "Vector"  @22471,33 9x4  stroke=#8A8A8A/1
+      TEXT "김투자"  @22492,23 34x18  text='최관리'  Inter Regular 12px  #4A4A4A
+  FRAME "BodyRow"  @21140,64 1440x907
+    FRAME "Sidebar"  @21140,64 195x907  stroke=#EDEDEB/1
+      FRAME "NavRow"  @21165,88 154x14
+        FRAME "아이콘"  @21165,88 14x14
+          VECTOR "Vector"  @21167,90 10x10  stroke=#8A8A8A/1
+        TEXT "콘솔 홈"  @21188,89 35x12  text='콘솔 홈'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @21165,120 154x14
+        FRAME "아이콘"  @21165,120 14x14
+          VECTOR "Vector"  @21170,123 4x4  stroke=#8A8A8A/1
+          VECTOR "Vector"  @21168,128 8x4  stroke=#8A8A8A/1
+        TEXT "보증서 관리"  @21188,120 57x14  text='보증서 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @21165,152 154x14
+        FRAME "아이콘"  @21165,152 14x14
+          VECTOR "Vector"  @21167,154 10x9  stroke=#8A8A8A/1
+          VECTOR "Vector"  @21167,157 10x0  stroke=#8A8A8A/1
+        TEXT "프로젝트 관리"  @21188,153 67x12  text='프로젝트 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @21165,184 154x14
+        FRAME "아이콘"  @21165,184 14x14
+          VECTOR "Vector"  @21168,186 0x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @21168,187 8x5  stroke=#8A8A8A/1
+        TEXT "마일스톤 설정"  @21188,185 67x12  text='마일스톤 설정'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @21165,216 154x14
+        FRAME "아이콘"  @21165,216 14x14
+          VECTOR "Vector"  @21167,218 10x12  stroke=#8A8A8A/1
+        TEXT "공간·설비 관리"  @21188,216 70x14  text='공간·설비 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @21165,248 154x14
+        FRAME "아이콘"  @21165,248 14x14
+          VECTOR "Vector"  @21167,250 8x8  stroke=#8A8A8A/1
+          VECTOR "Vector"  @21174,257 2x2  stroke=#8A8A8A/1
+        TEXT "운영팀 재검증"  @21188,249 57x12  text='운영자 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @21165,280 154x14
+        FRAME "아이콘"  @21165,280 14x14
+          VECTOR "Vector"  @21168,282 8x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @21170,287 4x2  stroke=#8A8A8A/1
+        TEXT "감사 로그 조회"  @21188,281 57x12  text='증빙 재검토'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @21165,312 154x14
+        FRAME "아이콘"  @21165,312 14x14
+          VECTOR "Vector"  @21167,314 9x10  stroke=#8A8A8A/1
+        TEXT "외부전문가 판정"  @21188,313 78x12  text='외부전문가 판정'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @21165,344 154x14
+        FRAME "아이콘"  @21165,344 14x14
+          VECTOR "Vector"  @21167,346 10x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @21171,348 3x6  stroke=#8A8A8A/1
+        TEXT "정산 규칙 설정"  @21188,345 70x12  text='정산 규칙 설정'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @21165,376 154x14
+        FRAME "아이콘"  @21165,376 14x14
+          VECTOR "Vector"  @21167,378 10x9  stroke=#8A8A8A/1
+        TEXT "정산 결과"  @21188,377 46x12  text='정산 결과'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @21165,408 154x14
+        FRAME "아이콘"  @21165,408 14x14
+          VECTOR "Vector"  @21168,410 8x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @21170,415 4x2  stroke=#8A8A8A/1
+        TEXT "감사 로그 조회"  @21188,409 70x12  text='감사 로그 조회'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @21165,440 154x14
+        FRAME "아이콘"  @21165,440 14x14
+          VECTOR "Vector"  @21170,443 4x4  stroke=#8A8A8A/1
+          VECTOR "Vector"  @21168,448 8x4  stroke=#8A8A8A/1
+        TEXT "권한 관리"  @21188,441 46x12  text='권한 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @21165,472 154x14
+        FRAME "아이콘"  @21165,472 14x14
+          VECTOR "Vector"  @21167,473 10x9  stroke=#8A8A8A/1
+          VECTOR "Vector"  @21171,484 2x1  stroke=#8A8A8A/1
+        TEXT "알림 발송"  @21188,473 46x12  text='알림 발송'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @21165,504 154x14
+        FRAME "아이콘"  @21165,504 14x14
+          VECTOR "Vector"  @21167,508 10x6  stroke=#8A8A8A/1
+        TEXT "AML · 이상거래 관리"  @21188,505 101x12  text='AML · 이상거래 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @21165,536 154x14
+        FRAME "아이콘"  @21165,536 14x14
+          VECTOR "Vector"  @21167,538 10x9  stroke=#14532D/1
+        TEXT "AML · 이상거래 관리"  @21188,537 70x12  text='매출·비용 입력'  Inter Medium 12px  #14532D
+      FRAME "Spacer"  @21165,568 154x347
+      FRAME "NavRow"  @21165,933 154x14
+        FRAME "아이콘"  @21165,933 14x14
+          VECTOR "Vector"  @21168,935 3x9  stroke=#8A8A8A/1
+          VECTOR "Vector"  @21174,938 2x5  stroke=#8A8A8A/1
+          VECTOR "Vector"  @21171,940 6x0  stroke=#8A8A8A/1
+        TEXT "로그아웃"  @21188,934 43x12  text='로그아웃'  Inter Regular 12px  #4A4A4A
+      ROUNDED_RECTANGLE "선"  @21151,535 2x16  fill=#14542E
+    FRAME "MainContent"  @21335,64 1245x907
+      TEXT "SectionLabel"  @21389,88 1137x17  text='매출·비용 입력'  Inter Medium 14px  #14542E
+      FRAME "PageHeaderRow"  @21389,123 1137x55  fill=#FFFFFF
+        FRAME "TitleStack"  @21389,123 354x55  fill=#FFFFFF
+          TEXT "매출 · 비용 입력"  @21389,123 354x31  text='이번 기간의 매출과 비용을 입력해요'  Inter Bold 24px  #1A1A1A
+          TEXT "부산 전포동 미니팜 1호 · 2026년 1분…"  @21389,160 290x18  text='부산 전포동 미니팜 1호 · 2026년 1분기 · 임시 저장 09:41'  Inter Regular 12px  #8A8A8A
+        FRAME "BtnGroup"  @22370,134 156x34  fill=#FFFFFF
+          FRAME "TempSaveBtn"  @22370,134 72x34  stroke=#E5E5E3/1  r=6
+            TEXT "임시 저장"  @22384,143 44x15  text='임시 저장'  Inter Medium 11px  #1A1A1A
+          FRAME "SettleBtn"  @22454,134 72x32  fill=#14542E  r=6
+            TEXT "정산 산출"  @22468,143 44x15  text='정산 산출'  Inter Medium 11px  #FFFFFF
+      FRAME "Frame 181"  @21389,196 1137x761
+        ROUNDED_RECTANGLE "선"  @21389,196 1137x1  fill=#EDEDEB
+        FRAME "Frame 182"  @21389,215 1137x706
+          FRAME "Frame 183"  @21389,215 1137x243
+            FRAME "SectionHeader"  @21389,215 1137x30  fill=#FFFFFF
+              TEXT "기간 매출"  @21389,218 71x23  text='기간 매출'  Inter Medium 14px  #1A1A1A
+              FRAME "AddBtn"  @22458,215 68x30  stroke=#E5E5E3/1  r=6
+                TEXT "항목 추가"  @22470,222 44x15  text='항목 추가'  Inter Medium 11px  #1A1A1A
+            FRAME "ColHeaderRow"  @21389,247 1137x38  fill=#FFFFFF
+              FRAME "Col"  @21389,257 897x18  fill=#FFFFFF
+                TEXT "항목"  @21389,257 23x18  text='항목'  Inter Regular 12px  #8A8A8A
+              FRAME "Col"  @22286,257 160x18  fill=#FFFFFF
+                TEXT "금액"  @22286,257 23x18  text='금액'  Inter Regular 12px  #8A8A8A
+              FRAME "Col"  @22446,257 80x18  fill=#FFFFFF
+                TEXT "출처"  @22446,257 23x18  text='출처'  Inter Regular 12px  #8A8A8A
+            ROUNDED_RECTANGLE "선"  @21389,287 1137x1  fill=#EDEDEB
+            FRAME "DataRow"  @21389,290 1137x58  fill=#FFFFFF
+              FRAME "Col"  @21389,310 897x18  fill=#FFFFFF
+                TEXT "자체몰 판매"  @21389,310 59x18  text='자체몰 판매'  Inter Regular 12px  #1A1A1A
+              FRAME "Col"  @22286,300 160x38  fill=#FFFFFF
+                FRAME "AmountBox"  @22286,300 140x38  stroke=#E5E5E3/1  r=6
+                  TEXT "9,400,000원"  @22334,309 84x20  text='9,400,000원'  Inter Medium 14px  #1A1A1A
+              FRAME "Col"  @22446,310 80x18  fill=#FFFFFF
+                TEXT "연동"  @22446,310 23x18  text='연동'  Inter Regular 12px  #4A4A4A
+            ROUNDED_RECTANGLE "선"  @21389,350 1137x1  fill=#F1F4F2
+            FRAME "DataRow"  @21389,353 1137x58  fill=#FFFFFF
+              FRAME "Col"  @21389,373 897x18  fill=#FFFFFF
+                TEXT "B2B 납품"  @21389,373 49x18  text='B2B 납품'  Inter Regular 12px  #1A1A1A
+              FRAME "Col"  @22286,363 160x38  fill=#FFFFFF
+                FRAME "AmountBox"  @22286,363 140x38  stroke=#E5E5E3/1  r=6
+                  TEXT "4,800,000원"  @22334,372 83x20  text='4,800,000원'  Inter Medium 14px  #1A1A1A
+              FRAME "Col"  @22446,373 80x18  fill=#FFFFFF
+                TEXT "직접 입력"  @22446,373 48x18  text='직접 입력'  Inter Regular 12px  #4A4A4A
+            ROUNDED_RECTANGLE "선"  @21389,413 1137x1  fill=#F1F4F2
+            FRAME "SummaryRow"  @21389,416 1137x39  fill=#FFFFFF
+              TEXT "매출 합계"  @21409,428 44x15  text='매출 합계'  Inter Medium 11px  #1A1A1A
+              TEXT "14,200,000원"  @22416,426 90x20  text='14,200,000원'  Inter Medium 14px  #1A1A1A
+            ROUNDED_RECTANGLE "선"  @21389,457 1137x1  fill=#EDEDEB
+          FRAME "Frame 184"  @21389,476 1137x445
+            FRAME "SectionHeader"  @21389,476 1137x30  fill=#FFFFFF
+              TEXT "운영 비용"  @21389,480 71x23  text='운영 비용'  Inter Medium 14px  #1A1A1A
+              FRAME "AddBtn"  @22458,476 68x30  stroke=#E5E5E3/1  r=6
+                TEXT "항목 추가"  @22470,484 44x15  text='항목 추가'  Inter Medium 11px  #1A1A1A
+            FRAME "ColHeaderRow"  @21389,508 1137x38  fill=#FFFFFF
+              FRAME "Col"  @21389,518 897x18  fill=#FFFFFF
+                TEXT "항목"  @21389,518 23x18  text='항목'  Inter Regular 12px  #8A8A8A
+              FRAME "Col"  @22286,518 160x18  fill=#FFFFFF
+                TEXT "금액"  @22286,518 23x18  text='금액'  Inter Regular 12px  #8A8A8A
+              FRAME "Col"  @22446,518 80x18  fill=#FFFFFF
+                TEXT "출처"  @22446,518 23x18  text='출처'  Inter Regular 12px  #8A8A8A
+            ROUNDED_RECTANGLE "선"  @21389,548 1137x1  fill=#EDEDEB
+            FRAME "DataRow"  @21389,551 1137x58  fill=#FFFFFF
+              FRAME "Col"  @21389,571 897x18  fill=#FFFFFF
+                TEXT "인건비"  @21389,571 34x18  text='인건비'  Inter Regular 12px  #1A1A1A
+              FRAME "Col"  @22286,561 160x38  fill=#FFFFFF
+                FRAME "AmountBox"  @22286,561 140x38  stroke=#E5E5E3/1  r=6
+                  TEXT "4,200,000원"  @22334,570 83x20  text='4,200,000원'  Inter Medium 14px  #1A1A1A
+              FRAME "Col"  @22446,571 80x18  fill=#FFFFFF
+                TEXT "직접 입력"  @22446,571 48x18  text='직접 입력'  Inter Regular 12px  #4A4A4A
+            ROUNDED_RECTANGLE "선"  @21389,611 1137x1  fill=#F1F4F2
+            FRAME "DataRow"  @21389,614 1137x58  fill=#FFFFFF
+              FRAME "Col"  @21389,634 897x18  fill=#FFFFFF
+                TEXT "전력 · 수도"  @21389,634 55x18  text='전력 · 수도'  Inter Regular 12px  #1A1A1A
+              FRAME "Col"  @22286,624 160x38  fill=#FFFFFF
+                FRAME "AmountBox"  @22286,624 140x38  stroke=#E5E5E3/1  r=6
+                  TEXT "2,600,000원"  @22334,633 83x20  text='2,600,000원'  Inter Medium 14px  #1A1A1A
+              FRAME "Col"  @22446,634 80x18  fill=#FFFFFF
+                TEXT "연동"  @22446,634 23x18  text='연동'  Inter Regular 12px  #4A4A4A
+            ROUNDED_RECTANGLE "선"  @21389,674 1137x1  fill=#F1F4F2
+            FRAME "DataRow"  @21389,677 1137x58  fill=#FFFFFF
+              FRAME "Col"  @21389,697 897x18  fill=#FFFFFF
+                TEXT "자재 · 소모품"  @21389,697 66x18  text='자재 · 소모품'  Inter Regular 12px  #1A1A1A
+              FRAME "Col"  @22286,687 160x38  fill=#FFFFFF
+                FRAME "AmountBox"  @22286,687 140x38  stroke=#E5E5E3/1  r=6
+                  TEXT "1,900,000원"  @22337,696 81x20  text='1,900,000원'  Inter Medium 14px  #1A1A1A
+              FRAME "Col"  @22446,697 80x18  fill=#FFFFFF
+                TEXT "직접 입력"  @22446,697 48x18  text='직접 입력'  Inter Regular 12px  #4A4A4A
+            ROUNDED_RECTANGLE "선"  @21389,737 1137x1  fill=#F1F4F2
+            FRAME "DataRow"  @21389,740 1137x58  fill=#FFFFFF
+              FRAME "Col"  @21389,760 897x18  fill=#FFFFFF
+                TEXT "기타 운영비"  @21389,760 59x18  text='기타 운영비'  Inter Regular 12px  #1A1A1A
+              FRAME "Col"  @22286,750 160x38  fill=#FFFFFF
+                FRAME "AmountBox"  @22286,750 140x38  stroke=#E5E5E3/1  r=6
+                  TEXT "700,000원"  @22347,759 70x20  text='700,000원'  Inter Medium 14px  #1A1A1A
+              FRAME "Col"  @22446,760 80x18  fill=#FFFFFF
+                TEXT "직접 입력"  @22446,760 48x18  text='직접 입력'  Inter Regular 12px  #4A4A4A
+            ROUNDED_RECTANGLE "선"  @21389,800 1137x1  fill=#F1F4F2
+            FRAME "SummaryRow"  @21389,803 1137x39  fill=#FFFFFF
+              TEXT "비용 합계"  @21409,815 44x15  text='비용 합계'  Inter Medium 11px  #1A1A1A
+              TEXT "9,400,000원"  @22422,812 84x20  text='9,400,000원'  Inter Medium 14px  #1A1A1A
+            ROUNDED_RECTANGLE "선"  @21389,844 1137x1  fill=#EDEDEB
+            FRAME "SummaryStatsRow"  @21389,847 1137x74  fill=#FFFFFF
+              FRAME "Stat"  @21389,860 110x47  fill=#FFFFFF
+                TEXT "분배 대상"  @21389,860 48x18  text='분배 대상'  Inter Regular 12px  #8A8A8A
+                FRAME "ValueRow"  @21389,884 110x23  fill=#FFFFFF
+                  TEXT "4,800,000"  @21389,884 96x23  text='4,800,000'  Inter Bold 18px  #14542E
+                  TEXT "원"  @21487,890 12x18  text='원'  Inter Regular 12px  #4A4A4A
+              ROUNDED_RECTANGLE "선"  @21539,847 1x74  fill=#EDEDEB
+              FRAME "Stat"  @21580,861 85x46  fill=#FFFFFF
+                TEXT "손익 구간"  @21580,861 48x18  text='손익 구간'  Inter Regular 12px  #8A8A8A
+                TEXT "적자 · updated"  @21580,887 85x20  text='월 배분 가능액'  Inter Medium 14px  #4A4A4A
+              ROUNDED_RECTANGLE "선"  @21705,847 1x74  fill=#EDEDEB
+              FRAME "Stat"  @21746,862 113x44  fill=#FFFFFF
+                TEXT "적용 규칙"  @21746,862 48x18  text='적용 규칙'  Inter Regular 12px  #8A8A8A
+                TEXT "투자자 80 · 운영자 20"  @21746,888 113x18  text='투자자 80 · 운영자 20'  Inter Regular 12px  #4A4A4A
+        TEXT "입력값을 저장하면 정산 규칙에 따라 정산 결…"  @21389,939 1137x18  text='입력값을 저장하면 정산 규칙에 따라 정산 결과가 자동 산출됩니다. 입력 · 수정 이력은 감사 로그에 기록됩니다.'  Inter Regular 12px  #8A8A8A

@@ -105,7 +105,7 @@ export function MilestonesScreen() {
         </>
       ) : null}
 
-      <h2 className="mt-8 text-15 font-bold text-ink">마일스톤 현황</h2>
+      <h2 className="mt-8 text-18 font-bold text-ink">마일스톤 현황</h2>
       <Card className="mt-4" padded={false}>
         <div className="px-6">
           {data.length === 0 ? (

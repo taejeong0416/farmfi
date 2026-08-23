@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "@/lib/auth";
-import { PageHeading, Shell } from "@/components/ui";
+import { AdminShell } from "@/components/screens/admin/AdminShell";
 import { MilestoneVerifyPanel } from "@/components/farmfi/admin/MilestoneVerifyPanel";
 
 export default async function AdminVerifyPage() {
@@ -10,13 +10,12 @@ export default async function AdminVerifyPage() {
   }
 
   return (
-    <Shell>
-      <PageHeading
-        eyebrow="관리자 콘솔"
-        title="마일스톤 검증"
-        desc="제출된 증빙을 AI 검증에 걸고, 통과한 단계만 집행합니다."
-      />
+    <AdminShell
+      label="마일스톤 검증"
+      title="제출된 증빙을 AI 검증에 걸어요"
+      desc="검증을 통과한 단계만 집행됩니다."
+    >
       <MilestoneVerifyPanel />
-    </Shell>
+    </AdminShell>
   );
 }

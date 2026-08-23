@@ -131,7 +131,7 @@ export function SettlementsScreen() {
     <Shell>
       <div className="flex items-end justify-between">
         <div>
-          <h1 className="text-22 font-bold text-ink">정산 · 지급 내역</h1>
+          <h1 className="text-18 font-bold text-ink">정산 · 지급 내역</h1>
           <p className="mt-3 text-13 text-muted">
             {list[0]?.project.name ?? "-"}
           </p>
@@ -153,7 +153,7 @@ export function SettlementsScreen() {
         </div>
       </Card>
 
-      <h2 className="mt-8 text-15 font-bold text-ink">단계별 집행 지급</h2>
+      <h2 className="mt-8 text-18 font-bold text-ink">단계별 집행 지급</h2>
       <div className="mt-4">
         <DataTable
           columns={milestoneColumns}
@@ -172,6 +172,10 @@ export function SettlementsScreen() {
           empty="정산 지급 내역이 없습니다."
         />
       </div>
+
+      <p className="mt-6 text-12 text-muted">
+        지급은 정산 확정 후 생성된 지급 파일 기준으로 처리되며, 보류 단계는 판정이 끝난 뒤 지급 대상에 포함됩니다.
+      </p>
     </Shell>
   );
 }

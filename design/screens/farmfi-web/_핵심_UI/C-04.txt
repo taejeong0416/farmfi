@@ -1,0 +1,31 @@
+FRAME "C-04 · 공통 / 이용 목적 선택"  @2694,-1267 730x643  fill=#FFFFFF  r=10
+  ROUNDED_RECTANGLE "Rectangle"  @2694,-1267 730x64  fill=#FFFFFF  stroke=#E5E5E3/1
+  TEXT "어떤 서비스를 이용할까요?"  @2726,-1173 268x29  text='어떤 서비스를 이용할까요?'  Inter Bold 28px  #1A1A1A
+  TEXT "로그인한 계정으로 투자, 정기구독, 운영 서비스를 이용할 수 있어요."  @2726,-1130 391x21  text='로그인한 계정으로 투자, 정기구독, 운영 서비스를 이용할 수 있어요.'  Inter Regular 14px  #8A8A8A
+  FRAME "Frame 59"  @2726,-1084 666x201
+    FRAME "Frame 55"  @2726,-1084 319x201  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+      FRAME "Frame 51"  @2743,-1067 285x167
+        TEXT "투자자로 이용"  @2743,-1067 285x23  text='투자자로 이용'  Inter Bold 20px  #1A1A1A
+        FRAME "Frame 54"  @2743,-1028 285x128
+          TEXT "검증된 단계에만 집행되는 공실 전환 프로젝트에 투자해요."  @2743,-1028 157x36  text='검증된 단계에만 집행되는\n공실 전환 프로젝트에 투자해요.'  Inter Regular 13px  #8A8A8A
+          TEXT "프로젝트 보기 · 내 투자 확인"  @2743,-978 285x18  text='프로젝트 보기 · 내 투자 확인'  Inter Medium 13px  #14542E
+          FRAME "Frame 39"  @2743,-946 285x46  fill=#14542E  stroke=#14542E/1  r=6
+            TEXT "투자자 화면으로"  @2838,-933 94x20  text='투자자 화면으로'  Inter Medium 14px  #FFFFFF
+    FRAME "Frame 56"  @3073,-1084 319x201  fill=#F1F4F2  stroke=#E5E5E3/1  r=10
+      FRAME "Frame 52"  @3090,-1067 285x167
+        TEXT "구매자로 이용"  @3090,-1067 285x23  text='구매자로 이용'  Inter Bold 20px  #1A1A1A
+        FRAME "Frame 53"  @3090,-1028 285x128
+          TEXT "가까운 미니팜에서 수확한 선택한 작물을 믹스팩으로 정기 픽업해요."  @3090,-1028 205x36  text='가까운 미니팜에서 수확한\n선택한 작물을 믹스팩으로 정기 픽업해요.'  Inter Regular 13px  #8A8A8A
+          TEXT "플랜 보기 · 내 픽업 관리"  @3090,-978 285x18  text='플랜 보기 · 내 픽업 관리'  Inter Medium 13px  #14542E
+          FRAME "Frame 40"  @3090,-946 285x46  fill=#14542E  stroke=#14542E/1  r=6
+            TEXT "구매자 화면으로"  @3186,-933 94x20  text='구매자 화면으로'  Inter Medium 14px  #FFFFFF
+  TEXT "나중에 상단 메뉴에서 언제든 바꿀 수 있습니다."  @2942,-671 234x18  text='나중에 상단 메뉴에서 언제든 바꿀 수 있습니다.'  Inter Regular 12px  #8A8A8A
+  FRAME "Frame 61"  @2726,-866 666x181  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+    FRAME "Frame 58"  @2743,-849 632x147
+      TEXT "운영자로 이용"  @2743,-849 632x23  text='운영자로 이용'  Inter Semi Bold 18px  #1A1A1A
+      FRAME "Frame 57"  @2743,-810 632x108
+        TEXT "지도에서 운영할 공간을 찾고, 개점 준비와 보증서를 관리해요."  @2743,-810 632x18  text='지도에서 운영할 공간을 찾고, 개점 준비와 보증서를 관리해요.'  Inter Regular 12px  #4A4A4A
+        TEXT "운영 자격 확인이 필요해요"  @2743,-778 632x18  text='운영 자격 확인이 필요해요'  Inter Medium 11px  #14542E
+        FRAME "Frame 41"  @2743,-746 632x44  fill=#14542E  r=6
+          TEXT "운영자 화면으로"  @3012,-734 94x20  text='운영자 화면으로'  Inter Semi Bold 12px  #FFFFFF
+  INSTANCE "App/Logo"  @2726,-1238 61x14

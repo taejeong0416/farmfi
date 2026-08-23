@@ -108,11 +108,12 @@ export function SpacesScreen() {
             <Link
               key={s.id}
               href={`/operator/spaces/${s.id}`}
-              className="block overflow-hidden rounded-12 border border-line bg-white transition-colors hover:border-brand"
+              className="block overflow-hidden rounded-10 border border-line bg-white transition-colors hover:border-brand"
             >
               <PhotoSlot
                 label="공간 사진"
-                className="h-[140px] rounded-none border-0 border-b border-line"
+                src="/assets/farm-building-indoor.png"
+                className="h-[140px] w-full rounded-none border-0 border-b border-line"
               />
               <div className="p-5">
                 <div className="flex items-center justify-between">
@@ -146,7 +147,7 @@ export function SpacesScreen() {
 
       <Card className="mt-8 flex items-center justify-between bg-brand">
         <div>
-          <p className="text-15 font-bold text-white">
+          <p className="text-18 font-bold text-white">
             내 조건에 맞는 공간이 없나요?
           </p>
           <p className="mt-2 text-12 text-brand-soft">

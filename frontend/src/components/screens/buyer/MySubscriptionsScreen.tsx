@@ -89,7 +89,7 @@ export function MySubscriptionsScreen() {
   return (
     <Shell>
       <h1 className="text-22 font-bold text-ink">내 구독</h1>
-      <p className="mt-3 text-13 text-muted">
+      <p className="mt-3 text-14 text-muted">
         생산량 안에서 작물과 드레싱 구성을 유연하게 바꿔보세요.
       </p>
 
@@ -163,7 +163,7 @@ export function MySubscriptionsScreen() {
                   />
                 </div>
 
-                <h3 className="mt-7 text-14 font-bold text-ink">이번 달 픽업</h3>
+                <h3 className="mt-7 text-17 font-bold text-ink">이번 달 픽업</h3>
                 <div className="mt-3">
                   {s.pickups.map((p) => (
                     <div
@@ -236,7 +236,7 @@ export function MySubscriptionsScreen() {
                     예정된 픽업이 없습니다.
                   </p>
                 )}
-                <p className="mt-5 text-11 text-muted">
+                <p className="mt-5 text-12 text-muted">
                   변경 가능 수량은 이번 주 생산 잔여분을 기준으로 표시됩니다.
                 </p>
               </Card>

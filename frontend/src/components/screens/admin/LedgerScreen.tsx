@@ -187,8 +187,8 @@ export function LedgerScreen() {
 
   return (
     <AdminShell
-      title="매출 · 비용 입력"
-      desc="정산 산출의 입력값. 매출은 판매 기록에서 자동으로 채워지고, 비용만 담당자가 적는다."
+      title="이번 기간의 매출과 비용을 입력해요"
+      desc="입력값을 저장하면 정산 규칙에 따라 정산 결과가 자동 산출됩니다. 입력 · 수정 이력은 감사 로그에 기록됩니다."
       action={
         <span className="text-12 text-muted">
           기준일 {data?.dataAsOf ? shortDate(data.dataAsOf) : "-"}

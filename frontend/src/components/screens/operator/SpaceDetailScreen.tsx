@@ -70,9 +70,13 @@ export function SpaceDetailScreen({ id }: { id: string }) {
 
       <div className="mt-7 flex items-start gap-8">
         <div className="flex-1">
-          <PhotoSlot label="공간 사진" className="h-[330px] w-full rounded-14" />
+          <PhotoSlot
+            label="공간 사진"
+            src="/assets/farm-building-indoor.png"
+            className="h-[330px] w-full rounded-10"
+          />
 
-          <h2 className="mt-8 text-20 font-bold text-ink">
+          <h2 className="mt-8 text-20 font-semibold text-ink">
             이 공간은 여기까지 준비됐어요
           </h2>
           <div className="mt-4 grid grid-cols-4 gap-4">
@@ -104,7 +108,7 @@ export function SpaceDetailScreen({ id }: { id: string }) {
 
           <Card className="mt-8 flex items-center justify-between rounded-14">
             <div>
-              <p className="text-15 font-bold text-ink">공간을 선택하기 전에</p>
+              <p className="text-15 font-semibold text-ink">공간을 선택하기 전에</p>
               <p className="mt-2 text-13 text-muted">
                 현장 방문을 예약하면 전력·급수 조건, 운영 동선, 주변 상권을 직접 확인할 수 있어요.
               </p>

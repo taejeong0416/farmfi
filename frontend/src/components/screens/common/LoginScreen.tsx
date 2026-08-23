@@ -40,7 +40,7 @@ export function LoginScreen() {
         </div>
         <form className="px-6 py-7" onSubmit={submit}>
           <h1 className="text-20 font-bold text-ink">로그인</h1>
-          <p className="mt-3 text-13 text-muted">
+          <p className="mt-3 text-12 text-muted">
             투자, 정기구독 또는 공간 운영을 시작하려면 로그인해주세요.
           </p>
 

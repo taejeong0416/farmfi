@@ -44,7 +44,7 @@ export function RolesScreen() {
 
   if (isLoading) {
     return (
-      <AdminShell title="권한 관리">
+      <AdminShell title="운영자별 접근 권한을 관리해요">
         <SkeletonBlock height={360} />
       </AdminShell>
     );
@@ -52,7 +52,7 @@ export function RolesScreen() {
 
   if (isError || !data) {
     return (
-      <AdminShell title="권한 관리">
+      <AdminShell title="운영자별 접근 권한을 관리해요">
         <EmptyState
           title="사용자 목록을 볼 수 없습니다"
           desc="관리자로 로그인한 뒤 다시 확인해 주세요."
@@ -135,8 +135,8 @@ export function RolesScreen() {
 
   return (
     <AdminShell
-      title="권한 관리"
-      desc="역할을 바꾸면 그 계정이 볼 수 있는 화면과 API가 함께 바뀝니다. 변경 기록은 감사 로그에 남습니다."
+      title="운영자별 접근 권한을 관리해요"
+      desc="권한 변경은 즉시 적용되며 변경 전후 값이 감사 로그에 기록됩니다. 외부 전문가 권한은 배정된 건에 한해 기한부로 부여됩니다."
       action={
         <span className="text-12 text-muted">사용자 {data.users.length}명</span>
       }

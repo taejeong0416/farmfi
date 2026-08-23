@@ -34,8 +34,8 @@ export function PlanScreen() {
       <h1 className="text-24 font-bold text-ink">
         {point?.name ?? "선택한 지점"}에서 받을 팩 크기를 골라주세요
       </h1>
-      <p className="mt-3 text-14 text-body">
-        선택한 지점의 생산량과 남은 구독 슬롯을 기준으로 신청할 수 있어요.
+      <p className="mt-3 text-12 text-body">
+        슬롯은 팜의 주간 생산량을 넘지 않도록 제한됩니다. 결제 완료 순서로 확정됩니다.
       </p>
 
       <Card className="mt-6 max-w-panel">

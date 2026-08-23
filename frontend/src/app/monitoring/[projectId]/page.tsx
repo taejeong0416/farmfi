@@ -106,7 +106,7 @@ export default function MonitoringPage() {
         desc: `${p.affectedSensors
           .map((s) => SENSOR_META[s].label)
           .join(", ")} 급변 (${p.anomalyScore.toFixed(1)}σ)`,
-        color: "#A34A3D",
+        color: "#DC2626",
       }));
     const driftEvents = data.drift
       .filter((d) => d.detected && d.detectedAt)
@@ -340,7 +340,7 @@ function DliPanel({
         <div className={styles.miniChart}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={bars} margin={{ top: 4, right: 4, bottom: 0, left: -18 }}>
-              <CartesianGrid stroke="#F2F2F0" vertical={false} />
+              <CartesianGrid stroke="#F1F4F2" vertical={false} />
               <XAxis
                 dataKey="ts"
                 tickFormatter={fmtDay}
@@ -458,7 +458,7 @@ function HarvestPanel({
         <div className={styles.miniChart}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={curve} margin={{ top: 4, right: 4, bottom: 0, left: -18 }}>
-              <CartesianGrid stroke="#F2F2F0" vertical={false} />
+              <CartesianGrid stroke="#F1F4F2" vertical={false} />
               <XAxis
                 dataKey="ts"
                 tickFormatter={fmtDay}
@@ -593,7 +593,7 @@ function SensorChart({
             data={display}
             margin={{ top: 6, right: 8, bottom: 0, left: -8 }}
           >
-            <CartesianGrid stroke="#F2F2F0" vertical={false} />
+            <CartesianGrid stroke="#F1F4F2" vertical={false} />
             {!isLux && (
               <>
                 <ReferenceArea
@@ -603,8 +603,8 @@ function SensorChart({
                   fillOpacity={0.07}
                   stroke="none"
                 />
-                <ReferenceLine y={gLo} stroke="#A34A3D" strokeDasharray="3 4" strokeOpacity={0.5} />
-                <ReferenceLine y={gHi} stroke="#A34A3D" strokeDasharray="3 4" strokeOpacity={0.5} />
+                <ReferenceLine y={gLo} stroke="#DC2626" strokeDasharray="3 4" strokeOpacity={0.5} />
+                <ReferenceLine y={gHi} stroke="#DC2626" strokeDasharray="3 4" strokeOpacity={0.5} />
               </>
             )}
             {driftTs && (
@@ -681,7 +681,7 @@ function SensorChart({
                       cx={props.cx}
                       cy={props.cy}
                       r={3.5}
-                      fill="#A34A3D"
+                      fill="#DC2626"
                       stroke="#fff"
                       strokeWidth={1}
                     />

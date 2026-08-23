@@ -1,52 +1,104 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { AppHeader, type NavItem } from "./AppHeader";
-import { useAuth, type AuthUserRole } from "@/lib/useAuth";
+import { useAuth } from "@/lib/useAuth";
 
-const PUBLIC_NAV: NavItem[] = [
-  { label: "투자", href: "/projects" },
-  { label: "정기구독", href: "/subscribe" },
-  { label: "FarmFi 소개", href: "/about" },
-];
-
-// 로그인한 역할이 자기 화면으로 바로 들어가는 링크.
-const ROLE_ENTRY: Partial<Record<AuthUserRole, NavItem>> = {
-  investor: { label: "내 투자", href: "/investor" },
-  operator: { label: "운영자 센터", href: "/operator" },
-  landlord: { label: "내 공간", href: "/landlord" },
-  admin: { label: "관리자 콘솔", href: "/admin" },
+type Shell = {
+  nav: NavItem[];
+  badge?: { text: string; as: "pill" | "text"; tone?: "investor" | "operator" };
 };
 
-export function SiteHeader() {
-  const { user, isAuthenticated, isLoading, logout } = useAuth();
-  const entry = user ? ROLE_ENTRY[user.role] : undefined;
+const PUBLIC: Shell = {
+  nav: [
+    { label: "홈", href: "/" },
+    { label: "정기구독하기", href: "/subscribe" },
+    { label: "투자자 시작하기", href: "/projects" },
+    { label: "운영자 시작하기", href: "/operator/spaces" },
+  ],
+};
 
-  const nav = entry ? [...PUBLIC_NAV, entry] : [...PUBLIC_NAV, { label: "운영자 시작", href: "/operator/spaces" }];
+const INVESTOR: Shell = {
+  badge: { text: "투자자 포털", as: "pill", tone: "investor" },
+  nav: [
+    { label: "프로젝트", href: "/projects" },
+    { label: "내 투자", href: "/investor" },
+    { label: "알림", href: "/investor/notifications" },
+  ],
+};
+
+const OPERATOR: Shell = {
+  badge: { text: "운영자 포털", as: "pill", tone: "operator" },
+  nav: [
+    { label: "공간 찾기", href: "/operator/spaces" },
+    { label: "내 준비 현황", href: "/operator" },
+    { label: "보증서", href: "/operator/certificate" },
+  ],
+};
+
+const BUYER: Shell = {
+  nav: [
+    { label: "정기구독", href: "/subscribe" },
+    { label: "내 구독", href: "/subscriptions" },
+  ],
+};
+
+const ADMIN: Shell = { nav: [], badge: { text: "관리자 콘솔", as: "text" } };
+
+/** 로그인·회원가입·본인확인은 내비 없는 단독 패널이다. */
+const BARE = ["/login", "/signup", "/start", "/verify"];
+
+function shellFor(pathname: string): Shell | null {
+  if (BARE.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
+    return null;
+  }
+  if (pathname.startsWith("/admin")) return ADMIN;
+  if (pathname.startsWith("/investor") || pathname.startsWith("/projects")) {
+    return INVESTOR;
+  }
+  if (pathname.startsWith("/operator")) return OPERATOR;
+  if (pathname.startsWith("/subscribe") || pathname.startsWith("/subscriptions")) {
+    return BUYER;
+  }
+  return PUBLIC;
+}
+
+export function SiteHeader() {
+  const pathname = usePathname() ?? "/";
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
+  const shell = shellFor(pathname);
+
+  if (!shell) return null;
+
+  const isAdmin = shell === ADMIN;
 
   return (
     <AppHeader
-      nav={nav}
+      nav={shell.nav}
+      badge={shell.badge}
       right={
         isLoading ? null : isAuthenticated ? (
           <div className="flex items-center gap-3">
             <span className="text-12 text-body">{user?.name}</span>
-            <button
-              type="button"
-              onClick={() => void logout()}
-              className="h-9 rounded-6 border border-line px-4 text-12 font-medium text-ink hover:bg-surface"
-            >
-              로그아웃
-            </button>
+            {isAdmin ? null : (
+              <button
+                type="button"
+                onClick={() => void logout()}
+                className="h-9 rounded-6 border border-line px-4 text-12 font-medium text-ink hover:bg-surface"
+              >
+                로그아웃
+              </button>
+            )}
           </div>
         ) : (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <Link href="/signup" className="text-13 text-body hover:text-ink">
               회원가입
             </Link>
             <Link
               href="/login"
-              className="flex h-9 items-center rounded-6 border border-line px-4 text-12 font-medium text-ink hover:bg-surface"
+              className="flex h-[35px] items-center rounded-6 border border-line px-4 text-12 font-medium text-ink hover:bg-surface"
             >
               로그인
             </Link>

@@ -2,9 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Pretendard 로드는 layout.tsx의 <link>에서. 여기선 전역 적용만. */
+/* 폰트 로드는 layout.tsx의 <link>에서. 여기선 전역 적용만.
+   Figma는 Inter로 조판했고 한글 글리프는 Pretendard로 떨어진다. 그 순서를 그대로 쓴다. */
 :root {
-  --font-sans: "Pretendard Variable", Pretendard, -apple-system,
+  --font-sans: Inter, "Pretendard Variable", Pretendard, -apple-system,
     BlinkMacSystemFont, system-ui, sans-serif;
 }
 
@@ -23,12 +24,12 @@ textarea {
   --green-800: #14542e;
   --green-700: #14542e;
   --green-600: #14542e;
-  --green-100: #eaf6ee;
-  --green-50: #eaf6ee;
+  --green-100: #f1f4f2;
+  --green-50: #f1f4f2;
   --line: #e5e5e3;
   --ink: #1a1a1a;
   --muted: #8a8a8a;
-  --soft: #f2f2f0;
+  --soft: #f1f4f2;
 }
 
 * {
@@ -43,8 +44,7 @@ body {
   margin: 0;
   background: #fff;
   color: var(--ink);
-  font-family: "Pretendard Variable", Pretendard, -apple-system,
-    BlinkMacSystemFont, system-ui, sans-serif;
+  font-family: var(--font-sans);
   letter-spacing: 0;
   word-break: keep-all;
 }

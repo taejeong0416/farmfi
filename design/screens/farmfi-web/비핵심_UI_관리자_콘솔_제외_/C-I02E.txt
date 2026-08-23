@@ -1,0 +1,18 @@
+FRAME "C-I02E · 모바일 신분증 확인 실패"  @-1286,541 515x482
+  FRAME "C-I02E · 모바일 신분증 확인 실패"  @-1286,541 515x482  fill=#FFFFFF  r=10
+    FRAME "TitleStack"  @-1253,575 449x66
+      TEXT "모바일 신분증 확인을 완료하지 못했어요"  @-1253,575 398x29  text='모바일 신분증 확인을 완료하지 못했어요'  Inter Bold 24px  #1A1A1A
+      TEXT "인증 요청 시간이 지났거나 모바일 신분증 앱에서 요청을 취소했습니다."  @-1253,620 409x21  text='인증 요청 시간이 지났거나 모바일 신분증 앱에서 요청을 취소했습니다.'  Inter Regular 14px  #4A4A4A
+    FRAME "FailureCard"  @-1253,657 449x180  stroke=#E5E5E3/1  r=10
+      TEXT "확인 방법"  @-1237,673 48x18  text='확인 방법'  Inter Regular 12px  #4A4A4A
+      TEXT "모바일 신분증 앱에서 확인"  @-1237,715 153x20  text='모바일 신분증 앱에서 확인'  Inter Bold 18px  #1A1A1A
+      TEXT "처리 결과"  @-1237,759 48x18  text='처리 결과'  Inter Regular 12px  #4A4A4A
+      TEXT "시간 만료 · 본인정보 저장 안 됨"  @-1237,801 181x20  text='시간 만료 · 본인정보 저장 안 됨'  Inter Medium 14px  #DC2626
+    FRAME "RetryBtn"  @-1253,853 449x46  fill=#14542E  r=10
+      TEXT "모바일 신분증으로 다시 확인"  @-1112,866 166x20  text='모바일 신분증으로 다시 확인'  Inter Medium 14px  #FFFFFF
+    FRAME "SimpleAuthBtn"  @-1253,915 449x46  stroke=#E5E5E3/1  r=10
+      TEXT "간편인증으로 로그인만 하기"  @-1110,928 162x20  text='간편인증으로 로그인만 하기'  Inter Medium 14px  #1A1A1A
+    TEXT "투자 신청 전에는 모바일 신분증 확인을 다시 요청합니다."  @-1253,977 449x18  text='투자 신청 전에는 모바일 신분증 확인을 다시 요청합니다.'  Inter Regular 12px  #8A8A8A
+  FRAME "x"  @-829,575 24x24
+    VECTOR "Vector"  @-823,581 12x12  stroke=#000000/2
+    VECTOR "Vector"  @-823,581 12x12  stroke=#000000/2

@@ -45,7 +45,7 @@ export function ProjectsScreen() {
             key={f.key}
             type="button"
             onClick={() => setFilter(f.key)}
-            className={`h-[34px] rounded-6 border px-3.5 text-12 ${
+            className={`h-[34px] rounded-6 border px-4 text-12 ${
               filter === f.key
                 ? "border-brand font-medium text-brand"
                 : "border-line text-body hover:bg-surface"
@@ -58,7 +58,7 @@ export function ProjectsScreen() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="프로젝트 · 위치 검색"
-          className="ml-auto h-[34px] w-[280px] rounded-6 border border-line px-3.5 text-12 text-ink outline-none placeholder:text-muted focus:border-brand"
+          className="ml-auto h-[34px] w-[353px] rounded-6 border border-line px-4 text-12 text-ink outline-none placeholder:text-muted focus:border-brand"
         />
       </div>
 

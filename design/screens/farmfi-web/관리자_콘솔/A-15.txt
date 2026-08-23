@@ -1,0 +1,192 @@
+FRAME "A-15 · 관리자 / AML·이상거래"  @19630,0 1440x900  fill=#FFFFFF  r=10
+  FRAME "TopBar"  @19630,0 1440x64  stroke=#E5E5E3/1
+    FRAME "NavLeft"  @19684,22 134x20
+      FRAME "Frame 180"  @19684,22 134x20
+        INSTANCE "App/Logo"  @19684,26 55x13
+        TEXT "관리자 콘솔"  @19749,22 69x20  text='관리자 콘솔'  Inter Medium 14px  #14542E
+    FRAME "Frame 12"  @20958,23 58x18
+      FRAME "아이콘"  @20958,24 16x16
+        VECTOR "Vector"  @20964,27 5x5  stroke=#8A8A8A/1
+        VECTOR "Vector"  @20961,33 9x4  stroke=#8A8A8A/1
+      TEXT "김투자"  @20982,23 34x18  text='최관리'  Inter Regular 12px  #4A4A4A
+  FRAME "BodyRow"  @19630,64 1440x836
+    FRAME "Sidebar"  @19630,64 195x836  stroke=#EDEDEB/1
+      FRAME "NavRow"  @19655,88 154x14
+        FRAME "아이콘"  @19655,88 14x14
+          VECTOR "Vector"  @19657,90 10x10  stroke=#8A8A8A/1
+        TEXT "콘솔 홈"  @19678,89 35x12  text='콘솔 홈'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @19655,120 154x14
+        FRAME "아이콘"  @19655,120 14x14
+          VECTOR "Vector"  @19660,123 4x4  stroke=#8A8A8A/1
+          VECTOR "Vector"  @19658,128 8x4  stroke=#8A8A8A/1
+        TEXT "보증서 관리"  @19678,120 57x14  text='보증서 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @19655,152 154x14
+        FRAME "아이콘"  @19655,152 14x14
+          VECTOR "Vector"  @19657,154 10x9  stroke=#8A8A8A/1
+          VECTOR "Vector"  @19657,157 10x0  stroke=#8A8A8A/1
+        TEXT "프로젝트 관리"  @19678,153 67x12  text='프로젝트 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @19655,184 154x14
+        FRAME "아이콘"  @19655,184 14x14
+          VECTOR "Vector"  @19658,186 0x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @19658,187 8x5  stroke=#8A8A8A/1
+        TEXT "마일스톤 설정"  @19678,185 67x12  text='마일스톤 설정'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @19655,216 154x14
+        FRAME "아이콘"  @19655,216 14x14
+          VECTOR "Vector"  @19657,218 10x12  stroke=#8A8A8A/1
+        TEXT "공간·설비 관리"  @19678,216 70x14  text='공간·설비 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @19655,248 154x14
+        FRAME "아이콘"  @19655,248 14x14
+          VECTOR "Vector"  @19657,250 8x8  stroke=#8A8A8A/1
+          VECTOR "Vector"  @19664,257 2x2  stroke=#8A8A8A/1
+        TEXT "운영팀 재검증"  @19678,249 57x12  text='운영자 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @19655,280 154x14
+        FRAME "아이콘"  @19655,280 14x14
+          VECTOR "Vector"  @19658,282 8x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @19660,287 4x2  stroke=#8A8A8A/1
+        TEXT "감사 로그 조회"  @19678,281 57x12  text='증빙 재검토'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @19655,312 154x14
+        FRAME "아이콘"  @19655,312 14x14
+          VECTOR "Vector"  @19657,314 9x10  stroke=#8A8A8A/1
+        TEXT "외부전문가 판정"  @19678,313 78x12  text='외부전문가 판정'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @19655,344 154x14
+        FRAME "아이콘"  @19655,344 14x14
+          VECTOR "Vector"  @19657,346 10x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @19661,348 3x6  stroke=#8A8A8A/1
+        TEXT "정산 규칙 설정"  @19678,345 70x12  text='정산 규칙 설정'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @19655,376 154x14
+        FRAME "아이콘"  @19655,376 14x14
+          VECTOR "Vector"  @19657,378 10x9  stroke=#8A8A8A/1
+        TEXT "정산 결과"  @19678,377 46x12  text='정산 결과'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @19655,408 154x14
+        FRAME "아이콘"  @19655,408 14x14
+          VECTOR "Vector"  @19658,410 8x10  stroke=#8A8A8A/1
+          VECTOR "Vector"  @19660,415 4x2  stroke=#8A8A8A/1
+        TEXT "감사 로그 조회"  @19678,409 70x12  text='감사 로그 조회'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @19655,440 154x14
+        FRAME "아이콘"  @19655,440 14x14
+          VECTOR "Vector"  @19660,443 4x4  stroke=#8A8A8A/1
+          VECTOR "Vector"  @19658,448 8x4  stroke=#8A8A8A/1
+        TEXT "권한 관리"  @19678,441 46x12  text='권한 관리'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @19655,472 154x14
+        FRAME "아이콘"  @19655,472 14x14
+          VECTOR "Vector"  @19657,473 10x9  stroke=#8A8A8A/1
+          VECTOR "Vector"  @19661,484 2x1  stroke=#8A8A8A/1
+        TEXT "알림 발송"  @19678,473 46x12  text='알림 발송'  Inter Regular 12px  #4A4A4A
+      FRAME "NavRow"  @19655,504 154x14
+        FRAME "아이콘"  @19655,504 14x14
+          VECTOR "Vector"  @19657,508 10x6  stroke=#14532D/1
+        TEXT "AML · 이상거래 관리"  @19678,505 101x12  text='AML · 이상거래 관리'  Inter Medium 12px  #14532D
+      FRAME "NavRow"  @19655,536 154x14
+        FRAME "아이콘"  @19655,536 14x14
+          VECTOR "Vector"  @19657,538 10x9  stroke=#8A8A8A/1
+        TEXT "AML · 이상거래 관리"  @19678,537 70x12  text='매출·비용 입력'  Inter Regular 12px  #4A4A4A
+      FRAME "Spacer"  @19655,568 154x276
+      FRAME "NavRow"  @19655,862 154x14
+        FRAME "아이콘"  @19655,862 14x14
+          VECTOR "Vector"  @19658,864 3x9  stroke=#8A8A8A/1
+          VECTOR "Vector"  @19664,867 2x5  stroke=#8A8A8A/1
+          VECTOR "Vector"  @19661,869 6x0  stroke=#8A8A8A/1
+        TEXT "로그아웃"  @19678,863 43x12  text='로그아웃'  Inter Regular 12px  #4A4A4A
+      ROUNDED_RECTANGLE "선"  @19641,503 2x16  fill=#14542E
+    FRAME "MainContent"  @19825,64 1245x836
+      TEXT "SectionLabel"  @19879,88 1137x17  text='AML · 이상거래 관리'  Inter Medium 14px  #14542E
+      FRAME "PageHeaderRow"  @19879,123 1137x31  fill=#FFFFFF
+        TEXT "AML · 이상거래 관리"  @19879,123 304x31  text='의심 거래를 탐지하고 조치해요'  Inter Bold 24px  #1A1A1A
+        TEXT "미처리 2건 · 최근 7일 탐지 9건"  @20860,130 156x18  text='미처리 2건 · 최근 7일 탐지 9건'  Inter Regular 12px  #8A8A8A
+      ROUNDED_RECTANGLE "선"  @19879,172 1137x1  fill=#EDEDEB
+      FRAME "KpiRow"  @19879,191 1137x45  fill=#FFFFFF
+        FRAME "Stat"  @20054,191 34x45  fill=#FFFFFF
+          TEXT "고위험"  @20054,191 34x18  text='고위험'  Inter Regular 12px  #8A8A8A
+          TEXT "2건"  @20054,213 28x23  text='2건'  Inter Bold 18px  #DC2626
+        ROUNDED_RECTANGLE "선"  @20260,194 1x40  fill=#EDEDEB
+        FRAME "Stat"  @20433,191 34x45  fill=#FFFFFF
+          TEXT "중위험"  @20433,191 34x18  text='중위험'  Inter Regular 12px  #8A8A8A
+          TEXT "4건"  @20433,213 29x23  text='4건'  Inter Bold 18px  #4A4A4A
+        ROUNDED_RECTANGLE "선"  @20639,194 1x40  fill=#EDEDEB
+        FRAME "Stat"  @20812,191 29x45  fill=#FFFFFF
+          TEXT "종결"  @20812,191 23x18  text='종결'  Inter Regular 12px  #8A8A8A
+          TEXT "3건"  @20812,213 29x23  text='3건'  Inter Bold 18px  #1A1A1A
+      ROUNDED_RECTANGLE "선"  @19879,254 1137x1  fill=#EDEDEB
+      FRAME "ColHeaderRow"  @19879,273 1137x18  fill=#FFFFFF
+        FRAME "Col"  @19879,273 90x18  fill=#FFFFFF
+          TEXT "탐지 시각"  @19879,273 48x18  text='탐지 시각'  Inter Regular 12px  #8A8A8A
+        FRAME "Col"  @19969,273 787x18  fill=#FFFFFF
+          TEXT "내용"  @19969,273 23x18  text='내용'  Inter Regular 12px  #8A8A8A
+        FRAME "Col"  @20756,273 110x18  fill=#FFFFFF
+          TEXT "대상"  @20756,273 23x18  text='대상'  Inter Regular 12px  #8A8A8A
+        FRAME "Col"  @20866,273 90x18  fill=#FFFFFF
+          TEXT "위험도"  @20866,273 34x18  text='위험도'  Inter Regular 12px  #8A8A8A
+        FRAME "Col"  @20956,273 60x18  fill=#FFFFFF
+          TEXT "처리"  @20956,273 23x18  text='처리'  Inter Regular 12px  #8A8A8A
+      ROUNDED_RECTANGLE "선"  @19879,309 1137x1  fill=#EDEDEB
+      FRAME "DataRow"  @19879,328 1137x18  fill=#FFFFFF
+        FRAME "Col"  @19879,328 90x18  fill=#FFFFFF
+          TEXT "03.15 14:22"  @19879,328 65x18  text='03.15 14:22'  Inter Regular 12px  #4A4A4A
+        FRAME "Col"  @19969,328 787x18  fill=#FFFFFF
+          TEXT "단기 반복 청약 · 취소 6회"  @19969,328 128x18  text='단기 반복 청약 · 취소 6회'  Inter Regular 12px  #1A1A1A
+        FRAME "Col"  @20756,328 110x18  fill=#FFFFFF
+          TEXT "투자자 A***"  @20756,328 62x18  text='투자자 A***'  Inter Regular 12px  #4A4A4A
+        FRAME "Col"  @20866,330 90x15  fill=#FFFFFF
+          FRAME "RiskGroup"  @20866,330 43x15  fill=#FFFFFF
+            ELLIPSE "점"  @20866,334 6x6  fill=#DC2626
+            TEXT "고위험"  @20878,330 31x15  text='고위험'  Inter Medium 11px  #DC2626
+        FRAME "Col"  @20956,330 60x15  fill=#FFFFFF
+          TEXT "검토"  @20956,330 21x15  text='검토'  Inter Medium 11px  #14542E
+      ROUNDED_RECTANGLE "선"  @19879,364 1137x1  fill=#F1F4F2
+      FRAME "DataRow"  @19879,383 1137x18  fill=#FFFFFF
+        FRAME "Col"  @19879,383 90x18  fill=#FFFFFF
+          TEXT "03.15 11:48"  @19879,383 63x18  text='03.15 11:48'  Inter Regular 12px  #4A4A4A
+        FRAME "Col"  @19969,383 787x18  fill=#FFFFFF
+          TEXT "미등록 지갑으로 이전 시도"  @19969,383 132x18  text='미등록 지갑으로 이전 시도'  Inter Regular 12px  #1A1A1A
+        FRAME "Col"  @20756,383 110x18  fill=#FFFFFF
+          TEXT "투자자 K***"  @20756,383 63x18  text='투자자 K***'  Inter Regular 12px  #4A4A4A
+        FRAME "Col"  @20866,384 90x15  fill=#FFFFFF
+          FRAME "RiskGroup"  @20866,384 43x15  fill=#FFFFFF
+            ELLIPSE "점"  @20866,389 6x6  fill=#DC2626
+            TEXT "고위험"  @20878,384 31x15  text='고위험'  Inter Medium 11px  #DC2626
+        FRAME "Col"  @20956,384 60x15  fill=#FFFFFF
+          TEXT "검토"  @20956,384 21x15  text='검토'  Inter Medium 11px  #14542E
+      ROUNDED_RECTANGLE "선"  @19879,419 1137x1  fill=#F1F4F2
+      FRAME "DataRow"  @19879,438 1137x18  fill=#FFFFFF
+        FRAME "Col"  @19879,438 90x18  fill=#FFFFFF
+          TEXT "03.14 19:05"  @19879,438 65x18  text='03.14 19:05'  Inter Regular 12px  #4A4A4A
+        FRAME "Col"  @19969,438 787x18  fill=#FFFFFF
+          TEXT "동일 IP 다계정 청약"  @19969,438 99x18  text='동일 IP 다계정 청약'  Inter Regular 12px  #1A1A1A
+        FRAME "Col"  @20756,438 110x18  fill=#FFFFFF
+          TEXT "계정 3건"  @20756,438 45x18  text='계정 3건'  Inter Regular 12px  #4A4A4A
+        FRAME "Col"  @20866,438 90x18  fill=#FFFFFF
+          FRAME "RiskGroup"  @20866,438 46x18  fill=#FFFFFF
+            ELLIPSE "점"  @20866,444 6x6  fill=#8A8A8A
+            TEXT "중위험"  @20878,438 34x18  text='중위험'  Inter Regular 12px  #4A4A4A
+        FRAME "Col"  @20956,440 60x15  fill=#FFFFFF
+          TEXT "검토"  @20956,440 21x15  text='검토'  Inter Medium 11px  #14542E
+      ROUNDED_RECTANGLE "선"  @19879,474 1137x1  fill=#F1F4F2
+      FRAME "DataRow"  @19879,493 1137x18  fill=#FFFFFF
+        FRAME "Col"  @19879,493 90x18  fill=#FFFFFF
+          TEXT "03.13 10:31"  @19879,493 64x18  text='03.13 10:31'  Inter Regular 12px  #4A4A4A
+        FRAME "Col"  @19969,493 787x18  fill=#FFFFFF
+          TEXT "한도 근접 반복 분할 청약"  @19969,493 124x18  text='한도 근접 반복 분할 청약'  Inter Regular 12px  #1A1A1A
+        FRAME "Col"  @20756,493 110x18  fill=#FFFFFF
+          TEXT "투자자 J***"  @20756,493 62x18  text='투자자 J***'  Inter Regular 12px  #4A4A4A
+        FRAME "Col"  @20866,493 90x18  fill=#FFFFFF
+          FRAME "RiskGroup"  @20866,493 46x18  fill=#FFFFFF
+            ELLIPSE "점"  @20866,499 6x6  fill=#8A8A8A
+            TEXT "중위험"  @20878,493 34x18  text='중위험'  Inter Regular 12px  #4A4A4A
+        FRAME "Col"  @20956,493 60x18  fill=#FFFFFF
+          TEXT "종결"  @20956,493 23x18  text='종결'  Inter Regular 12px  #8A8A8A
+      ROUNDED_RECTANGLE "선"  @19879,529 1137x1  fill=#F1F4F2
+      FRAME "DataRow"  @19879,548 1137x18  fill=#FFFFFF
+        FRAME "Col"  @19879,548 90x18  fill=#FFFFFF
+          TEXT "03.12 16:47"  @19879,548 65x18  text='03.12 16:47'  Inter Regular 12px  #4A4A4A
+        FRAME "Col"  @19969,548 787x18  fill=#FFFFFF
+          TEXT "단기 재바인딩 요청 반복"  @19969,548 121x18  text='단기 재바인딩 요청 반복'  Inter Regular 12px  #1A1A1A
+        FRAME "Col"  @20756,548 110x18  fill=#FFFFFF
+          TEXT "투자자 S***"  @20756,548 63x18  text='투자자 S***'  Inter Regular 12px  #4A4A4A
+        FRAME "Col"  @20866,548 90x18  fill=#FFFFFF
+          FRAME "RiskGroup"  @20866,548 46x18  fill=#FFFFFF
+            ELLIPSE "점"  @20866,554 6x6  fill=#8A8A8A
+            TEXT "저위험"  @20878,548 34x18  text='저위험'  Inter Regular 12px  #4A4A4A
+        FRAME "Col"  @20956,548 60x18  fill=#FFFFFF
+          TEXT "종결"  @20956,548 23x18  text='종결'  Inter Regular 12px  #8A8A8A
+      ROUNDED_RECTANGLE "선"  @19879,584 1137x1  fill=#EDEDEB
+      TEXT "탐지 건은 청약 · 집행을 자동 차단하지 않…"  @19879,603 1137x18  text='탐지 건은 청약 · 집행을 자동 차단하지 않으며, 검토 결과에 따라 계정 정지 또는 청약 제한이 적용됩니다.'  Inter Regular 12px  #8A8A8A

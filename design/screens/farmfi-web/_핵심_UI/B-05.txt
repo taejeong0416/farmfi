@@ -1,0 +1,128 @@
+FRAME "B-05 · 구매자 / 결제수단·자동결제"  @6164,4914 1440x900  fill=#FFFFFF  r=20
+  FRAME "B-04 · 구매자 / 주문서 확인"  @6164,4914 1440x865  fill=#FFFFFF  r=10
+    FRAME "TopNav"  @6164,4914 1440x64  stroke=#E5E5E3/1
+      FRAME "NavLeft"  @6218,4936 244x20
+        INSTANCE "App/Logo"  @6218,4939 61x14
+        FRAME "NavLinks"  @6335,4936 127x20
+          TEXT "정기구독"  @6335,4936 52x20  text='정기구독'  Inter Medium 14px  #14542E
+          TEXT "내 구독"  @6419,4936 43x20  text='내 구독'  Inter Regular 14px  #1A1A1A
+      FRAME "Frame 12"  @7492,4937 58x18
+        FRAME "아이콘"  @7492,4938 16x16
+          VECTOR "Vector"  @7498,4941 5x5  stroke=#8A8A8A/1
+          VECTOR "Vector"  @7495,4947 9x4  stroke=#8A8A8A/1
+        TEXT "김투자"  @7516,4937 34x18  text='이소비'  Inter Regular 12px  #4A4A4A
+    FRAME "BodyContainer"  @6164,4978 1440x801
+      FRAME "MainContentRow"  @6218,5006 1332x733
+        FRAME "LeftColumn"  @6218,5006 846x733
+          FRAME "HeaderText"  @6218,5006 846x60
+            TEXT "정기구독 주문서"  @6218,5006 846x29  text='정기구독 주문서'  Inter Bold 24px  #1A1A1A
+            TEXT "픽업 정보와 할인, 자동결제 내용을 확인해 주세요."  @6218,5045 846x21  text='픽업 정보와 할인, 자동결제 내용을 확인해 주세요.'  Inter Regular 14px  #4A4A4A
+          FRAME "SubProductCard"  @6218,5090 846x136  fill=#FFFFFF  stroke=#E5E5E3/1  r=12
+            TEXT "구독 상품"  @6242,5114 71x23  text='구독 상품'  Inter Bold 18px  #1A1A1A
+            FRAME "NameRow"  @6242,5149 798x23
+              TEXT "5종 믹스팩 · 주 2회"  @6242,5149 145x23  text='5종 믹스팩 · 주 2회'  Inter Bold 18px  #1A1A1A
+              TEXT "구성 변경"  @6996,5153 44x15  text='구성 변경'  Inter Medium 11px  #14542E
+            TEXT "선택 작물 5종 + 선택 드레싱 2봉"  @6242,5184 798x18  text='선택 작물 5종 + 선택 드레싱 2봉'  Inter Regular 12px  #4A4A4A
+          FRAME "PickupInfoCard"  @6218,5250 846x182  fill=#FFFFFF  stroke=#E5E5E3/1  r=12
+            TEXT "픽업 정보"  @6242,5274 71x23  text='픽업 정보'  Inter Bold 18px  #1A1A1A
+            FRAME "NameRow"  @6242,5309 798x20
+              TEXT "부산 전포동 미니팜 1호"  @6242,5309 134x20  text='부산 전포동 미니팜 1호'  Inter Medium 14px  #1A1A1A
+              TEXT "변경"  @7019,5312 21x15  text='변경'  Inter Medium 11px  #14542E
+            TEXT "도보 8분 · 화/금 17:00–20:00"  @6242,5341 798x18  text='도보 8분 · 화/금 17:00–20:00'  Inter Regular 12px  #4A4A4A
+            FRAME "ChipRow"  @6242,5371 228x37
+              FRAME "Frame 112"  @6242,5371 132x37  fill=#F1F4F2  stroke=#14542E/1  r=6
+                TEXT "화요일 · 9월 1일 시작"  @6259,5382 98x15  text='화요일 · 9월 1일 시작'  Inter Medium 11px  #14542E
+              FRAME "Frame 111"  @6382,5371 88x37  fill=#FFFFFF  stroke=#E5E5E3/1  r=6
+                TEXT "금요일 추가"  @6399,5382 54x15  text='금요일 추가'  Inter Medium 11px  #4A4A4A
+          FRAME "CouponCard"  @6218,5456 846x126  fill=#FFFFFF  stroke=#E5E5E3/1  r=12
+            FRAME "TitleRow"  @6242,5480 798x23
+              TEXT "쿠폰 · 할인"  @6242,5480 80x23  text='쿠폰 · 할인'  Inter Bold 18px  #1A1A1A
+              TEXT "보유 쿠폰 1장"  @6978,5484 62x15  text='보유 쿠폰 1장'  Inter Medium 11px  #14542E
+            FRAME "InputRow"  @6242,5519 798x39
+              FRAME "CouponInput"  @6242,5519 694x39  fill=#FFFFFF  stroke=#E5E5E3/1  r=8
+                TEXT "쿠폰 코드를 입력하세요"  @6258,5530 118x18  text='쿠폰 코드를 입력하세요'  Inter Regular 12px  #8A8A8A
+              FRAME "Frame 110"  @6948,5519 92x39  fill=#14542E  r=6
+                TEXT "쿠폰 적용"  @6972,5531 44x15  text='쿠폰 적용'  Inter Medium 11px  #FFFFFF
+          FRAME "PaymentCard"  @6218,5606 846x133  fill=#FFFFFF  stroke=#E5E5E3/1  r=12
+            FRAME "TitleRow"  @6242,5630 798x23
+              TEXT "결제수단"  @6242,5630 67x23  text='결제수단'  Inter Bold 18px  #1A1A1A
+              TEXT "변경"  @7019,5634 21x15  text='변경'  Inter Medium 11px  #14542E
+            TEXT "신한카드 **** 4821"  @6242,5665 798x20  text='신한카드  **** 4821'  Inter Medium 14px  #1A1A1A
+            TEXT "매월 1일 자동결제"  @6242,5697 798x18  text='매월 1일 자동결제'  Inter Regular 12px  #4A4A4A
+        FRAME "Frame 125"  @7096,5006 454x654  fill=#F1F4F2  r=14
+          FRAME "Group 31"  @7117,5029 406x458
+            TEXT "결제 요약"  @7117,5029 71x23  text='결제 요약'  Inter Bold 18px  #1A1A1A
+            TEXT "5종 믹스팩"  @7117,5079 55x18  text='5종 믹스팩'  Inter Regular 12px  #4A4A4A
+            TEXT "49,000원"  @7461,5079 62x20  text='49,000원'  Inter Medium 14px  #1A1A1A
+            TEXT "첫 구독 쿠폰"  @7117,5125 62x18  text='첫 구독 쿠폰'  Inter Regular 12px  #4A4A4A
+            TEXT "-5,000원"  @7464,5125 59x20  text='-5,000원'  Inter Medium 14px  #14542E
+            TEXT "픽업 비용"  @7117,5171 48x18  text='픽업 비용'  Inter Regular 12px  #4A4A4A
+            TEXT "0원"  @7501,5171 22x20  text='0원'  Inter Medium 14px  #1A1A1A
+            ROUNDED_RECTANGLE "Rectangle"  @7117,5217 406x1  fill=#E5E5E3
+            TEXT "오늘 결제"  @7117,5243 71x23  text='오늘 결제'  Inter Bold 18px  #1A1A1A
+            TEXT "44,000원"  @7412,5235 111x29  text='44,000원'  Inter Bold 24px  #14542E
+            ROUNDED_RECTANGLE "Rectangle"  @7117,5291 406x78  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+            TEXT "다음 자동결제"  @7137,5310 70x18  text='다음 자동결제'  Inter Regular 12px  #4A4A4A
+            TEXT "2026. 10. 01 · 49,000원"  @7345,5309 154x20  text='2026. 10. 01 · 49,000원'  Inter Medium 14px  #1A1A1A
+            TEXT "결제 1일 전 알림"  @7137,5337 82x18  text='결제 1일 전 알림'  Inter Regular 12px  #4A4A4A
+            FRAME "Frame 159"  @7117,5407 238x18
+              FRAME "Group 21"  @7117,5408 15x15
+                ROUNDED_RECTANGLE "면"  @7117,5408 15x15  fill=#14542E  r=4
+                FRAME "아이콘"  @7120,5412 9x9
+                  VECTOR "Vector"  @7122,5414 6x4  stroke=#FFFFFF/1
+              TEXT "정기구독 및 자동결제에 동의합니다. (필수)"  @7141,5407 214x18  text='정기구독 및 자동결제에 동의합니다. (필수)'  Inter Regular 12px  #1A1A1A
+            FRAME "Frame 161"  @7117,5469 240x18
+              ROUNDED_RECTANGLE "면"  @7117,5470 15x15  stroke=#8D8D8D/1  r=4
+              TEXT "할인·신상품 소식 수신에 동의합니다. (선택)"  @7140,5469 217x18  text='할인·신상품 소식 수신에 동의합니다. (선택)'  Inter Regular 12px  #4A4A4A
+            TEXT "약관 보기"  @7479,5439 44x15  text='약관 보기'  Inter Medium 11px  #14542E
+            TEXT "약관 보기"  @7479,5468 44x15  text='약관 보기'  Inter Medium 11px  #14542E
+            TEXT "약관 보기"  @7479,5408 44x15  text='약관 보기'  Inter Medium 11px  #14542E
+            FRAME "Frame 160"  @7117,5439 255x18
+              FRAME "Group 21"  @7117,5440 15x15
+                ROUNDED_RECTANGLE "면"  @7117,5440 15x15  fill=#14542E  r=4
+                FRAME "아이콘"  @7120,5444 9x9
+                  VECTOR "Vector"  @7122,5446 6x4  stroke=#FFFFFF/1
+              TEXT "취소·환불 및 픽업 정책을 확인했습니다. (필수)"  @7141,5439 231x18  text='취소·환불 및 픽업 정책을 확인했습니다. (필수)'  Inter Regular 12px  #1A1A1A
+          FRAME "Group 32"  @7117,5537 406x100
+            FRAME "Frame 113"  @7117,5562 406x44  fill=#14542E  r=6
+              TEXT "44,000원 결제하기"  @7262,5574 117x20  text='44,000원 결제하기'  Inter Medium 14px  #FFFFFF
+            TEXT "결제 후 남은 생산 슬롯 1개가 확정됩니다."  @7239,5537 206x18  text='결제 후 남은 생산 슬롯 1개가 확정됩니다.'  Inter Regular 12px  #8A8A8A
+            TEXT "다음 결제 전날까지 이번 회차 건너뛰기·일시정지가 가능해요."  @7191,5619 303x18  text='다음 결제 전날까지 이번 회차 건너뛰기·일시정지가 가능해요.'  Inter Regular 12px  #8A8A8A
+  ROUNDED_RECTANGLE "Rectangle 2"  @6164,4914 1440x900  fill=#000000@0.70
+  FRAME "Frame 167"  @6584,4962 600x805
+    ROUNDED_RECTANGLE "Rectangle"  @6584,4962 600x805  fill=#FFFFFF  r=18
+    TEXT "결제수단 선택"  @6617,4996 139x29  text='결제수단 선택'  Inter Bold 24px  #1A1A1A
+    TEXT "이번 결제와 다음 자동결제에 사용할 수단을 골라주세요."  @6617,5032 278x18  text='이번 결제와 다음 자동결제에 사용할 수단을 골라주세요.'  Inter Regular 12px  #4A4A4A
+    TEXT "등록된 결제수단"  @6617,5080 94x20  text='등록된 결제수단'  Inter Medium 14px  #1A1A1A
+    ROUNDED_RECTANGLE "Rectangle"  @6617,5112 534x82  fill=#F1F4F2  stroke=#14542E/1  r=10
+    ROUNDED_RECTANGLE "Rectangle"  @6637,5132 48x48  fill=#8A8A8A  r=8
+    TEXT "CARD"  @6647,5148 31x15  text='CARD'  Inter Medium 11px  #FFFFFF
+    TEXT "신한카드 **** 4821"  @6705,5130 126x20  text='신한카드  **** 4821'  Inter Medium 14px  #1A1A1A
+    TEXT "개인 · 일시불"  @6705,5156 66x18  text='개인 · 일시불'  Inter Regular 12px  #4A4A4A
+    TEXT "✓"  @7096,5142 16x23  text='✓'  Inter Bold 18px  #14542E
+    TEXT "간편결제"  @6617,5226 52x20  text='간편결제'  Inter Medium 14px  #1A1A1A
+    FRAME "Frame 164"  @6617,5258 164x68  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+      ROUNDED_RECTANGLE "Rectangle"  @6632,5274 34x34  r=8
+      TEXT "Kakao Pay"  @6678,5284 55x15  text='Kakao Pay'  Inter Medium 11px  #1A1A1A
+    FRAME "Frame 165"  @6795,5258 164x68  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+      ROUNDED_RECTANGLE "Rectangle"  @6810,5274 34x34  r=8
+      TEXT "N pay"  @6856,5284 31x15  text='N pay'  Inter Medium 11px  #1A1A1A
+    FRAME "Frame 166"  @6988,5258 164x68  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+      ROUNDED_RECTANGLE "Rectangle"  @7003,5274 34x34  stroke=#E5E5E3/1  r=8
+      TEXT "toss pay"  @7049,5284 45x15  text='toss pay'  Inter Medium 11px  #1A1A1A
+    FRAME "Frame 163"  @6617,5350 534x48  fill=#FFFFFF  stroke=#E5E5E3/1  r=9
+      TEXT "+ 새 카드 등록"  @6840,5364 89x20  text='+  새 카드 등록'  Inter Medium 14px  #14542E
+    ROUNDED_RECTANGLE "Rectangle"  @6617,5430 534x1  fill=#E5E5E3
+    TEXT "결제 정보"  @6617,5458 56x20  text='결제 정보'  Inter Medium 14px  #1A1A1A
+    TEXT "오늘 결제"  @6617,5492 48x18  text='오늘 결제'  Inter Regular 12px  #4A4A4A
+    TEXT "44,000원"  @7068,5488 83x23  text='44,000원'  Inter Bold 18px  #1A1A1A
+    TEXT "다음 결제"  @6617,5526 48x18  text='다음 결제'  Inter Regular 12px  #4A4A4A
+    TEXT "10월 1일 · 49,000원"  @7026,5524 125x20  text='10월 1일 · 49,000원'  Inter Medium 14px  #1A1A1A
+    ROUNDED_RECTANGLE "Rectangle"  @6617,5564 534x58  fill=#F1F4F2  r=9
+    TEXT "✓ 선택한 결제수단을 정기결제에 등록합니다."  @6637,5584 267x20  text='✓  선택한 결제수단을 정기결제에 등록합니다.'  Inter Medium 14px  #14542E
+    FRAME "Frame 115"  @6617,5642 534x44  fill=#14542E  r=6
+      TEXT "신한카드로 결제"  @6837,5654 94x20  text='신한카드로 결제'  Inter Medium 14px  #FFFFFF
+    TEXT "결제 정보는 결제사에서 안전하게 처리됩니다."  @6757,5706 227x18  text='결제 정보는 결제사에서 안전하게 처리됩니다.'  Inter Regular 12px  #8A8A8A
+    FRAME "x"  @7126,4996 24x24
+      VECTOR "Vector"  @7132,5002 12x12  stroke=#000000/2
+      VECTOR "Vector"  @7132,5002 12x12  stroke=#000000/2

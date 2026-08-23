@@ -1,0 +1,68 @@
+FRAME "C-I01 · 투자자 준비 / 본인확인 방법 선택"  @6208,178 1440x900  r=20
+  ROUNDED_RECTANGLE "Rectangle 1"  @6208,178 1440x900  fill=#000000@0.50
+  FRAME "App/Logo"  @6870,296 117x27
+    VECTOR "Vector"  @6869,296 117x27  fill=#FFFFFF
+  FRAME "C-04 · 공통 / 이용 목적 선택"  @6563,359 730x643  fill=#FFFFFF  r=10
+    ROUNDED_RECTANGLE "Rectangle"  @6563,359 730x64  fill=#FFFFFF  stroke=#E5E5E3/1
+    TEXT "어떤 서비스를 이용할까요?"  @6595,453 268x29  text='어떤 서비스를 이용할까요?'  Inter Bold 24px  #1A1A1A
+    TEXT "로그인한 계정으로 투자, 정기구독, 운영 서비스를 이용할 수 있어요."  @6595,496 391x21  text='로그인한 계정으로 투자, 정기구독, 운영 서비스를 이용할 수 있어요.'  Inter Regular 14px  #8A8A8A
+    FRAME "Frame 59"  @6595,542 666x201
+      FRAME "Frame 55"  @6595,542 319x201  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+        FRAME "Frame 51"  @6612,559 285x167
+          TEXT "투자자로 이용"  @6612,559 285x23  text='투자자로 이용'  Inter Bold 18px  #1A1A1A
+          FRAME "Frame 54"  @6612,598 285x128
+            TEXT "검증된 단계에만 집행되는 공실 전환 프로젝트에 투자해요."  @6612,598 157x36  text='검증된 단계에만 집행되는\n공실 전환 프로젝트에 투자해요.'  Inter Regular 12px  #8A8A8A
+            TEXT "프로젝트 보기 · 내 투자 확인"  @6612,648 285x18  text='프로젝트 보기 · 내 투자 확인'  Inter Regular 12px  #14542E
+            FRAME "Frame 39"  @6612,680 285x46  fill=#14542E  stroke=#14542E/1  r=6
+              TEXT "투자자 화면으로"  @6708,693 94x20  text='투자자 화면으로'  Inter Medium 14px  #FFFFFF
+      FRAME "Frame 56"  @6942,542 319x201  fill=#F1F4F2  stroke=#E5E5E3/1  r=10
+        FRAME "Frame 52"  @6959,559 285x167
+          TEXT "구매자로 이용"  @6959,559 285x23  text='구매자로 이용'  Inter Bold 18px  #1A1A1A
+          FRAME "Frame 53"  @6959,598 285x128
+            TEXT "가까운 미니팜에서 수확한 선택한 작물을 믹스팩으로 정기 픽업해요."  @6959,598 205x36  text='가까운 미니팜에서 수확한\n선택한 작물을 믹스팩으로 정기 픽업해요.'  Inter Regular 12px  #8A8A8A
+            TEXT "플랜 보기 · 내 픽업 관리"  @6959,648 285x18  text='플랜 보기 · 내 픽업 관리'  Inter Regular 12px  #14542E
+            FRAME "Frame 40"  @6959,680 285x46  fill=#14542E  stroke=#14542E/1  r=6
+              TEXT "구매자 화면으로"  @7054,693 94x20  text='구매자 화면으로'  Inter Medium 14px  #FFFFFF
+    TEXT "나중에 상단 메뉴에서 언제든 바꿀 수 있습니다."  @6811,955 234x18  text='나중에 상단 메뉴에서 언제든 바꿀 수 있습니다.'  Inter Regular 12px  #8A8A8A
+    FRAME "Frame 61"  @6595,760 666x181  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+      FRAME "Frame 58"  @6612,777 632x147
+        TEXT "운영자로 이용"  @6612,777 632x23  text='운영자로 이용'  Inter Bold 18px  #1A1A1A
+        FRAME "Frame 57"  @6612,816 632x108
+          TEXT "지도에서 운영할 공간을 찾고, 개점 준비와 보증서를 관리해요."  @6612,816 632x18  text='지도에서 운영할 공간을 찾고, 개점 준비와 보증서를 관리해요.'  Inter Regular 12px  #4A4A4A
+          TEXT "운영 자격 확인이 필요해요"  @6612,848 632x18  text='운영 자격 확인이 필요해요'  Inter Regular 12px  #14542E
+          FRAME "Frame 41"  @6612,880 632x44  fill=#14542E  r=6
+            TEXT "운영자 화면으로"  @6881,892 94x20  text='운영자 화면으로'  Inter Medium 14px  #FFFFFF
+    INSTANCE "App/Logo"  @6595,388 61x14
+  ROUNDED_RECTANGLE "Rectangle 2"  @6208,178 1440x900  fill=#000000@0.70
+  FRAME "C-I01 · 투자자 준비 / 본인확인 방법 선택"  @6696,307 465x643  fill=#FFFFFF  r=10
+    FRAME "Frame 46"  @6729,337 399x567
+      FRAME "Frame 44"  @6729,337 399x187
+        TEXT "투자 준비 1 / 3 · 본인확인"  @6729,337 399x21  text='투자 준비 1 / 3 · 본인확인'  Inter Regular 14px  #14542E
+        TEXT "먼저 본인확인 방법을 선택해 주세요."  @6729,373 399x29  text='먼저 본인확인 방법을 선택해 주세요.'  Inter Bold 24px  #1A1A1A
+        FRAME "공식 앱 안내"  @6729,417 399x107  fill=#F1F4F2  r=10
+          FRAME "Frame"  @6745,433 230x75
+            TEXT "💡 첫 투자 전에 필요한 확인!"  @6745,433 211x23  text='💡 첫 투자 전에 필요한 확인!'  Inter Bold 18px  #1A1A1A
+            TEXT "모바일 신분증이 있으면 바로 진행할 수 있어요"  @6745,463 230x18  text='모바일 신분증이 있으면 바로 진행할 수 있어요'  Inter Regular 12px  #1A1A1A
+            TEXT "→ 필요한 것 · 본인 명의 휴대폰"  @6745,488 182x20  text='→ 필요한 것 · 본인 명의 휴대폰'  Inter Medium 14px  #14542E
+      FRAME "Frame 45"  @6729,551 399x205
+        TEXT "본인확인 방법"  @6729,551 399x23  text='본인확인 방법'  Inter Bold 18px  #1A1A1A
+        FRAME "Frame 68"  @6729,588 399x77  fill=#F1F4F2  stroke=#14542E/1  r=10
+          FRAME "Group 11"  @6746,616 22x22
+            ELLIPSE "Radio/Selected"  @6746,616 22x22  fill=#14542E
+            ELLIPSE "Ellipse"  @6753,622 8x8  fill=#FFFFFF
+          FRAME "Frame 65"  @6792,605 174x43
+            TEXT "모바일 신분증으로 확인"  @6792,605 174x20  text='모바일 신분증으로 확인'  Inter Medium 14px  #1A1A1A
+            TEXT "첫 투자까지 한 번에 준비 · 권장"  @6792,630 174x18  text='첫 투자까지 한 번에 준비 · 권장'  Inter Regular 12px  #8A8A8A
+        FRAME "Frame 67"  @6729,679 399x77  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+          ELLIPSE "Radio/Default"  @6746,706 22x22  fill=#FFFFFF  stroke=#8A8A8A/1
+          FRAME "Frame 66"  @6792,696 215x43
+            TEXT "간편인증으로 로그인"  @6792,696 215x20  text='간편인증으로 로그인'  Inter Medium 14px  #1A1A1A
+            TEXT "둘러보기 가능 · 투자 전 모바일 신분증 확인"  @6792,721 215x18  text='둘러보기 가능 · 투자 전 모바일 신분증 확인'  Inter Regular 12px  #8A8A8A
+      FRAME "Frame 47"  @6729,783 399x76
+        FRAME "Frame 42"  @6729,783 399x44  fill=#14542E  r=6
+          TEXT "모바일 신분증으로 계속"  @6860,795 137x20  text='모바일 신분증으로 계속'  Inter Medium 14px  #FFFFFF
+        TEXT "나중에 확인하고 프로젝트 둘러보기"  @6729,841 399x18  text='나중에 확인하고 프로젝트 둘러보기'  Inter Regular 12px  #14542E
+      TEXT "선택한 방법은 다음 화면에서 변경할 수 있어요."  @6729,886 399x18  text='선택한 방법은 다음 화면에서 변경할 수 있어요.'  Inter Regular 12px  #8A8A8A
+    FRAME "x"  @7103,341 24x24
+      VECTOR "Vector"  @7109,347 12x12  stroke=#000000/2
+      VECTOR "Vector"  @7109,347 12x12  stroke=#000000/2

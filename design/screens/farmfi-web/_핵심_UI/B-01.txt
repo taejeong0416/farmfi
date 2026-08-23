@@ -1,0 +1,74 @@
+FRAME "B-01 · 구매자 / 픽업 지점 선택"  @84,4914 1440x868  fill=#FFFFFF  r=10
+  FRAME "TopNav"  @84,4914 1440x64  stroke=#E5E5E3/1
+    FRAME "NavLeft"  @138,4936 244x20
+      INSTANCE "App/Logo"  @138,4939 61x14
+      FRAME "NavLinks"  @255,4936 127x20
+        TEXT "정기구독"  @255,4936 52x20  text='정기구독'  Inter Medium 13px  #14542E
+        TEXT "내 구독"  @339,4936 43x20  text='내 구독'  Inter Regular 14px  #4A4A4A
+    FRAME "Frame 12"  @1412,4937 58x18
+      FRAME "아이콘"  @1412,4938 16x16
+        VECTOR "Vector"  @1418,4941 5x5  stroke=#8A8A8A/1
+        VECTOR "Vector"  @1415,4947 9x4  stroke=#8A8A8A/1
+      TEXT "김투자"  @1436,4937 34x18  text='이소비'  Inter Regular 12px  #4A4A4A
+  FRAME "BodyContainer"  @84,4978 1440x804
+    FRAME "HeaderText"  @138,5006 1332x62
+      TEXT "먼저, 어디에서 픽업할까요?"  @138,5006 1332x29  text='먼저, 어디에서 픽업할까요?'  Inter Bold 28px  #1A1A1A
+      TEXT "선택한 지점에서 재배하거나 보유한 작물과 드레싱만 다음 단계에 표시됩니다."  @138,5047 1332x21  text='선택한 지점에서 재배하거나 보유한 작물과 드레싱만 다음 단계에 표시됩니다.'  Inter Regular 14px  #4A4A4A
+    FRAME "SearchBar"  @138,5092 1332x48  fill=#F1F4F2  stroke=#E5E5E3/1  r=10
+      TEXT "⌖ 현재 위치 부산 부산진구 전포동"  @158,5108 161x15  text='⌖  현재 위치  부산 부산진구 전포동'  Inter Medium 12px  #1A1A1A
+      TEXT "주소 변경"  @1406,5108 44x15  text='주소 변경'  Inter Semi Bold 12px  #14542E
+    FRAME "MainContentRow"  @138,5164 1332x578
+      FRAME "MapArea"  @138,5164 842x578  fill=#EDEDEB  stroke=#E5E5E3/1  r=14
+        ROUNDED_RECTANGLE "Rectangle"  @324,5182 11x528  fill=#FFFFFF  r=5
+        ROUNDED_RECTANGLE "Rectangle"  @406,5182 11x528  fill=#FFFFFF  r=5
+        ROUNDED_RECTANGLE "Rectangle"  @488,5182 11x528  fill=#FFFFFF  r=5
+        ROUNDED_RECTANGLE "Rectangle"  @570,5182 11x528  fill=#FFFFFF  r=5
+        ROUNDED_RECTANGLE "Rectangle"  @652,5182 11x528  fill=#FFFFFF  r=5
+        ROUNDED_RECTANGLE "Rectangle"  @734,5182 11x528  fill=#FFFFFF  r=5
+        ROUNDED_RECTANGLE "Rectangle"  @816,5182 11x528  fill=#FFFFFF  r=5
+        ROUNDED_RECTANGLE "Rectangle"  @182,5198 130x510  fill=#D1E0D6  r=28
+        ROUNDED_RECTANGLE "Rectangle"  @320,5226 620x10  fill=#FFFFFF  r=5
+        ROUNDED_RECTANGLE "Rectangle"  @320,5331 620x10  fill=#FFFFFF  r=5
+        ROUNDED_RECTANGLE "Rectangle"  @320,5436 620x10  fill=#FFFFFF  r=5
+        ROUNDED_RECTANGLE "Rectangle"  @320,5541 620x10  fill=#FFFFFF  r=5
+        ROUNDED_RECTANGLE "Rectangle"  @320,5646 620x10  fill=#FFFFFF  r=5
+        ELLIPSE "Ellipse"  @582,5288 38x38  fill=#14542E  stroke=#FFFFFF/4
+        ELLIPSE "Ellipse"  @798,5468 32x32  fill=#8A8A8A  stroke=#FFFFFF/4
+        ELLIPSE "Ellipse"  @456,5578 32x32  fill=#8A8A8A  stroke=#FFFFFF/4
+        TEXT "전포 1호"  @556,5332 199x15  text='전포 1호'  Inter Semi Bold 11px  #1A1A1A
+        TEXT "화·금"  @556,5349 186x18  text='화·금'  Inter Regular 10px  #4A4A4A
+        TEXT "연산 2호"  @772,5512 201x15  text='연산 2호'  Inter Semi Bold 11px  #1A1A1A
+        TEXT "수·토"  @772,5529 186x18  text='수·토'  Inter Regular 10px  #4A4A4A
+        TEXT "부곡 1호"  @430,5622 199x15  text='부곡 1호'  Inter Semi Bold 11px  #1A1A1A
+        TEXT "금"  @430,5639 172x18  text='금'  Inter Regular 10px  #4A4A4A
+        FRAME "Frame 130"  @158,5684 184x38  fill=#FFFFFF  stroke=#E5E5E3/1  r=6
+          FRAME "Frame 171"  @175,5694 65x18
+            ELLIPSE "Ellipse 2"  @175,5698 9x9  fill=#14542E
+            TEXT "선택 지점"  @192,5694 48x18  text='선택 지점'  Inter Regular 11px  #4A4A4A
+          FRAME "Frame 172"  @260,5694 65x18
+            ELLIPSE "Ellipse 1"  @260,5698 9x9  fill=#8A8A8A
+            TEXT "다른 지점"  @277,5694 48x18  text='다른 지점'  Inter Regular 12px  #4A4A4A
+      FRAME "Sidebar"  @1016,5164 454x460
+        TEXT "가까운 픽업 지점"  @1016,5164 125x23  text='가까운 픽업 지점'  Inter Semi Bold 16px  #1A1A1A
+        FRAME "Group 24"  @1016,5199 454x105
+          ROUNDED_RECTANGLE "Rectangle"  @1016,5199 454x105  fill=#F1F4F2  stroke=#14542E/1  r=12
+          TEXT "부산 전포동 미니팜 1호"  @1036,5217 134x20  text='부산 전포동 미니팜 1호'  Inter Semi Bold 14px  #1A1A1A
+          TEXT "도보 8분 · 0.6km"  @1036,5245 89x18  text='도보 8분 · 0.6km'  Inter Regular 11px  #4A4A4A
+          TEXT "화·금 17:00–20:00"  @1036,5271 92x15  text='화·금 17:00–20:00'  Inter Medium 12px  #1A1A1A
+          TEXT "잔여 4슬롯"  @1399,5271 51x15  text='잔여 4슬롯'  Inter Medium 11px  #14542E
+          TEXT "✓ 선택"  @1413,5217 37x18  text='✓ 선택'  Inter Bold 11px  #14542E
+        FRAME "Group 25"  @1016,5316 454x105
+          ROUNDED_RECTANGLE "Rectangle"  @1016,5316 454x105  fill=#FFFFFF  stroke=#E5E5E3/1  r=12
+          TEXT "연산동 미니팜 2호"  @1036,5334 107x20  text='연산동 미니팜 2호'  Inter Semi Bold 14px  #1A1A1A
+          TEXT "버스 18분 · 2.4km"  @1036,5362 95x18  text='버스 18분 · 2.4km'  Inter Regular 11px  #4A4A4A
+          TEXT "수·토 16:00–19:00"  @1036,5388 91x15  text='수·토 16:00–19:00'  Inter Medium 12px  #1A1A1A
+          TEXT "잔여 9슬롯"  @1399,5388 51x15  text='잔여 9슬롯'  Inter Medium 11px  #14542E
+        FRAME "Group 26"  @1016,5433 454x105
+          ROUNDED_RECTANGLE "Rectangle"  @1016,5433 454x105  fill=#FFFFFF  stroke=#E5E5E3/1  r=12
+          TEXT "부곡동 생활팜 1호"  @1036,5451 105x20  text='부곡동 생활팜 1호'  Inter Semi Bold 14px  #1A1A1A
+          TEXT "지하철 26분 · 5.8km"  @1036,5479 107x18  text='지하철 26분 · 5.8km'  Inter Regular 11px  #4A4A4A
+          TEXT "금 17:00–20:00"  @1036,5505 79x15  text='금 17:00–20:00'  Inter Medium 12px  #1A1A1A
+          TEXT "잔여 2슬롯"  @1399,5505 51x15  text='잔여 2슬롯'  Inter Medium 11px  #DC2626
+        FRAME "Frame 89"  @1016,5550 454x44  fill=#14542E  r=6
+          TEXT "전포 1호 선택하고 팩 고르기"  @1161,5562 164x20  text='전포 1호 선택하고 팩 고르기'  Inter Semi Bold 14px  #FFFFFF
+        TEXT "첫 픽업: 9월 1일 화요일"  @1016,5606 119x18  text='첫 픽업: 9월 1일 화요일'  Inter Regular 11px  #8A8A8A

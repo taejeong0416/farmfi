@@ -6,22 +6,40 @@ import type { ReactNode } from "react";
 
 export type NavItem = { label: string; href: string };
 
-/** 모든 화면 상단의 같은 자리. Figma 기준 높이 60, 아래 1px 선. */
+/** 모든 화면 상단의 같은 자리. Figma 기준 높이 64, 아래 1px 선. */
 export function AppHeader({
   nav = [],
+  badge,
   right,
 }: {
   nav?: NavItem[];
+  /** 로고 옆 역할 표시. 포털은 알약, 관리자 콘솔은 글자만. */
+  badge?: { text: string; as: "pill" | "text"; tone?: "investor" | "operator" };
   right?: ReactNode;
 }) {
   const pathname = usePathname() ?? "";
 
   return (
-    <header className="border-b border-line-soft bg-white">
-      <div className="mx-auto flex h-[60px] max-w-shell items-center gap-8 px-8">
-        <Link href="/" className="text-17 font-bold text-brand">
-          FarmFi
-        </Link>
+    <header className="border-b border-line bg-white">
+      <div className="mx-auto flex h-16 max-w-shell items-center gap-8 px-[54px]">
+        <div className="flex items-center gap-2.5">
+          <Link href="/" className="text-17 font-bold text-brand">
+            FarmFi
+          </Link>
+          {badge?.as === "pill" ? (
+            <span
+              className={`rounded-full px-2 py-0.5 text-[8px] font-semibold ${
+                badge.tone === "operator"
+                  ? "bg-accent-operator/10 text-accent-operator"
+                  : "bg-accent-investor/10 text-accent-investor"
+              }`}
+            >
+              {badge.text}
+            </span>
+          ) : badge ? (
+            <span className="text-14 font-medium text-brand">{badge.text}</span>
+          ) : null}
+        </div>
         <nav className="flex flex-1 items-center gap-6">
           {nav.map((item) => {
             const active =
@@ -32,7 +50,7 @@ export function AppHeader({
               <Link
                 key={item.href}
                 href={item.href}
-                className={`text-13 ${
+                className={`text-14 ${
                   active ? "font-medium text-brand" : "text-body hover:text-ink"
                 }`}
               >
@@ -65,7 +83,7 @@ export function AppFooter() {
   );
 }
 
-/** 1440 본문 폭. 화면 본문을 감싸는 기본 컨테이너. */
+/** 1440 본문 폭. 화면 본문을 감싸는 기본 컨테이너. 좌우 54는 `.fig` 전 화면 공통이다. */
 export function Shell({
   children,
   className,
@@ -74,7 +92,7 @@ export function Shell({
   className?: string;
 }) {
   return (
-    <main className={`mx-auto max-w-shell px-8 py-10 ${className ?? ""}`}>
+    <main className={`mx-auto max-w-shell px-[54px] py-6 ${className ?? ""}`}>
       {children}
     </main>
   );

@@ -230,13 +230,13 @@ export function EvidenceSubmitScreen({ milestoneId }: { milestoneId: string }) {
             </Button>
           </div>
 
-          <h3 className="mt-8 text-15 font-bold text-ink">문서 · 영수증</h3>
+          <h3 className="mt-8 text-18 font-bold text-ink">문서 · 영수증</h3>
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
             className="mt-4 flex h-[106px] w-full flex-col items-center justify-center rounded-10 border border-dashed border-line bg-surface"
           >
-            <span className="text-13 font-medium text-brand">
+            <span className="text-14 font-medium text-brand">
               파일을 끌어다 놓거나 선택하세요
             </span>
             <span className="mt-1.5 text-12 text-muted">

@@ -1,0 +1,42 @@
+FRAME "O-12 · 마일스톤 집행 완료"  @7263,4458 1440x900
+  FRAME "O-12 · 마일스톤 집행 완료"  @7263,4458 1440x900  fill=#FFFFFF  r=10
+    FRAME "TopNav"  @7263,4458 1440x64  stroke=#E5E5E3/1
+      FRAME "NavLeft"  @7317,4482 404x17
+        FRAME "Frame 180"  @7317,4484 117x13
+          INSTANCE "App/Logo"  @7317,4484 55x13
+          FRAME "Frame 6"  @7382,4484 52x13  fill=#8C6114@0.10  stroke=#8C6114/0  r=19
+            TEXT "운영자 포털"  @7390,4486 37x8  text='운영자 포털'  Pretendard SemiBold 8px  #8C6114
+        FRAME "NavLinks"  @7490,4482 231x17
+          TEXT "공간 찾기"  @7490,4482 56x17  text='공간 찾기'  Inter Regular 14px  #4A4A4A
+          TEXT "내 준비 현황"  @7578,4482 72x17  text='내 준비 현황'  Inter Medium 14px  #14542E
+          TEXT "보증서"  @7682,4482 39x17  text='보증서'  Inter Regular 14px  #4A4A4A
+      FRAME "Frame 12"  @8533,4481 116x18
+        FRAME "아이콘"  @8533,4482 16x16
+          VECTOR "Vector"  @8539,4485 5x5  stroke=#8A8A8A/1
+          VECTOR "Vector"  @8536,4491 9x4  stroke=#8A8A8A/1
+        TEXT "그린테이블 이운영"  @8557,4481 92x18  text='그린테이블 이운영'  Inter Regular 12px  #4A4A4A
+    FRAME "BodyContainer"  @7263,4522 1440x836
+      FRAME "CenterWrap"  @7317,4678 1332x507
+        FRAME "SummaryContent"  @7750,4678 465x507  r=10
+          FRAME "TitleStack"  @7784,4706 399x63
+            TEXT "서울 성수동 미니팜 2호"  @7784,4706 117x18  text='서울 성수동 미니팜 2호'  Inter Regular 12px  #8A8A8A
+            TEXT "2단계 설비 발주집행이 완료되었습니다"  @7784,4740 386x29  text='2단계 설비 발주집행이 완료되었습니다'  Inter Bold 24px  #1A1A1A
+          FRAME "AmountCard"  @7784,4786 399x85  stroke=#E5E5E3/1  r=10
+            TEXT "집행 금액"  @7804,4802 48x18  text='집행 금액'  Inter Regular 12px  #8A8A8A
+            TEXT "8,200,000"  @7804,4824 127x29  text='8,200,000'  Inter Bold 24px  #14542E
+            TEXT "원"  @7932,4832 13x21  text='원'  Inter Regular 14px  #4A4A4A
+          FRAME "DetailsCard"  @7784,4886 399x121  stroke=#E5E5E3/1  r=8
+            ROUNDED_RECTANGLE "선"  @7784,4926 397x1  fill=#F1F4F2
+            TEXT "집행 시각"  @7800,4897 48x18  text='집행 시각'  Inter Regular 12px  #8A8A8A
+            TEXT "2026.03.14 11:02"  @8076,4898 96x18  text='2026.03.14 11:02'  Inter Medium 14px  #1A1A1A
+            ROUNDED_RECTANGLE "선"  @7784,4966 397x1  fill=#F1F4F2
+            TEXT "수취처"  @7800,4937 34x18  text='수취처'  Inter Regular 12px  #8A8A8A
+            TEXT "(주)어반설비"  @8108,4938 64x18  text='(주)어반설비'  Inter Medium 14px  #1A1A1A
+            TEXT "집행 번호"  @7800,4977 48x18  text='집행 번호'  Inter Regular 12px  #8A8A8A
+            TEXT "EX-2026-0314-0021"  @8056,4978 116x18  text='EX-2026-0314-0021'  Inter Medium 14px  #1A1A1A
+          TEXT "다음 단계인 3단계 설비 설치 증빙을 제출할…"  @7784,5024 399x18  text='다음 단계인 3단계 설비 설치 증빙을 제출할 수 있습니다.'  Inter Regular 12px  #4A4A4A
+          FRAME "Frame 182"  @7784,5058 399x100
+            FRAME "PrimaryBtn"  @7784,5058 399x46  fill=#14542E  r=6
+              TEXT "다음 증빙 제출하기"  @7928,5070 111x20  text='다음 증빙 제출하기'  Inter Medium 14px  #FFFFFF
+            FRAME "SecondaryBtn"  @7784,5112 399x46  stroke=#E5E5E3/1  r=6
+              TEXT "집행 내역 보기"  @7940,5124 85x20  text='집행 내역 보기'  Inter Medium 14px  #1A1A1A

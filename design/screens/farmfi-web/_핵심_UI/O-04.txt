@@ -1,0 +1,48 @@
+FRAME "O-04 · 운영자 / 현장 방문 예약"  @3884,6142 1440x900  fill=#FFFFFF  r=10
+  FRAME "TopNav"  @3884,6142 1440x64  stroke=#E5E5E3/0
+    FRAME "NavLeft"  @3938,6164 405x20
+      FRAME "Frame 180"  @3938,6168 117x13
+        INSTANCE "App/Logo"  @3938,6168 55x13
+        FRAME "Frame 6"  @4003,6168 52x13  fill=#8C6114@0.10  stroke=#8C6114/0  r=19
+          TEXT "운영자 포털"  @4010,6170 37x8  text='운영자 포털'  Pretendard SemiBold 8px  #8C6114
+      FRAME "NavLinks"  @4111,6164 232x20
+        TEXT "공간 찾기"  @4111,6164 56x20  text='공간 찾기'  Inter Medium 14px  #14542E
+        TEXT "내 준비 현황"  @4199,6164 73x20  text='내 준비 현황'  Inter Regular 14px  #4A4A4A
+        TEXT "보증서"  @4304,6164 39x20  text='보증서'  Inter Regular 14px  #4A4A4A
+    FRAME "Frame 12"  @5212,6165 58x18
+      FRAME "아이콘"  @5212,6166 16x16
+        VECTOR "Vector"  @5218,6169 5x5  stroke=#8A8A8A/1
+        VECTOR "Vector"  @5215,6175 9x4  stroke=#8A8A8A/1
+      TEXT "김투자"  @5236,6165 34x18  text='박운영'  Inter Regular 12px  #4A4A4A
+  FRAME "O-04 · 운영자 / 현장 방문 예약"  @3884,6206 1440x767  r=10
+    FRAME "Frame 137"  @3938,6244 239x30
+      TEXT "운영 신청 2 / 5"  @3938,6249 89x20  text='운영 신청 2 / 5'  Inter Semi Bold 13px  #14542E
+      FRAME "Autosave status"  @4045,6244 132x30  fill=#F1F4F2  r=999
+        TEXT "✓ 자동 저장됨"  @4057,6252 67x15  text='✓ 자동 저장됨'  Inter Semi Bold 12px  #14542E
+        TEXT "방금 전"  @4128,6250 37x18  text='방금 전'  Inter Regular 11px  #4A4A4A
+    TEXT "직접 보고 결정할 수 있어요"  @3938,6292 266x29  text='직접 보고 결정할 수 있어요'  Inter Bold 30px  #1A1A1A
+    TEXT "채광, 전력, 급배수와 픽업 동선을 담당 매니저와 함께 확인합니다. 방문 뒤에도 신청을 취소할 수 있어요."  @3938,6339 1332x21  text='채광, 전력, 급배수와 픽업 동선을 담당 매니저와 함께 확인합니다. 방문 뒤에도 신청을 취소할 수 있어요.'  Inter Regular 15px  #4A4A4A
+    FRAME "Content"  @3938,6378 1332x318  fill=#FFFFFF
+      FRAME "예약 날짜"  @3938,6378 334x318  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+        INSTANCE "App/Calendar"  @3954,6394 302x298
+      FRAME "시간"  @4288,6378 982x318  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+        TEXT "방문 시간"  @4304,6394 71x23  text='방문 시간'  Inter Semi Bold 16px  #1A1A1A
+        FRAME "Time"  @4304,6441 950x52  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+          TEXT "10:00 – 10:40"  @4320,6457 90x20  text='10:00 – 10:40'  Inter Semi Bold 14px  #1A1A1A
+        FRAME "Time"  @4304,6517 950x52  fill=#F1F4F2  stroke=#E5E5E3/1  r=10
+          TEXT "14:00 – 14:40 · 추천"  @4320,6533 128x20  text='14:00 – 14:40 · 추천'  Inter Semi Bold 14px  #14542E
+        FRAME "Time"  @4304,6593 950x52  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+          TEXT "16:00 – 16:40"  @4320,6609 90x20  text='16:00 – 16:40'  Inter Semi Bold 14px  #1A1A1A
+    FRAME "장소"  @3938,6714 1332x97  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+      TEXT "성수 로컬팜 후보지 · 서울 성동구 연무장길 00"  @3954,6730 341x23  text='성수 로컬팜 후보지 · 서울 성동구 연무장길 00'  Inter Semi Bold 16px  #1A1A1A
+      TEXT "담당 매니저 김팜 · 방문 전날 문자와 알림으로 안내해 드려요."  @3954,6777 302x18  text='담당 매니저 김팜 · 방문 전날 문자와 알림으로 안내해 드려요.'  Inter Regular 13px  #4A4A4A
+    FRAME "Frame 157"  @3938,6829 1332x44
+      FRAME "Button"  @3938,6829 657x44  fill=#14542E  stroke=#14542E/1  r=6
+        TEXT "이 일정으로 방문 예약"  @4202,6841 128x20  text='이 일정으로 방문 예약'  Inter Semi Bold 14px  #FFFFFF
+      FRAME "Button"  @4613,6829 657x44  fill=#FFFFFF  stroke=#E5E5E3/1  r=6
+        TEXT "전화로 일정 조율"  @4892,6841 98x20  text='전화로 일정 조율'  Inter Semi Bold 14px  #1A1A1A
+    FRAME "Step navigation"  @3938,6891 275x44  fill=#FFFFFF
+      FRAME "Button/secondary"  @3938,6891 121x44  fill=#FFFFFF  stroke=#E5E5E3/1  r=6
+        TEXT "← 이전 단계"  @3962,6903 73x20  text='← 이전 단계'  Inter Semi Bold 13px  #1A1A1A
+      FRAME "Button/ghost"  @4071,6891 142x44  fill=#F1F4F2  stroke=#F1F4F2/1  r=6
+        TEXT "저장하고 나가기"  @4095,6903 94x20  text='저장하고 나가기'  Inter Semi Bold 13px  #14542E

@@ -117,7 +117,7 @@ export function OperatorHomeScreen() {
 
       <div className="mt-7 flex items-start gap-8">
         <div className="flex-1">
-          <div className="rounded-14 bg-brand px-7 py-7">
+          <div className="rounded-12 bg-brand px-7 py-7">
             <p className="text-13 font-medium text-brand-soft">전체 준비도</p>
             <p className="mt-2 font-num text-3xl font-bold text-white">
               {progress}%
@@ -129,7 +129,7 @@ export function OperatorHomeScreen() {
             </p>
           </div>
 
-          <h2 className="mt-8 text-20 font-bold text-ink">내가 준비할 것</h2>
+          <h2 className="mt-8 text-20 font-semibold text-ink">내가 준비할 것</h2>
           <Card className="mt-4" padded={false}>
             <div className="px-6">
               <StepList
@@ -196,7 +196,7 @@ export function OperatorHomeScreen() {
 
         <div className="w-[360px] shrink-0 space-y-6">
           <Card>
-            <h2 className="text-15 font-bold text-ink">지금 할 일</h2>
+            <h2 className="text-15 font-semibold text-ink">지금 할 일</h2>
             {next ? (
               <>
                 <p className="mt-4 text-17 font-bold text-ink">{next.title}</p>
@@ -222,7 +222,7 @@ export function OperatorHomeScreen() {
           </Card>
 
           <Card>
-            <h2 className="text-15 font-bold text-ink">공간 준비 현황</h2>
+            <h2 className="text-20 font-semibold text-ink">공간 준비 현황</h2>
             <div className="mt-4">
               <ProgressBar value={progress} label={`준비도 ${progress}%`} />
             </div>

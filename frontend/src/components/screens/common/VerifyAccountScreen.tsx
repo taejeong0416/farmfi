@@ -59,12 +59,10 @@ export function VerifyAccountScreen({ next }: { next?: string }) {
 
   return (
     <PanelShell className="max-w-modal">
-      <h1 className="text-20 font-bold text-ink">
-        투자 준비 3 / 3 · 본인 계좌 확인
-      </h1>
-      <p className="mt-3 text-13 leading-6 text-body">
+      <p className="text-14 text-brand">투자 준비 3 / 3 · 본인 계좌 확인</p>
+      <h1 className="mt-4 text-24 font-bold text-ink">
         회수금과 환불을 받을 본인 명의 계좌를 확인해 주세요.
-      </p>
+      </h1>
 
       <div className="mt-6 rounded-12 bg-surface p-5">
         <div className="rounded-8 bg-white px-5 py-5">

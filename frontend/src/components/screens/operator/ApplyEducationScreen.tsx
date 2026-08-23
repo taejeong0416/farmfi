@@ -87,7 +87,7 @@ export function ApplyEducationScreen() {
         조건부 승인 후 필수 교육을 진행합니다. 멈춘 지점이 과정마다 저장돼 거기서 이어볼 수 있어요.
       </p>
 
-      <Card className="mt-7 rounded-14">
+      <Card className="mt-7 rounded-10">
         <div className="flex items-baseline justify-between">
           <h2 className="text-17 font-bold text-ink">전체 진도</h2>
           <span className="font-num text-15 font-medium text-brand">
@@ -109,7 +109,7 @@ export function ApplyEducationScreen() {
           return (
             <Card
               key={c.id}
-              className={`rounded-14 ${active ? "border-brand" : ""}`}
+              className={`rounded-10 ${active ? "border-brand" : ""}`}
             >
               <div className="flex items-start justify-between gap-4">
                 <div>

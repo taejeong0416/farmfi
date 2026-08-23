@@ -45,7 +45,7 @@
   transition: background 160ms ease;
 }
 .back:hover {
-  background: #EAF6EE;
+  background: #F1F4F2;
 }
 
 .head {
@@ -132,7 +132,7 @@
 .stat {
   background: #fff;
   border: 1px solid #E5E5E3;
-  border-radius: 14px;
+  border-radius: 10px;
   padding: 16px 18px;
 }
 .stat small {
@@ -155,8 +155,8 @@
   margin-left: 3px;
 }
 .stat.warn { border-color: #8A8A8A; background: #FFFFFF; }
-.stat.bad { border-color: #A34A3D; background: #FFFFFF; }
-.stat.good { border-color: #EAF6EE; background: #EAF6EE; }
+.stat.bad { border-color: #DC2626; background: #FFFFFF; }
+.stat.good { border-color: #F1F4F2; background: #F1F4F2; }
 
 .chartGrid {
   display: grid;
@@ -181,12 +181,12 @@
 .growthCard {
   background: #fff;
   border: 1px solid #E5E5E3;
-  border-radius: 16px;
+  border-radius: 10px;
   padding: 16px 18px 14px;
 }
-.growthCard.good { border-color: #EAF6EE; }
+.growthCard.good { border-color: #F1F4F2; }
 .growthCard.warn { border-color: #8A8A8A; }
-.growthCard.bad { border-color: #A34A3D; }
+.growthCard.bad { border-color: #DC2626; }
 
 .growthHead {
   display: flex;
@@ -226,7 +226,7 @@
   flex: 1;
   height: 8px;
   border-radius: 999px;
-  background: #F2F2F0;
+  background: #F1F4F2;
   overflow: hidden;
 }
 .ratioBar i {
@@ -290,11 +290,11 @@
 .card {
   background: #fff;
   border: 1px solid #E5E5E3;
-  border-radius: 16px;
+  border-radius: 10px;
   padding: 16px 18px 8px;
 }
 .card.alert {
-  border-color: #A34A3D;
+  border-color: #DC2626;
   box-shadow: 0 0 0 3px rgba(224, 90, 58, 0.06);
 }
 
@@ -334,12 +334,12 @@
   border-radius: 999px;
   border: 1px solid transparent;
 }
-.badge.ok { background: #EAF6EE; color: #14542E; border-color: #EAF6EE; }
-.badge.spike { background: #FFFFFF; color: #A34A3D; border-color: #A34A3D; }
+.badge.ok { background: #F1F4F2; color: #14542E; border-color: #F1F4F2; }
+.badge.spike { background: #FFFFFF; color: #DC2626; border-color: #DC2626; }
 .badge.drift { background: #FFFFFF; color: #8A8A8A; border-color: #E5E5E3; }
-.badge.range { background: #FFFFFF; color: #A34A3D; border-color: #A34A3D; }
+.badge.range { background: #FFFFFF; color: #DC2626; border-color: #DC2626; }
 .badge.suboptimal { background: #FFFFFF; color: #8A8A8A; border-color: #E5E5E3; }
-.badge.info { background: #F2F2F0; color: #4A4A4A; border-color: #E5E5E3; }
+.badge.info { background: #F1F4F2; color: #4A4A4A; border-color: #E5E5E3; }
 
 .chartBox {
   width: 100%;
@@ -353,7 +353,7 @@
   color: #8A8A8A;
   background: #fff;
   border: 1px solid #E5E5E3;
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 14px 18px;
 }
 .footnote b { color: #14542E; }
@@ -362,7 +362,7 @@
   margin-top: 22px;
   background: #fff;
   border: 1px solid #E5E5E3;
-  border-radius: 16px;
+  border-radius: 10px;
   padding: 18px 20px;
 }
 .events h3 {
@@ -375,7 +375,7 @@
   align-items: center;
   gap: 12px;
   padding: 10px 0;
-  border-top: 1px solid #F2F2F0;
+  border-top: 1px solid #F1F4F2;
   font-size: 13px;
 }
 .eventRow:first-of-type { border-top: none; }
@@ -405,5 +405,5 @@
   font-size: 12px;
   line-height: 1.6;
 }
-.tooltip .tHead { color: #EAF6EE; margin-bottom: 3px; }
-.tooltip .tSpike { color: #A34A3D; font-weight: 700; }
+.tooltip .tHead { color: #F1F4F2; margin-bottom: 3px; }
+.tooltip .tSpike { color: #DC2626; font-weight: 700; }

@@ -165,8 +165,8 @@ export function AdminProjectsScreen() {
 
   return (
     <AdminShell
-      title="투자 프로젝트 관리"
-      desc="모집 상태와 마일스톤 설정을 여기서 다룬다."
+      title="투자 프로젝트를 한눈에 확인하고 관리해요"
+      desc="사유를 입력하면 감사 로그에 함께 저장됩니다."
       action={
         <Button size="sm" variant="ghost" href="/admin/evidence">
           증빙 재검토

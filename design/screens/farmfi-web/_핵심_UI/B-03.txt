@@ -1,0 +1,111 @@
+FRAME "B-03 · 구매자 / 지점 재고 기반 구성"  @3124,4914 1440x900  fill=#FFFFFF  r=10
+  FRAME "TopNav"  @3124,4914 1440x64  stroke=#E5E5E3/1
+    FRAME "NavLeft"  @3178,4936 244x20
+      INSTANCE "App/Logo"  @3178,4939 61x14
+      FRAME "NavLinks"  @3295,4936 127x20
+        TEXT "정기구독"  @3295,4936 52x20  text='정기구독'  Inter Medium 13px  #14542E
+        TEXT "내 구독"  @3379,4936 43x20  text='내 구독'  Inter Regular 14px  #1A1A1A
+    FRAME "Frame 12"  @4452,4937 58x18
+      FRAME "아이콘"  @4452,4938 16x16
+        VECTOR "Vector"  @4458,4941 5x5  stroke=#8A8A8A/1
+        VECTOR "Vector"  @4455,4947 9x4  stroke=#8A8A8A/1
+      TEXT "김투자"  @4476,4937 34x18  text='이소비'  Inter Regular 12px  #4A4A4A
+  FRAME "BodyContainer"  @3124,4978 1440x739
+    FRAME "MainContentRow"  @3178,5006 1332x671
+      FRAME "LeftColumn"  @3178,5006 844x671
+        FRAME "HeaderText"  @3178,5006 844x60
+          TEXT "전포 1호에서 이번 믹스팩을 구성해보세요"  @3178,5006 844x29  text='전포 1호에서 이번 믹스팩을 구성해보세요'  Inter Bold 28px  #1A1A1A
+          TEXT "이 지점에서 이번 주 수확·보유 중인 작물 5개와 드레싱 2봉을 선택하세요."  @3178,5045 844x21  text='이 지점에서 이번 주 수확·보유 중인 작물 5개와 드레싱 2봉을 선택하세요.'  Inter Regular 14px  #4A4A4A
+        FRAME "CropHeaderRow"  @3178,5090 844x23
+          TEXT "작물 선택"  @3178,5090 71x23  text='작물 선택'  Inter Semi Bold 18px  #1A1A1A
+          TEXT "5 / 5 선택"  @3975,5094 47x15  text='5 / 5 선택'  Inter Medium 12px  #14542E
+        FRAME "CropRow1"  @3178,5137 844x66
+          FRAME "Crop-버터헤드"  @3178,5137 199x66  fill=#F1F4F2  stroke=#14542E/1  r=10
+            FRAME "IconLabel"  @3194,5154 94x32
+              ROUNDED_RECTANGLE "Rectangle"  @3194,5154 32x32
+              TEXT "버터헤드"  @3236,5160 52x20  text='버터헤드'  Inter Medium 13px  #1A1A1A
+            TEXT "✓"  @3348,5160 13x20  text='✓'  Inter Bold 13px  #14542E
+          FRAME "Crop-로메인"  @3393,5137 199x66  fill=#F1F4F2  stroke=#14542E/1  r=10
+            FRAME "IconLabel"  @3409,5154 81x32
+              ROUNDED_RECTANGLE "Rectangle"  @3409,5154 32x32
+              TEXT "로메인"  @3451,5160 39x20  text='로메인'  Inter Medium 13px  #1A1A1A
+            TEXT "✓"  @3563,5160 13x20  text='✓'  Inter Bold 13px  #14542E
+          FRAME "Crop-바질"  @3608,5137 199x66  fill=#F1F4F2  stroke=#14542E/1  r=10
+            FRAME "IconLabel"  @3624,5154 68x32
+              ROUNDED_RECTANGLE "Rectangle"  @3624,5154 32x32
+              TEXT "바질"  @3666,5160 26x20  text='바질'  Inter Medium 13px  #1A1A1A
+            TEXT "✓"  @3778,5160 13x20  text='✓'  Inter Bold 13px  #14542E
+          FRAME "Crop-루꼴라"  @3823,5137 199x66  fill=#F1F4F2  stroke=#14542E/1  r=10
+            FRAME "IconLabel"  @3839,5154 81x32
+              ROUNDED_RECTANGLE "Rectangle"  @3839,5154 32x32
+              TEXT "루꼴라"  @3881,5160 39x20  text='루꼴라'  Inter Medium 13px  #1A1A1A
+            TEXT "✓"  @3993,5160 13x20  text='✓'  Inter Bold 13px  #14542E
+        FRAME "CropRow2"  @3178,5227 844x66
+          FRAME "Crop-적근대"  @3178,5227 199x66  fill=#F1F4F2  stroke=#14542E/1  r=10
+            FRAME "IconLabel"  @3194,5244 81x32
+              ROUNDED_RECTANGLE "Rectangle"  @3194,5244 32x32
+              TEXT "적근대"  @3236,5250 39x20  text='적근대'  Inter Medium 13px  #1A1A1A
+            TEXT "✓"  @3348,5250 13x20  text='✓'  Inter Bold 13px  #14542E
+          FRAME "Crop-청경채"  @3393,5227 199x66  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+            FRAME "IconLabel"  @3409,5244 81x32
+              ROUNDED_RECTANGLE "Rectangle"  @3409,5244 32x32
+              TEXT "청경채"  @3451,5250 39x20  text='청경채'  Inter Medium 13px  #1A1A1A
+          FRAME "Crop-케일"  @3608,5227 199x66  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+            FRAME "IconLabel"  @3624,5244 68x32
+              ROUNDED_RECTANGLE "Rectangle"  @3624,5244 32x32
+              TEXT "케일"  @3666,5250 26x20  text='케일'  Inter Medium 13px  #1A1A1A
+            TEXT "품절"  @3770,5252 21x15  text='품절'  Inter Medium 11px  #4A4A4A
+          FRAME "Crop-딜"  @3823,5227 199x66  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+            FRAME "IconLabel"  @3839,5244 55x32
+              ROUNDED_RECTANGLE "Rectangle"  @3839,5244 32x32
+              TEXT "딜"  @3881,5250 13x20  text='딜'  Inter Medium 13px  #1A1A1A
+            TEXT "품절"  @3985,5252 21x15  text='품절'  Inter Medium 11px  #4A4A4A
+        TEXT "현재 지점 재고 기준 · 품절 작물은 선택할 수 없고 다음 수확일을 확인할 수 있어요."  @3178,5317 844x18  text='현재 지점 재고 기준 · 품절 작물은 선택할 수 없고 다음 수확일을 확인할 수 있어요.'  Inter Regular 12px  #4A4A4A
+        FRAME "DressHeaderRow"  @3178,5359 844x23
+          TEXT "드레싱 선택"  @3178,5359 87x23  text='드레싱 선택'  Inter Semi Bold 18px  #1A1A1A
+          TEXT "2 / 2봉"  @3988,5363 34x15  text='2 / 2봉'  Inter Medium 12px  #14542E
+        FRAME "DressRow"  @3178,5406 844x62
+          FRAME "Dress-참깨"  @3178,5406 199x62  fill=#F1F4F2  stroke=#14542E/1  r=10
+            TEXT "참깨"  @3194,5427 26x20  text='참깨'  Inter Medium 13px  #1A1A1A
+            TEXT "1봉"  @3345,5430 16x15  text='1봉'  Inter Semi Bold 12px  #14542E
+          FRAME "Dress-유자"  @3393,5406 199x62  fill=#F1F4F2  stroke=#14542E/1  r=10
+            TEXT "유자"  @3409,5427 26x20  text='유자'  Inter Medium 13px  #1A1A1A
+            TEXT "1봉"  @3560,5430 16x15  text='1봉'  Inter Semi Bold 12px  #14542E
+          FRAME "Dress-발사믹"  @3608,5406 199x62  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+            TEXT "발사믹"  @3624,5427 39x20  text='발사믹'  Inter Medium 13px  #1A1A1A
+            TEXT "+ 담기"  @3760,5430 31x15  text='+ 담기'  Inter Semi Bold 12px  #4A4A4A
+          FRAME "Dress-레몬허브"  @3823,5406 199x62  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+            TEXT "레몬 허브"  @3839,5427 56x20  text='레몬 허브'  Inter Medium 13px  #1A1A1A
+            TEXT "품절"  @3985,5430 21x15  text='품절'  Inter Semi Bold 12px  #4A4A4A
+        TEXT "픽업 빈도"  @3178,5492 71x23  text='픽업 빈도'  Inter Semi Bold 18px  #1A1A1A
+        FRAME "Frame 109"  @3178,5539 844x96
+          FRAME "Frame 106"  @3178,5539 268x96  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+            TEXT "주 1회"  @3195,5556 37x20  text='주 1회'  Inter Semi Bold 14px  #1A1A1A
+            TEXT "월 29,000원"  @3195,5600 66x18  text='월 29,000원'  Inter Regular 12px  #4A4A4A
+          FRAME "Frame 107"  @3466,5539 268x96  fill=#F1F4F2  stroke=#14542E/1  r=10
+            TEXT "주 2회"  @3483,5556 39x20  text='주 2회'  Inter Semi Bold 14px  #1A1A1A
+            TEXT "월 49,000원"  @3483,5600 66x18  text='월 49,000원'  Inter Regular 12px  #14542E
+          FRAME "Frame 108"  @3754,5539 268x96  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
+            TEXT "격주"  @3771,5556 26x20  text='격주'  Inter Semi Bold 14px  #1A1A1A
+            TEXT "월 19,000원"  @3771,5600 64x18  text='월 19,000원'  Inter Regular 12px  #4A4A4A
+        TEXT "작물 수급에 따라 품절된 작물은 비슷한 품목으로 변경을 제안할 수 있어요."  @3178,5659 844x18  text='작물 수급에 따라 품절된 작물은 비슷한 품목으로 변경을 제안할 수 있어요.'  Inter Regular 12px  #8A8A8A
+      FRAME "Sidebar"  @4078,5006 432x670
+        FRAME "Selected branch chip"  @4078,5006 432x42  fill=#F1F4F2  r=10
+          TEXT "선택 지점 · 부산 전포동 미니팜 1호"  @4094,5017 201x20  text='선택 지점 · 부산 전포동 미니팜 1호'  Inter Semi Bold 13px  #14542E
+          TEXT "지점 변경"  @4450,5020 44x15  text='지점 변경'  Inter Semi Bold 12px  #14542E
+        FRAME "Frame 124"  @4078,5064 432x612  fill=#FFFFFF  stroke=#E5E5E3/1  r=14
+          FRAME "Group 30"  @4100,5088 382x320
+            TEXT "선택한 구성"  @4100,5088 87x23  text='선택한 구성'  Inter Semi Bold 18px  #1A1A1A
+            TEXT "5종 믹스팩"  @4100,5130 83x23  text='5종 믹스팩'  Inter Bold 20px  #1A1A1A
+            TEXT "버터헤드 · 로메인 · 바질 · 루꼴라 · 적근대"  @4100,5166 206x18  text='버터헤드 · 로메인 · 바질 · 루꼴라 · 적근대'  Inter Regular 12px  #4A4A4A
+            TEXT "참깨 드레싱 1봉 · 유자 드레싱 1봉"  @4100,5211 168x18  text='참깨 드레싱 1봉 · 유자 드레싱 1봉'  Inter Regular 12px  #4A4A4A
+            ROUNDED_RECTANGLE "Rectangle"  @4100,5249 382x1  fill=#E5E5E3
+            TEXT "주 2회 · 화요일 / 금요일"  @4341,5272 140x20  text='주 2회 · 화요일 / 금요일'  Inter Medium 13px  #1A1A1A
+            TEXT "월 구독료"  @4100,5318 48x18  text='월 구독료'  Inter Regular 12px  #4A4A4A
+            TEXT "49,000원"  @4399,5313 83x23  text='49,000원'  Inter Bold 18px  #14542E
+            ROUNDED_RECTANGLE "Rectangle"  @4100,5365 382x1  fill=#E5E5E3
+            TEXT "다음 단계에서 픽업 지점, 쿠폰과 결제수단을 확인해요."  @4100,5390 270x18  text='다음 단계에서 픽업 지점, 쿠폰과 결제수단을 확인해요.'  Inter Regular 12px  #8A8A8A
+          FRAME "Frame 123"  @4100,5565 388x87
+            FRAME "Frame 122"  @4100,5565 388x52  fill=#14542E  r=6
+              TEXT "이 구성으로 주문하기"  @4232,5581 124x20  text='이 구성으로 주문하기'  Inter Semi Bold 14px  #FFFFFF
+            TEXT "매주 결제 전날까지 작물과 드레싱을 바꿀 수 있어요."  @4100,5634 388x18  text='매주 결제 전날까지 작물과 드레싱을 바꿀 수 있어요.'  Inter Regular 11px  #8A8A8A

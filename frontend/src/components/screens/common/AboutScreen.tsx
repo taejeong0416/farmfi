@@ -1,6 +1,7 @@
 "use client";
 
-import { Button, Card, PhotoSlot, Shell, StatRow } from "@/components/ui";
+import Link from "next/link";
+import { Button, Card, Shell, StatRow } from "@/components/ui";
 import { num, useProjects } from "../api";
 
 const STEPS = [
@@ -48,27 +49,40 @@ export function AboutScreen() {
 
   return (
     <Shell className="pt-0">
-      <section className="flex items-center gap-16 border-b border-line-soft py-16">
-        <div className="flex-1">
-          <p className="text-12 font-medium text-brand">FarmFi 소개</p>
-          <h1 className="mt-4 text-28 font-bold leading-tight text-ink">
+      <section
+        className="-mx-[54px] flex h-[407px] flex-col justify-center bg-brand bg-cover bg-center px-[54px]"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(20,84,46,0.78), rgba(20,84,46,0.78)), url('/assets/farm-operator-photo.png')",
+        }}
+      >
+        <div className="mx-auto w-full max-w-[1332px]">
+          <p className="text-14 font-medium text-white">FarmFi 소개</p>
+          <h1 className="mt-4 text-[36px] font-bold leading-tight text-white">
             확인되지 않으면
             <br />
             집행되지 않습니다
           </h1>
-          <p className="mt-6 text-14 leading-6 text-body">
+          <p className="mt-11 text-14 leading-6 text-white">
             비어 있던 도심 상가를 스마트팜 매장으로 바꾸는 자금을 모읍니다.
             <br />
             모인 자금은 한 번에 나가지 않고, 확인된 단계마다 나눠 집행됩니다.
           </p>
-          <div className="mt-8 flex gap-2.5">
-            <Button href="/projects">프로젝트 보기</Button>
-            <Button href="/operator/spaces" variant="secondary">
+          <div className="mt-5 flex gap-3">
+            <Link
+              href="/projects"
+              className="flex h-[46px] items-center rounded-6 border border-white px-6 text-14 font-medium text-white"
+            >
+              프로젝트 보기
+            </Link>
+            <Link
+              href="/operator/spaces"
+              className="flex h-[46px] items-center rounded-6 border border-brand bg-white px-6 text-14 font-medium text-brand"
+            >
               운영자로 시작하기
-            </Button>
+            </Link>
           </div>
         </div>
-        <PhotoSlot className="h-[262px] w-[522px] shrink-0" />
       </section>
 
       <StatRow
@@ -89,12 +103,12 @@ export function AboutScreen() {
       />
 
       <section className="pt-12">
-        <h2 className="text-20 font-bold text-ink">돈이 나가는 방식</h2>
+        <h2 className="text-18 font-bold text-ink">돈이 나가는 방식</h2>
         <div className="mt-6 grid grid-cols-4 gap-4">
           {STEPS.map((s) => (
             <div
               key={s.seq}
-              className="rounded-12 border border-line bg-white px-5 py-6"
+              className="rounded-10 border border-line bg-white px-5 py-6"
             >
               <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-soft text-11 font-bold text-brand">
                 {s.seq}
@@ -107,7 +121,7 @@ export function AboutScreen() {
       </section>
 
       <section className="pt-12">
-        <h2 className="text-20 font-bold text-ink">세 가지 장치</h2>
+        <h2 className="text-18 font-bold text-ink">세 가지 장치</h2>
         <div className="mt-6 grid grid-cols-3 gap-5">
           {PILLARS.map((p) => (
             <Card key={p.title}>
@@ -124,7 +138,7 @@ export function AboutScreen() {
             <p className="text-17 font-bold text-white">
               도심의 빈 공간을 함께 바꿔보세요
             </p>
-            <p className="mt-2 text-12 text-brand-soft">
+            <p className="mt-2 text-12 text-white">
               투자자 · 구매자 · 운영자 어느 쪽으로도 시작할 수 있어요.
             </p>
           </div>

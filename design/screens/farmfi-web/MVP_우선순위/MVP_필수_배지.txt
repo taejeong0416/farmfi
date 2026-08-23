@@ -1,2 +1,0 @@
-FRAME "MVP 필수 배지"  @13370,160 230x34  fill=#0F6E56  r=999
-  TEXT "이 구역도 MVP 필수"  @13388,169 190x17  text='이 구역도 MVP 필수'  Inter Bold 13px  #FFFFFF

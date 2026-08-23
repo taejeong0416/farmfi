@@ -95,8 +95,8 @@ export function ApplyContractScreen() {
         공간·운영기간·정산 기준이 실제 협의 내용과 같은지 확인한 뒤 전자서명합니다.
       </p>
 
-      <Card className="mt-7 rounded-14">
-        <h2 className="text-20 font-bold text-ink">FarmFi 운영 계약서</h2>
+      <Card className="mt-7 rounded-10">
+        <h2 className="text-18 font-bold text-ink">FarmFi 운영 계약서</h2>
         <div className="mt-4">
           <InfoRow label="운영 지역" value={application.region} />
           <InfoRow
@@ -115,7 +115,7 @@ export function ApplyContractScreen() {
       </Card>
 
       {signed ? (
-        <Card className="mt-4 rounded-14 border-brand bg-brand-soft">
+        <Card className="mt-4 rounded-10 border-brand bg-brand-soft">
           <p className="text-15 font-bold text-ink">서명을 마쳤어요</p>
           <p className="mt-2 text-13 text-body">
             {contract.signedAt ? shortDate(new Date(contract.signedAt)) : ""} 서명 ·
@@ -133,7 +133,7 @@ export function ApplyContractScreen() {
             {CHECKS.map((d, i) => (
               <div
                 key={d}
-                className={`rounded-14 border px-5 py-5 ${
+                className={`rounded-10 border px-5 py-5 ${
                   agreed[i] ? "border-brand bg-brand-soft" : "border-line bg-white"
                 }`}
               >
@@ -155,11 +155,11 @@ export function ApplyContractScreen() {
             ))}
           </div>
 
-          <Card className="mt-4 rounded-14">
-            <p className="text-15 font-bold text-ink">
+          <Card className="mt-4 rounded-10">
+            <p className="text-18 font-bold text-ink">
               이해되지 않는 조항이 있나요?
             </p>
-            <p className="mt-2 text-13 text-muted">
+            <p className="mt-2 text-12 text-muted">
               서명 전에 담당자에게 질문하거나 계약 수정을 요청할 수 있어요.
             </p>
             <div className="mt-4">

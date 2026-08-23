@@ -14,18 +14,17 @@ Phase A~K 체크는 잠정 `.fig` 기준으로 끝났다는 뜻이고, 최종 �
 ## 디자인
 Figma가 기준이다. 원본은 `design/*.fig`, 화면별 좌표·색·폰트 덤프는 `design/screens/`.
 
-현재 `design/*.fig`는 **잠정본**이다. 지금까지 옮긴 화면은 전부 이 잠정본 기준이라 최종 디자인과 다를 수 있다. 최종본이 들어오면 `docs/build-plan.md` Phase N(교체·대조·재검증)을 따른다.
+`design/farmfi-web.fig`는 디자인 최종본이다.
 
-색은 아래를 기본으로 쓴다.
+색은 아래를 쓴다.
 ```
 ink #1A1A1A · body #4A4A4A · muted #8A8A8A
-line #E5E5E3 · line-soft #EDEDEB · surface #F2F2F0
-brand #14542E · brand-soft #EAF6EE · danger #A34A3D
+line #E5E5E3 · line-soft #EDEDEB · surface #F1F4F2
+brand #14542E · danger #DC2626
+accent-investor #207349 · accent-operator #8C6114
 ```
-- Figma에 남아있는 노랑·파랑과 연한 틴트 배경은 쓰지 않는다. 치환표는 `docs/figma-color-map.md`.
-- 상태를 여러 색으로 등급 매기지 않는다. 글자로 말한다.
+- 값은 `.fig`에서 그대로 뽑은 것이다. Figma와 코드가 갈리면 Figma가 맞다.
 - 제3자 브랜드 로고(B-05 결제수단)는 원본 색을 쓴다.
-- 웹과 앱이 같은 색을 쓴다.
 
 ## 구조
 - `frontend/` — Next.js 14 (App Router) + Prisma + API Routes (웹 + 백엔드)

@@ -60,10 +60,10 @@ export function PageHeading({
     <div className="mb-6 flex items-end justify-between gap-6">
       <div>
         {eyebrow ? (
-          <p className="mb-2 text-12 font-medium text-brand">{eyebrow}</p>
+          <p className="mb-2 text-14 font-medium text-brand">{eyebrow}</p>
         ) : null}
         <h1 className="text-24 font-bold text-ink">{title}</h1>
-        {desc ? <p className="mt-2 text-13 text-body">{desc}</p> : null}
+        {desc ? <p className="mt-2 text-12 text-muted">{desc}</p> : null}
       </div>
       {action}
     </div>

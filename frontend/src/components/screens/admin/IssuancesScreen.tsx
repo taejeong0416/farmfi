@@ -181,6 +181,7 @@ export function IssuancesScreen() {
 
   return (
     <AdminShell
+      label="보유 구좌 발행"
       title="보유 구좌 발행"
       desc="입금이 확인된 신청은 투자자 수탁 지갑 앞으로 구좌가 발행됩니다. 체인 전송이 막힌 건은 여기서 다시 태웁니다."
       action={

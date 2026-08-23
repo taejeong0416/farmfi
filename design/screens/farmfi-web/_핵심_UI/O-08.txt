@@ -1,0 +1,86 @@
+FRAME "O-08 · 운영자 / 보증서 발급·앱 설치"  @10014,6142 1440x900  fill=#FFFFFF  r=10
+  FRAME "TopNav"  @10014,6142 1440x64  stroke=#E5E5E3/0
+    FRAME "NavLeft"  @10068,6164 405x20
+      FRAME "Frame 180"  @10068,6168 117x13
+        INSTANCE "App/Logo"  @10068,6168 55x13
+        FRAME "Frame 6"  @10133,6168 52x13  fill=#8C6114@0.10  stroke=#8C6114/0  r=19
+          TEXT "운영자 포털"  @10140,6170 37x8  text='운영자 포털'  Pretendard SemiBold 8px  #8C6114
+      FRAME "NavLinks"  @10241,6164 232x20
+        TEXT "공간 찾기"  @10241,6164 56x20  text='공간 찾기'  Inter Regular 14px  #4A4A4A
+        TEXT "내 준비 현황"  @10329,6164 73x20  text='내 준비 현황'  Inter Regular 14px  #4A4A4A
+        TEXT "보증서"  @10434,6164 39x20  text='보증서'  Inter Regular 14px  #14542E
+    FRAME "Frame 12"  @11342,6165 58x18
+      FRAME "아이콘"  @11342,6166 16x16
+        VECTOR "Vector"  @11348,6169 5x5  stroke=#8A8A8A/1
+        VECTOR "Vector"  @11345,6175 9x4  stroke=#8A8A8A/1
+      TEXT "김투자"  @11366,6165 34x18  text='박운영'  Inter Regular 12px  #4A4A4A
+  FRAME "BodyContainer"  @10014,6206 1440x782  fill=#FFFFFF
+    TEXT "운영 준비가 모두 확인됐어요"  @10068,6244 282x29  text='운영 준비가 모두 확인됐어요'  Inter Bold 30px  #1A1A1A
+    TEXT "이 보증서는 운영자 자격과 배정 공간을 증명하며, 운영자 앱에서 인증할 때 사용합니다."  @10068,6291 1332x21  text='이 보증서는 운영자 자격과 배정 공간을 증명하며, 운영자 앱에서 인증할 때 사용합니다.'  Inter Regular 14px  #4A4A4A
+    FRAME "ContentRow"  @10068,6330 1332x620
+      FRAME "CertificateCard"  @10068,6330 760x620
+        ROUNDED_RECTANGLE "Rectangle"  @10068,6330 760x620  stroke=#D1A84D/2  r=22
+        ROUNDED_RECTANGLE "Rectangle"  @10084,6346 728x588  stroke=#D1A84D/1  r=18
+        TEXT "FarmFi OPERATOR GUARANTEE"  @10108,6366 214x20  text='FarmFi OPERATOR GUARANTEE'  Inter Semi Bold 13px  #D1A84D
+        TEXT "운영자 보증서"  @10108,6411 208x43  text='운영자 보증서'  Inter Bold 30px  #F2D680
+        TEXT "운영자"  @10108,6482 31x15  text='운영자'  Inter Medium 11px  #D1A84D
+        TEXT "이운영"  @10108,6504 67x29  text='이운영'  Inter Semi Bold 22px  #FFFFFF
+        TEXT "배정 공간"  @10108,6558 44x15  text='배정 공간'  Inter Medium 11px  #D1A84D
+        TEXT "부산 전포동 미니팜 1호"  @10108,6580 171x23  text='부산 전포동 미니팜 1호'  Inter Semi Bold 18px  #FFFFFF
+        TEXT "보증서 번호"  @10108,6634 54x15  text='보증서 번호'  Inter Medium 11px  #D1A84D
+        TEXT "FF-OP-2026-0048"  @10108,6656 126x20  text='FF-OP-2026-0048'  Inter Medium 16px  #FFFFFF
+        TEXT "유효기간"  @10108,6704 41x15  text='유효기간'  Inter Medium 11px  #D1A84D
+        TEXT "2026.08.18 — 운영 계약 종료일까지"  @10108,6726 218x21  text='2026.08.18 — 운영 계약 종료일까지'  Inter Regular 14px  #FFFFFF
+        ROUNDED_RECTANGLE "Rectangle"  @10531,6480 212x212  fill=#FFFFFF  r=10
+        FRAME "QR Code"  @10531,6480 212x212
+          VECTOR "Vector"  @10546,6495 183x183  fill=#000000  stroke=#000000/0
+        TEXT "‘Farmfi’ 앱에서 QR 인증"  @10572,6708 113x15  text='‘Farmfi’ 앱에서 QR 인증'  Inter Medium 12px  #D1E0D6
+        ROUNDED_RECTANGLE "Rectangle"  @10108,6798 674x1  fill=#4A4A4A
+        TEXT "발급 기관 FarmFi"  @10108,6826 86x15  text='발급 기관  FarmFi'  Inter Medium 12px  #D1A84D
+        TEXT "공간 배정과 운영 자격이 유효한 동안 사용할 수 있습니다."  @10108,6858 285x18  text='공간 배정과 운영 자격이 유효한 동안 사용할 수 있습니다.'  Inter Regular 11px  #D1E0D6
+        TEXT "검증 해시 7F2A · 91C4 · B830"  @10108,6894 164x18  text='검증 해시  7F2A · 91C4 · B830'  Inter Regular 10px  #D1A84D
+        ROUNDED_RECTANGLE "Rectangle"  @10108,6798 674x1  fill=#D1A84D
+        FRAME "Group 46"  @10692,6815 92x92
+          ELLIPSE "Ellipse"  @10692,6815 92x92  stroke=#D1A84D/3
+          VECTOR "Vector"  @10720,6846 38x38
+          FRAME "Group"  @10705,6824 65x23
+            TEXT "F"  @10705,6840 6x11  text='F'  Inter Bold 9px  #8C6114
+            TEXT "A"  @10715,6830 7x11  text='A'  Inter Bold 9px  #8C6114
+            TEXT "R"  @10729,6825 6x11  text='R'  Inter Bold 9px  #8C6114
+            TEXT "M"  @10742,6824 9x11  text='M'  Inter Bold 9px  #8C6114
+            TEXT "F"  @10758,6829 6x11  text='F'  Inter Bold 9px  #8C6114
+            TEXT "I"  @10768,6838 3x11  text='I'  Inter Bold 9px  #8C6114
+          FRAME "Group"  @10701,6876 73x26
+            TEXT "V"  @10709,6876 7x11  text='V'  Inter Bold 9px  #9E7324
+            TEXT "E"  @10716,6883 6x11  text='E'  Inter Bold 9px  #9E7324
+            TEXT "R"  @10724,6888 6x11  text='R'  Inter Bold 9px  #9E7324
+            TEXT "I"  @10733,6890 3x11  text='I'  Inter Bold 9px  #9E7324
+            TEXT "F"  @10739,6891 6x11  text='F'  Inter Bold 9px  #9E7324
+            TEXT "I"  @10748,6889 3x11  text='I'  Inter Bold 9px  #9E7324
+            TEXT "E"  @10754,6887 6x11  text='E'  Inter Bold 9px  #9E7324
+            TEXT "D"  @10761,6881 7x11  text='D'  Inter Bold 9px  #9E7324
+      FRAME "RightColumn"  @10852,6330 548x620
+        ROUNDED_RECTANGLE "Rectangle"  @10852,6330 548x206  fill=#FFFFFF  stroke=#E5E5E3/1  r=14
+        TEXT "보증서 사용 방법"  @10876,6354 125x23  text='보증서 사용 방법'  Inter Semi Bold 18px  #1A1A1A
+        ROUNDED_RECTANGLE "Rectangle"  @10876,6398 26x26  fill=#F1F4F2  r=13
+        TEXT "1"  @10886,6404 6x15  text='1'  Inter Bold 11px  #14542E
+        TEXT "운영자 앱에서 ‘보증서 인증’ 선택"  @10916,6402 189x20  text='운영자 앱에서 ‘보증서 인증’ 선택'  Inter Medium 12px  #1A1A1A
+        ROUNDED_RECTANGLE "Rectangle"  @10876,6446 26x26  fill=#F1F4F2  r=13
+        TEXT "2"  @10886,6452 7x15  text='2'  Inter Bold 11px  #14542E
+        TEXT "보증서 QR 스캔 또는 번호 입력"  @10916,6450 180x20  text='보증서 QR 스캔 또는 번호 입력'  Inter Medium 12px  #1A1A1A
+        ROUNDED_RECTANGLE "Rectangle"  @10876,6494 26x26  fill=#F1F4F2  r=13
+        TEXT "3"  @10885,6500 8x15  text='3'  Inter Bold 11px  #14542E
+        TEXT "본인 확인 후 배정 매장과 자동 연결"  @10916,6498 203x20  text='본인 확인 후 배정 매장과 자동 연결'  Inter Medium 12px  #1A1A1A
+        ROUNDED_RECTANGLE "Rectangle"  @10852,6602 548x174  fill=#F1F4F2  r=14
+        TEXT "FarmFi 운영자 앱에서 시작하세요"  @10876,6628 255x23  text='FarmFi 운영자 앱에서 시작하세요'  Inter Bold 17px  #14542E
+        TEXT "앱을 설치하고 보증서를 인증하면 배정 매장 확인과 설비 연결을 바로 시작할 수 있어요."  @10876,6660 431x18  text='앱을 설치하고 보증서를 인증하면 배정 매장 확인과 설비 연결을 바로 시작할 수 있어요.'  Inter Regular 12px  #4A4A4A
+        ROUNDED_RECTANGLE "FarmFi App Logo"  @10874,6692 64x60  r=12
+        FRAME "Frame 155"  @10852,6802 548x46
+          FRAME "Frame 139"  @10852,6802 264x46  fill=#14542E  r=6
+            TEXT "iPhone용 다운로드"  @10927,6815 114x20  text='iPhone용 다운로드'  Inter Semi Bold 13px  #FFFFFF
+          FRAME "Frame 140"  @11134,6802 266x46  fill=#FFFFFF  stroke=#14542E/1  r=6
+            TEXT "Android용 다운로드"  @11207,6815 121x20  text='Android용 다운로드'  Inter Semi Bold 13px  #14542E
+        ROUNDED_RECTANGLE "Rectangle"  @10852,6878 548x72  fill=#FFFFFF  stroke=#E5E5E3/1  r=12
+        TEXT "보증서 상태"  @10876,6891 69x20  text='보증서 상태'  Inter Regular 12px  #4A4A4A
+        TEXT "유효 · 공간 배정 완료"  @11244,6904 122x20  text='유효 · 공간 배정 완료'  Inter Semi Bold 13px  #14542E
+        TEXT "정보가 달라지면 FarmFi에 변경을 요청해 주세요."  @10876,6919 247x18  text='정보가 달라지면 FarmFi에 변경을 요청해 주세요.'  Inter Regular 11px  #4A4A4A
