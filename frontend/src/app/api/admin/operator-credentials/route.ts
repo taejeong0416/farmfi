@@ -18,28 +18,53 @@ export async function GET() {
     throw err;
   }
 
-  const rows = await prisma.operatorCredential.findMany({
-    orderBy: { issuedAt: "desc" },
-    take: 100,
-    include: {
-      user: { select: { id: true, name: true } },
-      project: { select: { id: true, name: true } },
-    },
-  });
+  // 발급 대기 = 계약까지 끝났는데 아직 보증서가 없는 신청. 이 목록이 없으면
+  // A-03에서 발급할 대상을 고를 수가 없다.
+  const [rows, pending] = await Promise.all([
+    prisma.operatorCredential.findMany({
+      orderBy: { issuedAt: "desc" },
+      take: 100,
+      include: {
+        user: { select: { id: true, name: true, email: true } },
+        application: { select: { id: true, region: true } },
+        project: { select: { id: true, name: true } },
+      },
+    }),
+    prisma.operatorApplication.findMany({
+      where: { contractSignedAt: { not: null }, certificateNo: null },
+      orderBy: { contractSignedAt: "asc" },
+      select: {
+        id: true,
+        region: true,
+        contractSignedAt: true,
+        user: { select: { id: true, name: true } },
+        contract: { select: { termEnd: true } },
+      },
+    }),
+  ]);
 
   return NextResponse.json({
     credentials: rows.map((c) => ({
       id: c.id,
       credentialNo: c.credentialNo,
-      operator: c.user,
+      user: c.user,
+      application: c.application,
       project: c.project,
       status: c.status,
       statusLabel: CREDENTIAL_STATUS_LABEL[c.status] ?? c.status,
+      statusReason: c.statusReason,
       statusNote: c.statusNote,
       issuedAt: c.issuedAt,
       expiresAt: c.expiresAt,
       // 저장된 status가 active여도 기간이 지났으면 실제로는 만료다.
       effective: checkCredential(c),
+    })),
+    pending: pending.map((a) => ({
+      id: a.id,
+      region: a.region,
+      user: a.user,
+      contractSignedAt: a.contractSignedAt,
+      termEnd: a.contract?.termEnd ?? null,
     })),
     suspendReasons: SUSPEND_REASONS,
   });
