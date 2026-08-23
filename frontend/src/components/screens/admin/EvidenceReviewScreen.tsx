@@ -6,13 +6,12 @@ import {
   Button,
   Card,
   EmptyState,
-  PageHeading,
-  Shell,
   SkeletonBlock,
   TextArea,
 } from "@/components/ui";
 import { formatDate } from "@/lib/format";
 import { MILESTONE_STATUS_LABEL, getJson, postJson, won } from "../api";
+import { AdminShell } from "./AdminShell";
 
 type ReviewItem = {
   id: string;
@@ -48,9 +47,9 @@ export function EvidenceReviewScreen() {
 
   if (isLoading) {
     return (
-      <Shell>
+      <AdminShell label="운영팀 재검증" title="증빙 재검토">
         <SkeletonBlock height={420} />
-      </Shell>
+      </AdminShell>
     );
   }
 
@@ -77,16 +76,12 @@ export function EvidenceReviewScreen() {
   }
 
   return (
-    <Shell>
-      <PageHeading
-        eyebrow="운영팀 재검증"
-        title="증빙 재검토"
-        desc="자동 판정이 보류된 단계를 사람이 다시 본다. 승인해야 집행이 열린다."
-        action={
-          <span className="text-12 text-muted">대기 {items.length}건</span>
-        }
-      />
-
+    <AdminShell
+      label="운영팀 재검증"
+      title="증빙 재검토"
+      desc="자동 판정이 보류된 단계를 사람이 다시 본다. 승인해야 집행이 열린다."
+      action={<span className="text-12 text-muted">대기 {items.length}건</span>}
+    >
       {items.length === 0 ? (
         <EmptyState
           title="재검토할 증빙이 없습니다"
@@ -203,7 +198,7 @@ export function EvidenceReviewScreen() {
           ) : null}
         </div>
       )}
-    </Shell>
+    </AdminShell>
   );
 }
 

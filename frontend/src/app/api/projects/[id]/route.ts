@@ -26,7 +26,19 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(serializeBigInt(project));
+    // 목록과 같은 두 값을 여기서도 계산한다. 없으면 상세 화면이
+    // 달성률 NaN%·참여자 undefined명으로 그린다.
+    const target = Number(project.targetAmount ?? 0);
+    const fundingPercent =
+      target === 0 ? 0 : (Number(project.currentAmount) / target) * 100;
+
+    return NextResponse.json(
+      serializeBigInt({
+        ...project,
+        fundingPercent,
+        investorCount: project.tokenHoldings.length,
+      }),
+    );
   } catch (error) {
     console.error("GET /api/projects/[id] error:", error);
     return NextResponse.json(
