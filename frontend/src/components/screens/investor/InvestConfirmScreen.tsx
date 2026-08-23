@@ -2,10 +2,12 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   Button,
   Card,
   Checkbox,
+  EmptyState,
   Modal,
   PanelShell,
   SkeletonBlock,
@@ -33,7 +35,7 @@ export function InvestConfirmScreen({ projectId }: { projectId: string }) {
   const params = useSearchParams();
   const iid = params?.get("iid") ?? null;
 
-  const { data: investment, isLoading } = useInvestment(iid);
+  const { data: investment, isLoading, isError } = useInvestment(iid);
   const { data: bankAccount } = useBankAccount();
   const { data: agreements } = useAgreements();
   const [agreed, setAgreed] = useState<Record<string, boolean>>({});
@@ -56,6 +58,24 @@ export function InvestConfirmScreen({ projectId }: { projectId: string }) {
       router.push(`/projects/${projectId}/invest/done?iid=${iid}`);
     }
   }, [completed, iid, projectId, router]);
+
+  // 신청 없이 이 주소로 바로 들어오면 조회할 것이 없다. 스켈레톤만 두면
+  // 영영 로딩 중인 회색 상자가 남아 무엇이 잘못됐는지 알 수 없다.
+  if (!iid || isError) {
+    return (
+      <PanelShell>
+        <EmptyState
+          title="진행 중인 투자 신청이 없습니다"
+          desc="프로젝트 상세에서 신청 금액을 정하는 것부터 시작합니다."
+          action={
+            <Link href={`/projects/${projectId}`}>
+              <Button>프로젝트로 이동</Button>
+            </Link>
+          }
+        />
+      </PanelShell>
+    );
+  }
 
   if (isLoading || !investment) {
     return (

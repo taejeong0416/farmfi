@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Button, Card, PanelShell, SkeletonBlock } from "@/components/ui";
+import { Button, Card, EmptyState, PanelShell, SkeletonBlock } from "@/components/ui";
 import {
   MILESTONE_STATUS_LABEL,
   milestoneTone,
@@ -15,8 +16,25 @@ import {
 export function InvestDoneScreen({ projectId }: { projectId: string }) {
   const params = useSearchParams();
   const iid = params?.get("iid") ?? null;
-  const { data: investment, isLoading } = useInvestment(iid);
+  const { data: investment, isLoading, isError } = useInvestment(iid);
   const { data: project } = useProject(projectId);
+
+  // 신청 번호 없이 들어오면 보여줄 완료 내역이 없다. 무한 스켈레톤 대신 안내를 준다.
+  if (!iid || isError) {
+    return (
+      <PanelShell>
+        <EmptyState
+          title="완료된 투자 신청을 찾을 수 없습니다"
+          desc="내 투자에서 신청 내역을 확인할 수 있습니다."
+          action={
+            <Link href="/investor/applications">
+              <Button>신청 내역 보기</Button>
+            </Link>
+          }
+        />
+      </PanelShell>
+    );
+  }
 
   if (isLoading || !investment) {
     return (
