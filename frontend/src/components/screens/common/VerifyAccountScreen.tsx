@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Button, Field, PanelShell, Select, TextInput } from "@/components/ui";
+import { AuthShell, Button, Field, Select, TextInput } from "@/components/ui";
 import { registerBankAccount, verifyAccountHolder } from "../api";
 
 const BANKS = [
@@ -58,7 +58,7 @@ export function VerifyAccountScreen({ next }: { next?: string }) {
       : number || "계좌번호를 입력하세요";
 
   return (
-    <PanelShell className="max-w-modal">
+    <AuthShell>
       <p className="text-14 text-brand">투자 준비 3 / 3 · 본인 계좌 확인</p>
       <h1 className="mt-4 text-24 font-bold text-ink">
         회수금과 환불을 받을 본인 명의 계좌를 확인해 주세요.
@@ -121,6 +121,6 @@ export function VerifyAccountScreen({ next }: { next?: string }) {
       <p className="mt-4 text-11 text-muted">
         확인된 계좌는 회수금·환불 지급에만 사용하며, 계좌번호는 마스킹해 보관합니다.
       </p>
-    </PanelShell>
+    </AuthShell>
   );
 }

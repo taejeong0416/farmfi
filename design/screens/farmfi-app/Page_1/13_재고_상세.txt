@@ -2,7 +2,7 @@ FRAME "13 재고 상세·조정"  @1121,4743 402x1042  fill=#FFFFFF
   FRAME "Body"  @1121,4846 402x924
     FRAME "Card"  @1137,4862 370x215  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
       FRAME "Frame"  @1149,4882 345x40
-        ROUNDED_RECTANGLE "image 1"  @1149,4882 40x40
+        ROUNDED_RECTANGLE "image 1"  @1149,4882 40x40  fill=image:4f689284d0466547b43b03653200ba2ecec26225 FILL
         FRAME "Frame"  @1203,4882 291x40
           TEXT "12팩"  @1203,4882 47x29  text='12팩'  Pretendard Bold 24px  #1B5E3F
           FRAME "Frame"  @1203,4915 200x7  fill=#EAF6EE  r=4

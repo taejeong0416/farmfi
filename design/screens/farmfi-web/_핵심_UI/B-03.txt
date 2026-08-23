@@ -22,42 +22,42 @@ FRAME "B-03 · 구매자 / 지점 재고 기반 구성"  @3124,4914 1440x900  fi
         FRAME "CropRow1"  @3178,5137 844x66
           FRAME "Crop-버터헤드"  @3178,5137 199x66  fill=#F1F4F2  stroke=#14542E/1  r=10
             FRAME "IconLabel"  @3194,5154 94x32
-              ROUNDED_RECTANGLE "Rectangle"  @3194,5154 32x32
+              ROUNDED_RECTANGLE "Rectangle"  @3194,5154 32x32  fill=image:b6321a55bc60ac4f1f36cd8f292c4f9e73610a98 FILL
               TEXT "버터헤드"  @3236,5160 52x20  text='버터헤드'  Inter Medium 13px  #1A1A1A
             TEXT "✓"  @3348,5160 13x20  text='✓'  Inter Bold 13px  #14542E
           FRAME "Crop-로메인"  @3393,5137 199x66  fill=#F1F4F2  stroke=#14542E/1  r=10
             FRAME "IconLabel"  @3409,5154 81x32
-              ROUNDED_RECTANGLE "Rectangle"  @3409,5154 32x32
+              ROUNDED_RECTANGLE "Rectangle"  @3409,5154 32x32  fill=image:abf5dfea36f4bfddcf13dfed9c8f12b99ae11347 FILL
               TEXT "로메인"  @3451,5160 39x20  text='로메인'  Inter Medium 13px  #1A1A1A
             TEXT "✓"  @3563,5160 13x20  text='✓'  Inter Bold 13px  #14542E
           FRAME "Crop-바질"  @3608,5137 199x66  fill=#F1F4F2  stroke=#14542E/1  r=10
             FRAME "IconLabel"  @3624,5154 68x32
-              ROUNDED_RECTANGLE "Rectangle"  @3624,5154 32x32
+              ROUNDED_RECTANGLE "Rectangle"  @3624,5154 32x32  fill=image:0aa01d7e878f25c2f7386f48749696230be38998 FILL
               TEXT "바질"  @3666,5160 26x20  text='바질'  Inter Medium 13px  #1A1A1A
             TEXT "✓"  @3778,5160 13x20  text='✓'  Inter Bold 13px  #14542E
           FRAME "Crop-루꼴라"  @3823,5137 199x66  fill=#F1F4F2  stroke=#14542E/1  r=10
             FRAME "IconLabel"  @3839,5154 81x32
-              ROUNDED_RECTANGLE "Rectangle"  @3839,5154 32x32
+              ROUNDED_RECTANGLE "Rectangle"  @3839,5154 32x32  fill=image:89b62f7020d561d995ed41f61320393311891de7 FILL
               TEXT "루꼴라"  @3881,5160 39x20  text='루꼴라'  Inter Medium 13px  #1A1A1A
             TEXT "✓"  @3993,5160 13x20  text='✓'  Inter Bold 13px  #14542E
         FRAME "CropRow2"  @3178,5227 844x66
           FRAME "Crop-적근대"  @3178,5227 199x66  fill=#F1F4F2  stroke=#14542E/1  r=10
             FRAME "IconLabel"  @3194,5244 81x32
-              ROUNDED_RECTANGLE "Rectangle"  @3194,5244 32x32
+              ROUNDED_RECTANGLE "Rectangle"  @3194,5244 32x32  fill=image:0aaf0e2b47b878ba2c52584947d52cebb4dd90fa FILL
               TEXT "적근대"  @3236,5250 39x20  text='적근대'  Inter Medium 13px  #1A1A1A
             TEXT "✓"  @3348,5250 13x20  text='✓'  Inter Bold 13px  #14542E
           FRAME "Crop-청경채"  @3393,5227 199x66  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
             FRAME "IconLabel"  @3409,5244 81x32
-              ROUNDED_RECTANGLE "Rectangle"  @3409,5244 32x32
+              ROUNDED_RECTANGLE "Rectangle"  @3409,5244 32x32  fill=image:376e030a353550f93db5ac804749eff257b68d47 FILL
               TEXT "청경채"  @3451,5250 39x20  text='청경채'  Inter Medium 13px  #1A1A1A
           FRAME "Crop-케일"  @3608,5227 199x66  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
             FRAME "IconLabel"  @3624,5244 68x32
-              ROUNDED_RECTANGLE "Rectangle"  @3624,5244 32x32
+              ROUNDED_RECTANGLE "Rectangle"  @3624,5244 32x32  fill=image:d6000a04fea49c1d5e9db2e85a1d36314df53f63 FILL
               TEXT "케일"  @3666,5250 26x20  text='케일'  Inter Medium 13px  #1A1A1A
             TEXT "품절"  @3770,5252 21x15  text='품절'  Inter Medium 11px  #4A4A4A
           FRAME "Crop-딜"  @3823,5227 199x66  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
             FRAME "IconLabel"  @3839,5244 55x32
-              ROUNDED_RECTANGLE "Rectangle"  @3839,5244 32x32
+              ROUNDED_RECTANGLE "Rectangle"  @3839,5244 32x32  fill=image:8f4550d318e6867ea98d6a058d23f469e2d34c0a FILL
               TEXT "딜"  @3881,5250 13x20  text='딜'  Inter Medium 13px  #1A1A1A
             TEXT "품절"  @3985,5252 21x15  text='품절'  Inter Medium 11px  #4A4A4A
         TEXT "현재 지점 재고 기준 · 품절 작물은 선택할 수 없고 다음 수확일을 확인할 수 있어요."  @3178,5317 844x18  text='현재 지점 재고 기준 · 품절 작물은 선택할 수 없고 다음 수확일을 확인할 수 있어요.'  Inter Regular 12px  #4A4A4A

@@ -1,10 +1,10 @@
 "use client";
 
-import { Button, PanelShell, StepList } from "@/components/ui";
+import { AuthShell, Button, StepList } from "@/components/ui";
 
 export function VerifyDoneScreen() {
   return (
-    <PanelShell className="max-w-modal">
+    <AuthShell>
       <h1 className="text-20 font-bold text-ink">투자 준비 완료</h1>
 
       <div className="mt-8">
@@ -34,6 +34,6 @@ export function VerifyDoneScreen() {
           프로젝트 둘러보기
         </Button>
       </div>
-    </PanelShell>
+    </AuthShell>
   );
 }

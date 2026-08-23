@@ -126,10 +126,10 @@ FRAME "O-11 · 운영자 / 증빙 제출"  @4284,4458 1440x900  fill=#FFFFFF  r=
             FRAME "PhotoGrid"  @5342,4654 303x209
               FRAME "PhotoRow"  @5342,4654 303x148
                 FRAME "Photo1"  @5342,4654 146x148
-                  ROUNDED_RECTANGLE "사진 자리"  @5342,4654 146x122  stroke=#E5E5E3/1  r=8
+                  ROUNDED_RECTANGLE "사진 자리"  @5342,4654 146x122  fill=image:57138237271f9874539aea47e8d49b25518daa8d STRETCH  stroke=#E5E5E3/1  r=8
                   TEXT "현장 사진 1"  @5342,4784 57x18  text='현장 사진 1'  Inter Regular 12px  #8A8A8A
                 FRAME "Photo2"  @5498,4654 146x148
-                  ROUNDED_RECTANGLE "사진 자리"  @5498,4654 146x122  stroke=#E5E5E3/1  r=8
+                  ROUNDED_RECTANGLE "사진 자리"  @5498,4654 146x122  fill=image:9774dc2642bad2df21646ef4d2988bdaa460a73b STRETCH  stroke=#E5E5E3/1  r=8
                   TEXT "현장 사진 2"  @5498,4784 59x18  text='현장 사진 2'  Inter Regular 12px  #8A8A8A
               FRAME "Frame 118"  @5342,4817 303x46  stroke=#14542E/1  r=6
                 TEXT "사진 추가하기"  @5453,4830 81x20  text='사진 추가하기'  Inter Medium 14px  #14542E

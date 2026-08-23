@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AppHeader, type NavItem } from "./AppHeader";
+import { AppHeader, isBareRoute, type NavItem } from "./AppHeader";
 import { useAuth } from "@/lib/useAuth";
 
 type Shell = {
@@ -46,13 +46,8 @@ const BUYER: Shell = {
 
 const ADMIN: Shell = { nav: [], badge: { text: "관리자 콘솔", as: "text" } };
 
-/** 로그인·회원가입·본인확인은 내비 없는 단독 패널이다. */
-const BARE = ["/login", "/signup", "/start", "/verify"];
-
 function shellFor(pathname: string): Shell | null {
-  if (BARE.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
-    return null;
-  }
+  if (isBareRoute(pathname)) return null;
   if (pathname.startsWith("/admin")) return ADMIN;
   if (pathname.startsWith("/investor") || pathname.startsWith("/projects")) {
     return INVESTOR;

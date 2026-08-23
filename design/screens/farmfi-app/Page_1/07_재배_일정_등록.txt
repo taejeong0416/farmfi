@@ -17,17 +17,17 @@ FRAME "07 재배 일정 등록"  @1873,2335 402x874  fill=#FFFFFF
         TEXT "작물 선택"  @1901,2609 60x19  text='작물 선택'  Pretendard SemiBold 16px  #1D1E1C
         FRAME "Frame"  @1901,2640 345x49
           FRAME "Frame"  @1901,2640 169x49  fill=#EAF6EE  stroke=#1B5E3F/2  r=8
-            FRAME "CropPixel"  @1917,2650 29x29  r=4
+            FRAME "CropPixel"  @1917,2650 29x29  fill=image:d3363c1892f63ae31ace13da0d693c60ce3a3b46 FIT  r=4
             TEXT "버터헤드"  @1961,2656 45x16  text='버터헤드'  Pretendard SemiBold 13px  #1B5E3F
           FRAME "Frame"  @2078,2640 169x49  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
-            FRAME "CropPixel"  @2094,2650 29x29  r=4
+            FRAME "CropPixel"  @2094,2650 29x29  fill=image:f092616a1c75e8237c0620b92ca31b0f65179f41 FIT  r=4
             TEXT "로메인"  @2138,2656 34x16  text='로메인'  Pretendard Regular 13px  #656863
         FRAME "Frame"  @1901,2701 345x49
           FRAME "Frame"  @1901,2701 169x49  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
-            FRAME "CropPixel"  @1917,2711 29x29  r=4
+            FRAME "CropPixel"  @1917,2711 29x29  fill=image:d5db6ec95b9b93bac068ef5af9b8112143a12559 FILL  r=4
             TEXT "루꼴라"  @1961,2717 34x16  text='루꼴라'  Pretendard Regular 13px  #656863
           FRAME "Frame"  @2078,2701 169x49  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
-            FRAME "CropPixel"  @2094,2711 29x29  r=4
+            FRAME "CropPixel"  @2094,2711 29x29  fill=image:26f0af3f70b874ba4fff39e5c85c9117b83f5234 FIT  r=4
             TEXT "바질"  @2138,2717 23x16  text='바질'  Pretendard Regular 13px  #656863
       FRAME "Frame 2121453063"  @1901,2770 345x188
         TEXT "일정"  @1901,2770 28x19  text='일정'  Pretendard SemiBold 16px  #1D1E1C

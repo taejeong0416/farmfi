@@ -47,12 +47,23 @@ def load(fig_path):
 
 def hexcolor(paints):
     for p in paints or []:
-        if p.get('type') == 'SOLID' and p.get('visible', True):
+        if not p.get('visible', True):
+            continue
+        if p.get('type') == 'SOLID':
             c = p['color']
             rgb = '#%02X%02X%02X' % tuple(round(c[k] * 255) for k in 'rgb')
             a = c.get('a', 1.0) * p.get('opacity', 1.0)
             return rgb if a > 0.99 else f'{rgb}@{a:.2f}'
+        # 사진이 들어간 자리. 이 표시가 없으면 화면을 옮기는 사람이 그 칸을
+        # 빈 상자로 읽는다 — 실제로 사진 여러 장이 그렇게 빠졌다.
+        if p.get('type') == 'IMAGE' and p.get('image'):
+            return f'image:{imghash(p["image"]["hash"])} {p.get("imageScaleMode", "")}'
     return None
+
+
+def imghash(raw):
+    """이미지 해시 바이트 → `.fig` zip 안의 `images/<hex>` 파일명."""
+    return ''.join('%02x' % b for b in raw)
 
 
 def describe(n, x, y):
@@ -73,6 +84,28 @@ def describe(n, x, y):
         if r := n.get('cornerRadius'):
             parts.append(f'r={r:.0f}')
     return '  '.join(parts)
+
+
+def export_images(fig_path, out_dir):
+    """`.fig` 안의 이미지를 `design/images/<파일명>/<hex>.<확장자>`로 꺼낸다.
+
+    덤프는 좌표와 색만 담아서, 사진이 들어간 칸을 빈 상자와 구별할 수 없었다.
+    화면을 옮길 때 이 폴더를 보고 실제 사진을 가져다 쓴다.
+    """
+    sig = [(b'\x89PNG', 'png'), (b'\xff\xd8\xff', 'jpg'), (b'GIF8', 'gif'),
+           (b'RIFF', 'webp')]
+    os.makedirs(out_dir, exist_ok=True)
+    count = 0
+    with zipfile.ZipFile(fig_path) as z:
+        for name in z.namelist():
+            if not name.startswith('images/') or name == 'images/':
+                continue
+            blob = z.read(name)
+            ext = next((e for m, e in sig if blob.startswith(m)), 'bin')
+            with open(os.path.join(out_dir, f'{name[7:]}.{ext}'), 'wb') as f:
+                f.write(blob)
+            count += 1
+    return count
 
 
 def dump(fig_path):
@@ -138,4 +171,6 @@ if __name__ == '__main__':
     pattern = sys.argv[1] if len(sys.argv) > 1 else ''
     for fn in sorted(os.listdir(DESIGN)):
         if fn.endswith('.fig') and pattern in fn:
-            print(f'{fn}: {dump(os.path.join(DESIGN, fn))} screens')
+            path = os.path.join(DESIGN, fn)
+            imgs = export_images(path, os.path.join(DESIGN, 'images', fn[:-4]))
+            print(f'{fn}: {dump(path)} screens · {imgs} images')

@@ -19,5 +19,6 @@ export { StepLine, StepList } from "./StepLine";
 export type { Step } from "./StepLine";
 export { EmptyState, SkeletonBlock, PhotoSlot } from "./EmptyState";
 export { AppHeader, AppFooter, Shell, PanelShell } from "./AppHeader";
+export { AuthShell } from "./AuthShell";
 export type { NavItem } from "./AppHeader";
 export { SiteHeader } from "./SiteHeader";

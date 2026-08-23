@@ -74,7 +74,7 @@ FRAME "O-08 · 운영자 / 보증서 발급·앱 설치"  @10014,6142 1440x900  
         ROUNDED_RECTANGLE "Rectangle"  @10852,6602 548x174  fill=#F1F4F2  r=14
         TEXT "FarmFi 운영자 앱에서 시작하세요"  @10876,6628 255x23  text='FarmFi 운영자 앱에서 시작하세요'  Inter Bold 17px  #14542E
         TEXT "앱을 설치하고 보증서를 인증하면 배정 매장 확인과 설비 연결을 바로 시작할 수 있어요."  @10876,6660 431x18  text='앱을 설치하고 보증서를 인증하면 배정 매장 확인과 설비 연결을 바로 시작할 수 있어요.'  Inter Regular 12px  #4A4A4A
-        ROUNDED_RECTANGLE "FarmFi App Logo"  @10874,6692 64x60  r=12
+        ROUNDED_RECTANGLE "FarmFi App Logo"  @10874,6692 64x60  fill=image:cff03517e16e2789bfb1ce83b2e743ce5fbc04a9 FILL  r=12
         FRAME "Frame 155"  @10852,6802 548x46
           FRAME "Frame 139"  @10852,6802 264x46  fill=#14542E  r=6
             TEXT "iPhone용 다운로드"  @10927,6815 114x20  text='iPhone용 다운로드'  Inter Semi Bold 13px  #FFFFFF

@@ -34,7 +34,7 @@ FRAME "02 대시보드"  @602,919 402x1265  fill=#FFFFFF
     FRAME "StoreStatusSection"  @618,1685 370x381
       INSTANCE "App/SectionTitle"  @618,1685 370x19
       FRAME "Card"  @618,1716 370x350  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
-        FRAME "FloorPlanPlaceholder"  @618,1716 370x350
+        FRAME "FloorPlanPlaceholder"  @618,1716 370x350  fill=image:3a3e57f00ff20d3c55157db960a9e918bf2e77fd STRETCH
           FRAME "BedPill"  @634,1732 64x26  fill=#FFFFFF  r=99
             ELLIPSE "Ellipse"  @644,1742 6x6  fill=#1B5E3F
             TEXT "베드 A"  @656,1738 32x14  text='베드 A'  Pretendard SemiBold 12px  #1D1E1C

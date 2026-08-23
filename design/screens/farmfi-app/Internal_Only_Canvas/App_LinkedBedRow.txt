@@ -1,7 +1,7 @@
 SYMBOL "App/LinkedBedRow"  @575,3370 369x80  fill=#FFFFFF  stroke=#C9CEC9/1  r=8
   FRAME "BedPreview"  @587,3383 93x55
     TEXT "베드 A"  @587,3383 40x17  text='베드 A'  Inter Semi Bold 14px  #1B5E3F
-    FRAME "MiniPlants"  @587,3405 82x32  r=4
+    FRAME "MiniPlants"  @587,3405 82x32  fill=image:d9402c2efb94b780d7b72717af8885c45b4af50a FILL  r=4
   FRAME "Col"  @680,3383 84x55
     TEXT "상추"  @687,3383 26x17  text='상추'  Inter Semi Bold 14px  #1D1E1C
     TEXT "성숙도"  @687,3404 34x15  text='성숙도'  Inter Regular 12px  #5E625D

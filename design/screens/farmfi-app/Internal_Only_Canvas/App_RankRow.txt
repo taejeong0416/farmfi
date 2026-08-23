@@ -1,5 +1,5 @@
 SYMBOL "App/RankRow"  @1557,3370 369x25
-  FRAME "CropPixel"  @1557,3370 25x25  r=4
+  FRAME "CropPixel"  @1557,3370 25x25  fill=image:4e0bd0d3fe1a21288118e9a4bdf92b0e7d4f86b8 FIT  r=4
   TEXT "방울토마토"  @1588,3373 77x19  text='방울토마토'  Inter Regular 16px  #1D1E1C
   FRAME "ProgressBar"  @1672,3379 208x7  fill=#F0EEEA  r=51
     ROUNDED_RECTANGLE "Fill"  @1672,3379 255x7  fill=#1B5E3F  r=51

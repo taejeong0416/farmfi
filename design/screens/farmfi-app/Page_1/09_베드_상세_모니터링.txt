@@ -1,6 +1,6 @@
 FRAME "09 베드 상세 모니터링"  @1090,3526 402x1036  fill=#FFFFFF
   FRAME "Body"  @1090,3629 402x933
-    FRAME "SceneCard"  @1106,3645 370x270  r=10
+    FRAME "SceneCard"  @1106,3645 370x270  fill=image:d9402c2efb94b780d7b72717af8885c45b4af50a FILL  r=10
     FRAME "Card"  @1106,3931 370x240  fill=#FFFFFF  stroke=#C9CEC9/1  r=10
       TEXT "환경 센서"  @1118,3943 60x19  text='환경 센서'  Pretendard SemiBold 16px  #1D1E1C
       FRAME "Frame"  @1118,3972 345x76

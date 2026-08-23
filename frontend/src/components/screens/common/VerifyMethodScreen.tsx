@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Button, OptionCard, PanelShell } from "@/components/ui";
+import { AuthShell, Button, OptionCard } from "@/components/ui";
 
 export function VerifyMethodScreen() {
   const router = useRouter();
   const [method, setMethod] = useState<"mobile-id" | "simple">("mobile-id");
 
   return (
-    <PanelShell className="max-w-modal">
+    <AuthShell>
       <p className="text-14 text-brand">투자 준비 1 / 3 · 본인확인</p>
       <h1 className="mt-4 text-24 font-bold text-ink">
         먼저 본인확인 방법을 선택해 주세요.
@@ -61,6 +61,6 @@ export function VerifyMethodScreen() {
       <p className="mt-3 text-center text-11 text-muted">
         선택한 방법은 다음 화면에서 변경할 수 있어요.
       </p>
-    </PanelShell>
+    </AuthShell>
   );
 }

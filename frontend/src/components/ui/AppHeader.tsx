@@ -6,6 +6,16 @@ import type { ReactNode } from "react";
 
 export type NavItem = { label: string; href: string };
 
+/**
+ * 로그인·회원가입·본인확인은 사진 위에 패널만 놓인 단독 화면이다 (`AuthShell`).
+ * 내비도 푸터도 `.fig`에 없다.
+ */
+export const BARE_ROUTES = ["/login", "/signup", "/start", "/verify"];
+
+export function isBareRoute(pathname: string): boolean {
+  return BARE_ROUTES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+}
+
 /** 모든 화면 상단의 같은 자리. Figma 기준 높이 64, 아래 1px 선. */
 export function AppHeader({
   nav = [],
@@ -66,6 +76,9 @@ export function AppHeader({
 }
 
 export function AppFooter() {
+  const pathname = usePathname() ?? "/";
+  if (isBareRoute(pathname)) return null;
+
   return (
     <footer className="mt-20 border-t border-line-soft bg-white">
       <div className="mx-auto flex max-w-shell flex-wrap items-center justify-between gap-4 px-8 py-8">

@@ -1,4 +1,4 @@
-FRAME "C-03 · 공통 / 회원가입"  @3144,179 1440x900  r=20
+FRAME "C-03 · 공통 / 회원가입"  @3144,179 1440x900  fill=image:12503fdc24d24bf44db96b912c5071e0d28e5827 FILL  r=20
   ROUNDED_RECTANGLE "Rectangle 1"  @3144,179 1440x900  fill=#000000@0.50
   FRAME "App/Logo"  @3806,297 117x27
     VECTOR "Vector"  @3805,297 117x27  fill=#FFFFFF

@@ -1,6 +1,6 @@
 FRAME "00 scan (승인 완료)"  @1019,-1037 402x874
   FRAME "Body"  @1019,-684 402x167
-    ROUNDED_RECTANGLE "image 2"  @1163,-670 114x76
+    ROUNDED_RECTANGLE "image 2"  @1163,-670 114x76  fill=image:44d3f0585b3323b205c8a54978880d447f3b5b97 FILL
     TEXT "승인 완료"  @1110,-567 221x29  text='승인 완료'  Pretendard Bold 24px  #FFFFFF
   FRAME "Frame 2121453045"  @1019,-199 402x36
     FRAME "Group 828"  @1019,-199 402x36

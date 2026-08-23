@@ -12,7 +12,7 @@ FRAME "C-01 · 공통 진입 / 서비스 홈"  @84,178 1440x1162  fill=#FFFFFF  
       TEXT "PUBLIC NAV / 회원가입"  @1333,201 45x18  text='회원가입'  Inter Regular 13px  #4A4A4A
       FRAME "Frame 2"  @1403,192 67x35  stroke=#D6D6D4/1  r=6
         TEXT "로그인"  @1420,204 33x13  text='로그인'  Pretendard Medium 12px  #1A1A1A
-  FRAME "Frame 168"  @84,242 1449x407
+  FRAME "Frame 168"  @84,242 1449x407  fill=image:22dbb75817efd8b8ac2e19f06db45b35d75614d9 FILL
     FRAME "HeroText"  @138,287 1332x317
       TEXT "도심의 빈 공간이, 새로운 가치로 자랍니다"  @138,287 1332x86  text='도심의 빈 공간이,\n새로운 가치로 자랍니다'  Inter Bold 36px  #FFFFFF
       FRAME "Frame 169"  @138,463 1332x141
@@ -67,7 +67,7 @@ FRAME "C-01 · 공통 진입 / 서비스 홈"  @84,178 1440x1162  fill=#FFFFFF  
           TEXT "프로젝트 · 위치 검색"  @1133,816 102x15  text='프로젝트 · 위치 검색'  Inter Regular 12px  #B5B5B5
     FRAME "Frame 32"  @138,880 1332x370
       FRAME "Group 1"  @138,880 431x370
-        ROUNDED_RECTANGLE "사진 자리"  @139,881 429x151
+        ROUNDED_RECTANGLE "사진 자리"  @139,881 429x151  fill=image:7ed9fcb4d745d8b23eda9d417f98289867022e3b FILL
         ROUNDED_RECTANGLE "면"  @138,880 431x370  stroke=#E5E5E3/1  r=10
         ROUNDED_RECTANGLE "선"  @139,1031 429x1  fill=#E5E5E3
         FRAME "Frame 21"  @151,893 56x27  fill=#14542E  r=4
@@ -93,7 +93,7 @@ FRAME "C-01 · 공통 진입 / 서비스 홈"  @84,178 1440x1162  fill=#FFFFFF  
         TEXT "238명 · updated"  @191,1223 18x12  text='7명'  Inter Medium 12px  #1A1A1A
         TEXT "100,000원 · updated"  @489,1223 65x12  text='1,750,000원'  Inter Medium 12px  #1A1A1A
       FRAME "Group 2"  @589,880 431x370
-        ROUNDED_RECTANGLE "사진 자리"  @589,881 430x151
+        ROUNDED_RECTANGLE "사진 자리"  @589,881 430x151  fill=image:e7c9e4c692225e64375637bb84e27e53faeece95 FILL
         ROUNDED_RECTANGLE "면"  @589,880 431x370  stroke=#E5E5E3/1  r=10
         ROUNDED_RECTANGLE "선"  @590,1031 429x1  fill=#E5E5E3
         FRAME "Frame 22"  @602,893 56x27  fill=#14542E  r=4
@@ -119,7 +119,7 @@ FRAME "C-01 · 공통 진입 / 서비스 홈"  @84,178 1440x1162  fill=#FFFFFF  
         TEXT "142명 · updated"  @642,1223 18x12  text='5명'  Inter Medium 12px  #1A1A1A
         TEXT "100,000원 · updated"  @940,1223 65x12  text='1,750,000원'  Inter Medium 12px  #1A1A1A
       FRAME "Group 3"  @1040,880 429x370
-        ROUNDED_RECTANGLE "사진 자리"  @1040,881 428x151
+        ROUNDED_RECTANGLE "사진 자리"  @1040,881 428x151  fill=image:5dc501d865115f8601991e5b8c5c55db94dee26d FILL
         ROUNDED_RECTANGLE "면"  @1040,880 429x370  stroke=#E5E5E3/1  r=10
         ROUNDED_RECTANGLE "선"  @1040,1031 428x1  fill=#E5E5E3
         FRAME "Frame 23"  @1052,893 65x27  fill=#EDEDEB  r=4

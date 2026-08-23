@@ -198,10 +198,10 @@ FRAME "O-10 · 운영자 / 마일스톤 검증 현황"  @2764,4458 1440x936  fil
             TEXT "제출된 증빙"  @3837,4931 87x23  text='제출된 증빙'  Inter Bold 18px  #1A1A1A
             FRAME "PhotoRow"  @3837,4966 288x132
               FRAME "Photo1"  @3837,4966 145x132
-                ROUNDED_RECTANGLE "사진 자리"  @3837,4966 145x106  stroke=#E5E5E3/1  r=8
+                ROUNDED_RECTANGLE "사진 자리"  @3837,4966 145x106  fill=image:57138237271f9874539aea47e8d49b25518daa8d STRETCH  stroke=#E5E5E3/1  r=8
                 TEXT "현장 사진 1"  @3837,5080 57x18  text='현장 사진 1'  Inter Regular 12px  #8A8A8A
               FRAME "Photo2"  @3997,4966 128x132
-                ROUNDED_RECTANGLE "사진 자리"  @3997,4966 128x106  stroke=#E5E5E3/1  r=8
+                ROUNDED_RECTANGLE "사진 자리"  @3997,4966 128x106  fill=image:9774dc2642bad2df21646ef4d2988bdaa460a73b STRETCH  stroke=#E5E5E3/1  r=8
                 TEXT "현장 사진 2"  @3997,5080 59x18  text='현장 사진 2'  Inter Regular 12px  #8A8A8A
             FRAME "FileListCard"  @3837,5110 288x73  stroke=#E5E5E3/1  r=8
               FRAME "FileRow"  @3837,5110 288x36

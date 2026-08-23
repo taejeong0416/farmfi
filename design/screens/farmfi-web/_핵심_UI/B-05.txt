@@ -102,13 +102,13 @@ FRAME "B-05 · 구매자 / 결제수단·자동결제"  @6164,4914 1440x900  fil
     TEXT "✓"  @7096,5142 16x23  text='✓'  Inter Bold 18px  #14542E
     TEXT "간편결제"  @6617,5226 52x20  text='간편결제'  Inter Medium 14px  #1A1A1A
     FRAME "Frame 164"  @6617,5258 164x68  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
-      ROUNDED_RECTANGLE "Rectangle"  @6632,5274 34x34  r=8
+      ROUNDED_RECTANGLE "Rectangle"  @6632,5274 34x34  fill=image:50e35ce44682a0426d9753a201a490683372d082 FILL  r=8
       TEXT "Kakao Pay"  @6678,5284 55x15  text='Kakao Pay'  Inter Medium 11px  #1A1A1A
     FRAME "Frame 165"  @6795,5258 164x68  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
-      ROUNDED_RECTANGLE "Rectangle"  @6810,5274 34x34  r=8
+      ROUNDED_RECTANGLE "Rectangle"  @6810,5274 34x34  fill=image:4151943edca4b3ad49fc5109073f407ec729233b FILL  r=8
       TEXT "N pay"  @6856,5284 31x15  text='N pay'  Inter Medium 11px  #1A1A1A
     FRAME "Frame 166"  @6988,5258 164x68  fill=#FFFFFF  stroke=#E5E5E3/1  r=10
-      ROUNDED_RECTANGLE "Rectangle"  @7003,5274 34x34  stroke=#E5E5E3/1  r=8
+      ROUNDED_RECTANGLE "Rectangle"  @7003,5274 34x34  fill=image:7e8537bf3ccb7f2c3e0d10bffbd0b41f90f5552c FILL  stroke=#E5E5E3/1  r=8
       TEXT "toss pay"  @7049,5284 45x15  text='toss pay'  Inter Medium 11px  #1A1A1A
     FRAME "Frame 163"  @6617,5350 534x48  fill=#FFFFFF  stroke=#E5E5E3/1  r=9
       TEXT "+ 새 카드 등록"  @6840,5364 89x20  text='+  새 카드 등록'  Inter Medium 14px  #14542E

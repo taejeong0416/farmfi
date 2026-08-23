@@ -1,5 +1,5 @@
 SYMBOL "App/StockRow"  @164,3370 369x41  r=6
-  FRAME "CropPixel"  @168,3377 29x29  r=4
+  FRAME "CropPixel"  @168,3377 29x29  fill=image:e78bf7a27329056a5b4afbfba105f6cf55e3e8bc FIT  r=4
   FRAME "Mid"  @206,3376 290x30
     TEXT "상추"  @206,3376 26x17  text='상추'  Inter Regular 14px  #1D1E1C
     FRAME "ProgressBar"  @206,3399 290x7  fill=#F7F7F7  r=51

@@ -1,4 +1,4 @@
-FRAME "C-I02 · 투자자 준비 / 모바일 신분증 확인"  @7664,178 1440x900  r=20
+FRAME "C-I02 · 투자자 준비 / 모바일 신분증 확인"  @7664,178 1440x900  fill=image:12503fdc24d24bf44db96b912c5071e0d28e5827 FILL  r=20
   ROUNDED_RECTANGLE "Rectangle 1"  @7664,178 1440x900  fill=#000000@0.50
   FRAME "App/Logo"  @8326,296 117x27
     VECTOR "Vector"  @8325,296 117x27  fill=#FFFFFF

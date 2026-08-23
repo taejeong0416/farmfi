@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, InfoRow, PanelShell, StepList } from "@/components/ui";
+import { AuthShell, Button, InfoRow, StepList } from "@/components/ui";
 import {
   confirmIdentity,
   createIdentityOffer,
@@ -84,7 +84,7 @@ export function VerifyMobileIdScreen() {
   const ss = String(left % 60).padStart(2, "0");
 
   return (
-    <PanelShell className="max-w-modal">
+    <AuthShell>
       <p className="text-18 text-brand">
         투자 준비 2 / 3 · 모바일 신분증 확인
       </p>
@@ -186,7 +186,7 @@ export function VerifyMobileIdScreen() {
       <p className="mt-6 text-12 leading-5 text-muted">
         FarmFi는 실명·성인 여부 등 필요한 확인값만 저장하고 신분증 원문은 보관하지 않아요.
       </p>
-    </PanelShell>
+    </AuthShell>
   );
 }
 
@@ -199,7 +199,7 @@ function FailureView({
   expired: boolean;
 }) {
   return (
-    <PanelShell className="max-w-modal">
+    <AuthShell>
       <h1 className="text-24 font-bold text-ink">
         모바일 신분증 확인을 완료하지 못했어요
       </h1>
@@ -230,6 +230,6 @@ function FailureView({
       <p className="mt-6 text-12 text-muted">
         투자 신청 전에는 모바일 신분증 확인을 다시 요청합니다.
       </p>
-    </PanelShell>
+    </AuthShell>
   );
 }

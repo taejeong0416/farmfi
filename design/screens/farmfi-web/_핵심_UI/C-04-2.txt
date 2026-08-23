@@ -1,4 +1,4 @@
-FRAME "C-04 · 공통 / 이용 목적 선택"  @4669,179 1440x900  r=20
+FRAME "C-04 · 공통 / 이용 목적 선택"  @4669,179 1440x900  fill=image:12503fdc24d24bf44db96b912c5071e0d28e5827 FILL  r=20
   ROUNDED_RECTANGLE "Rectangle 1"  @4669,179 1440x900  fill=#000000@0.50
   FRAME "App/Logo"  @5331,297 117x27
     VECTOR "Vector"  @5330,297 117x27  fill=#FFFFFF
