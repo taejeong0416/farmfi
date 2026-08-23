@@ -12,6 +12,7 @@ import {
   SkeletonBlock,
 } from "@/components/ui";
 import { formatDate } from "@/lib/format";
+import { cancelDeadline } from "@/lib/subscription-window";
 import {
   PICKUP_STATUS_LABEL,
   patchSubscription,
@@ -26,6 +27,16 @@ const STATUS_LABEL: Record<string, string> = {
   cancelled: "해지됨",
   waitlist: "대기 신청",
 };
+
+/**
+ * 해지 마감 표기 (`.fig` B-07 `남은 변경 기한`).
+ * 판정은 서버(`lib/subscription-window.ts`)가 하고 여기서는 그 규칙과 같은 시각을 적는다.
+ */
+function changeDeadlineText(nextPaymentAt: string): string {
+  const d = cancelDeadline(new Date(nextPaymentAt));
+  if (!d) return "-";
+  return `${d.getMonth() + 1}월 ${d.getDate()}일 23:59까지`;
+}
 
 export function MySubscriptionsScreen() {
   const { data: subscriptions, isLoading, isError, refetch } = useSubscriptions();
@@ -137,6 +148,9 @@ export function MySubscriptionsScreen() {
                         다시 시작
                       </Button>
                     )}
+                    <Button size="sm" variant="ghost" href="/investor/payouts">
+                      결제 내역
+                    </Button>
                     <Button
                       size="sm"
                       variant="danger"
@@ -152,6 +166,19 @@ export function MySubscriptionsScreen() {
                   <InfoRow
                     label="다음 결제일"
                     value={shortDate(s.nextPaymentAt)}
+                  />
+                  {/* `.fig` B-07 — 결제일 옆에 해지 마감을 빨강으로 같이 적는다. */}
+                  <InfoRow
+                    label="남은 변경 기한"
+                    value={
+                      s.nextPaymentAt ? (
+                        <span className="text-danger">
+                          {changeDeadlineText(s.nextPaymentAt)}
+                        </span>
+                      ) : (
+                        "-"
+                      )
+                    }
                   />
                   <InfoRow
                     label="이번 구성"

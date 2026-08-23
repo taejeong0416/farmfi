@@ -13,13 +13,13 @@ import {
   SkeletonBlock,
   type Column,
 } from "@/components/ui";
-import { useAuth } from "@/lib/useAuth";
 import {
   MILESTONE_STATUS_LABEL,
   milestoneTone,
   num,
   shortDate,
   useInvestments,
+  useBankAccount,
   usePayouts,
   usePortfolio,
   useProjects,
@@ -29,10 +29,10 @@ import {
 } from "../api";
 
 export function HoldingsScreen() {
-  const { user } = useAuth();
   const { data: portfolio, isLoading, isError } = usePortfolio();
   const { data: projects } = useProjects();
   const { data: payouts } = usePayouts();
+  const { data: bankAccount } = useBankAccount();
   const { data: investments } = useInvestments();
 
   const projectById = useMemo(() => {
@@ -219,25 +219,44 @@ export function HoldingsScreen() {
 
         <div className="w-[360px] shrink-0 space-y-6">
           <Card padded={false}>
+            {/* `.fig` I-07 ConnectedAccountCard — 은행 · 계좌 끝자리 · 연결 상태 · 확인 시각. */}
             <div className="border-b border-line-soft px-5 py-4">
-              <h2 className="text-14 font-bold text-ink">등록 계좌</h2>
+              <h2 className="text-14 font-bold text-ink">연결 계좌</h2>
             </div>
             <div className="px-5">
-              <InfoRow label="예금주" value={user?.realName ?? user?.name ?? "-"} />
-              <InfoRow label="확인 상태" value={
-                user?.identityVerified ? (
-                  <span className="text-brand">확인됨</span>
-                ) : (
-                  "확인 전"
-                )
-              } />
+              <InfoRow label="은행" value={bankAccount?.bankName ?? "미연결"} />
+              <InfoRow
+                label="계좌 끝자리"
+                value={
+                  bankAccount ? `···${bankAccount.maskedNumber.slice(-4)}` : "-"
+                }
+              />
+              <InfoRow
+                label="연결 상태"
+                value={
+                  bankAccount ? (
+                    <span className="text-brand">연결됨</span>
+                  ) : (
+                    "연결 전"
+                  )
+                }
+              />
               <InfoRow
                 label="확인 시각"
-                value={user?.verifiedAt ? shortDate(user.verifiedAt) : "-"}
+                value={
+                  bankAccount?.verifiedAt ? shortDate(bankAccount.verifiedAt) : "-"
+                }
               />
             </div>
             <div className="flex items-center justify-between border-t border-surface px-5 py-4">
-              <span className="text-13 text-ink">회수 계좌</span>
+              <span className="text-13 text-ink">
+                회수 계좌{" "}
+                <span className="text-body">
+                  {bankAccount
+                    ? `${bankAccount.bankName} · ${bankAccount.maskedNumber.slice(-4)}`
+                    : "미등록"}
+                </span>
+              </span>
               <Link href="/verify/account" className="text-12 text-brand">
                 변경
               </Link>
