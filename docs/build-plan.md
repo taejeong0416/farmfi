@@ -281,9 +281,12 @@ Phase A~K는 화면과 그 화면이 도는 데 필요한 최소 API를 만들�
   `GET /api/agreements/[id]` · `POST .../consent`. 문서 버전·동의 시각·전자서명값을 저장하고 문서 해시를 체인 기록 대상으로 넘긴다
 - [ ] **Q2** 신청 단계 도메인 분리
   방문 예약·교육 이수·계약 서명이 `OperatorApplication` PATCH 하나에 얹혀 있다. `POST /api/operator/visits` · `/courses/[id]/progress` · `/contracts/[id]/signature-request`로 나누고 자동저장·이전 단계 이동을 살린다
-- [ ] **Q3** 보증서 모델
-  발급·정지·만료. 지점 운영계약 기간과 연동하고 교육·안전점검 만료 또는 중대 위반 시 정지(명세 17.1-8). `GET /api/operator/credential` · `POST /api/admin/operator-credentials` · `PATCH .../status`
-  앱이 이 보증서를 검증해 운영 기능을 열고 닫는다. 모델과 상태값이 정본이므로 앱 담당과 필드를 맞춰 둔다
+- [x] **Q3** 보증서 모델 — `lib/credential.ts` · `GET /api/operator/credential` · `GET|POST /api/admin/operator-credentials` · `PATCH .../[id]/status`
+  테이블은 이미 DB에 있었다(스키마에는 없이). `applicationId`로 어느 신청에서 나온 보증서인지 추적하는 구조라 O-08 흐름에 맞아 그대로 쓰고 `projectId`(앱이 연결할 매장)와 `vcId`만 더했다.
+  **유효성 판정을 서버가 한다.** 앱이 `status` 문자열을 보고 스스로 판단하면 만료 계산이 두 벌이 되고 언젠가 갈린다. 만료는 저장된 status와 무관하게 시간이 정한다 — 배치가 늦게 돌아도 만료된 권한이 새지 않는다.
+  정지·만료·해지를 갈라 둔다. 하나로 합치면 "왜 막혔나"에 답할 수 없다. 실패마다 **다음 행동**을 함께 준다(정지 → 사유 해소 후 재개 요청 / 만료 → 계약 갱신 후 재발급).
+  정지·해지에는 사유가 필수다. 만료는 사람이 찍지 못한다(기간이 정한다). 유효한 보증서가 있으면 중복 발급을 409로 막는다. 해지는 되돌릴 수 없다.
+  VC가 아직 없으면 `verifiedBy: "number"`로 내려준다 — 없는 VC를 있는 척하지 않는다.
 
 ## Phase R · 픽업 바코드
 

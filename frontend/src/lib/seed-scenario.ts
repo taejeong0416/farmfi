@@ -30,6 +30,8 @@ export async function seedScenario(prisma: PrismaClient) {
   // ─── 자식 → 부모 순서로 지운다. 하나라도 빠지면 project/user deleteMany가
   //     FK 위반으로 죽고 데모 리셋 자체가 안 된다.
   //     새 모델을 만들면 여기에 반드시 추가한다.
+  await prisma.milestoneReviewItem.deleteMany();
+  await prisma.operatorCredential.deleteMany();
   await prisma.setpointApplication.deleteMany();
   await prisma.holdingIssuance.deleteMany();
   await prisma.custodyWallet.deleteMany();
@@ -96,6 +98,20 @@ export async function seedScenario(prisma: PrismaClient) {
   const investor1 = await prisma.user.create({ data: verifiedInvestor("김투자", "investor@farmfi.test") });
   const investor2 = await prisma.user.create({ data: verifiedInvestor("이서연", "investor2@farmfi.test") });
   const investor3 = await prisma.user.create({ data: verifiedInvestor("박준혁", "investor3@farmfi.test") });
+
+  // ─── 운영자 신청 (O-03~O-07 완료 상태) ───
+  // 보증서는 계약이 끝난 신청에서 나온다(O-08). 신청이 없으면 발급할 근거가 없어
+  // 보증서 흐름 전체를 시연할 수 없다.
+  const operatorApplication = await prisma.operatorApplication.create({
+    data: {
+      userId: operator.id,
+      region: "부산 금정구",
+      cropExperience: "가정 수경재배 2년",
+      availableHours: "주 5일 · 하루 4시간",
+      status: "approved",
+      educationProgress: 100,
+    },
+  });
 
   // ─── 회수 계좌 (C-I03에서 확인한 본인 명의 계좌) ───
   // 없으면 지급 어댑터가 이체를 거부한다 — 실제로 그게 맞는 동작이지만,

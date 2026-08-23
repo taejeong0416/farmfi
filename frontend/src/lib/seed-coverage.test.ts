@@ -1,11 +1,15 @@
 // 리셋 삭제 목록 누락 검사 — 실행: npm test
 //
-// `seed-scenario.ts`가 새 모델을 빠뜨리면 `project.deleteMany()`가 FK 위반으로
-// 죽고 **데모 리셋 자체가 안 된다**. 실제로 두 번 났다: 팀원과 내가 모델을
-// 추가할 때마다 삭제 목록을 잊었다.
+// `seed-scenario.ts`가 새 모델을 빠뜨리면 부모 `deleteMany()`가 FK 위반으로
+// 죽고 **데모 리셋 자체가 안 된다**. 세 번 났다.
+//   ① 팀원 모델 14개  ② SetpointApplication  ③ MilestoneReviewItem
 //
-// 사람이 기억하는 대신 스키마와 코드를 대조한다. Project나 User를 참조하는
-// 모델은 반드시 삭제 목록에 있어야 한다 — 그것들이 FK로 막는 쪽이다.
+// ③은 앞선 버전의 이 테스트가 못 잡았다 — Project·User 참조만 봤는데
+// MilestoneReviewItem은 Milestone을 참조한다. 부모가 지워지는 순간 그 자식도
+// 걸리는데, "부모"를 두 모델로 좁힌 게 잘못이었다.
+//
+// 이제 **삭제 목록에 있는 모든 모델**을 부모로 보고, 그 자식이 목록에
+// 있는지·더 먼저 지워지는지까지 본다. 순서가 뒤집혀도 FK로 죽는다.
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -16,7 +20,6 @@ const ROOT = join(import.meta.dirname, "..", "..");
 const schema = readFileSync(join(ROOT, "prisma", "schema.prisma"), "utf8");
 const seed = readFileSync(join(ROOT, "src", "lib", "seed-scenario.ts"), "utf8");
 
-/** 모델명 → 그 블록 본문 */
 function models(): Map<string, string> {
   const out = new Map<string, string>();
   const re = /^model\s+(\w+)\s*\{([\s\S]*?)^\}/gm;
@@ -25,25 +28,60 @@ function models(): Map<string, string> {
   return out;
 }
 
-/** prisma 클라이언트 프로퍼티명 — 첫 글자만 소문자 */
-function clientName(model: string): string {
-  return model[0].toLowerCase() + model.slice(1);
+const clientName = (model: string) => model[0].toLowerCase() + model.slice(1);
+
+/** 이 모델이 FK로 참조하는 모델들 — `@relation(fields: ...)`가 붙은 쪽이 자식이다. */
+function parentsOf(body: string, known: Set<string>): string[] {
+  const out = new Set<string>();
+  for (const line of body.split("\n")) {
+    if (!line.includes("@relation(fields:")) continue;
+    const m = line.trim().match(/^\w+\s+(\w+)/);
+    if (m && known.has(m[1])) out.add(m[1]);
+  }
+  return [...out];
 }
 
-test("Project·User를 참조하는 모델은 전부 리셋 삭제 목록에 있다", () => {
-  const missing: string[] = [];
-  for (const [name, body] of models()) {
-    if (name === "Project" || name === "User") continue;
-    // 관계 필드가 Project/User를 가리키면 그 모델이 삭제를 막는다.
-    const refs = /@relation\(fields:/.test(body) && /\b(Project|User)\s/.test(body);
-    if (!refs) continue;
-    const call = `prisma.${clientName(name)}.deleteMany()`;
-    if (!seed.includes(call)) missing.push(`${name} → ${call}`);
+/** 삭제 순서 — 등장 순서가 곧 실행 순서다. */
+function deleteOrder(): Map<string, number> {
+  const out = new Map<string, number>();
+  const re = /prisma\.(\w+)\.deleteMany\(\)/g;
+  let m: RegExpExecArray | null;
+  let i = 0;
+  while ((m = re.exec(seed))) if (!out.has(m[1])) out.set(m[1], i++);
+  return out;
+}
+
+test("삭제되는 모델의 자식도 함께, 그리고 더 먼저 삭제된다", () => {
+  const all = models();
+  const known = new Set(all.keys());
+  const order = deleteOrder();
+  const problems: string[] = [];
+
+  for (const [child, body] of all) {
+    const parents = parentsOf(body, known);
+    for (const parent of parents) {
+      // 부모가 안 지워지면 자식도 걸릴 일이 없다.
+      if (!order.has(clientName(parent))) continue;
+
+      const childCall = `prisma.${clientName(child)}.deleteMany()`;
+      if (!order.has(clientName(child))) {
+        problems.push(
+          `${child} → ${childCall}  (부모 ${parent}가 지워지는데 자식이 목록에 없다)`,
+        );
+        continue;
+      }
+      if (order.get(clientName(child))! > order.get(clientName(parent))!) {
+        problems.push(
+          `${child}가 부모 ${parent}보다 뒤에 지워진다 — 순서를 앞으로 옮길 것`,
+        );
+      }
+    }
   }
+
   assert.deepEqual(
-    missing,
+    problems,
     [],
-    `리셋에서 빠진 모델이 있다. seed-scenario.ts의 삭제 목록에 자식→부모 순서로 추가할 것:\n  ${missing.join("\n  ")}`,
+    `seed-scenario.ts의 삭제 목록을 고칠 것 (자식 → 부모 순서):\n  ${problems.join("\n  ")}`,
   );
 });
 

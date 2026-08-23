@@ -47,6 +47,8 @@ const ACTION_LABEL: Record<string, string> = {
   "pickup.completed": "픽업 수령 완료",
   "period_record.confirmed": "매출·비용 확정",
   "setpoint.applied": "설정점 적용",
+  "credential.issued": "보증서 발급",
+  "credential.status_changed": "보증서 상태 변경",
   "project.refunded": "환불",
   "user.role_changed": "권한 변경",
   "notification.sent": "알림 발송",

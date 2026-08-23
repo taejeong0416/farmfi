@@ -38,6 +38,8 @@ export const AUDIT_ACTIONS = [
   "pickup.completed",
   "period_record.confirmed",
   "setpoint.applied",
+  "credential.issued",
+  "credential.status_changed",
   "user.role_changed",
   "project.refunded",
   "notification.sent",

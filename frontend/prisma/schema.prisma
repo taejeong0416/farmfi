@@ -43,6 +43,7 @@ model User {
   subscriptions         Subscription[]
   bankAccount           BankAccount?
   custodyWallet         CustodyWallet?
+  credentials           OperatorCredential[]
 }
 
 // ─── 운영자 지원 신청 ───
@@ -70,6 +71,7 @@ model OperatorApplication {
   certificateIssuedAt DateTime?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt @default(now())
+  credentials         OperatorCredential[]
 }
 
 // ─── 신원 인증 세션 (OpenDID Verifier 흐름 — 모바일 신분증) ───
@@ -149,6 +151,7 @@ model Project {
   subscriptions  Subscription[]
   periodRecords      PeriodRecord[]
   setpointApplications SetpointApplication[]
+  credentials          OperatorCredential[]
 }
 
 // ─── 에스크로 ───
@@ -862,4 +865,50 @@ model MilestoneReviewItem {
 
   @@unique([milestoneId, signal])
   @@index([milestoneId])
+}
+
+// ─── 운영자 보증서 (O-08 · A-03 · Phase Q3) ───
+// 앱이 이 보증서를 검증해 운영 기능을 열고 닫는다. 그래서 상태값이 정본이다.
+//
+// 테이블은 이미 DB에 있었다(스키마에는 없이). `applicationId`로 어느 신청에서
+// 나온 보증서인지 추적하는 구조라 O-08 흐름(신청→심사→계약→발급)에 맞다.
+// 기존 컬럼을 그대로 쓰고 두 개만 더한다 — `projectId`(앱이 연결할 매장)와
+// `vcId`(Open DID VC 참조).
+//
+// 명세 17.1-8: "지점 운영계약 기간과 연동하고 교육·안전점검 만료 또는 중대 위반
+// 시 정지한다." 정지는 되돌릴 수 있고 만료는 시간이 지나면 자동이다 — 둘을 한
+// 상태로 합치면 "왜 막혔나"에 답할 수 없다.
+model OperatorCredential {
+  id            String  @id @default(cuid())
+  /** 보증서 번호 — 앱에서 번호로 인증할 때 쓴다. 전역 유일 */
+  credentialNo  String  @unique
+  userId        String
+  user          User    @relation(fields: [userId], references: [id])
+  applicationId String
+  application   OperatorApplication @relation(fields: [applicationId], references: [id])
+  spaceId       String?
+  /** 앱이 연결할 매장. 공간(Space)과 달리 운영 데이터가 붙는 단위다 */
+  projectId     String?
+  project       Project? @relation(fields: [projectId], references: [id])
+  /** active · suspended · expired · revoked */
+  status        String   @default("active")
+  issuedAt      DateTime @default(now())
+  /** 지점 운영계약 종료일. 지나면 만료로 본다 */
+  expiresAt     DateTime
+  /** 정지·해지 사유 코드 */
+  statusReason  String?
+  /** 사람이 읽는 사유. 상태만 남기면 왜 막혔는지 아무도 모른다 */
+  statusNote    String?
+  statusChangedAt DateTime?
+  statusChangedBy String?
+  /**
+   * Open DID VC 참조. 실제 발급이 붙기 전에는 null이고, 그때는 번호로만
+   * 검증한다 — 없는 VC를 있는 척하지 않는다.
+   */
+  vcId          String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId, status])
+  @@index([status, expiresAt])
 }
