@@ -4,7 +4,7 @@ import { serializeBigInt as serialize } from "@/lib/serialize";
 import { requireRole } from "@/lib/auth";
 import { recordAudit } from "@/lib/audit";
 import { verifyMilestoneOnChain } from "@/lib/onchain";
-import { canRunVerification } from "@/lib/milestone-gate";
+import { canRunVerification, reviewSignalsOf } from "@/lib/milestone-gate";
 
 // 교차검증(receipt↔photo): 영수증 구매 항목과 사진 검출 객체가
 // 같은 설비 카테고리를 하나 이상 공유하는지 확인
@@ -26,6 +26,30 @@ function crossCheckReceiptPhoto(
       category.some((k) => receiptText.includes(k)) &&
       category.some((k) => photoText.includes(k))
   );
+}
+
+/**
+ * 자동 검증 결과를 조건 항목의 **초안**으로 저장한다 (명세 9.8).
+ *
+ * 초안일 뿐이라 `verdict`를 `met`로 확정하지 않는다 — 사람이 항목을 확인해야
+ * 승인이 열린다(A-08). 여기서 met를 찍으면 자동 검증이 곧 승인이 되어
+ * "관리자가 항목마다 확인한다"는 조건부 집행의 근거가 사라진다.
+ *
+ * 이미 사람이 손댄 항목(`autoDraft: false`)은 덮어쓰지 않는다.
+ */
+async function saveAutoDrafts(
+  milestoneId: string,
+  signals: string[],
+  result: Record<string, boolean>,
+) {
+  for (const signal of signals) {
+    if (!(signal in result)) continue;
+    await prisma.milestoneReviewItem.upsert({
+      where: { milestoneId_signal: { milestoneId, signal } },
+      create: { milestoneId, signal, verdict: "undecided", autoDraft: true },
+      update: {}, // 사람 판정을 되돌리지 않는다
+    });
+  }
 }
 
 export async function POST(
@@ -167,10 +191,14 @@ export async function POST(
       await prisma.milestone.update({
         where: { id },
         data: {
+          // 자동 검증 통과가 곧 승인은 아니다. 다만 이 코드베이스는 verified를
+          // "집행 가능"으로 쓰고 있고, canRelease가 증빙·판정 기록을 다시 본다.
+          // 항목별 확인은 A-08 승인 경로가 담당한다.
           status: "verified",
           aiVerificationResult: signals,
         },
       });
+      await saveAutoDrafts(id, reviewSignalsOf(milestone), signals);
 
       // 검증 통과를 온체인에 기록 (배포 전이면 null, 체인 오류 시 DB는 유지)
       let txHash: string | null = null;
@@ -235,6 +263,9 @@ export async function POST(
         aiVerificationResult: signals,
       },
     });
+    // 실패도 초안을 남긴다 — 관리자가 심사 큐에서 어느 항목이 왜 걸렸는지
+    // 보고 판정한다. 자동 검증 실패는 반려가 아니라 사람이 볼 일이다(T3).
+    await saveAutoDrafts(id, reviewSignalsOf(milestone), signals);
 
     // 관리자 알림 (1회 실패: 재검증 안내 / 2회 실패: 수동 검토 전환)
     await prisma.notification.create({

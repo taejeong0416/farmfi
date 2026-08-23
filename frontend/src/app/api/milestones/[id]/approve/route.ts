@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 import { serializeBigInt } from "@/lib/serialize";
 import { requireRole } from "@/lib/auth";
 import { recordAudit } from "@/lib/audit";
-import { canReview } from "@/lib/milestone-gate";
+import { canApproveItems, canReview, reviewSignalsOf } from "@/lib/milestone-gate";
 
 // POST /api/milestones/[id]/approve — 관리자 증빙 재검토 (A-08).
 // decision: "approve" → verified (집행 가능) · "revise" → revision_required (재제출 요청)
@@ -28,9 +28,11 @@ export async function POST(
   } catch {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
-  const { decision, note } = (body ?? {}) as {
+  const { decision, note, items } = (body ?? {}) as {
     decision?: unknown;
     note?: unknown;
+    /** [{ signal, verdict, evidenceUrl?, note? }] — 조건 항목별 판정 */
+    items?: unknown;
   };
   if (decision !== "approve" && decision !== "revise") {
     return NextResponse.json(
@@ -47,7 +49,7 @@ export async function POST(
 
   const milestone = await prisma.milestone.findUnique({
     where: { id },
-    include: { project: { select: { id: true, name: true } } },
+    include: { project: { select: { id: true, name: true } }, reviewItems: true },
   });
   if (!milestone) {
     return NextResponse.json({ error: "단계를 찾을 수 없습니다." }, { status: 404 });
@@ -72,6 +74,40 @@ export async function POST(
       { error: "운영자 증빙이 제출되지 않은 단계는 승인할 수 없습니다." },
       { status: 400 },
     );
+  }
+
+  // 조건 항목별 판정을 먼저 반영한다. 명세 A-08: "각 항목마다 충족·미충족과
+  // 근거가 된 증빙을 지정해야 승인 버튼이 열린다."
+  // 자동 검증 결과는 초안일 뿐이라 그것만으로 승인이 되면 안 된다.
+  if (Array.isArray(items)) {
+    for (const raw of items) {
+      if (typeof raw !== "object" || raw === null) continue;
+      const { signal, verdict, evidenceUrl, note: itemNote } = raw as Record<string, unknown>;
+      if (typeof signal !== "string" || !signal) continue;
+      if (verdict !== "met" && verdict !== "unmet" && verdict !== "undecided") continue;
+      const data = {
+        verdict,
+        evidenceUrl: typeof evidenceUrl === "string" ? evidenceUrl : null,
+        note: typeof itemNote === "string" ? itemNote : null,
+        // 사람이 손댔다는 표시. 초안과 확정을 구분해야 "누가 정했나"가 남는다.
+        autoDraft: false,
+        decidedById: session.userId,
+        decidedAt: new Date(),
+      };
+      await prisma.milestoneReviewItem.upsert({
+        where: { milestoneId_signal: { milestoneId: id, signal } },
+        create: { milestoneId: id, signal, ...data },
+        update: data,
+      });
+    }
+  }
+
+  if (decision === "approve") {
+    const fresh = await prisma.milestoneReviewItem.findMany({ where: { milestoneId: id } });
+    const itemGate = canApproveItems(reviewSignalsOf(milestone), fresh);
+    if (!itemGate.ok) {
+      return NextResponse.json({ error: itemGate.error }, { status: 400 });
+    }
   }
 
   // 판정 시점의 상태를 조건으로 걸어 동시 판정 중 하나만 반영되게 한다.
@@ -106,7 +142,14 @@ export async function POST(
     summary: `${milestone.project.name} ${milestone.seq}단계 ${
       decision === "approve" ? "증빙 승인" : "보완 요청"
     }`,
-    detail: { note: typeof note === "string" ? note : null },
+    detail: {
+      note: typeof note === "string" ? note : null,
+      // 명세 A-08: "승인자, 조건 항목별 판정, 사유, 시각을 감사 로그에 기록한다."
+      items: await prisma.milestoneReviewItem.findMany({
+        where: { milestoneId: id },
+        select: { signal: true, verdict: true, evidenceUrl: true, note: true },
+      }),
+    },
   });
 
   return NextResponse.json({ milestone: serializeBigInt(updated) });

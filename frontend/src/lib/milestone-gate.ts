@@ -157,3 +157,77 @@ export function canRelease(
   }
   return { ok: true };
 }
+
+// ── 조건 항목별 판정 (A-08) ──────────────────────────────────────────────────
+
+/** 항목 판정값. `undecided`가 하나라도 있으면 승인이 열리지 않는다. */
+export type ItemVerdict = "undecided" | "met" | "unmet";
+
+export interface ReviewItem {
+  signal: string;
+  verdict: string;
+  evidenceUrl?: string | null;
+}
+
+export const SIGNAL_LABEL: Record<string, string> = {
+  contract: "계약서",
+  receipt: "영수증",
+  photo: "현장 사진",
+  iot: "센서 데이터",
+  crossCheck: "교차검증",
+};
+
+/**
+ * 이 단계가 판정해야 할 항목 목록.
+ * `requiredSignals`에 교차검증이 걸려 있으면 그것도 하나의 항목이다 —
+ * 영수증과 사진이 각각 통과해도 서로 안 맞으면 조건을 못 채운 것이다.
+ */
+export function reviewSignalsOf(m: {
+  requiredSignals: string[];
+  crossCheck: string | null;
+}): string[] {
+  return m.crossCheck ? [...m.requiredSignals, "crossCheck"] : [...m.requiredSignals];
+}
+
+/**
+ * 승인해도 되는지. 명세 A-08: "각 항목마다 충족·미충족과 근거가 된 증빙을
+ * 지정해야 승인 버튼이 열린다. 한 항목이라도 미지정이면 승인할 수 없다."
+ *
+ * 근거 증빙 지정은 파일이 필요한 항목에만 요구한다. IoT·교차검증은 수집 데이터와
+ * 대조 결과라 지정할 파일이 없다.
+ */
+const FILE_BACKED = new Set(["contract", "receipt", "photo"]);
+
+export function canApproveItems(
+  signals: string[],
+  items: ReviewItem[],
+): GateResult {
+  const bySignal = new Map(items.map((i) => [i.signal, i]));
+
+  const undecided = signals.filter(
+    (sig) => (bySignal.get(sig)?.verdict ?? "undecided") === "undecided",
+  );
+  if (undecided.length > 0) {
+    const names = undecided.map((s) => SIGNAL_LABEL[s] ?? s).join(" · ");
+    return { ok: false, error: `아직 판정하지 않은 항목이 있습니다 — ${names}` };
+  }
+
+  const unmet = signals.filter((sig) => bySignal.get(sig)?.verdict === "unmet");
+  if (unmet.length > 0) {
+    const names = unmet.map((s) => SIGNAL_LABEL[s] ?? s).join(" · ");
+    return {
+      ok: false,
+      error: `충족하지 못한 항목이 있어 승인할 수 없습니다 — ${names}. 보완 요청 또는 반려로 처리해 주세요.`,
+    };
+  }
+
+  const noEvidence = signals.filter(
+    (sig) => FILE_BACKED.has(sig) && !bySignal.get(sig)?.evidenceUrl,
+  );
+  if (noEvidence.length > 0) {
+    const names = noEvidence.map((s) => SIGNAL_LABEL[s] ?? s).join(" · ");
+    return { ok: false, error: `근거 증빙을 지정하지 않은 항목이 있습니다 — ${names}` };
+  }
+
+  return { ok: true };
+}
