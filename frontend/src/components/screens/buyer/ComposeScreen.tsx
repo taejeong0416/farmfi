@@ -7,6 +7,37 @@ import { shortDate } from "../api";
 import { SubscribeStepLine } from "./SubscribeStepLine";
 import { useCatalog, useSubscribeDraft } from "./useSubscribeDraft";
 
+/**
+ * 작물 아이콘 (`.fig` B-03). 카드마다 32x32 사진이 붙는다.
+ * 이름이 도면에 없는 작물은 아이콘을 비운다 — 다른 작물 그림을 붙이면 거짓말이다.
+ */
+const CROP_ICON: Record<string, string> = {
+  버터헤드: "butterhead",
+  상추: "butterhead",
+  로메인: "romaine",
+  바질: "basil",
+  루꼴라: "arugula",
+  적근대: "chard",
+  청경채: "bokchoy",
+  케일: "kale",
+  딜: "dill",
+};
+
+function CropIcon({ name }: { name: string }) {
+  const slug = CROP_ICON[name];
+  if (!slug) {
+    return <span className="h-8 w-8 shrink-0 rounded-6 bg-surface" aria-hidden />;
+  }
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={`/assets/figma/crop-${slug}.png`}
+      alt=""
+      className="h-8 w-8 shrink-0 rounded-6 object-cover"
+    />
+  );
+}
+
 export function ComposeScreen() {
   const router = useRouter();
   const { draft, update, ready } = useSubscribeDraft();
@@ -104,9 +135,12 @@ export function ComposeScreen() {
               }`}
             >
               <span className="flex items-center justify-between">
-                <span className="text-14 font-medium text-ink">{c.name}</span>
+                <span className="flex items-center gap-2.5">
+                  <CropIcon name={c.name} />
+                  <span className="text-13 font-medium text-ink">{c.name}</span>
+                </span>
                 {selected ? (
-                  <span className="text-12 font-medium text-brand">✓</span>
+                  <span className="text-13 font-bold text-brand">✓</span>
                 ) : null}
               </span>
               <span className="mt-2 block text-11 text-muted">

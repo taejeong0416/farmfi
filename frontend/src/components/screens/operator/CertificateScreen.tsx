@@ -120,6 +120,37 @@ export function CertificateScreen() {
             ))}
           </ol>
 
+          {/* `.fig` O-08 — 사용 방법 아래 앱 설치 안내가 붙는다. */}
+          <div className="mt-7 rounded-14 bg-surface px-6 py-6">
+            <p className="text-17 font-bold text-brand">
+              FarmFi 운영자 앱에서 시작하세요
+            </p>
+            <p className="mt-2 text-12 text-body">
+              앱을 설치하고 보증서를 인증하면 배정 매장 확인과 설비 연결을 바로
+              시작할 수 있어요.
+            </p>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/assets/figma/app-logo.png"
+              alt="FarmFi 운영자 앱"
+              className="mt-4 h-[60px] w-16 rounded-12 object-cover"
+            />
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                className="h-[46px] rounded-6 bg-brand text-13 font-semibold text-white"
+              >
+                iPhone용 다운로드
+              </button>
+              <button
+                type="button"
+                className="h-[46px] rounded-6 border border-brand bg-white text-13 font-semibold text-brand"
+              >
+                Android용 다운로드
+              </button>
+            </div>
+          </div>
+
           <div className="mt-7">
             <Button full href="/operator">
               개점 준비 현황 보기

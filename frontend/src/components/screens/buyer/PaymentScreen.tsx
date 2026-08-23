@@ -14,11 +14,11 @@ const REGISTERED = {
   desc: "개인 · 일시불",
 };
 
-// 제3자 브랜드 마크는 원본 색을 쓴다.
+// 제3자 브랜드 마크는 `.fig`에 든 원본 로고를 그대로 쓴다.
 const EASY = [
-  { key: "kakao", label: "Kakao Pay", short: "Kakao Pay", mark: "#FAD61A" },
-  { key: "naver", label: "N pay", short: "N pay", mark: "#1FB85C" },
-  { key: "toss", label: "toss pay", short: "toss pay", mark: "#FFFFFF" },
+  { key: "kakao", label: "Kakao Pay", short: "Kakao Pay", mark: "/assets/figma/pay-kakao.png" },
+  { key: "naver", label: "N pay", short: "N pay", mark: "/assets/figma/pay-naver.png" },
+  { key: "toss", label: "toss pay", short: "toss pay", mark: "/assets/figma/pay-toss.png" },
 ];
 
 const METHODS = [REGISTERED, ...EASY];
@@ -115,10 +115,11 @@ export function PaymentScreen() {
               method === m.key ? "border-brand bg-surface" : "border-line bg-white"
             }`}
           >
-            <span
-              className="h-[34px] w-[34px] shrink-0 rounded-8 border border-line"
-              style={{ backgroundColor: m.mark }}
-              aria-hidden
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={m.mark}
+              alt=""
+              className="h-[34px] w-[34px] shrink-0 rounded-8 border border-line object-cover"
             />
             <span className="text-11 font-medium text-ink">{m.label}</span>
           </button>

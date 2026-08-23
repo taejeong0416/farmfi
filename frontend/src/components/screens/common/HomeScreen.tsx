@@ -24,6 +24,23 @@ const FILTERS = [
   { key: "funded", label: "모집 완료" },
 ] as const;
 
+/**
+ * 카드 사진이 없을 때 쓰는 기본 이미지. `.fig` C-01은 카드 세 장에 서로 다른
+ * 스마트팜 사진을 넣는다 — 한 장을 돌려쓰면 목록이 같은 그림으로 도배된다.
+ */
+const CARD_PHOTOS = [
+  "/assets/figma/home-farm-1.jpg",
+  "/assets/figma/home-farm-2.jpg",
+  "/assets/figma/home-farm-3.jpg",
+];
+
+/** id에서 사진을 정한다. 목록 순서가 바뀌어도 같은 지점은 같은 사진이다. */
+function cardPhoto(id: string): string {
+  let sum = 0;
+  for (const ch of id) sum += ch.charCodeAt(0);
+  return CARD_PHOTOS[sum % CARD_PHOTOS.length];
+}
+
 export function ProjectCard({ p }: { p: ProjectSummary }) {
   const pct = p.fundingPercent;
   const target = p.targetAmount ?? 0;
@@ -39,7 +56,7 @@ export function ProjectCard({ p }: { p: ProjectSummary }) {
       <div className="relative">
         <PhotoSlot
           label="대표 공간 사진"
-          src={p.imageUrl ?? "/assets/farm-building-project.png"}
+          src={p.imageUrl ?? cardPhoto(p.id)}
           className="h-[151px] w-full rounded-none border-0 border-b border-line"
         />
         <span
@@ -158,11 +175,9 @@ export function HomeScreen() {
   return (
     <Shell className="pt-0">
       <section
+        // `.fig` Frame 168 — 밭 사진 위에 흰 글자다. 덧씌우는 막은 없다.
         className="-mx-[54px] flex h-[407px] flex-col justify-center bg-brand bg-cover bg-center px-[54px]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(20,84,46,0.72), rgba(20,84,46,0.72)), url('/assets/farm-building-hero.png')",
-        }}
+        style={{ backgroundImage: "url('/assets/figma/home-field.jpg')" }}
       >
         <div className="mx-auto w-full max-w-[1332px]">
           <h1 className="text-[36px] font-bold leading-tight text-white">
