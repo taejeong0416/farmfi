@@ -6,6 +6,7 @@
 // 지급 사무(누구에게 얼마를 언제 보냈나)를 추적한다.
 
 import { prisma } from "@/lib/db";
+import { resolveConfirmedRecord } from "@/lib/period-record";
 import { calculateFeePool } from "@/lib/waterfall";
 
 export const PAYOUT_CATEGORIES = ["dividend", "landlord_rent", "operator_settlement"] as const;
@@ -49,7 +50,12 @@ export interface PayoutLine {
 export interface PayoutPlan {
   period: string;
   operatorRevenue: number;
+  /** 매출을 판매 기록 합계에서 가져왔는지 (false면 확정 입력값 또는 호출자 주입) */
   operatorRevenueMeasured: boolean;
+  /** 확정된 기간 입력값(`PeriodRecord`)을 반영했는지 */
+  recordConfirmed: boolean;
+  /** 확정 입력값의 운영 비용 합계. 운영자 정산 몫에서만 차감한다. */
+  operatingCost: number;
   feePool: Awaited<ReturnType<typeof calculateFeePool>>;
   perToken: number;
   lines: PayoutLine[];
@@ -59,9 +65,13 @@ export interface PayoutPlan {
 /**
  * 한 프로젝트의 한 달 지급 계획을 계산한다 (등록은 하지 않는다).
  *
+ * 매출의 출처는 세 단계다: 호출자가 넘긴 actuals → 확정된 기간 입력값
+ * (`PeriodRecord`, 명세 2.1) → 판매 기록 합계. 확정되지 않은 입력값은 읽지 않는다.
+ * 운영 비용은 확정 입력값에서만 오고, 운영자 정산 줄에서만 빠진다.
+ *
  * @param projectId 대상 지점
  * @param period YYYY-MM
- * @param actuals 매출 실측치. operatorRevenue를 넘기지 않으면 SalesRecord 합계를 쓴다.
+ * @param actuals 매출 실측치. 넘긴 값이 확정 입력값보다 우선한다.
  */
 export async function buildPayoutPlan(
   projectId: string,
@@ -75,7 +85,7 @@ export async function buildPayoutPlan(
   const parsed = parsePeriod(period);
   if (!parsed.ok) throw new Error("INVALID_PERIOD");
 
-  const [project, partners, holdings, sales] = await Promise.all([
+  const [project, partners, holdings, sales, record] = await Promise.all([
     prisma.project.findUniqueOrThrow({
       where: { id: projectId },
       select: { id: true, name: true, operatorId: true, operator: { select: { name: true } } },
@@ -89,13 +99,16 @@ export async function buildPayoutPlan(
       where: { projectId, soldAt: { gte: parsed.start, lt: parsed.end } },
       _sum: { amount: true },
     }),
+    resolveConfirmedRecord(projectId, period),
   ]);
 
   const measuredRevenue = sales._sum.amount ?? 0;
-  const operatorRevenueMeasured = actuals?.operatorRevenue == null;
+  const inputRevenue = actuals?.operatorRevenue ?? record?.revenue ?? null;
+  const operatorRevenueMeasured = inputRevenue == null;
   const operatorRevenue = operatorRevenueMeasured
     ? measuredRevenue
-    : Math.max(0, actuals!.operatorRevenue!);
+    : Math.max(0, inputRevenue);
+  const operatingCost = record?.totalCost ?? 0;
 
   const feePool = await calculateFeePool(projectId, operatorRevenue, {
     experienceRevenue: actuals?.experienceRevenue,
@@ -134,11 +147,16 @@ export async function buildPayoutPlan(
     });
   }
 
-  // ③ 운영자 정산 — 운영자는 매출을 직접 보유하고 이용료·임대료를 지불한다(v18 설계 원칙 2).
-  // 여기 등록하는 금액은 그 차액(운영자가 최종적으로 손에 쥐는 몫)이고, 음수 구간은
-  // 0으로 눕히되 원값을 memo에 남긴다 — 지급 원장에 마이너스 지급 건은 의미가 없다.
+  // ③ 운영자 정산 — 운영자는 매출을 직접 보유하고 이용료·임대료·운영비를 지불한다
+  // (v18 설계 원칙 2). 여기 등록하는 금액은 그 차액(운영자가 최종적으로 손에 쥐는 몫)이고,
+  // 음수 구간은 0으로 눕히되 원값을 memo에 남긴다 — 지급 원장에 마이너스 지급 건은 의미가 없다.
+  // 운영비는 확정된 기간 입력값에서만 온다. 투자자 회수금은 이 비용에 영향받지 않는다.
   if (project.operatorId) {
-    const net = BigInt(Math.round(operatorRevenue)) - BigInt(feePool.platformUsageFee) - rentTotal;
+    const net =
+      BigInt(Math.round(operatorRevenue)) -
+      BigInt(feePool.platformUsageFee) -
+      rentTotal -
+      BigInt(operatingCost);
     lines.push({
       category: "operator_settlement",
       payeeUserId: project.operatorId,
@@ -148,6 +166,7 @@ export async function buildPayoutPlan(
         `매출 ${Math.round(operatorRevenue).toLocaleString("ko-KR")}` +
         ` − 이용료 ${feePool.platformUsageFee.toLocaleString("ko-KR")}` +
         ` − 임대료 ${Number(rentTotal).toLocaleString("ko-KR")}` +
+        (operatingCost > 0 ? ` − 운영비 ${operatingCost.toLocaleString("ko-KR")}` : "") +
         ` = ${Number(net).toLocaleString("ko-KR")}원`,
     });
   }
@@ -156,6 +175,8 @@ export async function buildPayoutPlan(
     period,
     operatorRevenue,
     operatorRevenueMeasured,
+    recordConfirmed: record != null,
+    operatingCost,
     feePool,
     perToken,
     lines,

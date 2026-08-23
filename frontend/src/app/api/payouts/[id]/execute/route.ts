@@ -4,6 +4,7 @@ import { serializeBigInt as serialize } from "@/lib/serialize";
 import { requireRole } from "@/lib/auth";
 import { recordAudit } from "@/lib/audit";
 import { getPayoutAdapter } from "@/lib/payout-adapter";
+import { payoutFailurePolicy } from "@/lib/payout-failure";
 
 /**
  * POST /api/payouts/[id]/execute — 지급 어댑터로 이체를 실행한다.
@@ -40,6 +41,22 @@ export async function POST(
     return NextResponse.json({ error: "이미 지급 완료된 건입니다." }, { status: 400 });
   }
 
+  // 실패한 건은 사유에 따라 다시 걸 수 있는지가 갈린다. 계좌가 잘못된 건을 그대로
+  // 다시 보내면 같은 자리에서 또 실패하고 시도 횟수만 는다.
+  if (payout.status === "failed") {
+    const policy = payoutFailurePolicy(payout.failureCode);
+    if (!policy.retryable) {
+      return NextResponse.json(
+        {
+          error: policy.adminHint,
+          code: "PAYOUT_RETRY_BLOCKED",
+          failure: { code: policy.code, label: policy.label, actor: policy.actor },
+        },
+        { status: 409 },
+      );
+    }
+  }
+
   // 여기서 잠근다. 이 전이에 성공한 요청만 이체를 보낸다.
   //
   // processing에 오래 머문 건도 다시 잡는다 — 이체를 넘긴 직후 프로세스가 죽으면
@@ -54,7 +71,13 @@ export async function POST(
         { status: "processing", createdAt: { lt: new Date(Date.now() - STUCK_MS) } },
       ],
     },
-    data: { status: "processing", failureReason: null },
+    data: {
+      status: "processing",
+      failureReason: null,
+      failureCode: null,
+      retryCount: { increment: 1 },
+      lastAttemptAt: new Date(),
+    },
   });
   if (claimed.count === 0) {
     return NextResponse.json(
@@ -68,7 +91,7 @@ export async function POST(
   if (payout.amount <= BigInt(0)) {
     const zero = await prisma.payout.update({
       where: { id },
-      data: { status: "paid", paidAt: new Date(), failureReason: null },
+      data: { status: "paid", paidAt: new Date(), failureReason: null, failureCode: null },
     });
     return NextResponse.json(
       serialize({ ok: true, payout: zero, skipped: "zero_amount" }),
@@ -83,6 +106,7 @@ export async function POST(
       where: { id },
       data: {
         status: "scheduled",
+        failureCode: null,
         failureReason: null,
         memo: payout.memo ? `${payout.memo} · 수동 이체 대상` : "수동 이체 대상",
       },
@@ -116,7 +140,7 @@ export async function POST(
   if (!result.ok) {
     const failed = await prisma.payout.update({
       where: { id },
-      data: { status: "failed", failureReason: result.message },
+      data: { status: "failed", failureCode: result.code, failureReason: result.message },
     });
     await recordAudit({
       actorId: session.userId,
@@ -139,6 +163,7 @@ export async function POST(
     data: {
       status: "paid",
       paidAt: result.transferredAt,
+      failureCode: null,
       failureReason: null,
       memo: payout.memo
         ? `${payout.memo} · ${result.providerTransferId}`

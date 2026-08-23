@@ -16,7 +16,8 @@ const BANKS = [
   "토스뱅크",
 ];
 
-export function VerifyAccountScreen() {
+/** next: 등록을 마친 뒤 돌아갈 앱 내부 경로. 없으면 본인확인 완료로 간다. */
+export function VerifyAccountScreen({ next }: { next?: string }) {
   const router = useRouter();
   const [bank, setBank] = useState(BANKS[0]);
   const [number, setNumber] = useState("");
@@ -43,7 +44,7 @@ export function VerifyAccountScreen() {
     setBusy(true);
     try {
       await registerBankAccount(bank, number);
-      router.push("/verify/done");
+      router.push(next ?? "/verify/done");
     } catch (e) {
       setError(e instanceof Error ? e.message : "계좌를 등록하지 못했습니다.");
     } finally {

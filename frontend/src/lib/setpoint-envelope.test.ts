@@ -13,9 +13,22 @@ import { applyEnvelope, envelopeBounds, type EnvelopeVerdict } from "./setpoint-
 import { getCrop } from "./crop-profiles";
 import type { GrowthRecipe, RecipeSetpoint, SurfaceVerdict } from "./growth-recipe";
 
-function sp(feature: string, optimum: number, atBoundary = false): RecipeSetpoint {
+function sp(
+  feature: string,
+  optimum: number,
+  atBoundary = false,
+  curvatureUnresolved = false,
+): RecipeSetpoint {
   const unit: Record<string, string> = { temp: "℃", humidity: "%", co2: "ppm", ec: "dS/m", ph: "", dli: "mol" };
-  return { feature, label: feature, optimum, current: optimum, unit: unit[feature] ?? "", atBoundary };
+  return {
+    feature,
+    label: feature,
+    optimum,
+    current: optimum,
+    unit: unit[feature] ?? "",
+    atBoundary,
+    curvatureUnresolved,
+  };
 }
 
 function recipe(setpoints: RecipeSetpoint[], surface: SurfaceVerdict = "최대점") {
@@ -130,4 +143,9 @@ test("품종이 바뀌면 봉투도 바뀐다", () => {
   const leafy = envelopeBounds("temp", getCrop("leafy"))!;
   const basil = envelopeBounds("temp", getCrop("basil"))!;
   assert.notDeepEqual(leafy, basil, "바질과 상추가 같은 온도 봉투를 쓰면 정규화한 게 아니다");
+});
+
+test("곡률이 안 잡힌 요인은 채택하지 않는다", () => {
+  const r = applyEnvelope(recipe([sp("temp", 21, false, true)]), { cropKey: "leafy" });
+  assert.equal(verdictOf(r, "temp"), "REJECTED_CURVATURE");
 });

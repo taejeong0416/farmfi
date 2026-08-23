@@ -2,9 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getServerSession } from "@/lib/auth";
 import { serializeBigInt } from "@/lib/serialize";
+import { missingRequiredConsents, agreementHashFor } from "@/lib/agreements";
 
 // POST /api/investments/[id]/consent — 최종 확인·전자서명 (I-03).
-// 서명 문자열을 남기고 납입 대기로 넘긴다.
+// 필수 문서에 전부 동의했는지 확인하고, 동의한 문서들을 묶은 해시를 신청에 남긴 뒤
+// 납입 대기로 넘긴다. 문서별 동의는 POST /api/agreements/[id]/consent가 먼저 받는다.
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -37,11 +39,27 @@ export async function POST(
     );
   }
 
+  // 필수 문서를 건너뛴 채로 넘어가지 못하게 막는다. 화면의 체크박스는 서버가
+  // 확인할 수 없는 표시일 뿐이고, 동의 기록이 있어야 동의한 것이다.
+  const missing = await missingRequiredConsents(session.userId, id);
+  if (missing.length > 0) {
+    return NextResponse.json(
+      {
+        error: "필수 문서에 모두 동의해야 합니다.",
+        missing: missing.map((a) => ({ id: a.id, code: a.code, title: a.title })),
+      },
+      { status: 400 },
+    );
+  }
+
+  const agreementHash = await agreementHashFor(session.userId, id);
+
   const updated = await prisma.investment.update({
     where: { id },
     data: {
       signature: signature.trim(),
       consentedAt: new Date(),
+      agreementHash,
       status: "AWAITING_DEPOSIT",
     },
   });

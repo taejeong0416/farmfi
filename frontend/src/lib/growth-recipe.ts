@@ -4,15 +4,18 @@
 // 도출 → 비전공 운영자의 진입장벽 완화.
 //
 // 3단계:
-//   ① 특성 중요도 (그래디언트 부스팅): 어느 환경 요인이 수율을 좌우하나
-//   ② 다변량 반응표면 최적점: 주효과 + 쌍상호작용항(temp*co2, ec*dli, temp*humidity)으로
+//   ① 다변량 반응표면 최적점: 주효과 + 쌍상호작용항(temp*co2, ec*dli, temp*humidity)으로
 //      6D 결합 최적점 도출 (독립 1D ≠ 6D 결합 최적 — 상호작용 반영)
+//   ② 표면 민감도: 관측범위에서 각 요인이 예측 수율을 얼마나 움직이나
 //   ③ 갭 분석: 현재 사이트 조건 vs 최적 레시피 → 실행 권고 + 모델 기반 수율 상방
+//
+// ②와 ③은 같은 계수에서 나온다. 별도 모델로 중요도를 내면 "습도가 가장 중요"와
+// "습도는 옮길 게 없다"가 한 화면에 같이 뜨고, 두 숫자가 어긋나도 검출할 길이 없다.
 //
 // crop-profiles의 하드코딩 목표(DLI·정상범위)를 데이터가 대체하고, 그 학습된
 // 목표를 최적화 스택이 효율적으로 달성한다 — 두 시스템이 맞물린다.
 
-import { fromNormalized, toNormalized } from "./crop-normalize";
+import { cropScales, fromNormalized, toNormalized } from "./crop-normalize";
 
 export interface GrowthObservation {
   temp: number; // ℃
@@ -24,10 +27,36 @@ export interface GrowthObservation {
   yield: number; // kg/㎡ (사이클 수확량)
   /** 어느 품종의 사이클인가. 품종을 가로지르는 이전 강도를 이 값으로 정한다 */
   cropKey?: string;
+  /**
+   * 이 사이클의 설정값이 무작위로 배정됐다는 표식. 배정된 요인과 그 값(정규화 좌표)을
+   * 남긴다.
+   *
+   * 이 칸이 인과 주장의 전부다. 표식 없이 쌓인 관측에서는 "온도가 높았던 사이클의
+   * 수율이 높았다"와 "온도가 높은 사이클은 여름이고 여름엔 일사가 많았다"가 같은
+   * 숫자를 만들고, 어떤 분석으로도 갈라지지 않는다. 무작위 배정은 그 둘을 끊지만,
+   * 끊었다는 사실이 기록돼야 나중에 쓸 수 있다.
+   */
+  assignment?: { feature: GrowthFeature; z: number };
+  /**
+   * 사이클 평균이 지운 것을 되살리는 두 요약값. 사이클 28일 × 24시간 = 672개
+   * 측정이 평균 하나로 접히면서 사라지는 정보 중 가장 잘 알려진 둘이다.
+   *
+   * 주야 진폭 — 평균 22℃가 (주 26 / 야 18)인지 (내내 22)인지가 전혀 다른 작물을
+   * 만든다. DIF는 초장 제어의 표준 수단인데 평균에서는 구분되지 않는다.
+   *
+   * 상한 초과 누적시간 — 34℃ 3시간이 준 손상은 되돌아오지 않는데, 나머지가 21℃면
+   * 평균은 22℃로 멀쩡하다. 스트레스는 비선형·비가역이고 평균은 선형·가역이다.
+   *
+   * 둘 다 회귀 입력이 아니다. 열을 늘리면 파라미터가 늘고, 연 12행이 쌓이는
+   * 데이터가 그걸 감당하지 못한다. 대신 초과시간은 가중치로(스트레스 사이클은
+   * 반응표면 위에 있지 않은 관측이다), 주야 진폭은 진단 플래그로 쓴다.
+   */
+  tempDiurnalAmpC?: number; // ℃ (주간 평균 − 야간 평균)
+  tempExcessHours?: number; // h (품종 상한을 넘긴 시간의 합)
 }
 
-export const FEATURES = ["temp", "humidity", "co2", "ec", "ph", "dli"] as const;
-export type GrowthFeature = (typeof FEATURES)[number];
+export type GrowthFeature = "temp" | "humidity" | "co2" | "ec" | "ph" | "dli";
+export const FEATURES: readonly GrowthFeature[] = ["temp", "humidity", "co2", "ec", "ph", "dli"];
 
 export const FEATURE_LABEL: Record<string, string> = {
   temp: "온도",
@@ -38,48 +67,17 @@ export const FEATURE_LABEL: Record<string, string> = {
   dli: "광량(DLI)",
 };
 
-// ── 회귀 스텀프 (깊이 1 결정트리) — 그래디언트 부스팅의 약학습기 ──────────────
-interface Stump {
-  feature: number;
-  threshold: number;
-  left: number;
-  right: number;
-  gain: number;
-}
-
-function fitStump(X: number[][], residual: number[]): Stump {
-  let best: Stump = { feature: 0, threshold: 0, left: 0, right: 0, gain: -Infinity };
-  const n = X.length;
-  const totalMean = residual.reduce((a, b) => a + b, 0) / n;
-  const totalVar = residual.reduce((s, r) => s + (r - totalMean) ** 2, 0);
-
-  for (let f = 0; f < FEATURES.length; f++) {
-    const vals = [...new Set(X.map((x) => x[f]))].sort((a, b) => a - b);
-    for (let ti = 0; ti < vals.length - 1; ti++) {
-      const th = (vals[ti] + vals[ti + 1]) / 2;
-      let lSum = 0, lN = 0, rSum = 0, rN = 0;
-      for (let i = 0; i < n; i++) {
-        if (X[i][f] <= th) { lSum += residual[i]; lN++; }
-        else { rSum += residual[i]; rN++; }
-      }
-      if (lN === 0 || rN === 0) continue;
-      const lMean = lSum / lN, rMean = rSum / rN;
-      let sse = 0;
-      for (let i = 0; i < n; i++) {
-        const pred = X[i][f] <= th ? lMean : rMean;
-        sse += (residual[i] - pred) ** 2;
-      }
-      const gain = totalVar - sse;
-      if (gain > best.gain) best = { feature: f, threshold: th, left: lMean, right: rMean, gain };
-    }
-  }
-  return best;
-}
-
-export interface RecipeImportance {
+export interface RecipeSensitivity {
   feature: string;
   label: string;
-  importance: number; // 정규화 0~1
+  /**
+   * 다른 요인을 탐색범위 중앙에 두고 이 요인만 범위 끝까지 훑을 때 예측 수율이
+   * 움직이는 폭 (kg/㎡). 곡률과 관측 폭이 함께 반영된다 — 곡률이 커도 좁게만
+   * 관측했으면 폭이 작고, 그게 "이 데이터가 이 요인에 대해 아는 정도"다.
+   */
+  range: number;
+  /** 여섯 요인 폭의 합에서 차지하는 비율 0~1 */
+  share: number;
   correlation: number; // 수율과의 피어슨 상관
 }
 
@@ -94,6 +92,12 @@ export interface RecipeSetpoint {
    * 뜻이고, 표시된 값은 "여기가 최적"이 아니라 "여기까지밖에 못 본다"는 뜻이다.
    */
   atBoundary: boolean;
+  /**
+   * 이차항 계수의 부트스트랩 신뢰구간이 0을 포함한다 — 이 요인의 곡률이 잡히지
+   * 않았다는 뜻이다. 정점 −b/(2β)의 분모가 0 근처라 위치가 잡음에서 나오므로
+   * 최적화에서 빼고 현재값에 고정한다. optimum은 그 고정된 값이다.
+   */
+  curvatureUnresolved: boolean;
 }
 
 /**
@@ -104,11 +108,18 @@ export type SurfaceVerdict = "최대점" | "안장점" | "판정불가";
 
 export interface GrowthRecipe {
   samples: number;
-  importance: RecipeImportance[];
+  sensitivity: RecipeSensitivity[];
   recipe: RecipeSetpoint[];
   /** 5-fold CV R². 표본이 파라미터 수에 못 미치면 null — 0은 "설명력 없음"이라 뜻이 다르다 */
   modelR2: number | null;
   surface: SurfaceVerdict;
+  /** 열 스트레스로 무게가 절반 아래로 내려간 관측의 비율 */
+  stressDownweightedShare: number;
+  /**
+   * 주야 진폭이 정상범위 폭을 넘어 사이클 평균이 대표성을 잃은 관측의 비율.
+   * 높으면 온도 권고의 근거가 약하다 — 평균이 같아도 실제 온도곡선이 다르다.
+   */
+  diurnalFlaggedShare: number;
   note: string;
   _beta?: number[]; // 정규화 좌표에서의 반응표면 계수 (갭 분석이 다시 쓴다)
   _cropKey?: string; // _beta가 어느 품종의 좌표계인지
@@ -144,13 +155,17 @@ function predictRS(beta: number[], x: number[]): number {
 // 입력·출력 모두 정규화 좌표다.
 
 /** 정규화 좌표 관측에서 반응표면 계수를 적합한다. */
-export function fitResponseSurface(Z: number[][], y: number[]): number[] {
-  return olsFit(Z.map(buildDesignRow), y);
+export function fitResponseSurface(Z: number[][], y: number[], w?: number[]): number[] {
+  return olsFit(Z.map(buildDesignRow), y, w);
 }
 
 /** 계수와 탐색범위에서 6D 결합 최적점(정규화 좌표)을 찾는다. */
-export function optimumZ(beta: number[], bounds: [number, number][]): number[] {
-  return coordinateAscent(beta, bounds);
+export function optimumZ(
+  beta: number[],
+  bounds: [number, number][],
+  pinned?: (number | null)[]
+): number[] {
+  return coordinateAscent(beta, bounds, pinned);
 }
 
 export function predictSurface(beta: number[], z: number[]): number {
@@ -174,23 +189,43 @@ export function zBounds(Z: number[][], clamp: boolean): [number, number][] {
   });
 }
 
-// OLS 정규방정식: (D^T D + λI) β = D^T y (λ=1e-6 릿지 정규화로 수치 안정)
-function olsFit(D: number[][], y: number[]): number[] {
+// 가중 OLS 정규방정식: (D^T W D + λI) β = D^T W y (λ=1e-6 릿지 정규화로 수치 안정)
+// 가중치를 생략하면 모두 1 — 보통의 최소제곱이다.
+function olsFit(D: number[][], y: number[], w?: number[]): number[] {
   const p = D[0].length;
   const n = D.length;
   const A: number[][] = Array.from({ length: p }, () => Array(p).fill(0));
   const b: number[] = Array(p).fill(0);
   for (let i = 0; i < n; i++) {
+    const wi = w ? w[i] : 1;
     for (let j = 0; j < p; j++) {
-      b[j] += D[i][j] * y[i];
+      b[j] += wi * D[i][j] * y[i];
       for (let k = j; k < p; k++) {
-        A[j][k] += D[i][j] * D[i][k];
+        A[j][k] += wi * D[i][j] * D[i][k];
         A[k][j] = A[j][k];
       }
     }
   }
   for (let j = 0; j < p; j++) A[j][j] += 1e-6; // 릿지 정규화
   return gaussianElimP(A, b);
+}
+
+// ── 열 스트레스 가중 ─────────────────────────────────────────────────────────
+// 상한을 오래 넘긴 사이클은 열 손상이 이미 일어난 사이클이다. 그 수율은 환경↔수율
+// 반응표면 위에 있지 않다 — 사고가 난 관측이다. 정상 사이클과 같은 무게로 적합하면
+// 표면 자체가 휘고, 스트레스가 평균 온도와 함께 움직이므로 온도 최적점이 실제보다
+// 낮게 끌려간다.
+//
+// 초과시간을 회귀 열로 넣지 않는 이유는 두 가지다. 파라미터가 늘고, 그 항에는
+// 이차항이 없어(스트레스는 단조 나쁨이라 최적값이 0이다) 헤시안 대각이 0이 되어
+// §최대점 판정이 항상 안장점으로 떨어진다. 가중치로 쓰면 자유도를 하나도 먹지
+// 않으면서 오염만 걷어낸다.
+
+/** 이만큼 초과하면 무게가 절반이 된다 (h). 하루치 누적을 기준으로 잡았다 */
+export const STRESS_HALF_HOURS = 24;
+
+export function observationWeights(obs: GrowthObservation[]): number[] {
+  return obs.map((o) => 1 / (1 + (o.tempExcessHours ?? 0) / STRESS_HALF_HOURS));
 }
 
 // p×p 가우스 소거 (부분 피벗팅)
@@ -213,25 +248,38 @@ function gaussianElimP(A: number[][], b: number[]): number[] {
   );
 }
 
+// 다른 요인을 x에 고정했을 때 요인 i의 1D 부분문제 계수.
+//   f(z_i) = bQuad·z_i² + bLin·z_i + const
+// 상호작용항에서 z_i가 포함된 열의 기여가 bLin으로 들어간다.
+//   col 13 = temp*co2:  i=0 → co2 고정값 곱, i=2 → temp 고정값 곱
+//   col 14 = ec*dli:    i=3 → dli 고정값 곱, i=5 → ec 고정값 곱
+//   col 15 = temp*hum:  i=0 → hum 고정값 곱, i=1 → temp 고정값 곱
+// 최적화와 민감도가 이 하나를 같이 쓴다 — 상호작용 배선이 두 벌이면 어긋난다.
+function marginalCoeffs(beta: number[], x: number[], i: number): { bQuad: number; bLin: number } {
+  const bQuad = beta[7 + i];
+  let bLin = beta[1 + i];
+  if (i === 0) bLin += beta[13] * x[2] + beta[15] * x[1];
+  else if (i === 1) bLin += beta[15] * x[0];
+  else if (i === 2) bLin += beta[13] * x[0];
+  else if (i === 3) bLin += beta[14] * x[5];
+  else if (i === 5) bLin += beta[14] * x[3];
+  return { bQuad, bLin };
+}
+
 // 좌표 상승 (각 변수 1D 최적화 반복 → 6D 결합 최적점)
-// 각 xi에 대한 1D 서브문제: f(xi) = β_quad*xi² + (β_lin + Σ interaction) * xi + const
-function coordinateAscent(beta: number[], bounds: [number, number][], maxIter = 200): number[] {
-  const x = bounds.map(([lo, hi]) => (lo + hi) / 2);
+// pinned[i]가 있으면 그 축은 고정한다 — 곡률이 안 잡힌 요인을 최적화에서 뺄 때 쓴다.
+function coordinateAscent(
+  beta: number[],
+  bounds: [number, number][],
+  pinned?: (number | null)[],
+  maxIter = 200
+): number[] {
+  const x = bounds.map(([lo, hi], i) => pinned?.[i] ?? (lo + hi) / 2);
   for (let iter = 0; iter < maxIter; iter++) {
     let converged = true;
     for (let i = 0; i < 6; i++) {
-      const bQuad = beta[7 + i]; // 2차 주효과 계수
-      let bLin = beta[1 + i];   // 1차 주효과 계수
-      // 상호작용항에서 xi가 포함된 열의 기여 추가
-      // col 13 = temp*co2:  i=0 → co2 고정값 곱, i=2 → temp 고정값 곱
-      // col 14 = ec*dli:    i=3 → dli 고정값 곱, i=5 → ec 고정값 곱
-      // col 15 = temp*hum:  i=0 → hum 고정값 곱, i=1 → temp 고정값 곱
-      if (i === 0) bLin += beta[13] * x[2] + beta[15] * x[1];
-      else if (i === 1) bLin += beta[15] * x[0];
-      else if (i === 2) bLin += beta[13] * x[0];
-      else if (i === 3) bLin += beta[14] * x[5];
-      else if (i === 5) bLin += beta[14] * x[3];
-
+      if (pinned?.[i] != null) continue;
+      const { bQuad, bLin } = marginalCoeffs(beta, x, i);
       const [lo, hi] = bounds[i];
       let xi: number;
       if (bQuad < -1e-10) {
@@ -247,6 +295,84 @@ function coordinateAscent(beta: number[], bounds: [number, number][], maxIter = 
     if (converged) break;
   }
   return x;
+}
+
+/**
+ * 요인별 표면 민감도 — 다른 요인을 탐색범위 중앙에 두고 이 요인만 범위 전체를
+ * 훑을 때 예측 수율이 움직이는 폭.
+ *
+ * 별도 트리 모델의 SHAP 대신 이걸 쓴다. 권고를 만드는 계수에서 직접 나오므로
+ * 갭 분석과 어긋날 수가 없고, 표본 잡음이 순위를 흔드는 정도도 훨씬 작다.
+ * 단위는 kg/㎡ — 좌표계를 바꿔도 값이 같다.
+ */
+export function surfaceSensitivity(beta: number[], bounds: [number, number][]): number[] {
+  const center = bounds.map(([lo, hi]) => (lo + hi) / 2);
+  return bounds.map(([lo, hi], i) => {
+    const { bQuad, bLin } = marginalCoeffs(beta, center, i);
+    const g = (z: number) => bQuad * z * z + bLin * z;
+    const vals = [g(lo), g(hi)];
+    // 정점이 상자 안에 있으면 극값이 끝이 아니라 거기다
+    if (Math.abs(bQuad) > 1e-12) {
+      const vz = -bLin / (2 * bQuad);
+      if (vz > lo && vz < hi) vals.push(g(vz));
+    }
+    return Math.max(...vals) - Math.min(...vals);
+  });
+}
+
+// ── 요인별 곡률 판정 ─────────────────────────────────────────────────────────
+// 표면 판정(아래)은 여섯 축을 한꺼번에 본다. 그런데 실패는 요인별로 온다.
+//
+// DLI는 정상범위 안에서 포화형이라 반응이 거의 평탄하고, pH도 6.0 근처에서 평탄하다.
+// 참 곡률이 0인데 관측에는 잡음이 있으니 최소제곱은 이차항을 0이 아닌 값으로 낸다.
+// 부호를 잡음이 정한다. 음수로 나오면 "정점이 있다"고 판정하고, 정점 −b/(2β)는
+// 분모가 0에 가까워 폭발한다. 상자로 클리핑되니 화면에는 얌전한 숫자가 뜨지만
+// 그 값은 상자 모서리이거나 잡음의 산물이다.
+//
+// 이차항 계수를 부트스트랩해서 신뢰구간이 0을 포함하면 그 요인은 곡률 미확인으로
+// 보고 최적화에서 뺀다. 함수 형태를 요인마다 다르게 고르는 것이 정공법이지만,
+// 실데이터 없이 형태를 정하는 건 또 하나의 미검증 가정을 얹는 일이다. 곡률이
+// 안 잡혔다는 사실을 말로 내는 편이 지금 상태에서 정직하다.
+function curvatureUnresolved(
+  Z: number[][],
+  y: number[],
+  w: number[],
+  replicates = 200,
+  seed = 23
+): boolean[] {
+  const n = Z.length;
+  if (n < NPARAMS) return Array(6).fill(true);
+
+  let s = seed >>> 0;
+  const rand = () => {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+
+  const draws: number[][] = Array.from({ length: 6 }, () => []);
+  for (let b = 0; b < replicates; b++) {
+    const zi: number[][] = [];
+    const yi: number[] = [];
+    const wi: number[] = [];
+    for (let k = 0; k < n; k++) {
+      const j = Math.min(n - 1, Math.floor(rand() * n));
+      zi.push(Z[j]);
+      yi.push(y[j]);
+      wi.push(w[j]);
+    }
+    const beta = fitResponseSurface(zi, yi, wi);
+    for (let i = 0; i < 6; i++) if (Number.isFinite(beta[7 + i])) draws[i].push(beta[7 + i]);
+  }
+
+  return draws.map((d) => {
+    if (d.length < 20) return true;
+    d.sort((a, b) => a - b);
+    const lo = d[Math.floor(0.025 * (d.length - 1))];
+    const hi = d[Math.ceil(0.975 * (d.length - 1))];
+    return lo <= 0 && hi >= 0; // 구간이 0을 걸치면 부호조차 못 정한 것이다
+  });
 }
 
 // ── 표면 진단: 이 이차형식이 최대점을 갖는가 ────────────────────────────────
@@ -287,10 +413,13 @@ function surfaceVerdict(beta: number[]): SurfaceVerdict {
 }
 
 // 5-fold 교차검증 R² (훈련 R² 대신 — 과적합 제어)
-function cvR2(X: number[][], y: number[], nFolds = 5): number | null {
+// 적합과 채점 모두 가중한다. 스트레스 사이클을 무게를 낮춰 적합해 놓고 채점만
+// 같은 무게로 하면, 일부러 안 맞춘 행 때문에 설명력이 낮게 나온다.
+function cvR2(X: number[][], y: number[], w: number[], nFolds = 5): number | null {
   const n = X.length;
   if (n < NPARAMS * 2) return null; // 표본이 파라미터의 2배 미만 — 판정 자체가 불가
-  const yMean = y.reduce((a, b) => a + b, 0) / n;
+  const wSum = w.reduce((a, b) => a + b, 0);
+  const yMean = y.reduce((s, yi, i) => s + w[i] * yi, 0) / wSum;
   const foldSize = Math.floor(n / nFolds);
   let ssRes = 0, ssTot = 0;
   for (let fold = 0; fold < nFolds; fold++) {
@@ -301,19 +430,18 @@ function cvR2(X: number[][], y: number[], nFolds = 5): number | null {
       ...X.slice(te).map(buildDesignRow),
     ];
     const trainY = [...y.slice(0, ts), ...y.slice(te)];
-    const beta = olsFit(trainD, trainY);
+    const trainW = [...w.slice(0, ts), ...w.slice(te)];
+    const beta = olsFit(trainD, trainY, trainW);
     for (let i = ts; i < te; i++) {
-      ssRes += (y[i] - predictRS(beta, X[i])) ** 2;
-      ssTot += (y[i] - yMean) ** 2;
+      ssRes += w[i] * (y[i] - predictRS(beta, X[i])) ** 2;
+      ssTot += w[i] * (y[i] - yMean) ** 2;
     }
   }
   return ssTot > 0 ? Math.max(0, 1 - ssRes / ssTot) : 0;
 }
 
-// ── ① 그래디언트 부스팅으로 특성 중요도, ② 다변량 반응표면으로 결합 최적점 ──────
+// ── 반응표면 적합 → 결합 최적점 · 요인별 민감도 ──────────────────────────────
 export function analyzeGrowthRecipe(obs: GrowthObservation[], opts?: {
-  rounds?: number;
-  learningRate?: number;
   cropKey?: string; // 농학 정상범위와 관측범위 교집합으로 외삽 방지
 }): GrowthRecipe {
   const n = obs.length;
@@ -324,61 +452,58 @@ export function analyzeGrowthRecipe(obs: GrowthObservation[], opts?: {
   // 같은 좌표계에서 만난다.
   const X = obs.map((o) => toNormalized(o, o.cropKey ?? cropKey));
   const y = obs.map((o) => o.yield);
-  const rounds = opts?.rounds ?? 40;
-  const lr = opts?.learningRate ?? 0.2;
+  const w = observationWeights(obs);
+  const wSum = w.reduce((a, b) => a + b, 0);
+  const yMean = y.reduce((s, yi, i) => s + w[i] * yi, 0) / wSum;
 
-  // ① 그래디언트 부스팅으로 특성 중요도 (gain 기반)
-  const yMean = y.reduce((a, b) => a + b, 0) / n;
-  let pred = Array(n).fill(yMean);
-  const importanceGain = Array(FEATURES.length).fill(0);
-  for (let r = 0; r < rounds; r++) {
-    const residual = y.map((yi, i) => yi - pred[i]);
-    const stump = fitStump(X, residual);
-    if (stump.gain <= 0) break;
-    importanceGain[stump.feature] += stump.gain;
-    for (let i = 0; i < n; i++) {
-      pred[i] += lr * (X[i][stump.feature] <= stump.threshold ? stump.left : stump.right);
-    }
-  }
-
-  // ② 다변량 반응표면 적합 (주효과 + 이차항 + 쌍상호작용)
+  // 다변량 반응표면 적합 (주효과 + 이차항 + 쌍상호작용)
   const D = X.map(buildDesignRow);
-  const beta = olsFit(D, y);
+  const beta = olsFit(D, y, w);
 
   // 5-fold CV R²
-  const r2 = cvR2(X, y);
+  const r2 = cvR2(X, y, w);
 
   // 다항식 외삽(temp 14.8℃ 같은 비현실값)을 막기 위해 농학 정상범위로 클램프한다
   const bounds = zBounds(X, Boolean(cropKey));
 
+  // 곡률이 안 잡힌 축은 최적화에서 빼고 현재 관측 평균에 고정한다. 잡음이 정한
+  // 정점으로 운영자를 움직이게 하느니 "이 요인은 지금 값을 유지한다"가 맞다.
+  const unresolved = curvatureUnresolved(X, y, w);
+  const zMean = FEATURES.map((_, i) => X.reduce((s, x, k) => s + w[k] * x[i], 0) / wSum);
+  const pinned = unresolved.map((u, i) => (u ? Math.max(bounds[i][0], Math.min(bounds[i][1], zMean[i])) : null));
+
   // 6D 결합 최적점 (좌표 상승 — 독립 1D 최적 ≠ 결합 최적)
-  const optZ = coordinateAscent(beta, bounds);
+  const optZ = coordinateAscent(beta, bounds, pinned);
   const optPhysical = fromNormalized(optZ, cropKey);
   // 끝에 붙은 요인은 "여기가 최적"이 아니라 "여기까지밖에 못 봤다"는 뜻이다
   const boundaryTol = 1e-4;
   const atBoundary = optZ.map(
-    (z, i) => Math.abs(z - bounds[i][0]) < boundaryTol || Math.abs(z - bounds[i][1]) < boundaryTol
+    (z, i) =>
+      !unresolved[i] &&
+      (Math.abs(z - bounds[i][0]) < boundaryTol || Math.abs(z - bounds[i][1]) < boundaryTol)
   );
 
-  // 특성 중요도 정규화 + 상관
-  const gainSum = importanceGain.reduce((a, b) => a + b, 0) || 1;
+  // 표면 민감도 — 최적점을 낸 것과 같은 계수·같은 상자에서 나온다
+  const sens = surfaceSensitivity(beta, bounds);
+  const sensSum = sens.reduce((a, b) => a + b, 0) || 1;
   const corr = (f: number) => {
     const xf = X.map((x) => x[f]);
-    const xm = xf.reduce((a, b) => a + b, 0) / n;
+    const xm = xf.reduce((s, v, i) => s + w[i] * v, 0) / wSum;
     let num = 0, dx = 0, dy = 0;
     for (let i = 0; i < n; i++) {
-      num += (xf[i] - xm) * (y[i] - yMean);
-      dx += (xf[i] - xm) ** 2;
-      dy += (y[i] - yMean) ** 2;
+      num += w[i] * (xf[i] - xm) * (y[i] - yMean);
+      dx += w[i] * (xf[i] - xm) ** 2;
+      dy += w[i] * (y[i] - yMean) ** 2;
     }
     return dx > 0 && dy > 0 ? num / Math.sqrt(dx * dy) : 0;
   };
-  const importance: RecipeImportance[] = FEATURES.map((f, i) => ({
+  const sensitivity: RecipeSensitivity[] = FEATURES.map((f, i) => ({
     feature: f,
     label: FEATURE_LABEL[f],
-    importance: Math.round((importanceGain[i] / gainSum) * 1000) / 1000,
+    range: Math.round(sens[i] * 1000) / 1000,
+    share: Math.round((sens[i] / sensSum) * 1000) / 1000,
     correlation: Math.round(corr(i) * 100) / 100,
-  })).sort((a, b) => b.importance - a.importance);
+  })).sort((a, b) => b.range - a.range);
 
   // 현 사이트 평균은 물리 단위 그대로 — 운영자가 계기에서 읽는 값이다
   const recipe: RecipeSetpoint[] = FEATURES.map((f, i) => ({
@@ -388,11 +513,23 @@ export function analyzeGrowthRecipe(obs: GrowthObservation[], opts?: {
     current: Math.round((obs.reduce((s, o) => s + o[f], 0) / n) * 100) / 100,
     unit: UNIT[f],
     atBoundary: atBoundary[i],
+    curvatureUnresolved: unresolved[i],
   }));
 
-  const top = importance[0];
+  const top = sensitivity[0];
   const surface = surfaceVerdict(beta);
   const bounded = recipe.filter((r) => r.atBoundary).map((r) => r.label);
+
+  // 주야 진폭이 정상범위 폭을 넘으면 그 사이클의 평균 온도는 대표값이 아니다.
+  // 임계값을 따로 정하지 않고 그 품종의 정상범위 폭을 그대로 쓴다 — 진폭이 허용
+  // 범위 전체를 훑었다면 평균 하나로 그 사이클을 말할 수 없다.
+  const difLimit = 2 * cropScales(cropKey).temp.half;
+  const withDif = obs.filter((o) => o.tempDiurnalAmpC !== undefined);
+  const diurnalFlaggedShare = withDif.length
+    ? Math.round((withDif.filter((o) => (o.tempDiurnalAmpC ?? 0) > difLimit).length / withDif.length) * 1000) / 1000
+    : 0;
+  const stressDownweightedShare =
+    Math.round((w.filter((wi) => wi < 0.5).length / n) * 1000) / 1000;
 
   const fitPart =
     r2 === null
@@ -405,16 +542,28 @@ export function analyzeGrowthRecipe(obs: GrowthObservation[], opts?: {
         ? "반응표면이 안장이라 표시된 값은 최적점이 아니라 탐색범위의 끝이다"
         : "곡률이 잡히지 않아 최적점을 판정할 수 없다";
   const boundPart = bounded.length ? ` 탐색범위 끝에 붙은 요인: ${bounded.join("·")}.` : "";
+  const unresolvedLabels = recipe.filter((r) => r.curvatureUnresolved).map((r) => r.label);
+  const curvPart = unresolvedLabels.length
+    ? ` 곡률이 잡히지 않아 최적화에서 뺀 요인: ${unresolvedLabels.join("·")} — 이차항 계수의 신뢰구간이 0을 걸쳐 정점 위치를 잡음이 정한다.`
+    : "";
+  const stressPart = stressDownweightedShare
+    ? ` 열 스트레스로 무게를 절반 아래로 내린 관측이 ${Math.round(stressDownweightedShare * 100)}%다 — 그 사이클의 수율은 이 표면 위에 있지 않다.`
+    : "";
+  const difPart = diurnalFlaggedShare
+    ? ` 주야 진폭이 정상범위 폭(${difLimit}℃)을 넘은 관측이 ${Math.round(diurnalFlaggedShare * 100)}%라 온도 권고의 근거가 그만큼 약하다.`
+    : "";
 
   return {
     samples: n,
-    importance,
+    sensitivity,
     recipe,
     modelR2: r2 === null ? null : Math.round(r2 * 100) / 100,
     surface,
-    note: `${fitPart}. 수율 최대 요인: ${top.label}(중요도 ${Math.round(
-      top.importance * 100
-    )}%). 주효과+이차항+쌍상호작용(온도×CO₂·EC×DLI·온도×습도) 다변량 반응표면의 6D 결합 최적점 — ${surfacePart}.${boundPart}`,
+    stressDownweightedShare,
+    diurnalFlaggedShare,
+    note: `${fitPart}. 관측범위에서 예측 수율을 가장 크게 움직이는 요인: ${top.label}(폭 ${top.range}kg/㎡, 전체의 ${Math.round(
+      top.share * 100
+    )}%). 주효과+이차항+쌍상호작용(온도×CO₂·EC×DLI·온도×습도) 다변량 반응표면의 6D 결합 최적점 — ${surfacePart}.${boundPart}${curvPart}${stressPart}${difPart}`,
     _beta: beta,
     _cropKey: cropKey,
   };
@@ -430,11 +579,18 @@ export interface RecipeAction {
   current: number;
   target: number;
   direction: "상향" | "하향" | "유지";
-  importance: number;
+  /**
+   * 표면 민감도 몫. "이 요인이 표면을 얼마나 움직이나"이고, 아래 상방은
+   * "지금 여기서 옮기면 얼마 버나"다. 민감한데 상방이 0이면 이미 최적에 붙어
+   * 있다는 뜻 — 둘이 같은 계수에서 나오므로 이 해석이 항상 성립한다.
+   */
+  sensitivityShare: number;
   /** 섀플리 배분 상방(%). 음수면 그 요인만 따로 옮기는 것이 오히려 손해라는 뜻 */
   predictedYieldUpliftPct: number;
   /** 최적점이 탐색범위 끝이라 권고의 근거가 약한 요인 */
   atBoundary: boolean;
+  /** 곡률이 잡히지 않아 조작 지시를 내지 않는 요인 */
+  curvatureUnresolved: boolean;
 }
 
 export interface RecipeGapReport {
@@ -447,7 +603,7 @@ export function recipeGapAnalysis(
   recipe: GrowthRecipe,
   current: Partial<Record<GrowthFeature, number>>
 ): RecipeGapReport {
-  const impMap = new Map(recipe.importance.map((i) => [i.feature, i.importance]));
+  const sensMap = new Map(recipe.sensitivity.map((s) => [s.feature, s.share]));
   const spMap = new Map(recipe.recipe.map((sp) => [sp.feature, sp]));
   const nF = FEATURES.length;
 
@@ -511,10 +667,14 @@ export function recipeGapAnalysis(
         label: sp.label,
         current: Math.round(cur * 100) / 100,
         target: sp.optimum,
-        direction: Math.abs(gap) < deadband ? "유지" : gap > 0 ? "상향" : "하향",
-        importance: impMap.get(sp.feature) ?? 0,
+        // 곡률이 안 잡힌 요인은 정점 위치를 잡음이 정한다 — 그 값으로 조작
+        // 지시를 내지 않는다
+        direction:
+          sp.curvatureUnresolved || Math.abs(gap) < deadband ? "유지" : gap > 0 ? "상향" : "하향",
+        sensitivityShare: sensMap.get(sp.feature) ?? 0,
         predictedYieldUpliftPct: phiPct[fi],
         atBoundary: sp.atBoundary,
+        curvatureUnresolved: sp.curvatureUnresolved,
       };
     })
     .sort((a, b) => b.predictedYieldUpliftPct - a.predictedYieldUpliftPct);
@@ -526,6 +686,12 @@ export function recipeGapAnalysis(
       : 0;
 
   const top = actions[0];
+  // 주야 진폭이 큰 관측이 많으면 온도 권고만 근거가 약하다. 다른 요인은 멀쩡하므로
+  // 표 전체를 막지 않고 그 줄에만 사실을 붙인다.
+  const difWarn =
+    recipe.diurnalFlaggedShare > 0.2
+      ? ` 온도는 주야 진폭이 큰 사이클이 ${Math.round(recipe.diurnalFlaggedShare * 100)}%라 평균값 권고의 근거가 약하다 — 같은 평균에서도 실제 온도곡선이 다르다.`
+      : "";
   return {
     actions,
     totalPotentialUpliftPct: total,
@@ -533,7 +699,7 @@ export function recipeGapAnalysis(
       recipe.surface !== "최대점"
         ? `반응표면이 ${recipe.surface}이라 권고를 내지 않는다 — 표시된 값은 최적점이 아니라 탐색범위의 끝이다.`
         : top && top.direction !== "유지"
-          ? `${top.label}을(를) ${top.current}${recipe.recipe.find((r) => r.label === top.label)?.unit ?? ""} → ${top.target} ${top.direction}이 최우선 (모델 예측 수율 ${top.predictedYieldUpliftPct >= 0 ? "+" : ""}${top.predictedYieldUpliftPct}%). 전체 최적화 시 ${total >= 0 ? "+" : ""}${total}% 상방.${top.atBoundary ? " 다만 이 요인은 탐색범위 끝이라 더 올릴 여지가 확인되지 않았다." : ""}`
-          : `현재 조건이 최적 레시피에 근접 — 유지 권장.`,
+          ? `${top.label}을(를) ${top.current}${recipe.recipe.find((r) => r.label === top.label)?.unit ?? ""} → ${top.target} ${top.direction}이 최우선 (모델 예측 수율 ${top.predictedYieldUpliftPct >= 0 ? "+" : ""}${top.predictedYieldUpliftPct}%). 전체 최적화 시 ${total >= 0 ? "+" : ""}${total}% 상방.${top.atBoundary ? " 다만 이 요인은 탐색범위 끝이라 더 올릴 여지가 확인되지 않았다." : ""}${difWarn}`
+          : `현재 조건이 최적 레시피에 근접 — 유지 권장.${difWarn}`,
   };
 }

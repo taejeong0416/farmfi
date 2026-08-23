@@ -141,6 +141,89 @@ test("요인별 상방의 합이 전체 상방과 맞는다", () => {
   assert.equal(gap.actions.length, FEATURES.length);
 });
 
+test("평탄한 요인에 정점을 지어내지 않는다", () => {
+  // pH 곡률을 잡음에 묻힐 만큼 낮춘다(폭 0.001kg/㎡ vs 잡음 0.12). 실제 pH 반응이
+  // 이 모양에 가깝다 — 6.0 근처에서 양분 가용성이 평평하고 양 끝에서만 급격히
+  // 나빠진다. 참 곡률이 거의 0이면 최소제곱은 잡음에 맞춰 이차항을 내고 그 부호를
+  // 잡음이 정한다. 정확히 0으로 두면 테스트 베드 자체가 오목성을 잃어 회수의 기준이
+  // 사라지므로 아주 작은 값을 남긴다.
+  const flat: SynthSpec = { ...LEAFY_SPEC, quad: { ...LEAFY_SPEC.quad, ph: 0.004 } };
+  const { observations } = generateObservations(flat, 200, 31);
+  const fit = analyzeGrowthRecipe(observations, { cropKey: "leafy" });
+
+  const ph = fit.recipe.find((r) => r.feature === "ph")!;
+  assert.equal(ph.curvatureUnresolved, true, `pH 곡률이 0인데 정점을 냈다 (${ph.optimum})`);
+  // 곡률이 있는 요인까지 싸잡아 끄면 안 된다
+  assert.equal(fit.recipe.find((r) => r.feature === "temp")!.curvatureUnresolved, false);
+  assert.match(fit.note, /곡률이 잡히지 않아/);
+
+  // 그리고 갭 분석이 그 요인에 조작 지시를 내지 않는다
+  const phAction = recipeGapAnalysis(fit, { ph: 5.6 }).actions.find((a) => a.label === ph.label)!;
+  assert.equal(phAction.direction, "유지", `pH를 ${phAction.target}로 옮기라고 한다`);
+  assert.equal(phAction.curvatureUnresolved, true);
+});
+
+test("열 스트레스 사이클이 온도 최적점을 끌어내리고, 가중이 되돌린다", () => {
+  // 벌점은 주야 진폭에서 나오고 진폭은 평균과 독립으로 뽑히므로, 회귀는 이 손실을
+  // 설명할 수 없다. 그런데 주간온도 = 평균 + 진폭/2이라 손실은 평균 온도와 함께
+  // 커진다 — 그 결과 온도 최적점이 실제보다 낮게 끌려간다. 사이클 평균이 지운
+  // 정보가 모델을 오염시키는 경로가 이것이다.
+  const { observations, stressRate } = generateObservations(LEAFY_SPEC, 400, 12);
+  assert.ok(stressRate > 0.15, `스트레스 사이클이 ${Math.round(stressRate * 100)}%뿐이라 검증이 성립하지 않는다`);
+
+  const truth = trueOptimum(LEAFY_SPEC).temp;
+  const tempOf = (obs: GrowthObservation[]) =>
+    analyzeGrowthRecipe(obs, { cropKey: "leafy" }).recipe.find((r) => r.feature === "temp")!.optimum;
+
+  // 표식을 지우면 가중치가 전부 1이 되어 보통의 최소제곱으로 돌아간다
+  const unweighted = observations.map((o) => ({ ...o, tempExcessHours: undefined }));
+  const biased = tempOf(unweighted);
+  const corrected = tempOf(observations);
+
+  assert.ok(biased < truth - 0.3, `오염이 재현되지 않았다 — 가중 없이 ${biased}℃ (정답 ${truth}℃)`);
+  assert.ok(
+    Math.abs(corrected - truth) < Math.abs(biased - truth),
+    `가중이 오차를 줄이지 못했다 — 가중 ${corrected}℃ vs 무가중 ${biased}℃ (정답 ${truth}℃)`
+  );
+});
+
+test("스트레스 가중이 기준시간에 민감하지 않다", () => {
+  // 절반 무게가 되는 기준시간 24h는 작업 가정이다. 그 값을 바꿔도 온도 최적점이
+  // 크게 흔들리지 않아야 이 가정이 결론을 좌우하지 않는다고 말할 수 있다.
+  const { observations } = generateObservations(LEAFY_SPEC, 400, 12);
+  const truth = trueOptimum(LEAFY_SPEC).temp;
+  const scaled = (k: number) =>
+    analyzeGrowthRecipe(
+      observations.map((o) => ({ ...o, tempExcessHours: (o.tempExcessHours ?? 0) * k })),
+      { cropKey: "leafy" }
+    ).recipe.find((r) => r.feature === "temp")!.optimum;
+
+  // 기준시간을 2배로 본 것(=초과시간 절반)과 절반으로 본 것(=초과시간 2배)
+  for (const k of [0.5, 2]) {
+    assert.ok(
+      Math.abs(scaled(k) - truth) < 0.5,
+      `기준시간을 ${k === 0.5 ? "2배" : "절반"}으로 잡으면 최적 온도가 ${scaled(k)}℃ (정답 ${truth}℃)`
+    );
+  }
+});
+
+test("주야 진폭이 큰 사이클을 플래그로 세고 권고에 붙인다", () => {
+  // 진폭이 정상범위 폭(6℃)을 넘으면 그 사이클 평균은 대표값이 아니다.
+  const { observations } = generateObservations(LEAFY_SPEC, 200, 12);
+  const fit = analyzeGrowthRecipe(observations, { cropKey: "leafy" });
+  assert.ok(fit.diurnalFlaggedShare > 0.2, `플래그 비율 ${fit.diurnalFlaggedShare}`);
+  assert.match(fit.note, /주야 진폭/);
+
+  const gap = recipeGapAnalysis(fit, { temp: 19, co2: 650 });
+  assert.match(gap.headline, /온도곡선이 다르다/);
+
+  // 진폭이 없는 관측에서는 플래그도 경고도 없다 — 모르는 것을 아는 척하지 않는다
+  const noDif = observations.map((o) => ({ ...o, tempDiurnalAmpC: undefined }));
+  const plain = analyzeGrowthRecipe(noDif, { cropKey: "leafy" });
+  assert.equal(plain.diurnalFlaggedShare, 0);
+  assert.doesNotMatch(recipeGapAnalysis(plain, { temp: 19 }).headline, /온도곡선/);
+});
+
 test("농학 클램프가 최적점을 대신 찍어주지 않는다", () => {
   // 클램프를 끄고도(cropKey 미지정) 같은 답이 나와야 데이터가 찾은 것이다.
   const { observations } = generateObservations(LEAFY_SPEC, 200);

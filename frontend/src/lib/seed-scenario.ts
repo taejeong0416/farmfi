@@ -1,6 +1,8 @@
 import bcrypt from "bcryptjs";
 import type { PrismaClient } from "../generated/prisma/client";
 import { buildIotRecords } from "./iot-seed";
+import { syncAgreements } from "./agreements";
+import { syncCourses } from "./operator-apply";
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -30,8 +32,13 @@ export async function seedScenario(prisma: PrismaClient) {
   // ─── 자식 → 부모 순서로 지운다. 하나라도 빠지면 project/user deleteMany가
   //     FK 위반으로 죽고 데모 리셋 자체가 안 된다.
   //     새 모델을 만들면 여기에 반드시 추가한다.
+  await prisma.agreementConsent.deleteMany();
   await prisma.milestoneReviewItem.deleteMany();
   await prisma.operatorCredential.deleteMany();
+  await prisma.operatorContract.deleteMany();
+  await prisma.operatorCourseProgress.deleteMany();
+  await prisma.operatorVisit.deleteMany();
+  await prisma.reconciliationEntry.deleteMany();
   await prisma.setpointApplication.deleteMany();
   await prisma.holdingIssuance.deleteMany();
   await prisma.custodyWallet.deleteMany();
@@ -74,6 +81,11 @@ export async function seedScenario(prisma: PrismaClient) {
   await prisma.operatorApplication.deleteMany();
   await prisma.space.deleteMany();
   await prisma.user.deleteMany();
+
+  // 동의 문서와 교육 과정은 시나리오 데이터가 아니라 기준 데이터다.
+  // 지우지 않고 코드에 맞춘다.
+  await syncAgreements(prisma);
+  await syncCourses(prisma);
 
   const now = new Date();
   const pw = await bcrypt.hash("farmfi123", 10);

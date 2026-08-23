@@ -55,8 +55,9 @@ function thisPeriod(): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
 }
 
+// 임대료는 여기 없다. 파트너 계약(ProjectPartner)의 월 고정 임대료가 지급 원장에서
+// 따로 빠지므로, 여기 또 적으면 운영자 몫에서 두 번 차감된다.
 const DEFAULT_COSTS: CostLine[] = [
-  { id: "rent", label: "임대료", amount: "" },
   { id: "utility", label: "전기 · 수도", amount: "" },
   { id: "labor", label: "인건비", amount: "" },
   { id: "supply", label: "자재 · 소모품", amount: "" },
@@ -264,6 +265,10 @@ export function LedgerScreen() {
           </Card>
 
           <h2 className="mt-8 text-15 font-bold text-ink">운영 비용</h2>
+          <p className="mt-1.5 text-12 text-muted">
+            임대료는 적지 않습니다. 파트너 계약의 월 고정 임대료가 지급 원장에서 따로
+            빠집니다.
+          </p>
           <Card className="mt-4" padded={false}>
             <div className="grid grid-cols-[1fr_220px] border-b border-line bg-surface px-6 py-3">
               <span className="text-11 text-muted">항목</span>

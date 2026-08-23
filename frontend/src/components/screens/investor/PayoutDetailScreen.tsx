@@ -13,6 +13,7 @@ import {
 import {
   PAYOUT_STATUS_LABEL,
   shortDate,
+  useBankAccount,
   usePayouts,
   won,
   type PayoutItem,
@@ -20,6 +21,7 @@ import {
 
 export function PayoutDetailScreen({ id }: { id: string }) {
   const { data, isLoading, isError } = usePayouts();
+  const { data: bankAccount } = useBankAccount();
 
   if (isLoading) {
     return (
@@ -122,6 +124,48 @@ export function PayoutDetailScreen({ id }: { id: string }) {
         </div>
       </Card>
 
+      {payout.status === "failed" ? (
+        <Card className="mt-5">
+          <p className="text-14 font-bold text-danger">
+            회수금을 보내지 못했습니다
+          </p>
+          <p className="mt-2 text-12 leading-5 text-body">
+            {payout.failure?.hint ??
+              payout.failureReason ??
+              "사유를 확인하는 중입니다. 잠시 후 다시 확인해 주세요."}
+          </p>
+          {/* 수취인이 고칠 수 있는 실패만 계좌 수정 경로를 연다. 은행 일시 오류에
+              계좌를 고치라고 하면 멀쩡한 계좌를 건드리게 된다. */}
+          {payout.failure?.actor === "payee" ? (
+            <>
+              <div className="mt-4 rounded-8 border border-line bg-surface px-4 py-3">
+                <p className="text-11 text-muted">지금 등록된 계좌</p>
+                <p className="mt-1 text-13 text-ink">
+                  {bankAccount
+                    ? `${bankAccount.bankName} ${bankAccount.maskedNumber} · ${bankAccount.holderName}`
+                    : "등록된 계좌가 없습니다"}
+                </p>
+              </div>
+              <div className="mt-4">
+                <Button
+                  size="sm"
+                  href={`/verify/account?next=${encodeURIComponent(`/investor/payouts/${payout.id}`)}`}
+                >
+                  {bankAccount ? "회수 계좌 수정" : "회수 계좌 등록"}
+                </Button>
+              </div>
+              <p className="mt-3 text-11 text-muted">
+                계좌를 고치면 운영팀이 다시 보냅니다. 본인 명의 계좌만 등록할 수 있습니다.
+              </p>
+            </>
+          ) : (
+            <p className="mt-3 text-11 text-muted">
+              운영팀이 확인하고 다시 보냅니다. 따로 하실 일은 없습니다.
+            </p>
+          )}
+        </Card>
+      ) : null}
+
       <h2 className="mt-8 text-14 font-bold text-ink">산정 근거</h2>
       <Card className="mt-4" padded={false}>
         <div className="px-6">
@@ -131,10 +175,14 @@ export function PayoutDetailScreen({ id }: { id: string }) {
             <span className="text-brand">{won(payout.amount)}</span>
           } />
           <InfoRow label="비고" value={payout.memo ?? "-"} />
-          {payout.failureReason ? (
+          {payout.status === "failed" ? (
             <InfoRow
               label="실패 사유"
-              value={<span className="text-danger">{payout.failureReason}</span>}
+              value={
+                <span className="text-danger">
+                  {payout.failure?.label ?? payout.failureReason ?? "확인 필요"}
+                </span>
+              }
             />
           ) : null}
         </div>

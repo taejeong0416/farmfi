@@ -1,15 +1,19 @@
+import Link from "next/link";
+
 export type Step = {
   label: string;
   /** done 완료 · current 진행 중 · todo 남음 */
   state: "done" | "current" | "todo";
+  /** 주면 눌러서 그 단계로 돌아갈 수 있다. 끝낸 단계에만 준다. */
+  href?: string;
 };
 
 /** 여러 화면에 걸친 절차의 현재 위치. 색 대신 글자와 굵기로 구분한다. */
 export function StepLine({ steps }: { steps: Step[] }) {
   return (
     <ol className="flex items-center gap-2">
-      {steps.map((s, i) => (
-        <li key={s.label} className="flex items-center gap-2">
+      {steps.map((s, i) => {
+        const chip = (
           <span
             className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-12 ${
               s.state === "current"
@@ -17,16 +21,23 @@ export function StepLine({ steps }: { steps: Step[] }) {
                 : s.state === "done"
                   ? "border-line bg-white text-body"
                   : "border-line bg-white text-muted"
-            }`}
+            } ${s.href ? "hover:bg-surface" : ""}`}
           >
-            <span className="font-num text-11">{s.state === "done" ? "✓" : i + 1}</span>
+            <span className="font-num text-11">
+              {s.state === "done" ? "✓" : i + 1}
+            </span>
             {s.label}
           </span>
-          {i < steps.length - 1 ? (
-            <span className="h-px w-4 bg-line" aria-hidden />
-          ) : null}
-        </li>
-      ))}
+        );
+        return (
+          <li key={s.label} className="flex items-center gap-2">
+            {s.href ? <Link href={s.href}>{chip}</Link> : chip}
+            {i < steps.length - 1 ? (
+              <span className="h-px w-4 bg-line" aria-hidden />
+            ) : null}
+          </li>
+        );
+      })}
     </ol>
   );
 }

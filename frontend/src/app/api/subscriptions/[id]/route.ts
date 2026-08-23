@@ -8,6 +8,12 @@ import {
   upcomingPickups,
   type PackSize,
 } from "@/lib/pickup-subscription";
+import {
+  canCancel,
+  canChangePickup,
+  cancelDeadline,
+  pickupChangeDeadline,
+} from "@/lib/subscription-window";
 
 async function loadOwned(id: string, userId: string) {
   const subscription = await prisma.subscription.findUnique({
@@ -35,7 +41,21 @@ export async function GET(
   if (!subscription) {
     return NextResponse.json({ error: "구독을 찾을 수 없습니다." }, { status: 404 });
   }
-  return NextResponse.json({ subscription });
+  // 마감 판정은 서버가 한다. 화면이 각자 계산하면 시계가 갈리고, 눌러 보고서야
+  // 거절당하는 버튼이 생긴다.
+  const now = new Date();
+  return NextResponse.json({
+    subscription,
+    deadlines: {
+      cancelBy: cancelDeadline(subscription.nextPaymentAt)?.toISOString() ?? null,
+      canCancel: canCancel(subscription.nextPaymentAt, now).ok,
+      pickups: subscription.pickups.map((p) => ({
+        pickupId: p.id,
+        changeBy: pickupChangeDeadline(p.scheduledAt).toISOString(),
+        canChange: p.status === "scheduled" && canChangePickup(p.scheduledAt, now).ok,
+      })),
+    },
+  });
 }
 
 /**
@@ -112,9 +132,19 @@ export async function PATCH(
         monthlyPrice(subscription.packSize as PackSize, perWeek) -
           subscription.discount,
       );
-      // 아직 오지 않은 회차를 새 주기로 다시 만든다.
+      // 아직 오지 않은 회차를 새 주기로 다시 만든다. 다만 변경 마감이 지난
+      // 회차는 남긴다 — 매장이 이미 담기 시작한 팩을 주기 변경이 조용히 지우면
+      // 손님은 오지 않고 물건은 버려진다.
+      const now = new Date();
+      const locked = subscription.pickups.filter(
+        (p) => p.status === "scheduled" && !canChangePickup(p.scheduledAt, now).ok,
+      );
       await prisma.pickupOrder.deleteMany({
-        where: { subscriptionId: id, status: "scheduled" },
+        where: {
+          subscriptionId: id,
+          status: "scheduled",
+          id: { notIn: locked.map((p) => p.id) },
+        },
       });
       const dates = upcomingPickups(perWeek, 4);
       await createPickupOrders(prisma, id, dates);
@@ -128,6 +158,15 @@ export async function PATCH(
     case "pause":
     case "resume":
     case "cancel": {
+      if (b.action === "cancel") {
+        const gate = canCancel(subscription.nextPaymentAt);
+        if (!gate.ok) {
+          return NextResponse.json(
+            { error: gate.error, code: gate.code, deadline: gate.deadline },
+            { status: 409 },
+          );
+        }
+      }
       const status =
         b.action === "pause"
           ? "paused"
@@ -155,6 +194,29 @@ export async function PATCH(
           { error: "회차를 찾을 수 없습니다." },
           { status: 404 },
         );
+      }
+      if (pickup.status !== "scheduled") {
+        return NextResponse.json(
+          {
+            error:
+              pickup.status === "picked"
+                ? "이미 수령한 회차입니다."
+                : "이미 건너뛴 회차입니다.",
+            code: "PICKUP_NOT_SCHEDULED",
+          },
+          { status: 409 },
+        );
+      }
+      // 건너뛰기에만 마감을 건다. 수령 처리(picked)는 매장이 실제로 건네준
+      // 사실을 적는 것이라 시각으로 막을 것이 아니다.
+      if (b.action === "skip") {
+        const gate = canChangePickup(pickup.scheduledAt);
+        if (!gate.ok) {
+          return NextResponse.json(
+            { error: gate.error, code: gate.code, deadline: gate.deadline },
+            { status: 409 },
+          );
+        }
       }
       const updated = await prisma.pickupOrder.update({
         where: { id: pickup.id },

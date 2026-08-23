@@ -27,8 +27,11 @@ export async function GET(req: NextRequest) {
 }
 
 /**
- * PATCH /api/admin/operator-applications — 심사 판정과 보증서 발급.
- * action: approve(조건부 승인) · revise(보완 요청) · issue(보증서 발급) · suspend(보증서 정지)
+ * PATCH /api/admin/operator-applications — 심사 판정.
+ * action: approve(조건부 승인) · revise(보완 요청)
+ *
+ * 보증서 발급·정지는 `/api/admin/operator-credentials`가 맡는다. 보증서는
+ * 신청 행의 칸이 아니라 상태를 가진 별도 행이고, 앱이 그 상태를 본다.
  */
 export async function PATCH(request: NextRequest) {
   let session;
@@ -77,35 +80,6 @@ export async function PATCH(request: NextRequest) {
       const updated = await prisma.operatorApplication.update({
         where: { id: b.id },
         data: { status: "docs", reviewNote: b.note.trim() },
-      });
-      return NextResponse.json({ application: updated });
-    }
-
-    case "issue": {
-      if (!application.contractSignedAt) {
-        return NextResponse.json(
-          { error: "계약 서명이 끝난 신청만 발급할 수 있습니다." },
-          { status: 400 },
-        );
-      }
-      const certificateNo =
-        application.certificateNo ??
-        `FF-OP-${new Date().getFullYear()}-${application.id.slice(-4).toUpperCase()}`;
-      const updated = await prisma.operatorApplication.update({
-        where: { id: b.id },
-        data: {
-          certificateNo,
-          certificateIssuedAt: new Date(),
-          status: "operating",
-        },
-      });
-      return NextResponse.json({ application: updated });
-    }
-
-    case "suspend": {
-      const updated = await prisma.operatorApplication.update({
-        where: { id: b.id },
-        data: { certificateIssuedAt: null, status: "matched" },
       });
       return NextResponse.json({ application: updated });
     }

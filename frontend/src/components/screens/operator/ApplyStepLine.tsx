@@ -4,11 +4,11 @@ import { StepLine, type Step } from "@/components/ui";
 import type { OperatorApplication } from "../api";
 
 const STEPS = [
-  { key: "docs", label: "자격·서류" },
-  { key: "visit", label: "현장 방문" },
-  { key: "education", label: "필수 교육" },
-  { key: "confirm", label: "공간 확정" },
-  { key: "contract", label: "계약 서명" },
+  { key: "docs", label: "자격·서류", href: "/operator/apply" },
+  { key: "visit", label: "현장 방문", href: "/operator/apply/visit" },
+  { key: "education", label: "필수 교육", href: "/operator/apply/education" },
+  { key: "confirm", label: "공간 확정", href: "/operator/apply/confirm" },
+  { key: "contract", label: "계약 서명", href: "/operator/apply/contract" },
 ] as const;
 
 type StepKey = (typeof STEPS)[number]["key"];
@@ -29,10 +29,12 @@ export function ApplyStepLine({
     contract: Boolean(application?.contractSignedAt),
   };
 
+  // 끝낸 단계는 눌러서 돌아갈 수 있다. 방문 일정을 바꾸거나 교육을 다시 보려면
+  // 앞으로만 가는 흐름으로는 방법이 없다.
   const steps: Step[] = STEPS.map((s) => ({
     label: s.label,
-    state:
-      s.key === current ? "current" : done[s.key] ? "done" : "todo",
+    state: s.key === current ? "current" : done[s.key] ? "done" : "todo",
+    href: s.key !== current && done[s.key] ? s.href : undefined,
   }));
 
   const index = STEPS.findIndex((s) => s.key === current) + 1;

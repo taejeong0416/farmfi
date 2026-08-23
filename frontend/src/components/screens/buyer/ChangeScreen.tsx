@@ -16,6 +16,7 @@ import {
   useSubscriptions,
   won,
 } from "../api";
+import { canCancel, canChangePickup } from "@/lib/subscription-window";
 import { useCatalog } from "./useSubscribeDraft";
 
 export function ChangeScreen() {
@@ -28,6 +29,7 @@ export function ChangeScreen() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [confirmCancel, setConfirmCancel] = useState(false);
 
   useEffect(() => {
     if (!active) return;
@@ -56,6 +58,13 @@ export function ChangeScreen() {
   }
 
   const next = active.pickups.find((p) => p.status === "scheduled");
+
+  // 마감 규칙은 서버와 같은 함수를 쓴다. 화면이 따로 계산하면 언젠가 갈리고,
+  // 그때는 열려 있는 버튼이 거절당한다.
+  const skipOpen = next ? canChangePickup(new Date(next.scheduledAt)).ok : false;
+  const cancelOpen = canCancel(
+    active.nextPaymentAt ? new Date(active.nextPaymentAt) : null,
+  ).ok;
   const crops = catalog?.crops ?? [];
   const dressingOptions = catalog?.dressings ?? [];
 
@@ -234,13 +243,13 @@ export function ChangeScreen() {
       <Card className="mt-4">
         <p className="text-15 font-bold text-ink">이번 회차 건너뛰기</p>
         <p className="mt-2 text-12 text-muted">
-          또는 최대 8주까지 구독을 잠시 멈출 수 있어요.
+          픽업 3시간 전까지 건너뛸 수 있어요. 또는 구독을 잠시 멈출 수 있어요.
         </p>
         <div className="mt-5 grid grid-cols-2 gap-3">
           <Button
             full
             variant="ghost"
-            disabled={busy || !next}
+            disabled={busy || !next || !skipOpen}
             onClick={() =>
               next && void act({ action: "skip", pickupId: next.id })
             }
@@ -260,6 +269,53 @@ export function ChangeScreen() {
             {active.status === "paused" ? "구독 다시 시작" : "구독 일시정지"}
           </Button>
         </div>
+        {/* 마감이 지났으면 버튼을 막고 이유를 쓴다. 눌러 보고 거절당하게 두지 않는다. */}
+        {next && !skipOpen ? (
+          <p className="mt-3 text-11 text-muted">
+            매장이 이미 준비를 시작했습니다. 이번 회차는 건너뛸 수 없어요.
+          </p>
+        ) : null}
+      </Card>
+
+      <Card className="mt-4">
+        <p className="text-15 font-bold text-ink">구독 해지</p>
+        <p className="mt-2 text-12 text-muted">
+          다음 결제일 전날까지 해지할 수 있어요. 해지해도 남은 회차는 그대로 받습니다.
+        </p>
+        <p className="mt-2 text-12 text-body">
+          다음 결제일 {active.nextPaymentAt ? formatDate(active.nextPaymentAt) : "미정"}
+        </p>
+        <div className="mt-5">
+          {confirmCancel ? (
+            <div className="grid grid-cols-2 gap-3">
+              <Button full variant="ghost" onClick={() => setConfirmCancel(false)}>
+                그대로 두기
+              </Button>
+              <Button
+                full
+                disabled={busy}
+                onClick={() => void act({ action: "cancel" })}
+              >
+                해지 확정
+              </Button>
+            </div>
+          ) : (
+            <Button
+              full
+              variant="ghost"
+              disabled={busy || !cancelOpen}
+              onClick={() => setConfirmCancel(true)}
+            >
+              구독 해지
+            </Button>
+          )}
+        </div>
+        {!cancelOpen ? (
+          <p className="mt-3 text-11 text-muted">
+            결제일이 지나 이번 주기는 해지할 수 없어요. 다음 주기 전날까지 다시 시도해
+            주세요.
+          </p>
+        ) : null}
       </Card>
 
       {error ? <p className="mt-4 text-12 text-danger">{error}</p> : null}

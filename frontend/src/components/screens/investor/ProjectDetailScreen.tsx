@@ -19,6 +19,7 @@ import {
   num,
   shortDate,
   useProject,
+  useProjectNav,
   won,
   type MilestoneSummary,
 } from "../api";
@@ -51,6 +52,7 @@ const DOCUMENTS = [
 
 export function ProjectDetailScreen({ id }: { id: string }) {
   const { data: p, isLoading, isError } = useProject(id);
+  const { data: navInfo } = useProjectNav(id);
   const router = useRouter();
   const { user } = useAuth();
 
@@ -137,6 +139,50 @@ export function ProjectDetailScreen({ id }: { id: string }) {
               />
             </div>
           </Card>
+
+          {navInfo?.available ? (
+            <>
+              <h2 className="mt-10 text-15 font-bold text-ink">지점 기준가</h2>
+              <p className="mt-1.5 text-12 text-muted">
+                신탁 잔액 · 집행으로 생긴 자산 · 누적 회수금을 발행 구좌 수로 나눈 값입니다.
+                거래 가격이 아니라 산정 기준입니다.
+              </p>
+              <Card className="mt-4" padded={false}>
+                <div className="grid grid-cols-3">
+                  <Metric label="1구좌 기준가" value={won(Math.round(navInfo.nav))} accent />
+                  <Metric
+                    label="발행가 대비"
+                    value={
+                      navInfo.issuePrice > 0
+                        ? `${(((navInfo.nav - navInfo.issuePrice) / navInfo.issuePrice) * 100).toFixed(1)}%`
+                        : "-"
+                    }
+                    bordered
+                  />
+                  <Metric
+                    label="직전 대비"
+                    value={`${navInfo.changeRate.toFixed(1)}%`}
+                    bordered
+                  />
+                </div>
+                <div className="grid grid-cols-3 border-t border-line-soft">
+                  <Metric label="신탁 잔액" value={won(navInfo.breakdown.escrow)} small />
+                  <Metric
+                    label="집행 자산"
+                    value={won(navInfo.breakdown.asset)}
+                    small
+                    bordered
+                  />
+                  <Metric
+                    label="누적 회수금"
+                    value={won(navInfo.breakdown.cashFlow)}
+                    small
+                    bordered
+                  />
+                </div>
+              </Card>
+            </>
+          ) : null}
 
           <h2 className="mt-10 text-15 font-bold text-ink">투자금 사용 과정</h2>
           <div className="mt-4">

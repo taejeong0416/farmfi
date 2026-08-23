@@ -102,11 +102,11 @@ radius 6 · 8 · 10 · 12 · 14 · 999
 
 | 영역 | 있는 것 | 없는 것 |
 |---|---|---|
-| 인증 | `auth/*`, `identity/*`(OpenDID 실연동), 본인 명의 계좌 확인 | 동의 문서 버전·전자서명 저장 |
+| 인증 | `auth/*`, `identity/*`(OpenDID 실연동), 본인 명의 계좌 확인, 동의 문서 버전·전자서명 저장 | 계약 해시 체인 기록 |
 | 투자 | `projects`, `investments/*`(적합성·동의·가상계좌 납입), 은행 입금 웹훅, `portfolio`, `payouts` | 수탁 지갑·보유 구좌 발행, 체인 잡 큐·대사 |
 | 마일스톤 | `evidence`·`approve`·`verify`(AI 4종)·`complete`·`timeout`·`appeals` | 검증 근거 조회, 관리자 심사 큐, `manual_review` 경로 |
-| 운영자 | `operator-applications`(방문·교육·계약이 이 PATCH 하나에 얹혀 있다) | 단계별 도메인 분리, 보증서 모델·발급·검증 |
-| 정기구독(구매자) | `Subscription`·`PickupOrder` 모델, `subscriptions/*`, `catalog` | 픽업 바코드 발급, 건너뛰기·일시정지 |
+| 운영자 | `operator-applications`(서류·확정), `operator/visits`·`courses`·`contracts`, 보증서 발급·정지·만료 | 앱의 보증서 검증(`credential/verify` — 앱 담당) |
+| 정기구독(구매자) | `Subscription`·`PickupOrder` 모델, `subscriptions/*`, `catalog`, 픽업 바코드 발급 | 건너뛰기·일시정지 |
 | 운영 데이터 | `monitoring`, `optimization`, `briefing`, `iot/generate`, `sales`, `inventory` | 레시피 적용, NAV 조회, 매출·비용 확정 |
 | 관리자 | `admin/*`, `audit-logs`, `appeals`, `reports/institution` | 체인 잡·대사 콘솔, 매출·비용 확정 게이트 |
 
@@ -270,17 +270,19 @@ Phase A~K는 화면과 그 화면이 도는 데 필요한 최소 API를 만들�
   지수 백오프(30초부터 5회) 후 `CHAIN_FAILED` + 운영 알림. 체인이 실패해도 입금·청약은 되돌리지 않는다. 청약이 `DEPOSIT_FAILED`로 끝난 건은 발행을 `CANCELLED`로 닫는다 — 환불 대상에 구좌를 발행하지 않는다
 - [x] **P4** 발행 콘솔 — `GET/POST /api/admin/issuances`
   계획의 `chain-jobs` 대신 `issuances`로 냈다. 잡 큐가 따로 없고 발행 행이 곧 큐라 이름을 실체에 맞췄다. POST에 `id`를 주면 그 건만 재시도(`CHAIN_FAILED`도 되살린다), 안 주면 전체 드레인
-- [x] **P5** 대사 — `lib/reconcile.ts` · `GET /api/admin/reconciliation` · `GET|POST /api/cron/reconcile`
-  Vercel Cron이 10분마다 `/api/cron/reconcile`을 부른다(`CRON_SECRET` 없으면 503으로 닫힘 — 열어 두면 아무나 가스를 태우는 버튼이 된다). 밀린 발행을 다시 태우고 지갑별 `balanceOf`와 DB 수량을 대조한다. **불일치는 고치지 않는다** — 어느 쪽이 정본인지 모르는 상태에서 한쪽에 맞추면 틀린 쪽을 정본으로 만든다. 알림만 남긴다
+- [x] **P5** 대사 — `lib/reconciliation.ts`
+  Vercel Cron이 `/api/cron/reconcile`을 부른다(`CRON_SECRET` 없으면 503으로 닫힘 — 열어 두면 아무나 가스를 태우는 버튼이 된다). 영수증 10분, 전체 대사 하루 한 번. `sweepReceipts()`가 해시만 남고 확정되지 않은 건의 영수증을 다시 읽는다. Relay는 "해시가 있으면 성공"으로 넘기지만 여기서는 영수증을 실제로 확인해 되돌려진 트랜잭션을 잡는다 — revert면 해시를 지워 Relay가 성공으로 오인하지 못하게 한다. `reconcileHoldings()`는 지갑별 확정 구좌 합과 `balanceOf`를 비교한다. **불일치는 고치지 않는다** — 어느 쪽이 정본인지 모르는 상태에서 한쪽에 맞추면 틀린 쪽을 정본으로 만든다. `ReconciliationEntry`(OPEN·RESOLVED)에 적고 알림을 남긴다. 조회·해소는 `GET/POST /api/admin/reconciliation`(해소 사유 필수)
 
 **컨트랙트 매핑 (P2 결정)** — 명세의 `HoldingLedger`를 새로 배포하지 않고 이미 배포된 `FarmToken`이 그 역할을 한다. `mintHolding` → `FarmToken.mint(address,uint256)`. 근거: `decimals() == 0`이라 1구좌 = 정수 1로 그대로 맞고, `_update`의 화이트리스트 게이트가 `from == address(0)`(발행)을 예외로 두어 신원 등록 전에도 발행이 된다. 2차 이전(`transferHolding`)은 송·수신 지갑 모두 `registerIdentity`가 필요하므로 그때 별도 단위로 뺀다.
 
 ## Phase Q · 계약 동의·운영자 보증서
 
-- [ ] **Q1** 동의 문서
-  `GET /api/agreements/[id]` · `POST .../consent`. 문서 버전·동의 시각·전자서명값을 저장하고 문서 해시를 체인 기록 대상으로 넘긴다
-- [ ] **Q2** 신청 단계 도메인 분리
-  방문 예약·교육 이수·계약 서명이 `OperatorApplication` PATCH 하나에 얹혀 있다. `POST /api/operator/visits` · `/courses/[id]/progress` · `/contracts/[id]/signature-request`로 나누고 자동저장·이전 단계 이동을 살린다
+- [x] **Q1** 동의 문서 — `lib/agreements.ts`
+  문서는 고쳐 쓰지 않고 `version`을 올린다(`Agreement`). 동의 기록(`AgreementConsent`)에는 문서 해시를 복사해 둬 문서 행이 바뀌어도 동의 시점의 본문이 무엇이었는지 남는다. `GET /api/agreements`(목록) · `GET /api/agreements/[id]`(본문, 행 id 또는 코드) · `POST .../consent`(동의 시각·전자서명값·본인확인 세션 저장). 필수 문서를 다 동의해야 `POST /api/investments/[id]/consent`가 통과하고, 그때 동의 문서들을 묶은 해시를 `Investment.agreementHash`에 남긴다 — 체인에 올릴 계약 해시다. I-03은 이 문서 목록을 그대로 그리고 전문을 모달로 읽는다
+  체인 전송은 남아있다. 명세 10.6의 `registerAgreement`에 해당하는 함수가 배포된 컨트랙트에 없다 — 컨트랙트 수정은 별도 단위다
+- [x] **Q2** 신청 단계 도메인 분리 — `lib/operator-apply.ts`
+  방문은 `OperatorVisit`이 상태를 가진다 — 살아 있는 예약은 하나이고, 다시 예약하면 그 건이 옮겨간다. `POST /api/operator/visits` · `PATCH .../[id]`(변경·취소). 교육은 `OperatorCourse`(기준 데이터) + `OperatorCourseProgress`(과정별 진도·중단 지점)로 나눴다. `POST /api/operator/courses/[id]/progress`는 진도를 뒤로 물리지 않고 중단 지점만 덮어써 이어보기가 된다. 신청 행의 `educationProgress`는 비중을 반영한 파생값이다. 계약은 `OperatorContract`가 본문과 해시를 들고, `POST /api/operator/contracts/[id]/signature-request`를 두 번 부른다 — 서명값 없이 부르면 요청, 서명값과 함께 부르면 서명. 요청 없이 서명값만 보내면 받지 않는다
+  `PATCH /api/operator-applications/[id]`에는 서류·공간 확정만 남았다. 진행 표시줄에서 끝낸 단계를 눌러 돌아갈 수 있다. 방문 예약을 취소해도 신청 상태를 뒤로 밀지 않는다 — 이미 끝난 교육·계약이 없던 일이 되면 안 된다
 - [x] **Q3** 보증서 모델 — `lib/credential.ts` · `GET /api/operator/credential` · `GET|POST /api/admin/operator-credentials` · `PATCH .../[id]/status`
   테이블은 이미 DB에 있었다(스키마에는 없이). `applicationId`로 어느 신청에서 나온 보증서인지 추적하는 구조라 O-08 흐름에 맞아 그대로 쓰고 `projectId`(앱이 연결할 매장)와 `vcId`만 더했다.
   **유효성 판정을 서버가 한다.** 앱이 `status` 문자열을 보고 스스로 판단하면 만료 계산이 두 벌이 되고 언젠가 갈린다. 만료는 저장된 status와 무관하게 시간이 정한다 — 배치가 늦게 돌아도 만료된 권한이 새지 않는다.
@@ -291,6 +293,7 @@ Phase A~K는 화면과 그 화면이 도는 데 필요한 최소 API를 만들�
 ## Phase R · 픽업 바코드
 
 - [x] **R1** 바코드 발급·조회·수령 처리
+  `GET /api/pickups/[code]/barcode`(구매자 발급). 회차를 가리키는 키는 확인번호 하나다 — 발급·조회·수령·준비가 같은 값을 쓴다. 확인번호(`code`)와 바코드 값(`barcodeToken`)은 다른 것이다 — 확인번호는 구독 id와 날짜로 정해져 짐작할 수 있으므로 스캔으로 수령 처리가 되는 값은 따로 만든다. 같은 회차는 몇 번을 열어도 같은 토큰이 나오고(화면을 저장해 뒀다가 매장에서 보여주는 흐름이라), 수령한 회차는 `409 PICKUP_BARCODE_USED`, 건너뛴 회차는 `400 PICKUP_SKIPPED`로 발급을 거부한다
   `GET /api/pickups?projectId=&date=` (오늘 예정 + 준비 요약) · `GET /api/pickups/[code]` (확인번호 조회) · `POST /api/pickups/[code]/complete` (수령) · `POST /api/pickups/[code]/prepare` (팩 준비 체크).
   `PickupOrder.code`에 unique를 걸었다 — 스캔도 수동입력도 이 값 하나로 찾으므로 중복이 있으면 어느 픽업인지가 결정되지 않는다. 그 대가로 확인번호 생성이 충돌할 수 있어 `createPickupOrders`가 후보를 밀며 재시도한다(`createMany`는 4건 중 하나만 부딪혀도 구독 생성이 통째로 깨진다).
   중복 처리는 조건부 `updateMany`로 막는다. 사전 조회로 막으면 동시 스캔 둘이 다 통과한다. 이미 처리된 건은 409에 처리 시각과 처리자를 실어 보낸다.
@@ -314,10 +317,15 @@ Phase A~K는 화면과 그 화면이 도는 데 필요한 최소 API를 만들�
 
 - [x] **S1** 매출·비용 입력·확정 — `PeriodRecord` · `GET|PUT /api/admin/projects/[id]/records` · `POST .../records/confirm`
   A-16 화면이 비용을 로컬 state로만 들고 있어 새로고침하면 사라졌고, 정산은 요청 본문의 `totalRevenue`를 그대로 썼다 — 부르는 쪽이 배당 재원을 정하는 구조였다. 이제 배당 라우트는 `confirmed`인 기간 기록에서만 매출을 읽는다. 확정에는 사유가 필수다(숫자만 남으면 왜 그 값인지 사라진다). 확정된 기간은 잠그고, 해제는 별도 행위로 두되 이미 분배된 기간은 해제할 수 없다. 같은 기간 이중 분배는 409로 막는다. 데모 7단계도 저장→확정→분배 순서를 그대로 밟는다
-- [ ] **S2** 지급 실패 처리
-  실패 사유별 재시도와 회수 계좌 수정 경로(I-08)
-- [ ] **S3** NAV 조회
-  `GET /api/projects/[id]/nav`. `lib/nav-calculator.ts`가 지금 `portfolio`에서만 쓰인다. 청약·집행 0건이면 표시하지 않는다
+  지급 원장(`buildPayoutPlan`)도 같은 규칙을 쓴다 — 확정된 기간 기록의 매출을 읽고, 없거나 draft면 판매 기록 합계로 간다. 운영 비용은 운영자 정산 줄에서만 빠진다. 투자자 회수금은 수수료 풀에서 나오므로 비용과 무관하다(v18 설계 원칙 2). 임대료는 비용 항목이 아니다 — 파트너 계약의 월 고정 임대료가 원장에서 따로 빠져 두 번 차감된다
+- [x] **S2** 지급 실패 처리 — `lib/payout-failure.ts`
+  실패를 한 덩어리로 다루면 "다시 시도"가 늘 열려 있고, 계좌가 잘못된 건은 눌러도 같은 자리에서 또 실패한다. `Payout.failureCode`에 어댑터 코드를 남기고 코드별 다음 행동을 한 표에 모았다 — 은행 오류는 그대로 재시도, 계좌 문제는 수취인이 고쳐야, 수동 이체 대상은 사람이. 재시도 불가 코드에 `POST .../execute`를 걸면 `409 PAYOUT_RETRY_BLOCKED`로 막고, 화면은 버튼을 아예 열지 않는다. 코드가 없거나 모르는 코드(사람이 손으로 실패 처리한 건)는 재시도를 열지 않는다 — 원인을 모르는 채 돈을 다시 보내지 않는다
+  `retryCount`·`lastAttemptAt`은 이체를 실제로 보낸 횟수다. `GET /api/payouts`가 실패 건에 다음 할 일을 실어 내리되, 수취인에게는 자기가 할 수 있는 안내만 보인다
+  I-08은 수취인이 고칠 수 있는 실패에만 계좌 수정 경로를 연다 — 은행 일시 오류에 계좌를 고치라고 하면 멀쩡한 계좌를 건드린다. `/verify/account?next=`로 보내고 등록을 마치면 회수 상세로 되돌아온다(앱 내부 경로만 받는다)
+- [x] **S3** NAV 조회 — `GET /api/projects/[id]/nav`
+  `lib/nav-calculator.ts`가 `portfolio`에서만 쓰이고 있었다. 지점 단위로 열어 I-01에 붙였다. 로그인 뒤에만 연다 — 투자 판단에 쓰이는 값이다
+  **청약도 집행도 0건이면 값을 내지 않는다.** 산식은 0을 돌려주지만 그 0은 "가치가 0"이 아니라 "아직 잴 것이 없다"는 뜻이고, 0원으로 찍히면 투자자가 손실로 읽는다. `available: false`와 사유·근거 건수를 같이 내려 화면이 항목 자체를 감춘다. 발행 구좌 수가 없는 지점도 같은 이유로 감춘다 — 1구좌당 값을 나눌 수 없다
+  조회는 `NavSnapshot`을 남기지 않는다. 조회가 기록을 만들면 누가 열어봤는지에 따라 직전 대비 변동률의 기준선이 달라진다
 
 ## Phase T · 검증 근거와 심사 큐
 
@@ -338,16 +346,24 @@ Phase A~K는 화면과 그 화면이 도는 데 필요한 최소 API를 만들�
   **9.2 최적대 판정과 9.5 목표 DLI가 이제 학습값을 본다.** 적용된 설정점을 중심으로 최적대를 좁히고 목표 DLI를 그 값으로 바꾼다. 원칙은 봉투와 같다 — **좁힐 수만 있고 넓힐 수 없다.** 문헌 범위 밖으로는 절대 안 나가고, **고장 게이트는 건드리지 않는다**(물리 한계는 학습의 대상이 아니다).
   `APPLIED`가 아닌 요인은 쓰지 않는다. 규칙이 클램프하거나 거부한 값은 "규칙이 잘라낸 자리"지 이 매장의 최적이 아니다.
   확인: 적용 전 온도 최적대 `[18, 24]`·목표 DLI `15` → 적용 후 `[20.3, 23.3]`·`15.8`.
-- [ ] **W1a** 레시피 관측을 실데이터로
-  지금 학습 입력은 `growth-recipe-synth.ts`의 합성 관측이다. `HarvestRecord`(수확량)와 `IotData`(사이클 환경 평균)를 조인해 실 관측으로 바꾼다. 6요인 원천은 `IotData`에 다 있다(`ecLevel`은 nullable — 공개데이터 온실 계열처럼 EC를 안 재는 원천이 섞인다). 관측을 만들 때 `ecLevel`이 null인 사이클을 **뺄지 작물 프로파일 `ecTarget` 중앙으로 채울지**가 이 항목의 결정이다. 채우면 EC 방향 학습이 죽고, 빼면 표본이 준다
+- [x] **W1a** 레시피 관측을 실데이터로 — `lib/growth-observations.ts`
+  `HarvestRecord`(사이클의 끝과 수확량)와 `IotData`(그 기간 환경 시계열)를 조인해 관측을 만든다. 사이클 창은 `Product.growDays`로 수확 시점에서 거꾸로 잡는다. 사이클이 `MIN_MEASURED_CYCLES`(30)에 못 미치면 합성 관측으로 돌아가되, **어느 쪽을 썼는지 응답과 적용 기록에 남긴다** — 합성으로 낸 설정점을 실측인 줄 알고 설비에 넣으면 그 매장에서 한 번도 관측되지 않은 값이 운전점이 된다
+  **EC 결측은 행이 아니라 열을 뺀다.** 채우면 EC 열이 상수에 가까워져 회귀가 채움값 주변의 잡음을 곡률로 읽고 "자신 있어 보이는 가짜 최적 EC"를 낸다. 빼면 EC를 안 재는 매장은 0행이 되어 나머지 다섯 요인까지 학습이 꺼진다. 측정률이 60% 이상이면 결측 사이클만 버리고 6요인으로, 그 아래면 모든 행의 EC를 같은 값으로 눕혀 분산을 0으로 만든다 — 곡률이 안 잡히므로 파이프라인이 스스로 EC를 뺀다. `ecCoverage`·`droppedFeatures`로 어느 쪽인지 내려준다
+  접기 규칙 셋을 테스트로 고정했다 — 명기 조도만 DLI로 적산(암기를 섞으면 광량이 절반이 된다) · 한쪽 시간대가 없으면 주야 진폭을 `undefined`로 둔다(0은 "내내 같았다"는 주장이다) · 상한 초과 시간은 측정 간격을 곱한 값이다
+  수확량 단위는 봉/㎡다. 봉당 무게를 아는 표가 없다 — 최적점은 y에 양수 상수를 곱해도 안 움직이므로 학습에는 문제가 없고, 절대 수량을 말할 때만 걸린다
 - [x] **W2** 최적화 적용 — `lib/setpoint-envelope.ts` · `GET|POST /api/projects/[id]/setpoints`
   **결정론적 봉투**를 세웠다. 학습 산출을 그대로 설비에 넘기지 않고 규칙이 먼저 판단한다 — 반응면이 안장·판정불가거나 최적점이 관측 경계에 붙으면 채택하지 않고, 통과한 값만 농학 범위·설비 정격(LED 최대 DLI)·하루 변화폭으로 좁힌다. **학습은 좁힐 수만 있고 규칙이 허용한 폭을 넓히지 못한다.** 이 설정점이 IoT 가동률 → 마일스톤 2·4단계 판정 → 트랜치 집행으로 이어지므로 마지막 결정은 규칙이 갖는다.
   거부·조정 사유를 값으로 남긴다(`APPLIED` · `CLAMPED_AGRONOMIC` · `CLAMPED_EQUIPMENT` · `CLAMPED_RATE` · `REJECTED_SURFACE` · `REJECTED_BOUNDARY` · `REJECTED_INVALID`). 산출값과 적용값을 `SetpointApplication`에 **둘 다** 저장한다 — 하나만 남기면 모델을 고칠 근거가 사라진다. 정산·판정에는 적용값을 쓴다.
   변화폭은 요인마다 다르다. pH가 가장 좁다(구간의 8%) — 과보정이 회복을 더 어렵게 한다.
-- [ ] **W3** 기관 성과 리포트 화면
-  API(`reports/institution`)는 있고 화면이 없다. CSV 내보내기 포함
-- [ ] **W4** 구독 상세 변경
-  건너뛰기·일시정지·해지. 다음 결제일 전날까지 해지, 픽업 3시간 전까지 변경(명세 17.1-9)
+- [x] **W3** 기관 성과 리포트 화면 — `/admin/reports` (A-11)
+  Figma A-11이 정산 결과라 붙을 화면이 없었다. A2 토큰·A3 컴포넌트로 새로 그렸다. 기관·기간을 고르고 지점별 수확·판매·매출·이상 비율을 본다. `format=csv`로 같은 표를 내려받는다(Excel이 열도록 BOM)
+  **API가 인증 없이 열려 있었다.** 지점별 매출이 그대로 나오는 경로인데 세션 검사가 없었다. `requireRole("admin")`을 걸었다. 기관 목록은 `institutionId` 없이 부르면 나온다 — 그것만을 위한 라우트를 따로 두면 같은 권한 검사를 두 번 쓰게 된다
+  IoT 측정이 0건인 지점은 이상 비율을 `0%`가 아니라 "측정 없음"으로 쓴다. 0%는 "이상이 없었다"는 주장이고, 안 잰 것과 다르다
+- [x] **W4** 구독 상세 변경 — `lib/subscription-window.ts`
+  건너뛰기·일시정지·해지는 이미 있었고 **마감이 없었다.** 명세 17.1-9의 두 마감을 한 곳에 두고 서버가 판정한다 — 픽업 3시간 전(매장이 팩을 담기 시작하는 시점), 다음 결제일 전날 끝(결제일 당일 해지는 "돈은 나갔는데 해지됐다"가 된다). 지나면 `409 PICKUP_CHANGE_CLOSED` · `409 CANCEL_CLOSED`에 마감 시각을 실어 보낸다
+  **주기 변경이 임박한 회차를 지우지 않는다.** 예정 회차를 전부 지우고 다시 만들고 있었는데, 그러면 매장이 이미 담기 시작한 팩이 조용히 사라진다. 마감이 지난 회차는 남긴다
+  이미 수령·건너뛴 회차에 다시 요청하면 `409 PICKUP_NOT_SCHEDULED`. 수령 처리(`picked`)에는 마감을 걸지 않는다 — 매장이 실제로 건네준 사실을 적는 것이라 시각으로 막을 것이 아니다
+  B-08 화면에 해지를 붙이고(확인 한 단계), 마감이 지난 버튼은 아예 잠근다. 화면과 서버가 같은 함수를 쓴다 — 각자 계산하면 열려 있는 버튼이 거절당한다
 
 ## 명세와 화면 목록이 어긋나는 곳
 
@@ -358,7 +374,7 @@ Phase A~K는 화면과 그 화면이 도는 데 필요한 최소 API를 만들�
 | O-12 매장 운영 현황(조회) | O-12 마일스톤 집행 완료 | 웹에 운영 현황 화면이 없다. 앱 대시보드와 범위가 겹쳐 어디에 둘지 결정이 필요하다 |
 | O-13 생육 레시피·환경 최적화 | O-13 정산·지급 내역 | W1·W2가 붙을 화면이 없다 |
 | A-10 매출·비용 입력 | A-16 매출·비용 입력 (`/admin/ledger`) | S1은 A-16에 붙인다 |
-| A-11 기관 성과 리포트 | A-11 정산 결과 | W3이 붙을 화면이 없다 |
+| A-11 기관 성과 리포트 | A-11 정산 결과 | W3을 `/admin/reports`에 새로 그렸다 |
 
 화면이 없는 기능은 최종 `.fig`(Phase N)에 있는지 먼저 확인한다. 최종본에도 없으면 A2 토큰과 A3 컴포넌트로 새로 그린다(Phase J와 같은 방식).
 

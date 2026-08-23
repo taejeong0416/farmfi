@@ -27,10 +27,12 @@ export async function GET(
 }
 
 /**
- * PATCH /api/operator-applications/[id] — 신청 단계 진행.
- * step으로 어느 단계를 밀지 고른다. 앞 단계가 끝나지 않으면 다음 단계로 넘어가지 않는다.
+ * PATCH /api/operator-applications/[id] — 서류 제출과 공간 확정.
  *
- *   docs → visit → education → confirm → contract
+ * 방문 예약·교육 이수·계약 서명은 각자 상태를 가지므로 여기 얹지 않는다.
+ *   방문 → POST /api/operator/visits · PATCH /api/operator/visits/[id]
+ *   교육 → POST /api/operator/courses/[id]/progress
+ *   계약 → POST /api/operator/contracts/[id]/signature-request
  */
 export async function PATCH(
   request: NextRequest,
@@ -75,44 +77,6 @@ export async function PATCH(
       return NextResponse.json({ application: updated });
     }
 
-    case "visit": {
-      if (typeof b.visitAt !== "string" || Number.isNaN(Date.parse(b.visitAt))) {
-        return NextResponse.json(
-          { error: "방문 일시를 선택해 주세요." },
-          { status: 400 },
-        );
-      }
-      const updated = await prisma.operatorApplication.update({
-        where: { id },
-        data: {
-          visitAt: new Date(b.visitAt),
-          visitNote: typeof b.visitNote === "string" ? b.visitNote : null,
-          status: "visit",
-        },
-      });
-      return NextResponse.json({ application: updated });
-    }
-
-    case "education": {
-      const progress = Number(b.progress);
-      if (!Number.isFinite(progress) || progress < 0 || progress > 100) {
-        return NextResponse.json(
-          { error: "교육 진행률이 올바르지 않습니다." },
-          { status: 400 },
-        );
-      }
-      const done = progress >= 100;
-      const updated = await prisma.operatorApplication.update({
-        where: { id },
-        data: {
-          educationProgress: Math.round(progress),
-          educationDoneAt: done ? new Date() : null,
-          status: done ? "education" : application.status,
-        },
-      });
-      return NextResponse.json({ application: updated });
-    }
-
     case "confirm": {
       if (!application.educationDoneAt) {
         return NextResponse.json(
@@ -126,31 +90,6 @@ export async function PATCH(
           spaceId: typeof b.spaceId === "string" ? b.spaceId : application.spaceId,
           confirmedAt: new Date(),
           status: "matched",
-        },
-      });
-      return NextResponse.json({ application: updated });
-    }
-
-    case "contract": {
-      if (!application.confirmedAt) {
-        return NextResponse.json(
-          { error: "공간을 먼저 확정해야 합니다." },
-          { status: 400 },
-        );
-      }
-      if (typeof b.signature !== "string" || !b.signature.trim()) {
-        return NextResponse.json({ error: "서명을 입력해 주세요." }, { status: 400 });
-      }
-      // 계약 서명이 끝나면 보증서 번호를 발급한다.
-      const certificateNo = `FF-${new Date().getFullYear()}-${id.slice(-6).toUpperCase()}`;
-      const updated = await prisma.operatorApplication.update({
-        where: { id },
-        data: {
-          contractSignature: b.signature.trim(),
-          contractSignedAt: new Date(),
-          certificateNo,
-          certificateIssuedAt: new Date(),
-          status: "operating",
         },
       });
       return NextResponse.json({ application: updated });

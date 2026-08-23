@@ -52,7 +52,10 @@ export interface PayoutAdapter {
  * MOCK_PAYOUT_SCENARIO로 실패 분기를 재현한다 (S2 지급 실패 처리 시연용).
  * - normal(기본): 성공
  * - no_account: 등록 계좌가 없어 실패
+ * - account_invalid: 계좌번호·예금주 불일치로 실패
  * - bank_error: 은행 응답 오류로 실패
+ *
+ * 코드별로 다음에 할 일이 갈린다 — lib/payout-failure.ts가 그 표를 들고 있다.
  */
 class MockPayoutAdapter implements PayoutAdapter {
   readonly provider = "mock";
@@ -75,6 +78,13 @@ class MockPayoutAdapter implements PayoutAdapter {
         ok: false,
         code: "PAYOUT_NO_ACCOUNT",
         message: "등록된 회수 계좌가 없습니다. 계좌를 등록한 뒤 다시 시도해 주세요.",
+      };
+    }
+    if (this.scenario === "account_invalid") {
+      return {
+        ok: false,
+        code: "PAYOUT_ACCOUNT_INVALID",
+        message: "등록된 계좌로 보낼 수 없습니다. 계좌번호와 예금주를 확인해 주세요.",
       };
     }
     if (this.scenario === "bank_error") {

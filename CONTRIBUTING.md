@@ -31,6 +31,7 @@ FarmFi 개발 가이드. 기능 범위와 화면 흐름은 [docs/feature-spec.md
    | `DEPOSIT_DEADLINE_HOURS` | | 가상계좌 입금기한 (기본 24) |
    | `MOCK_BANK_SCENARIO` | | `normal` / `issue_failed` / `mismatch` / `delayed` — I-03E 분기 재현 |
    | `MOCK_BANK_DEPOSIT_DELAY_SEC` | | Mock 은행이 입금하기까지 걸리는 시간 (기본 0) |
+   | `CRON_SECRET` | | 대사 크론(`/api/cron/reconcile`) 호출 키. 없으면 크론 경로가 503으로 닫힌다 |
 
 3. `npm run prisma:generate` → `npm run prisma:push` → `npm run seed`
    - `prisma db push`(DDL)는 **세션 pooler(5432)** 필요 — 일반 URL이 6543(트랜잭션 pooler)이면 `--url`로 5432 오버라이드. 시드(DML)는 6543으로 OK.

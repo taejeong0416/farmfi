@@ -12,6 +12,7 @@ import {
 import {
   PAYOUT_STATUS_LABEL,
   num,
+  retryPayout,
   shortDate,
   usePayouts,
   won,
@@ -64,6 +65,22 @@ export function SettlementsResultScreen() {
     }
   }
 
+  // 재시도는 어댑터를 다시 태우는 것이다. 사유가 재시도 대상이 아니면 서버가
+  // 409로 막으므로, 화면은 버튼을 열지 않는 것으로 먼저 알린다.
+  async function retry(id: string) {
+    setBusy(true);
+    setNote(null);
+    try {
+      const r = await retryPayout(id);
+      await refetch();
+      setNote(r.ok ? "지급 완료로 기록했습니다." : (r.error ?? "다시 실패했습니다."));
+    } catch (e) {
+      setNote(e instanceof Error ? e.message : "재시도에 실패했습니다.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   const columns: Column<PayoutItem>[] = [
     { key: "period", header: "기간", width: "100px", render: (p) => p.period },
     {
@@ -104,27 +121,47 @@ export function SettlementsResultScreen() {
       key: "status",
       header: "상태",
       align: "right",
-      width: "150px",
+      width: "230px",
       render: (p) => (
-        <span className="flex items-center justify-end gap-3">
-          <Badge
-            tone={
-              p.status === "paid" ? "pass" : p.status === "failed" ? "fail" : "plain"
-            }
-          >
-            {PAYOUT_STATUS_LABEL[p.status] ?? p.status}
-          </Badge>
-          {p.status === "scheduled" ? (
-            <button
-              type="button"
-              disabled={busy}
-              onClick={() => void process(p.id)}
-              className="text-12 font-medium text-brand"
+        <div className="flex flex-col items-end gap-1.5">
+          <span className="flex items-center justify-end gap-3">
+            <Badge
+              tone={
+                p.status === "paid" ? "pass" : p.status === "failed" ? "fail" : "plain"
+              }
             >
-              지급 확정
-            </button>
+              {PAYOUT_STATUS_LABEL[p.status] ?? p.status}
+            </Badge>
+            {p.status === "scheduled" ? (
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => void process(p.id)}
+                className="text-12 font-medium text-brand"
+              >
+                지급 확정
+              </button>
+            ) : null}
+            {p.status === "failed" && p.failure?.retryable ? (
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => void retry(p.id)}
+                className="text-12 font-medium text-brand"
+              >
+                다시 시도
+              </button>
+            ) : null}
+          </span>
+          {p.status === "failed" ? (
+            <span className="text-right text-11 leading-4 text-muted">
+              {p.failure?.label ?? "확인 필요"}
+              {p.retryCount > 0 ? ` · ${p.retryCount}회 시도` : ""}
+              <br />
+              {p.failure?.hint ?? p.failureReason}
+            </span>
           ) : null}
-        </span>
+        </div>
       ),
     },
   ];

@@ -32,17 +32,23 @@ export const AUDIT_ACTIONS = [
   "appeal.decided",
   "dividend.distributed",
   "settlement_rule.updated",
+  "period_record.confirmed",
   "payout.scheduled",
   "payout.processed",
   "project.status_changed",
   "pickup.completed",
-  "period_record.confirmed",
   "setpoint.applied",
   "credential.issued",
   "credential.status_changed",
   "user.role_changed",
   "project.refunded",
   "notification.sent",
+  "reconciliation.resolved",
+  "operator_credential.issued",
+  "operator_credential.suspended",
+  "operator_credential.reinstated",
+  "operator_credential.revoked",
+  "operator_credential.expired",
 ] as const;
 
 export type AuditAction = (typeof AUDIT_ACTIONS)[number];
@@ -58,8 +64,11 @@ export interface AuditEntry {
     | "payout"
     | "appeal"
     | "settlement_rule"
+    | "period_record"
     | "pickup"
-    | "user";
+    | "user"
+    | "reconciliation"
+    | "operator_credential";
   entityId?: string | null;
   projectId?: string | null;
   summary: string;

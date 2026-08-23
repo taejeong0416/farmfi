@@ -11,6 +11,7 @@ import {
   PAYOUT_STATUSES,
   type PayoutCategory,
 } from "@/lib/payout";
+import { payoutFailurePolicy } from "@/lib/payout-failure";
 
 function csvCell(value: unknown): string {
   if (value === null || value === undefined) return "";
@@ -104,8 +105,32 @@ export async function GET(req: NextRequest) {
         .reduce((s, p) => s + Number(p.amount), 0),
     };
 
+    // 실패 건에는 다음에 할 일을 같이 싣는다. 코드만 내려주면 화면마다 그 표를
+    // 다시 만들게 되고, 두 화면이 서로 다른 안내를 하게 된다.
+    // 수취인 본인에게는 자기가 할 수 있는 안내만 보인다 — 관리자 지시는 감춘다.
+    const isAdmin = session.role === "admin";
+    const rows = payouts.map((p) => {
+      if (p.status !== "failed") return { ...p, failure: null };
+      const policy = payoutFailurePolicy(p.failureCode);
+      return {
+        ...p,
+        failure: {
+          code: policy.code,
+          label: policy.label,
+          retryable: policy.retryable,
+          actor: policy.actor,
+          hint: isAdmin ? policy.adminHint : policy.payeeHint,
+        },
+      };
+    });
+
     return NextResponse.json(
-      serialize({ payouts, summary, categories: PAYOUT_CATEGORIES, statuses: PAYOUT_STATUSES })
+      serialize({
+        payouts: rows,
+        summary,
+        categories: PAYOUT_CATEGORIES,
+        statuses: PAYOUT_STATUSES,
+      })
     );
   } catch (error) {
     console.error("GET /api/payouts error:", error);
@@ -190,6 +215,8 @@ export async function POST(request: NextRequest) {
         perToken: plan.perToken,
         operatorRevenue: plan.operatorRevenue,
         operatorRevenueMeasured: plan.operatorRevenueMeasured,
+        recordConfirmed: plan.recordConfirmed,
+        operatingCost: plan.operatingCost,
       },
     });
 

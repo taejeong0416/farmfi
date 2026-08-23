@@ -1,7 +1,6 @@
 // ── AI 생육레시피 분석 — 고도화 ─────────────────────────────────────────────
 // 기본 버전(growth-recipe.ts)이 하나의 표면에서 최적점 하나를 낸다면, 여기서는
 // 그 최적점이 얼마나 믿을 만한지와, 그 믿음을 어디서 빌려왔는지를 다룬다.
-//   · SHAP 섀플리 값 (협조게임이론/XAI)  → 편향 없는 특성 기여도
 //   · 부트스트랩 → 계층 베이지안         → 최적점의 실제 불확실성과 출처 배분
 //   · 사후분산 기반 실험 제안            → 다음에 무엇을 시험하면 가장 많이 배우나
 //
@@ -23,9 +22,13 @@ import {
   FEATURES,
   FEATURE_LABEL,
   UNIT,
+  predictSurface,
+  observationWeights,
+  type GrowthRecipe,
   type GrowthFeature,
   type SurfaceVerdict,
   type RecipeGapReport,
+  type RecipeSensitivity,
 } from "./growth-recipe";
 import { toNormalized, fromNormalized, transferWeight } from "./crop-normalize";
 import { LEAFY_SPEC, generateObservations } from "./growth-recipe-synth";
@@ -37,176 +40,7 @@ import { profitOptimalRecipe, type ProfitRecipe } from "./growth-recipe-profit";
 // 3분의 1이나 남아, 농학 지식을 실제보다 약하게 쓰게 된다.
 const PRIOR_SD = 0.5;
 
-// ── 깊이2 결정트리 (2단 분할 — 상호작용 포착) ────────────────────────────────
-// 깊이1 스텀프는 순수 가법모델 → SHAP이 주효과만 본다.
-// 깊이2는 "루트 분할 후 각 자식에서 추가 분할" → 변수 간 조건부 상호작용 반영.
-interface Tree2 {
-  rootF: number; rootT: number;
-  leftF: number; leftT: number; ll: number; lr: number; leftIsLeaf: boolean;
-  rightF: number; rightT: number; rl: number; rr: number; rightIsLeaf: boolean;
-}
-interface GBModel { base: number; trees: Tree2[]; lr: number; }
-
-// 인덱스 부분집합에서 최적 분할 탐색 (깊이2 트리 자식 노드 구성용)
-// 잎에 남는 최소 표본 — 1개짜리 잎을 허용하면 40라운드가 잡음을 그대로 외운다.
-const MIN_LEAF = 5;
-
-function bestSplitOnIdx(
-  X: number[][], resid: number[], indices: number[]
-): { f: number; t: number; lM: number; rM: number } | null {
-  const n = indices.length;
-  if (n < 2 * MIN_LEAF) return null;
-  const rMean = indices.reduce((s, i) => s + resid[i], 0) / n;
-  const tot = indices.reduce((s, i) => s + (resid[i] - rMean) ** 2, 0);
-  let best: { f: number; t: number; lM: number; rM: number; gain: number } | null = null;
-  let bestGain = 1e-9;
-  for (let f = 0; f < FEATURES.length; f++) {
-    const vals = [...new Set(indices.map((i) => X[i][f]))].sort((a, b) => a - b);
-    for (let ti = 0; ti < vals.length - 1; ti++) {
-      const t = (vals[ti] + vals[ti + 1]) / 2;
-      let lS = 0, lN = 0, rS = 0, rN = 0;
-      for (const i of indices) {
-        if (X[i][f] <= t) { lS += resid[i]; lN++; } else { rS += resid[i]; rN++; }
-      }
-      if (lN < MIN_LEAF || rN < MIN_LEAF) continue;
-      const lM = lS / lN, rM = rS / rN;
-      let sse = 0;
-      for (const i of indices) sse += (resid[i] - (X[i][f] <= t ? lM : rM)) ** 2;
-      const gain = tot - sse;
-      if (gain > bestGain) { bestGain = gain; best = { f, t, lM, rM, gain }; }
-    }
-  }
-  return best ? { f: best.f, t: best.t, lM: best.lM, rM: best.rM } : null;
-}
-
-function bestTree2(X: number[][], resid: number[]): Tree2 | null {
-  const n = X.length;
-  const all = Array.from({ length: n }, (_, i) => i);
-  const root = bestSplitOnIdx(X, resid, all);
-  if (!root) return null;
-
-  const leftIdx = all.filter((i) => X[i][root.f] <= root.t);
-  const rightIdx = all.filter((i) => X[i][root.f] > root.t);
-  const leftMean = leftIdx.reduce((s, i) => s + resid[i], 0) / leftIdx.length;
-  const rightMean = rightIdx.reduce((s, i) => s + resid[i], 0) / rightIdx.length;
-
-  const leftChild = bestSplitOnIdx(X, resid, leftIdx);
-  const rightChild = bestSplitOnIdx(X, resid, rightIdx);
-
-  return {
-    rootF: root.f, rootT: root.t,
-    leftF: leftChild?.f ?? 0, leftT: leftChild?.t ?? 0,
-    ll: leftChild?.lM ?? leftMean, lr: leftChild?.rM ?? leftMean,
-    leftIsLeaf: !leftChild,
-    rightF: rightChild?.f ?? 0, rightT: rightChild?.t ?? 0,
-    rl: rightChild?.lM ?? rightMean, rr: rightChild?.rM ?? rightMean,
-    rightIsLeaf: !rightChild,
-  };
-}
-
-function predictTree2(tree: Tree2, x: number[]): number {
-  if (x[tree.rootF] <= tree.rootT) {
-    if (tree.leftIsLeaf) return tree.ll;
-    return x[tree.leftF] <= tree.leftT ? tree.ll : tree.lr;
-  } else {
-    if (tree.rightIsLeaf) return tree.rl;
-    return x[tree.rightF] <= tree.rightT ? tree.rl : tree.rr;
-  }
-}
-
-function trainGB(X: number[][], y: number[], rounds = 40, lr = 0.2): GBModel {
-  const n = X.length;
-  const base = y.reduce((a, b) => a + b, 0) / n;
-  let pred = Array(n).fill(base);
-  const trees: Tree2[] = [];
-  for (let r = 0; r < rounds; r++) {
-    const resid = y.map((yi, i) => yi - pred[i]);
-    const tree = bestTree2(X, resid);
-    if (!tree) break;
-    trees.push(tree);
-    for (let i = 0; i < n; i++)
-      pred[i] += lr * predictTree2(tree, X[i]);
-  }
-  return { base, trees, lr };
-}
-
-function predictGB(m: GBModel, x: number[]): number {
-  let p = m.base;
-  for (const t of m.trees) p += m.lr * predictTree2(t, x);
-  return p;
-}
-
-// ── ① SHAP 섀플리 값 — 공정한 특성 기여도 (정확 계산, 6특성=64연합) ──────────
-// gain은 트리 분할 우연에 편향된다. 섀플리 값은 "각 특성이 없을 때 vs 있을 때"의
-// 모든 연합 순열 평균 기여 — 협조게임이론의 유일 공정 배분. 특성 6개면 2^6 정확계산.
-// 깊이2 GB 위에서 실행 → 상호작용 효과가 SHAP에 배분된다.
-export interface ShapResult {
-  feature: string;
-  label: string;
-  meanAbsShap: number;
-}
-
-export function shapImportance(obs: GrowthObservation[], cropKey?: string): ShapResult[] {
-  const X = obs.map((o) => toNormalized(o, o.cropKey ?? cropKey));
-  const y = obs.map((o) => o.yield);
-  const model = trainGB(X, y);
-  const nF = FEATURES.length;
-
-  // 기준선은 f(평균벡터)가 아니라 E[f(x)]다. 비선형 모델에서 둘은 다르고, 평균벡터를
-  // 쓰면 Σφ = f(x) − E[f]라는 섀플리의 효율성 공리가 깨진다. 배경 표본에 대해
-  // 평균을 내는 개입(interventional) 방식으로 계산한다.
-  const bgStride = Math.max(1, Math.floor(X.length / 20));
-  const background = X.filter((_, i) => i % bgStride === 0).slice(0, 20);
-
-  const shapForRow = (x: number[]): number[] => {
-    const phi = Array(nF).fill(0);
-    const subsets = 1 << nF;
-    const vCache = new Map<number, number>();
-    const v = (mask: number) => {
-      if (vCache.has(mask)) return vCache.get(mask)!;
-      let acc = 0;
-      for (const bgRow of background) {
-        acc += predictGB(
-          model,
-          FEATURES.map((_, f) => (((mask >> f) & 1) ? x[f] : bgRow[f]))
-        );
-      }
-      const val = acc / background.length;
-      vCache.set(mask, val);
-      return val;
-    };
-    const fact = (k: number) => { let r = 1; for (let i = 2; i <= k; i++) r *= i; return r; };
-    const nFact = fact(nF);
-    for (let i = 0; i < nF; i++) {
-      for (let mask = 0; mask < subsets; mask++) {
-        if ((mask >> i) & 1) continue;
-        const sSize = popcount(mask);
-        const w = (fact(sSize) * fact(nF - sSize - 1)) / nFact;
-        phi[i] += w * (v(mask | (1 << i)) - v(mask));
-      }
-    }
-    return phi;
-  };
-
-  // 앞에서부터 40행이 아니라 전 구간에서 고르게 뽑는다 — 관측이 시간순이면
-  // 앞머리 40개는 한 계절만 보는 것과 같다.
-  const absSum = Array(nF).fill(0);
-  const stride = Math.max(1, Math.floor(X.length / 40));
-  const rows = X.filter((_, i) => i % stride === 0).slice(0, 40);
-  for (const row of rows) {
-    const phi = shapForRow(row);
-    for (let f = 0; f < nF; f++) absSum[f] += Math.abs(phi[f]);
-  }
-  const sampleN = rows.length;
-  return FEATURES.map((f, i) => ({
-    feature: f,
-    label: FEATURE_LABEL[f],
-    meanAbsShap: Math.round((absSum[i] / sampleN) * 1000) / 1000,
-  })).sort((a, b) => b.meanAbsShap - a.meanAbsShap);
-}
-function popcount(x: number): number { let c = 0; while (x) { c += x & 1; x >>= 1; } return c; }
-
-// ── ② 부트스트랩으로 최적점의 실제 불확실성을 잰다 ──────────────────────────
+// ── ① 부트스트랩으로 최적점의 실제 불확실성을 잰다 ──────────────────────────
 // 관측을 복원추출해 표면을 다시 적합하고 최적점을 다시 찾는다. 그 분포의 산포가
 // 곧 최적점의 표준오차다. 잡음이 크거나 곡률이 얕거나 최적점이 상자 끝에 붙으면
 // 산포가 저절로 커진다 — 표본 수만 보는 공식으로는 셋 다 구분하지 못한다.
@@ -221,6 +55,7 @@ export interface BootstrapOptimum {
 function bootstrapOptimum(
   Z: number[][],
   y: number[],
+  w: number[],
   clamp: boolean,
   replicates = 200,
   seed = 11
@@ -241,12 +76,14 @@ function bootstrapOptimum(
   for (let b = 0; b < replicates; b++) {
     const zi: number[][] = [];
     const yi: number[] = [];
+    const wi: number[] = [];
     for (let k = 0; k < n; k++) {
       const j = Math.min(n - 1, Math.floor(rand() * n));
       zi.push(Z[j]);
       yi.push(y[j]);
+      wi.push(w[j]);
     }
-    const beta = fitResponseSurface(zi, yi);
+    const beta = fitResponseSurface(zi, yi, wi);
     const opt = optimumZ(beta, bounds);
     if (opt.every((v) => Number.isFinite(v))) draws.push(opt);
   }
@@ -263,7 +100,7 @@ function bootstrapOptimum(
   return { meanZ, seZ, replicates: draws.length };
 }
 
-// ── ③ 계층 사전 — 문헌 → 다른 품종 → 이 품종 ────────────────────────────────
+// ── ② 계층 사전 — 문헌 → 다른 품종 → 이 품종 ────────────────────────────────
 // 세 출처의 정밀도를 더한다. 가운데 층의 정밀도에 이전 강도 w를 곱하는 것이
 // "품종이 바뀌면 리셋인가 승계인가"에 대한 답이다. w=1이면 완전 승계, w=0이면
 // 리셋이고, 실제 값은 그 사이 어딘가다.
@@ -321,7 +158,10 @@ export function agronomyInformedRecipe(
   for (const [k, rows] of byCrop) {
     if (rows.length < MIN_FIT) continue;
     const Z = rows.map((o) => toNormalized(o, k));
-    fits.set(k, bootstrapOptimum(Z, rows.map((o) => o.yield), true));
+    fits.set(
+      k,
+      bootstrapOptimum(Z, rows.map((o) => o.yield), observationWeights(rows), true)
+    );
   }
 
   const own = fits.get(target) ?? null;
@@ -412,10 +252,21 @@ export function agronomyInformedRecipe(
   };
 }
 
-// ── ④ 능동학습 실험제안 — 사후분산이 큰 요인부터 ────────────────────────────
-// 사후 표준편차가 실제 데이터에서 나오므로, 제안 여부가 표본 수 임계값이 아니라
-// "아직 모르는 정도"에 걸린다. 방향은 관측이 성긴 쪽으로 잡는다 — 이미 촘촘한
-// 구간을 한 번 더 재봐야 배우는 게 없다.
+// ── ③ 무작위 처리 배정 — 관측을 실험으로 바꾼다 ─────────────────────────────
+// 사후 표준편차가 실제 데이터에서 나오므로, 아직 모르는 요인이 어느 쪽인지는
+// 표본 수가 아니라 데이터가 정한다. 문제는 그다음이다.
+//
+// 최적점을 그대로 적용해 얻은 관측으로 다시 학습하면, 설정값이 계절·인력·품종과
+// 함께 움직인 기록만 쌓인다. "온도를 올리면 수율이 오른다"는 개입 주장인데 근거는
+// 관측이고, 둘을 갈라놓을 방법이 그 데이터 안에 없다.
+//
+// 그래서 매 사이클 요인 하나를 골라 무작위 방향으로 밀어서 적용한다. 무작위로
+// 정해진 값은 정의상 계절과 독립이므로 교란이 끊긴다. 어느 요인을 고를지는 남은
+// 불확실성에 비례시켜, 배울 게 많은 축이 더 자주 흔들리게 한다.
+//
+// 흔드는 값이 공짜여야 이게 성립한다. 최적점 근처에서 표면이 평평한 방향은
+// 밀어도 수율이 거의 안 변한다. 예측 손실이 상한을 넘는 요인은 배정하지 않는다 —
+// 기울어진 축은 탐색 대상이 아니라 그냥 옮길 대상이다.
 export interface ExperimentSuggestion {
   label: string;
   suggestValue: number;
@@ -425,52 +276,171 @@ export interface ExperimentSuggestion {
   reason: string;
 }
 
+/** 이번 사이클에 실제로 적용할 무작위 처리 */
+export interface ExperimentAssignment {
+  feature: GrowthFeature;
+  label: string;
+  unit: string;
+  /** 레시피가 낸 설정점 (물리 단위) */
+  recipeValue: number;
+  /** 무작위로 민 뒤 실제로 적용할 값 (물리 단위) */
+  assignedValue: number;
+  /** 적용값의 정규화 좌표 — 관측에 이 값을 표식으로 남긴다 */
+  z: number;
+  direction: "상향" | "하향";
+  /** 이 흔들림으로 잃을 것으로 보는 예측 수율 (%) */
+  expectedYieldCostPct: number;
+  reason: string;
+}
+
 /** 사후 표준편차가 사전의 이 비율을 넘으면 아직 모른다고 본다 */
 const UNCERTAIN_RATIO = 0.35;
 
+/**
+ * 무작위 흔들림이 잃어도 되는 예측 수율 상한(%). 정점 근처가 평평한 축에서는
+ * 실제 손실이 이보다 훨씬 작고, 이 선을 넘는 축은 탐색이 아니라 이동 대상이다.
+ */
+const MAX_NUDGE_LOSS_PCT = 1.0;
+
 export function activeLearningSuggest(
   obs: GrowthObservation[],
-  cropKey?: string
-): { suggestions: ExperimentSuggestion[]; note: string } {
+  cropKey?: string,
+  opts?: {
+    /** 배정 난수 시드. 실제 운영에서는 사이클 식별자를 넣는다 */
+    seed?: number;
+    /** 흔들림의 수율 손실을 계산할 표면. 없으면 손실 게이트 없이 배정한다 */
+    fit?: GrowthRecipe;
+  }
+): {
+  suggestions: ExperimentSuggestion[];
+  assignment: ExperimentAssignment | null;
+  /** 이미 쌓인 관측 중 무작위 배정 표식이 붙은 비율 */
+  randomizedShare: number;
+  note: string;
+} {
   const target = cropKey ?? obs.find((o) => o.cropKey)?.cropKey ?? "leafy";
   const { setpoints } = agronomyInformedRecipe(obs, target);
-  const Z = obs.map((o) => toNormalized(o, o.cropKey ?? target));
 
   const suggestions: ExperimentSuggestion[] = [];
+  const eligible: { i: number; ratio: number }[] = [];
   FEATURES.forEach((f, i) => {
     const sp = setpoints[i];
     const ratio = sp.sigPostZ / PRIOR_SD;
     if (ratio <= UNCERTAIN_RATIO) return;
-
-    // 관측이 성긴 쪽으로 1σ 나간 점. 이미 촘촘한 구간을 한 번 더 재봐야 배울 게 없다.
-    const zf = Z.map((z) => z[i]);
-    const zMean = zf.reduce((a, b) => a + b, 0) / zf.length;
-    const side = sp.muZ >= zMean ? 1 : -1;
-    const probeZ = sp.muZ + side * sp.sigPostZ;
-    const probe = fromNormalized(
-      FEATURES.map((_, k) => (k === i ? probeZ : 0)),
-      target
-    )[f];
-
+    eligible.push({ i, ratio });
     suggestions.push({
       label: sp.label,
-      suggestValue: Math.round(probe * 100) / 100,
+      suggestValue: Math.round(physical(sp.muZ + sp.sigPostZ, i, target) * 100) / 100,
       unit: sp.unit,
       uncertaintyRatio: Math.round(ratio * 100) / 100,
       reason:
-        `사후 표준편차가 사전의 ${Math.round(ratio * 100)}%로 남아 있다. ` +
-        `관측이 성긴 ${side > 0 ? "높은" : "낮은"} 쪽 ${Math.round(probe * 100) / 100}${sp.unit}에서 한 사이클 시험하면 ` +
-        `이 요인의 추정이 가장 많이 좁아진다.`,
+        `사후 표준편차가 사전의 ${Math.round(ratio * 100)}%로 남아 있다 — ` +
+        `이 요인을 흔들면 배우는 게 가장 많다.`,
     });
   });
-
   suggestions.sort((a, b) => b.uncertaintyRatio - a.uncertaintyRatio);
+
+  const randomizedShare =
+    obs.length === 0 ? 0 : Math.round((obs.filter((o) => o.assignment).length / obs.length) * 1000) / 1000;
+
+  const assignment = drawAssignment(eligible, setpoints, target, opts);
+
+  const gatePart =
+    eligible.length > 0 && !assignment
+      ? ` 다만 남은 요인은 모두 흔들었을 때 예측 손실이 ${MAX_NUDGE_LOSS_PCT}%를 넘어 배정하지 않는다 — 그 축은 탐색이 아니라 이동 대상이다.`
+      : "";
+  const causalPart =
+    randomizedShare > 0
+      ? ` 쌓인 관측의 ${Math.round(randomizedShare * 100)}%가 무작위 배정이라 그만큼은 인과로 읽을 수 있다.`
+      : ` 쌓인 관측에 무작위 배정 표식이 하나도 없다 — 지금 설정점은 개입 권고가 아니라 가설이다.`;
+
   return {
     suggestions,
-    note: suggestions.length
-      ? `${suggestions.length}개 요인의 사후 표준편차가 사전의 ${Math.round(UNCERTAIN_RATIO * 100)}%를 넘는다 — 아직 데이터가 말해주지 않은 구간이다. 제안 조건으로 한 사이클 돌린 뒤 재학습하면 그만큼 좁아진다.`
-      : `모든 요인의 사후 표준편차가 사전의 ${Math.round(UNCERTAIN_RATIO * 100)}% 아래다 — 추가 실험 없이 현 레시피를 써도 된다.`,
+    assignment,
+    randomizedShare,
+    note:
+      (eligible.length
+        ? `${eligible.length}개 요인의 사후 표준편차가 사전의 ${Math.round(UNCERTAIN_RATIO * 100)}%를 넘는다 — 아직 데이터가 말해주지 않은 구간이다.${
+            assignment
+              ? ` 이번 사이클은 ${assignment.label}을(를) ${assignment.recipeValue}${assignment.unit} 대신 ${assignment.assignedValue}${assignment.unit}로 무작위 배정한다.`
+              : ""
+          }${gatePart}`
+        : `모든 요인의 사후 표준편차가 사전의 ${Math.round(UNCERTAIN_RATIO * 100)}% 아래다 — 추가 실험 없이 현 레시피를 써도 된다.`) + causalPart,
   };
+}
+
+/** 요인 i의 정규화 좌표 값을 물리 단위로 */
+function physical(z: number, i: number, cropKey: string): number {
+  return fromNormalized(FEATURES.map((_, k) => (k === i ? z : 0)), cropKey)[FEATURES[i]];
+}
+
+// 요인 하나를 남은 불확실성에 비례해 뽑고, 방향을 동전으로 정한다.
+// 방향을 관측이 성긴 쪽으로 고정하면 배정이 데이터에 의존하게 되어 계절과 다시
+// 엮인다 — 무작위화의 값어치가 바로 거기서 사라진다.
+function drawAssignment(
+  eligible: { i: number; ratio: number }[],
+  setpoints: HybridSetpoint[],
+  target: string,
+  opts?: { seed?: number; fit?: GrowthRecipe }
+): ExperimentAssignment | null {
+  if (eligible.length === 0) return null;
+
+  // 시드가 사이클 번호라 1, 2, 3처럼 붙어 들어온다. 선형합동생성기는 그런 시드에
+  // 대해 첫 난수가 거의 같아서 매 사이클 같은 요인이 뽑힌다 — 무작위가 아니게 된다.
+  // 혼합 단계가 있는 생성기를 써야 이웃한 시드가 갈라진다.
+  let s = (opts?.seed ?? 1) >>> 0;
+  const rand = () => {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+
+  const beta = opts?.fit?._beta;
+  const baseZ = setpoints.map((sp) => sp.muZ);
+  const baseY = beta ? predictSurface(beta, baseZ) : null;
+
+  // 불확실성 비례 추첨. 손실 게이트에 걸리면 그 요인을 빼고 다시 뽑는다.
+  const pool = [...eligible];
+  while (pool.length) {
+    const total = pool.reduce((a, e) => a + e.ratio, 0);
+    let r = rand() * total;
+    let pick = 0;
+    while (pick < pool.length - 1 && r > pool[pick].ratio) {
+      r -= pool[pick].ratio;
+      pick++;
+    }
+    const { i } = pool[pick];
+    const sp = setpoints[i];
+    const dir = rand() < 0.5 ? -1 : 1;
+    // 농학 정상범위 밖으로는 배정하지 않는다 — 배우자고 작물을 상하게 할 수 없다
+    const z = Math.max(-1, Math.min(1, sp.muZ + dir * sp.sigPostZ));
+
+    let costPct = 0;
+    if (beta && baseY !== null && Math.abs(baseY) > 1e-6) {
+      const nudged = [...baseZ];
+      nudged[i] = z;
+      costPct = ((baseY - predictSurface(beta, nudged)) / Math.abs(baseY)) * 100;
+    }
+    if (costPct <= MAX_NUDGE_LOSS_PCT) {
+      return {
+        feature: FEATURES[i],
+        label: sp.label,
+        unit: sp.unit,
+        recipeValue: Math.round(physical(sp.muZ, i, target) * 100) / 100,
+        assignedValue: Math.round(physical(z, i, target) * 100) / 100,
+        z: Math.round(z * 1000) / 1000,
+        direction: z >= sp.muZ ? "상향" : "하향",
+        expectedYieldCostPct: Math.round(Math.max(0, costPct) * 100) / 100,
+        reason:
+          `사후 표준편차가 사전의 ${Math.round((sp.sigPostZ / PRIOR_SD) * 100)}%로 남은 요인이라 추첨 대상이었고, ` +
+          `방향은 동전으로 정했다. 이 값은 계절·인력과 독립이라 다음 사이클의 수확이 ` +
+          `이 요인의 인과 효과를 말해준다. 예측 수율 손실은 ${Math.round(Math.max(0, costPct) * 100) / 100}%다.`,
+      };
+    }
+    pool.splice(pick, 1);
+  }
+  return null;
 }
 
 // ── 통합 오케스트레이터 ──────────────────────────────────────────────────────
@@ -479,14 +449,23 @@ export function activeLearningSuggest(
 // 수확 기록에서 확정한다.
 export interface RecipeReport {
   samples: number;
-  shap: ShapResult[];
+  /** 표면 민감도 — 갭 분석과 같은 계수에서 나온다 */
+  sensitivity: RecipeSensitivity[];
   hybrid: HybridSetpoint[];
   suggestions: ExperimentSuggestion[];
+  /** 이번 사이클에 적용할 무작위 처리. null이면 흔들 축이 없다 */
+  assignment: ExperimentAssignment | null;
+  /** 쌓인 관측 중 무작위 배정 표식이 붙은 비율 — 0이면 인과 주장이 성립하지 않는다 */
+  randomizedShare: number;
   hybridNote: string;
   suggestNote: string;
   /** 반응표면이 최대점을 갖는가 — 아니면 아래 갭 분석은 권고를 내지 않는다 */
   surface: SurfaceVerdict;
   modelR2: number | null;
+  /** 열 스트레스로 무게가 절반 아래로 내려간 관측의 비율 */
+  stressDownweightedShare: number;
+  /** 주야 진폭이 커 사이클 평균이 대표성을 잃은 관측의 비율 */
+  diurnalFlaggedShare: number;
   gap: RecipeGapReport;
   /** 같은 표면 위에서 수율이 아니라 수익을 최대화한 설정점 */
   profit: ProfitRecipe;
@@ -496,20 +475,25 @@ export function growthRecipeDemo(cropKey = "leafy", ledPowerKw = 4): RecipeRepor
   const { observations: obs } = generateObservations(LEAFY_SPEC, 120, 7, cropKey);
   const fit = analyzeGrowthRecipe(obs, { cropKey });
   const hybrid = agronomyInformedRecipe(obs, cropKey);
-  const active = activeLearningSuggest(obs, cropKey);
+  // 시드는 실제 운영에서 사이클 식별자가 된다 — 데모에서는 관측 시드를 그대로 쓴다
+  const active = activeLearningSuggest(obs, cropKey, { seed: 7, fit });
   // 현 사이트 조건 = 관측 평균. 갭 분석이 "여기서 저기로"를 말하는 출발점이다.
   const current = Object.fromEntries(
     FEATURES.map((f) => [f, obs.reduce((s, o) => s + o[f], 0) / obs.length])
   ) as Record<GrowthFeature, number>;
   return {
     samples: obs.length,
-    shap: shapImportance(obs, cropKey),
+    sensitivity: fit.sensitivity,
     hybrid: hybrid.setpoints,
     suggestions: active.suggestions,
+    assignment: active.assignment,
+    randomizedShare: active.randomizedShare,
     hybridNote: hybrid.note,
     suggestNote: active.note,
     surface: fit.surface,
     modelR2: fit.modelR2,
+    stressDownweightedShare: fit.stressDownweightedShare,
+    diurnalFlaggedShare: fit.diurnalFlaggedShare,
     gap: recipeGapAnalysis(fit, current),
     profit: profitOptimalRecipe(obs, fit, { cropKey, ledPowerKw }),
   };

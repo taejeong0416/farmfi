@@ -1,13 +1,44 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { requireRole } from "@/lib/auth";
 import { resolveDataWindow } from "@/lib/data-window";
 
-// GET /api/reports/institution?institutionId=&days=30
-// 기관 성과 리포트: 공간활용(운영률)·생산량·판매·운영현황을 지점별로 집계.
+function csvCell(value: unknown): string {
+  if (value === null || value === undefined) return "";
+  const s = String(value);
+  return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
+// GET /api/reports/institution?institutionId=&days=30&format=csv
+// 기관 성과 리포트 (A-11): 공간활용(운영률)·생산량·판매·운영현황을 지점별로 집계.
+//
+// institutionId를 주지 않으면 기관 목록만 돌려준다 — 화면이 무엇을 고를 수 있는지
+// 알아야 하는데 그것만을 위한 라우트를 따로 두면 같은 권한 검사를 두 번 쓰게 된다.
+//
+// 지점별 매출이 그대로 나오는 경로다. 도입 기관 담당자와 운영팀이 보는 값이므로
+// 관리자 세션에서만 연다.
 export async function GET(req: NextRequest) {
+  try {
+    await requireRole("admin");
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
+
   const institutionId = req.nextUrl.searchParams.get("institutionId");
   if (!institutionId) {
-    return NextResponse.json({ error: "institutionId is required" }, { status: 400 });
+    const institutions = await prisma.institution.findMany({
+      orderBy: { name: "asc" },
+      select: { id: true, name: true, type: true, _count: { select: { projects: true } } },
+    });
+    return NextResponse.json({
+      institutions: institutions.map((i) => ({
+        id: i.id,
+        name: i.name,
+        type: i.type,
+        projectCount: i._count.projects,
+      })),
+    });
   }
   const daysRaw = Number(req.nextUrl.searchParams.get("days") ?? 30);
   const days = Number.isFinite(daysRaw) && daysRaw > 0 ? daysRaw : 30;
@@ -83,6 +114,41 @@ export async function GET(req: NextRequest) {
     totalSalesQuantity: byProject.reduce((s, p) => s + p.salesQuantity, 0),
     totalRevenue: byProject.reduce((s, p) => s + p.revenue, 0),
   };
+
+  if (req.nextUrl.searchParams.get("format") === "csv") {
+    const header = [
+      "institution",
+      "project",
+      "status",
+      "harvestQuantity",
+      "salesQuantity",
+      "revenue",
+      "iotRecords",
+      "anomalyRate",
+    ];
+    const rows = byProject.map((p) =>
+      [
+        institution.name,
+        p.name,
+        p.status,
+        p.harvestQuantity,
+        p.salesQuantity,
+        p.revenue,
+        p.iotRecords,
+        p.anomalyRate,
+      ]
+        .map(csvCell)
+        .join(","),
+    );
+    // Excel이 UTF-8로 열도록 BOM을 붙인다.
+    const csv = "﻿" + [header.join(","), ...rows].join("\r\n");
+    return new NextResponse(csv, {
+      headers: {
+        "content-type": "text/csv; charset=utf-8",
+        "content-disposition": `attachment; filename="institution-${institution.id}-${days}d.csv"`,
+      },
+    });
+  }
 
   return NextResponse.json({
     institution: { id: institution.id, name: institution.name },

@@ -2,13 +2,23 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Button, Card, Checkbox, PanelShell, SkeletonBlock } from "@/components/ui";
+import {
+  Button,
+  Card,
+  Checkbox,
+  Modal,
+  PanelShell,
+  SkeletonBlock,
+} from "@/components/ui";
 import { formatDate } from "@/lib/format";
 import {
   cancelInvestment,
+  consentToAgreement,
   issueVirtualAccount,
   postJson,
   requestDepositInquiry,
+  useAgreementBody,
+  useAgreements,
   useBankAccount,
   useDepositStatus,
   useInvestment,
@@ -16,7 +26,7 @@ import {
   type DepositState,
 } from "../api";
 
-const DOCUMENTS = ["투자계약서", "핵심위험 안내서", "개인정보 제공 동의"];
+const SIGNATURE = "전자서명 동의";
 
 export function InvestConfirmScreen({ projectId }: { projectId: string }) {
   const router = useRouter();
@@ -25,7 +35,9 @@ export function InvestConfirmScreen({ projectId }: { projectId: string }) {
 
   const { data: investment, isLoading } = useInvestment(iid);
   const { data: bankAccount } = useBankAccount();
-  const [agreed, setAgreed] = useState<boolean[]>([false, false, false]);
+  const { data: agreements } = useAgreements();
+  const [agreed, setAgreed] = useState<Record<string, boolean>>({});
+  const [reading, setReading] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [consented, setConsented] = useState(false);
@@ -58,8 +70,14 @@ export function InvestConfirmScreen({ projectId }: { projectId: string }) {
     setBusy(true);
     setError(null);
     try {
+      // 체크박스는 화면에만 남는 표시다. 문서마다 동의를 먼저 기록해야
+      // 신청 동의가 통과한다.
+      for (const a of agreements ?? []) {
+        if (!agreed[a.id]) continue;
+        await consentToAgreement(a.id, investment.id, SIGNATURE);
+      }
       await postJson(`/api/investments/${investment.id}/consent`, {
-        signature: "전자서명 동의",
+        signature: SIGNATURE,
       });
     } catch (e) {
       setError(e instanceof Error ? e.message : "동의를 저장하지 못했습니다.");
@@ -112,7 +130,9 @@ export function InvestConfirmScreen({ projectId }: { projectId: string }) {
     );
   }
 
-  const allAgreed = agreed.every(Boolean);
+  const requiredDocs = (agreements ?? []).filter((a) => a.required);
+  const allAgreed =
+    requiredDocs.length > 0 && requiredDocs.every((a) => agreed[a.id]);
 
   return (
     <PanelShell>
@@ -169,23 +189,34 @@ export function InvestConfirmScreen({ projectId }: { projectId: string }) {
 
       <Card className="mt-4 rounded-14">
         <div className="space-y-3">
-          {DOCUMENTS.map((d, i) => (
-            <Checkbox
-              key={d}
-              label={<span className="text-14 font-medium text-ink">{d}</span>}
-              checked={agreed[i]}
-              onChange={(e) =>
-                setAgreed((v) =>
-                  v.map((x, idx) => (idx === i ? e.target.checked : x)),
-                )
-              }
-            />
+          {(agreements ?? []).map((a) => (
+            <div key={a.id} className="flex items-center justify-between gap-4">
+              <Checkbox
+                label={
+                  <span className="text-14 font-medium text-ink">{a.title}</span>
+                }
+                checked={Boolean(agreed[a.id])}
+                onChange={(e) =>
+                  setAgreed((v) => ({ ...v, [a.id]: e.target.checked }))
+                }
+              />
+              <button
+                type="button"
+                className="shrink-0 text-13 font-medium text-brand underline underline-offset-2"
+                onClick={() => setReading(a.id)}
+              >
+                전문 보기
+              </button>
+            </div>
           ))}
         </div>
         <p className="mt-4 text-12 leading-5 text-muted">
-          계약서와 위험 안내를 확인한 뒤 동의해 주세요. 동의와 입금 확인 내역은 변경하기 어렵게 기록됩니다.
+          계약서와 위험 안내를 확인한 뒤 동의해 주세요. 동의한 문서의 판과 동의 시각이 함께
+          기록되며, 동의와 입금 확인 내역은 변경하기 어렵게 남습니다.
         </p>
       </Card>
+
+      <AgreementModal id={reading} onClose={() => setReading(null)} />
 
       {error ? <p className="mt-4 text-13 text-danger">{error}</p> : null}
 
@@ -198,6 +229,39 @@ export function InvestConfirmScreen({ projectId }: { projectId: string }) {
         </Button>
       </div>
     </PanelShell>
+  );
+}
+
+/** 문서 전문. 동의하기 전에 읽을 수 있어야 동의가 동의다. */
+function AgreementModal({
+  id,
+  onClose,
+}: {
+  id: string | null;
+  onClose: () => void;
+}) {
+  const { data, isLoading } = useAgreementBody(id);
+
+  return (
+    <Modal
+      open={Boolean(id)}
+      onClose={onClose}
+      title={data?.title ?? "문서"}
+      desc={data ? `${data.version}판` : undefined}
+      footer={
+        <Button full variant="ghost" onClick={onClose}>
+          닫기
+        </Button>
+      }
+    >
+      {isLoading || !data ? (
+        <SkeletonBlock height={240} />
+      ) : (
+        <p className="max-h-[50vh] overflow-y-auto whitespace-pre-wrap text-13 leading-6 text-body">
+          {data.body}
+        </p>
+      )}
+    </Modal>
   );
 }
 

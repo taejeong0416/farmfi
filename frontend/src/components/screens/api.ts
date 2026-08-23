@@ -119,6 +119,35 @@ export type ProjectDetail = ProjectSummary & {
   fundingStart: string | null;
 };
 
+/**
+ * 지점 기준가(NAV). 청약도 집행도 없으면 서버가 `available: false`로 내려주고,
+ * 화면은 항목을 감춘다 — 0원으로 찍으면 손실로 읽힌다.
+ */
+export type ProjectNav =
+  | {
+      available: false;
+      reason: string;
+      basis: { holdings: number; executedMilestones: number };
+    }
+  | {
+      available: true;
+      basis: { holdings: number; executedMilestones: number };
+      nav: number;
+      previousNav: number;
+      changeRate: number;
+      breakdown: { escrow: number; asset: number; cashFlow: number };
+      issuePrice: number;
+    };
+
+export function useProjectNav(id: string) {
+  return useQuery({
+    queryKey: ["project-nav", id],
+    queryFn: () => getJson<ProjectNav>(`/api/projects/${id}/nav`),
+    enabled: Boolean(id),
+    retry: false,
+  });
+}
+
 // GET /api/projects/[id]는 프로젝트 객체를 그대로 내려준다.
 export function useProject(id: string) {
   return useQuery({
@@ -297,6 +326,50 @@ export async function cancelInvestment(id: string): Promise<void> {
   await postJson(`/api/investments/${id}/cancel`);
 }
 
+// ─── 동의 문서 (I-03) ───
+
+export type AgreementSummary = {
+  id: string;
+  code: string;
+  version: string;
+  title: string;
+  required: boolean;
+};
+
+export function useAgreements() {
+  return useQuery({
+    queryKey: ["agreements"],
+    queryFn: () => getJson<{ agreements: AgreementSummary[] }>("/api/agreements"),
+    select: (d) => d.agreements,
+    retry: false,
+  });
+}
+
+/** 문서 본문. 사용자가 열어볼 때만 받는다. */
+export function useAgreementBody(id: string | null) {
+  return useQuery({
+    queryKey: ["agreement", id],
+    queryFn: () =>
+      getJson<{ agreement: { title: string; version: string; body: string } }>(
+        `/api/agreements/${id}`,
+      ),
+    select: (d) => d.agreement,
+    enabled: Boolean(id),
+    retry: false,
+  });
+}
+
+export async function consentToAgreement(
+  agreementId: string,
+  investmentId: string,
+  signature: string,
+): Promise<void> {
+  await postJson(`/api/agreements/${agreementId}/consent`, {
+    investmentId,
+    signature,
+  });
+}
+
 // ─── 회수·환불 계좌 (C-I03) ───
 
 export type BankAccountInfo = {
@@ -440,6 +513,199 @@ export async function patchApplication(
   return data.application;
 }
 
+// ─── 현장 방문 예약 (O-04) ───
+
+export type OperatorVisit = {
+  id: string;
+  scheduledAt: string;
+  slot: string;
+  note: string | null;
+  status: string;
+  completedAt: string | null;
+  resultNote: string | null;
+};
+
+/** 살아 있는 예약 한 건. 취소·완료된 건은 이력이라 여기서 걸러낸다. */
+export function useOperatorVisit() {
+  return useQuery({
+    queryKey: ["operator-visit"],
+    queryFn: () => getJson<{ visits: OperatorVisit[] }>("/api/operator/visits"),
+    select: (d) => d.visits.find((v) => v.status === "RESERVED") ?? null,
+    retry: false,
+  });
+}
+
+export async function reserveVisit(body: {
+  scheduledAt: string;
+  slot: string;
+  note?: string;
+}): Promise<OperatorVisit> {
+  const data = await postJson<{ visit: OperatorVisit }>(
+    "/api/operator/visits",
+    body,
+  );
+  return data.visit;
+}
+
+export async function cancelVisit(id: string): Promise<void> {
+  const res = await fetch(`/api/operator/visits/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ cancel: true }),
+  });
+  if (!res.ok) {
+    const data = (await res.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(data?.error ?? "예약을 취소하지 못했습니다.");
+  }
+}
+
+// ─── 필수 교육 (O-05) ───
+
+export type OperatorCourse = {
+  id: string;
+  code: string;
+  title: string;
+  summary: string;
+  seq: number;
+  weight: number;
+  durationSec: number;
+  progress: number;
+  lastPositionSec: number;
+  completedAt: string | null;
+};
+
+export function useOperatorCourses() {
+  return useQuery({
+    queryKey: ["operator-courses"],
+    queryFn: () =>
+      getJson<{
+        courses: OperatorCourse[];
+        educationProgress: number;
+        educationDoneAt: string | null;
+      }>("/api/operator/courses"),
+    retry: false,
+  });
+}
+
+export async function saveCourseProgress(
+  courseId: string,
+  progress: number,
+  lastPositionSec?: number,
+): Promise<{ education: { progress: number; done: boolean } }> {
+  return postJson(`/api/operator/courses/${courseId}/progress`, {
+    progress,
+    lastPositionSec,
+  });
+}
+
+// ─── 운영 계약 (O-07) ───
+
+export type OperatorContract = {
+  id: string;
+  body: string;
+  contentHash: string;
+  status: string;
+  signatureRequestedAt: string | null;
+  signedAt: string | null;
+  termStart: string | null;
+  termEnd: string | null;
+};
+
+export function useOperatorContract() {
+  return useQuery({
+    queryKey: ["operator-contract"],
+    queryFn: () =>
+      getJson<{ contract: OperatorContract | null; reason?: string }>(
+        "/api/operator/contract",
+      ),
+    retry: false,
+  });
+}
+
+export async function requestContractSignature(
+  id: string,
+  signature?: string,
+): Promise<OperatorContract> {
+  const data = await postJson<{ contract: OperatorContract }>(
+    `/api/operator/contracts/${id}/signature-request`,
+    signature ? { signature } : {},
+  );
+  return data.contract;
+}
+
+// ─── 픽업 바코드 (B-09) ───
+
+export type PickupBarcode = {
+  pickupId: string;
+  code: string;
+  token: string;
+  issuedAt: string | null;
+  scheduledAt: string;
+  status: string;
+  storeName: string;
+  storeLocation: string | null;
+  packSize: number;
+  dressingCount: number;
+};
+
+/**
+ * 회차 바코드. 이미 수령·건너뛴 회차는 서버가 발급을 거부하므로 오류를 그대로
+ * 화면에 올린다 — 손에 남은 바코드가 계속 유효해 보이면 안 된다.
+ */
+export function usePickupBarcode(pickupCode: string | null) {
+  return useQuery({
+    queryKey: ["pickup-barcode", pickupCode],
+    queryFn: () =>
+      getJson<{ barcode: PickupBarcode }>(`/api/pickups/${pickupCode}/barcode`),
+    select: (d) => d.barcode,
+    enabled: Boolean(pickupCode),
+    retry: false,
+  });
+}
+
+// ─── 운영자 보증서 (O-08) ───
+
+// 값의 정본은 서버(lib/credential.ts)다. 여기 키가 그 값과 어긋나면 화면에
+// 라벨 대신 코드 문자열이 그대로 나온다.
+export const CREDENTIAL_STATUS_LABEL: Record<string, string> = {
+  active: "유효",
+  suspended: "정지",
+  expired: "만료",
+  revoked: "해지",
+};
+
+export const CREDENTIAL_REASON_LABEL: Record<string, string> = {
+  training_expired: "교육 이수 만료",
+  safety_check_expired: "안전점검 만료",
+  serious_violation: "중대 위반",
+  contract_ended: "운영계약 종료",
+  other: "기타",
+};
+
+export type OperatorCredential = {
+  id: string;
+  credentialNo: string;
+  operatorName: string;
+  spaceAddress: string | null;
+  status: string;
+  issuedAt: string;
+  expiresAt: string;
+  statusReason: string | null;
+  statusNote: string | null;
+};
+
+export function useOperatorCredential() {
+  return useQuery({
+    queryKey: ["operator-credential"],
+    queryFn: () =>
+      getJson<{ credential: OperatorCredential | null; missing?: string[] }>(
+        "/api/operator/credential",
+      ),
+    retry: false,
+  });
+}
+
 export type PayoutItem = {
   id: string;
   projectId: string;
@@ -450,10 +716,37 @@ export type PayoutItem = {
   period: string;
   status: string;
   paidAt: string | null;
+  failureCode: string | null;
   failureReason: string | null;
+  /** 실패 건에만 실린다. 무엇을 해야 하는지는 서버가 정한다(lib/payout-failure.ts) */
+  failure: {
+    code: string;
+    label: string;
+    retryable: boolean;
+    actor: "admin" | "payee" | "manual";
+    hint: string | null;
+  } | null;
+  retryCount: number;
+  lastAttemptAt: string | null;
   memo: string | null;
   createdAt: string;
 };
+
+export async function retryPayout(
+  id: string,
+): Promise<{ ok: boolean; error?: string }> {
+  const res = await fetch(`/api/payouts/${id}/execute`, {
+    method: "POST",
+    credentials: "include",
+  });
+  const data = (await res.json().catch(() => null)) as
+    | { ok?: boolean; error?: string }
+    | null;
+  if (!res.ok) {
+    throw new Error(data?.error ?? "재시도에 실패했습니다.");
+  }
+  return { ok: Boolean(data?.ok), error: data?.error };
+}
 
 export const PAYOUT_STATUS_LABEL: Record<string, string> = {
   processing: "이체 중",

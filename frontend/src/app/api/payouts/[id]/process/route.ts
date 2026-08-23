@@ -59,10 +59,18 @@ export async function POST(
           ? {
               status: "paid",
               paidAt: now,
+              failureCode: null,
               failureReason: null,
               ...(evidenceUrl ? { evidenceUrl: String(evidenceUrl) } : {}),
             }
-          : { status: "failed", failureReason: String(failureReason).trim(), paidAt: null },
+          : {
+              status: "failed",
+              // 사람이 손으로 적은 실패에는 어댑터 코드가 없다. 코드가 없으면
+              // 재시도를 열지 않는다 — 원인을 모르는 채 다시 보내지 않는다.
+              failureCode: null,
+              failureReason: String(failureReason).trim(),
+              paidAt: null,
+            },
     });
     if (claimed.count === 0) {
       return NextResponse.json(

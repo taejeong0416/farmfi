@@ -32,6 +32,8 @@ export type EnvelopeVerdict =
   | "REJECTED_SURFACE"
   /** 최적점이 탐색 경계에 붙음 → "여기까지밖에 못 봤다"는 뜻이라 채택하지 않는다 */
   | "REJECTED_BOUNDARY"
+  /** 곡률이 잡히지 않음 → 이 요인에는 최적점이라 부를 것이 없다 */
+  | "REJECTED_CURVATURE"
   /** 값이 숫자가 아니다 (적합 실패·결측) */
   | "REJECTED_INVALID";
 
@@ -178,6 +180,14 @@ export function applyEnvelope(
         "REJECTED_BOUNDARY",
         fallback,
         "최적점이 관측 범위 끝에 붙었습니다. 더 좋은 값이 밖에 있을 수 있어 채택하지 않습니다.",
+      );
+      continue;
+    }
+    if (sp.curvatureUnresolved) {
+      push(
+        "REJECTED_CURVATURE",
+        fallback,
+        "관측이 이 요인의 곡률을 잡지 못했습니다. 꼭짓점이 없으니 최적점이라 부를 값도 없습니다.",
       );
       continue;
     }

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button, Card, EmptyState, PanelShell, SkeletonBlock } from "@/components/ui";
 import { formatDate } from "@/lib/format";
-import { patchSubscription, useSubscriptions } from "../api";
+import { patchSubscription, usePickupBarcode, useSubscriptions } from "../api";
 
 /** 확인번호 → 막대 폭 배열. 화면과 저장 이미지가 같은 그림이어야 하므로 한 곳에서 만든다. */
 function barWidths(code: string): number[] {
@@ -39,8 +39,11 @@ function Barcode({ code }: { code: string }) {
  * 확인번호·지점·일시를 같이 그린다 — 막대만 저장하면 스캔이 안 될 때
  * 사진을 보고 번호를 부를 수가 없다.
  */
+// code는 스캔 대상(바코드 토큰), label은 사람이 부르는 확인번호다. 막대는 code로
+// 그리고 글자와 파일명에는 label만 쓴다 — 토큰이 파일명으로 새어 나가면 안 된다.
 function savePassImage(opts: {
   code: string;
+  label: string;
   storeName: string;
   when: string;
   pack: string;
@@ -84,7 +87,7 @@ function savePassImage(opts: {
 
   ctx.fillStyle = "#1A1A1A";
   ctx.font = "500 20px ui-monospace, monospace";
-  const text = opts.code;
+  const text = opts.label;
   const textWidth = ctx.measureText(text).width;
   ctx.fillText(text, (width - textWidth) / 2, top + barHeight + 40);
 
@@ -93,13 +96,26 @@ function savePassImage(opts: {
   ctx.fillText("매장 직원에게 이 화면을 보여 주세요", 40, height - 28);
 
   const link = document.createElement("a");
-  link.download = `farmfi-pickup-${opts.code}.png`;
+  link.download = `farmfi-pickup-${opts.label}.png`;
   link.href = canvas.toDataURL("image/png");
   link.click();
 }
 
 export function PickupPassScreen({ pickupId }: { pickupId: string }) {
   const { data: subscriptions, isLoading, refetch } = useSubscriptions();
+
+  const subscription = (subscriptions ?? []).find((s) =>
+    s.pickups.some((p) => p.id === pickupId),
+  );
+  const pickup = subscription?.pickups.find((p) => p.id === pickupId);
+
+  // 픽업 라우트는 확인번호 하나로 회차를 찾는다(스캔·수동입력·발급이 같은 키를 쓴다).
+  // 화면은 회차 id로 열리므로 구독을 받은 뒤에야 확인번호를 알 수 있다.
+  const {
+    data: barcode,
+    error: barcodeError,
+    refetch: refetchBarcode,
+  } = usePickupBarcode(pickup?.code ?? null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -110,11 +126,6 @@ export function PickupPassScreen({ pickupId }: { pickupId: string }) {
       </PanelShell>
     );
   }
-
-  const subscription = (subscriptions ?? []).find((s) =>
-    s.pickups.some((p) => p.id === pickupId),
-  );
-  const pickup = subscription?.pickups.find((p) => p.id === pickupId);
 
   if (!subscription || !pickup) {
     return (
@@ -136,7 +147,7 @@ export function PickupPassScreen({ pickupId }: { pickupId: string }) {
         action: "skip",
         pickupId,
       });
-      await refetch();
+      await Promise.all([refetch(), refetchBarcode()]);
     } catch (e) {
       setError(e instanceof Error ? e.message : "요청에 실패했습니다.");
     } finally {
@@ -169,33 +180,44 @@ export function PickupPassScreen({ pickupId }: { pickupId: string }) {
           확인번호 {pickup.code}
         </p>
 
-        <div className="mt-6 rounded-10 border border-line px-5 py-6">
-          <Barcode code={pickup.code} />
-          <p className="mt-4 text-center font-num text-14 tracking-[0.3em] text-ink">
-            {pickup.code}
-          </p>
-        </div>
-
-        <p className="mt-4 text-11 text-muted">
-          직원이 바코드를 확인하면 수령 완료로 바뀝니다. 밝기를 높이면 더 잘 보여요.
-        </p>
-
-        <div className="mt-5">
-          <Button
-            full
-            variant="ghost"
-            onClick={() =>
-              savePassImage({
-                code: pickup!.code,
-                storeName: `${subscription!.project.name} · ${subscription!.project.location ?? "-"}`,
-                when: formatDate(pickup!.scheduledAt),
-                pack: `${subscription!.packSize}종 믹스팩 · 드레싱 ${subscription!.dressings.length}봉`,
-              })
-            }
-          >
-            바코드 이미지 저장
-          </Button>
-        </div>
+        {barcode ? (
+          <>
+            <div className="mt-6 rounded-10 border border-line px-5 py-6">
+              <Barcode code={barcode.token} />
+              <p className="mt-4 text-center font-num text-14 tracking-[0.3em] text-ink">
+                {barcode.code}
+              </p>
+            </div>
+            <p className="mt-4 text-11 text-muted">
+              직원이 바코드를 확인하면 수령 완료로 바뀝니다. 밝기를 높이면 더 잘 보여요.
+            </p>
+            <div className="mt-5">
+              <Button
+                full
+                variant="ghost"
+                onClick={() =>
+                  savePassImage({
+                    code: barcode.token,
+                    label: barcode.code,
+                    storeName: `${subscription!.project.name} · ${subscription!.project.location ?? "-"}`,
+                    when: formatDate(pickup!.scheduledAt),
+                    pack: `${subscription!.packSize}종 믹스팩 · 드레싱 ${subscription!.dressings.length}봉`,
+                  })
+                }
+              >
+                바코드 이미지 저장
+              </Button>
+            </div>
+          </>
+        ) : (
+          <div className="mt-6 rounded-10 border border-line px-5 py-6">
+            <p className="text-center text-13 text-muted">
+              {barcodeError instanceof Error
+                ? barcodeError.message
+                : "바코드를 준비하고 있어요."}
+            </p>
+          </div>
+        )}
       </Card>
 
       {error ? <p className="mt-4 text-12 text-danger">{error}</p> : null}

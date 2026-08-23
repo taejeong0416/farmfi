@@ -36,6 +36,23 @@ export interface SynthSpec {
   noiseSd: number;
   /** 물리적 하한 — 작물이 죽는 구간. 자주 걸리면 응답이 절단되어 회귀가 편향된다 */
   floor: number;
+
+  // ── 사이클 평균이 지우는 것 ───────────────────────────────────────────────
+  // 사이클 평균만 관측하면 시간 구조가 사라진다. 그 손실이 실제로 얼마나 아픈지는
+  // 생성기가 시간 구조를 갖고 있어야만 잴 수 있다. 그래서 주야 진폭을 사이클마다
+  // 따로 뽑고, 주간 온도가 상한을 넘긴 시간에 비례해 수율에 벌점을 준다.
+  //
+  // 벌점이 평균 온도의 함수가 아니라는 게 핵심이다. 진폭은 평균과 독립으로 뽑히므로
+  // 회귀는 이 벌점을 설명할 수 없고, 그런데도 벌점은 평균 온도와 함께 커진다
+  // (주간온도 = 평균 + 진폭/2). 그 결과 온도 최적점이 실제보다 낮게 끌려간다.
+  /** 주야 진폭이 뽑히는 범위 (℃) */
+  diurnalAmpC: [number, number];
+  /** 주간 온도가 이 값을 넘으면 열 스트레스 (℃) */
+  stressAboveC: number;
+  /** 한 사이클의 명기 시간 (h) — 28일 × 12시간 */
+  litHoursPerCycle: number;
+  /** 초과 1시간당 수율 손실 (kg/㎡) */
+  stressPenaltyPerHour: number;
 }
 
 // 엽채류(상추) 테스트 베드. center는 crop-profiles의 정상범위 안쪽에 두어,
@@ -61,6 +78,10 @@ export const LEAFY_SPEC: SynthSpec = {
   },
   noiseSd: 0.12,
   floor: 0.3,
+  diurnalAmpC: [0, 8],
+  stressAboveC: 27,
+  litHoursPerCycle: 336, // 28일 × 12시간
+  stressPenaltyPerHour: 0.0025, // 명기 전체가 초과면 0.84kg/㎡
 };
 
 /** 스펙의 진짜 최적점. 오목성이 성립하는 한 center와 같다. */
@@ -147,10 +168,22 @@ export function trueYield(spec: SynthSpec, x: Record<SynthFeature, number>): num
   return Math.max(spec.floor, y);
 }
 
+/**
+ * 주야 진폭에서 나오는 열 스트레스. 주간 온도가 상한을 2℃ 넘으면 명기 전체가
+ * 초과 구간이고, 그 사이에서는 선형으로 늘어난다.
+ */
+export function stressHours(spec: SynthSpec, meanTempC: number, ampC: number): number {
+  const daytime = meanTempC + ampC / 2;
+  const over = Math.max(0, Math.min(1, (daytime - spec.stressAboveC) / 2));
+  return spec.litHoursPerCycle * over;
+}
+
 export interface SynthResult {
   observations: GrowthObservation[];
   /** 하한에 걸린 관측 비율 — 높으면 응답이 절단되어 회귀가 편향된다 */
   floorRate: number;
+  /** 열 스트레스가 걸린 관측 비율 */
+  stressRate: number;
 }
 
 export function generateObservations(
@@ -169,16 +202,33 @@ export function generateObservations(
 
   const observations: GrowthObservation[] = [];
   let floored = 0;
+  let stressed = 0;
   for (let i = 0; i < n; i++) {
     const env = {} as Record<SynthFeature, number>;
     for (const f of SYNTH_FEATURES) {
       const [lo, hi] = spec.bounds[f];
       env[f] = lo + rand() * (hi - lo);
     }
-    const clean = trueYield(spec, env);
+    // 진폭은 평균과 독립으로 뽑는다 — 회귀가 볼 수 없는 축이어야 손실이 재어진다
+    const [aLo, aHi] = spec.diurnalAmpC;
+    const ampC = aLo + rand() * (aHi - aLo);
+    const excessH = stressHours(spec, env.temp, ampC);
+    if (excessH > 0) stressed++;
+
+    const clean = trueYield(spec, env) - excessH * spec.stressPenaltyPerHour;
     const noisy = clean + gauss() * spec.noiseSd;
     if (noisy <= spec.floor) floored++;
-    observations.push({ ...env, cropKey, yield: Math.max(spec.floor, noisy) });
+    observations.push({
+      ...env,
+      cropKey,
+      yield: Math.max(spec.floor, noisy),
+      tempDiurnalAmpC: Math.round(ampC * 100) / 100,
+      tempExcessHours: Math.round(excessH * 10) / 10,
+    });
   }
-  return { observations, floorRate: Math.round((floored / n) * 1000) / 1000 };
+  return {
+    observations,
+    floorRate: Math.round((floored / n) * 1000) / 1000,
+    stressRate: Math.round((stressed / n) * 1000) / 1000,
+  };
 }

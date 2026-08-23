@@ -43,6 +43,7 @@ model User {
   subscriptions         Subscription[]
   bankAccount           BankAccount?
   custodyWallet         CustodyWallet?
+  agreementConsents     AgreementConsent[]
   credentials           OperatorCredential[]
 }
 
@@ -71,7 +72,90 @@ model OperatorApplication {
   certificateIssuedAt DateTime?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt @default(now())
-  credentials         OperatorCredential[]
+  visits           OperatorVisit[]
+  courseProgresses OperatorCourseProgress[]
+  contract         OperatorContract?
+  credentials      OperatorCredential[]
+}
+
+
+// ─── 현장 방문 예약 (O-04) ───
+// 신청 행의 visitAt 한 칸으로는 예약을 바꾸거나 취소한 이력을 담을 수 없다.
+// 예약은 그 자체로 상태를 가진다.
+model OperatorVisit {
+  id            String              @id @default(cuid())
+  applicationId String
+  application   OperatorApplication @relation(fields: [applicationId], references: [id])
+  spaceId       String?
+  scheduledAt   DateTime
+  // 화면에서 고른 시간 칸. 시각은 scheduledAt이 들고 있고 이건 어느 칸을 골랐는지다.
+  slot          String
+  note          String?
+  // RESERVED → COMPLETED · CANCELLED. 일정을 바꿔도 RESERVED로 남는다.
+  status        String    @default("RESERVED")
+  // 방문 결과. 관리자 심사가 이 값을 본다 (명세 O-04).
+  completedAt   DateTime?
+  resultNote    String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([applicationId, status])
+}
+
+// ─── 필수 교육 과정 (O-05) ───
+// 시나리오 데이터가 아니라 기준 데이터다. 코드에 적힌 걸 DB에 맞춘다.
+model OperatorCourse {
+  id      String @id @default(cuid())
+  code    String @unique
+  title   String
+  summary String
+  seq     Int
+  // 전체 진도에서 이 과정이 차지하는 비중(%). 활성 과정의 합이 100이다.
+  weight     Int
+  // 재생 길이(초). 이어보기가 이 값 대비 어디까지 봤는지를 말한다.
+  durationSec Int     @default(600)
+  isActive    Boolean @default(true)
+  progresses  OperatorCourseProgress[]
+
+  @@index([isActive, seq])
+}
+
+// ─── 과정별 진도 ───
+model OperatorCourseProgress {
+  id            String              @id @default(cuid())
+  applicationId String
+  application   OperatorApplication @relation(fields: [applicationId], references: [id])
+  courseId      String
+  course        OperatorCourse      @relation(fields: [courseId], references: [id])
+  progress      Int                 @default(0) // 0~100
+  // 중단 지점(초). 이어보기가 여기서 다시 시작한다 (명세 O-05).
+  lastPositionSec Int       @default(0)
+  completedAt     DateTime?
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([applicationId, courseId])
+  @@index([applicationId])
+}
+
+// ─── 운영 계약 (O-07) ───
+// 서명 시점의 본문과 해시를 들고 있다. 계약 조건이 나중에 바뀌어도
+// 무엇에 서명했는지가 남는다.
+model OperatorContract {
+  id            String              @id @default(cuid())
+  applicationId String              @unique
+  application   OperatorApplication @relation(fields: [applicationId], references: [id])
+  spaceId       String?
+  body          String
+  contentHash   String
+  // DRAFT → SIGNATURE_REQUESTED → SIGNED (· CANCELLED)
+  status               String    @default("DRAFT")
+  signatureRequestedAt DateTime?
+  signature            String?
+  signedAt             DateTime?
+  termStart            DateTime?
+  termEnd              DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 }
 
 // ─── 신원 인증 세션 (OpenDID Verifier 흐름 — 모바일 신분증) ───
@@ -190,7 +274,7 @@ model Milestone {
   evidenceUrls         String[]  // 운영자가 올린 증빙 파일들
   // 파일별 sha256(업로드 시점 계산). 원본은 저장소에, 체인에는 이 해시만 올린다.
   // evidenceUrls와 같은 순서다. 원본이 바뀌면 해시가 어긋나 위·변조가 드러난다.
-  evidenceHashes       String[]
+  evidenceHashes       String[]  @default([])
   evidenceNote         String?   // 제출 시 남긴 설명
   evidenceSubmittedAt  DateTime?
   reviewNote           String?   // 관리자 재검토 의견
@@ -446,9 +530,15 @@ model Payout {
   payeeName     String
   amount        BigInt
   period        String    // YYYY-MM
-  status        String    @default("scheduled") // scheduled → paid / failed
+  status        String    @default("scheduled") // scheduled → processing → paid / failed
   paidAt        DateTime?
+  // 실패 사유 코드. 사람이 읽는 문장(failureReason)만으로는 무엇을 해야 하는지가
+  // 갈리지 않는다 — 은행 오류는 그대로 다시 걸면 되고 계좌 문제는 수취인이 고쳐야
+  // 재시도가 의미 있다. 코드별 다음 행동은 lib/payout-failure.ts가 정한다.
+  failureCode   String?
   failureReason String?
+  retryCount    Int       @default(0) // 이체를 실제로 보낸 횟수
+  lastAttemptAt DateTime?
   evidenceUrl   String?   // 세금계산서 등 지급 증빙
   memo          String?
   createdAt     DateTime  @default(now())
@@ -622,6 +712,9 @@ model Investment {
   // 동의·서명
   consentedAt  DateTime?
   signature    String?
+  // 이 신청에서 동의한 문서들을 하나로 묶은 해시. 체인에 계약 해시를 기록할 때
+  // 올릴 값이다 (명세 10.4). 문서 원문이 아니라 이 값만 체인으로 나간다.
+  agreementHash String?
   // 납입 결과
   transactionId String?
   failureReason String?
@@ -633,9 +726,61 @@ model Investment {
   virtualAccounts VirtualAccount[]
   depositEvents   DepositEvent[]
   issuances       HoldingIssuance[]
+  consents        AgreementConsent[]
 
   @@index([userId, createdAt])
   @@index([projectId, status])
+}
+
+// ─── 동의 문서 (명세 5.2 · 10.6) ───
+// 문서는 고쳐 쓰지 않고 버전을 올린다. 이미 동의한 사람이 본 문서가 나중에 바뀌면
+// "무엇에 동의했는지"를 증명할 수 없다. 본문이 바뀌면 새 행이다.
+model Agreement {
+  id      String @id @default(cuid())
+  // investment_contract · risk_disclosure · privacy_consent
+  code    String
+  version String
+  title   String
+  body    String
+  // sha256(body). 동의 기록에 같이 박아 문서 원문과의 연결을 남긴다.
+  contentHash String
+  // 필수 문서는 전부 동의해야 투자 신청이 넘어간다.
+  required    Boolean  @default(true)
+  // 화면에 늘어놓는 순서
+  sortOrder     Int      @default(0)
+  effectiveFrom DateTime @default(now())
+  // 새 버전이 나오면 옛 버전은 false. 지우지 않는다 — 과거 동의가 가리키는 문서다.
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  consents      AgreementConsent[]
+
+  @@unique([code, version])
+  @@index([isActive, sortOrder])
+}
+
+// ─── 동의 기록 ───
+// 누가 · 어느 문서(버전)에 · 언제 · 무엇으로 서명했는지. 문서 해시를 여기에도
+// 복사해 둔다 — Agreement 행을 잘못 건드려도 동의 시점의 값이 남는다.
+model AgreementConsent {
+  id String @id @default(cuid())
+  // `<userId>:<agreementId>:<investmentId|->`. Postgres는 NULL을 서로 다르게 보므로
+  // investmentId가 없는 동의까지 막으려면 복합 unique가 아니라 이 키가 필요하다.
+  consentKey  String @unique
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  agreementId String
+  agreement   Agreement @relation(fields: [agreementId], references: [id])
+  // 어느 투자 신청에 대한 동의인지. 신청과 무관한 동의는 null.
+  investmentId String?
+  investment   Investment? @relation(fields: [investmentId], references: [id])
+  contentHash  String
+  signature    String
+  // 명세 5.2 — 동의는 본인확인 세션을 재확인한 뒤에 이뤄진다.
+  identityVerificationId String?
+  consentedAt            DateTime @default(now())
+
+  @@index([userId, consentedAt])
+  @@index([investmentId])
 }
 
 // ─── 회수·환불 계좌 (C-I03) ───
@@ -732,8 +877,12 @@ model PickupOrder {
   // 앱 명세의 SCHEDULED→PREPARING→READY→COMPLETED를 이 값들에 맞춘다.
   // PREPARING은 운영자가 체크하는 순간이 곧 ready라 따로 두지 않는다.
   status         String       @default("scheduled")
-  // 매장 확인번호. 스캔·수동입력 모두 이 값으로 찾으므로 전역 유일해야 한다.
+  // 매장 확인번호. 사람이 읽고 부르는 값이다.
   code           String       @unique
+  // 바코드에 담기는 값. 확인번호는 구독 id와 날짜로 정해져 짐작할 수 있으므로
+  // 스캔 대상은 따로 둔다. 앱이 이 값으로 회차를 찾아 수령 처리한다.
+  barcodeToken    String?     @unique
+  barcodeIssuedAt DateTime?
   preparedAt     DateTime?    // 운영자가 팩 준비를 마친 시각
   pickedAt       DateTime?
   pickedById     String?      // 수령 처리한 운영자 User.id — 중복 스캔 안내에 쓴다
@@ -789,6 +938,35 @@ model HoldingIssuance {
   @@index([investmentId])
 }
 
+// ─── 대사 감사 큐 (v2.1) ───
+// DB와 체인이 어긋난 사실을 적어 두는 곳. 대사는 절대 자동으로 고치지 않는다 —
+// 어느 쪽이 맞는지는 기계가 판단할 수 없고, 잘못 맞추면 구좌가 이중으로 생기거나
+// 사라진다. 여기 쌓인 행을 사람이 보고 처리한다.
+model ReconciliationEntry {
+  id           String   @id @default(cuid())
+  // 같은 불일치가 매 회차 새 행으로 쌓이지 않게 하는 키.
+  // 예: `holding:<walletId>:<날짜>` · `receipt:<issuanceId>`
+  scopeKey     String   @unique
+  // HOLDING_MISMATCH(지갑 잔액 불일치) · RECEIPT_REVERTED(체인에서 되돌려짐)
+  // · RECEIPT_MISSING(해시는 있는데 영수증이 안 잡힘)
+  kind         String
+  entityType   String // custody_wallet · holding_issuance
+  entityId     String
+  // 대사 시점의 양쪽 값. 사람이 판단할 근거라 문자열로 그대로 남긴다.
+  expectedText String
+  actualText   String
+  detail       Json?
+  status       String   @default("OPEN") // OPEN · RESOLVED
+  resolution   String?
+  resolvedBy   String?
+  resolvedAt   DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([status, createdAt])
+  @@index([kind, status])
+}
+
 // ─── 기간 정산 입력 (A-16 · Phase S1) ───
 // 인수 기준: "관리자가 매출·비용을 확정해야 정산 계산이 돈다. 확정 전 값은
 // 계산에 들어가지 않는다." 그래서 배당 라우트는 이 표에서 confirmed인 행만 읽는다.
@@ -809,7 +987,7 @@ model PeriodRecord {
   confirmedById String?
   confirmedAt   DateTime?
   createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  updatedAt     DateTime  @updatedAt @default(now())
 
   @@unique([projectId, period])
   @@index([status, period])
@@ -861,7 +1039,7 @@ model MilestoneReviewItem {
   decidedById String?
   decidedAt   DateTime?
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  updatedAt   DateTime  @updatedAt @default(now())
 
   @@unique([milestoneId, signal])
   @@index([milestoneId])

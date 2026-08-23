@@ -1,9 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Card, EmptyState, PanelShell } from "@/components/ui";
-import { patchApplication, useOperatorApplication } from "../api";
+import {
+  cancelVisit,
+  reserveVisit,
+  useOperatorApplication,
+  useOperatorVisit,
+} from "../api";
 import { ApplyStepLine } from "./ApplyStepLine";
 
 const SLOTS = [
@@ -28,12 +33,22 @@ const WEEKDAY = ["일", "월", "화", "수", "목", "금", "토"];
 export function ApplyVisitScreen() {
   const router = useRouter();
   const { data: application, refetch } = useOperatorApplication();
+  const { data: visit, refetch: refetchVisit } = useOperatorVisit();
   const days = nextDays(14);
 
   const [day, setDay] = useState<Date>(days[0]);
   const [slot, setSlot] = useState(SLOTS[1].time);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // 이미 잡아둔 예약이 있으면 그 날짜·시간에서 시작한다. 다시 고르게 하면
+  // 언제로 잡아뒀는지 화면에서 사라진다.
+  useEffect(() => {
+    if (!visit) return;
+    const at = new Date(visit.scheduledAt);
+    setDay(at);
+    setSlot(visit.slot);
+  }, [visit]);
 
   if (!application) {
     return (
@@ -54,14 +69,25 @@ export function ApplyVisitScreen() {
       const [h, m] = slot.split(":").map(Number);
       const at = new Date(day);
       at.setHours(h, m, 0, 0);
-      await patchApplication(application!.id, {
-        step: "visit",
-        visitAt: at.toISOString(),
-      });
-      await refetch();
+      await reserveVisit({ scheduledAt: at.toISOString(), slot });
+      await Promise.all([refetch(), refetchVisit()]);
       router.push("/operator/apply/education");
     } catch (e) {
       setError(e instanceof Error ? e.message : "예약에 실패했습니다.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function cancel() {
+    if (!visit) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await cancelVisit(visit.id);
+      await Promise.all([refetch(), refetchVisit()]);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "예약을 취소하지 못했습니다.");
     } finally {
       setBusy(false);
     }
@@ -75,6 +101,18 @@ export function ApplyVisitScreen() {
       <p className="mt-3 text-14 leading-6 text-body">
         채광, 전력, 급배수와 픽업 동선을 담당 매니저와 함께 확인합니다. 방문 뒤에도 신청을 취소할 수 있어요.
       </p>
+
+      {visit ? (
+        <Card className="mt-7 rounded-14 border-brand bg-brand-soft">
+          <p className="text-15 font-bold text-ink">
+            {new Date(visit.scheduledAt).getMonth() + 1}월{" "}
+            {new Date(visit.scheduledAt).getDate()}일 {visit.slot} 예약됨
+          </p>
+          <p className="mt-2 text-13 text-body">
+            아래에서 날짜와 시간을 다시 고르면 이 예약이 그 일정으로 옮겨져요.
+          </p>
+        </Card>
+      ) : null}
 
       <Card className="mt-7 rounded-14">
         <h2 className="text-17 font-bold text-ink">예약 날짜</h2>
@@ -148,8 +186,13 @@ export function ApplyVisitScreen() {
 
       <div className="mt-6 space-y-3">
         <Button full disabled={busy} onClick={submit}>
-          {busy ? "예약 중" : "이 일정으로 방문 예약"}
+          {busy ? "저장 중" : visit ? "이 일정으로 변경" : "이 일정으로 방문 예약"}
         </Button>
+        {visit ? (
+          <Button full variant="ghost" disabled={busy} onClick={cancel}>
+            예약 취소
+          </Button>
+        ) : null}
         <Button full variant="ghost" href="/operator">
           저장하고 나가기
         </Button>

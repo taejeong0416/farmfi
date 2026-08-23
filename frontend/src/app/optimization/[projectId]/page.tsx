@@ -337,17 +337,24 @@ export default async function OptimizationPage({
         <p className="text-xs font-medium text-body bg-surface rounded px-2 py-1">
           ※ 합성 데이터 데모 (실 수율은 1호점 수확기록에서 확정). 반응표면 판정{" "}
           <strong>{recipe.surface}</strong> · 설명력{" "}
-          {recipe.modelR2 === null ? "판정 불가(표본 부족)" : `CV R² ${recipe.modelR2}`}
+          {recipe.modelR2 === null ? "판정 불가(표본 부족)" : `CV R² ${recipe.modelR2}`} · 열 스트레스로
+          무게를 낮춘 관측 {Math.round(recipe.stressDownweightedShare * 100)}% · 주야 진폭이 커
+          평균이 대표성을 잃은 관측 {Math.round(recipe.diurnalFlaggedShare * 100)}%
         </p>
 
         <div className="grid gap-3 sm:grid-cols-2 text-sm">
           <div className="rounded bg-white p-3">
-            <div className="font-medium">특성 중요도 (SHAP 섀플리 값)</div>
+            <div className="font-medium">표면 민감도 — 어느 요인이 수율을 크게 움직이나</div>
             <p className="mt-1 text-body">
-              {recipe.shap.slice(0, 4).map((s) => `${s.label} ${Math.round(s.meanAbsShap * 100)}`).join(" · ")}
+              {recipe.sensitivity
+                .slice(0, 4)
+                .map((s) => `${s.label} ${s.range}kg/㎡`)
+                .join(" · ")}
             </p>
             <p className="mt-1 text-xs text-muted">
-              협조게임이론의 공정 기여도. 배경 표본에 대한 개입 방식이라 부분의 합이 예측 차이와 맞는다.
+              탐색범위 끝까지 그 요인만 훑을 때 예측 수율이 움직이는 폭. 아래 갭 분석과 같은
+              계수에서 나온다 — 민감한데 상방이 0이면 이미 최적에 붙은 것이고, 둔감한데
+              상방이 크면 지금 값이 탐색범위 밖이라는 뜻이다.
             </p>
           </div>
           <div className="rounded bg-white p-3">
@@ -391,6 +398,9 @@ export default async function OptimizationPage({
                     <td className="py-1">
                       {a.label}
                       {a.atBoundary && <span className="ml-1 text-muted">(관측 끝)</span>}
+                      {a.curvatureUnresolved && (
+                        <span className="ml-1 text-muted">(곡률 미확인)</span>
+                      )}
                     </td>
                     <td className="py-1">{a.current}</td>
                     <td className="py-1">{a.target}</td>
@@ -406,7 +416,9 @@ export default async function OptimizationPage({
           )}
           <p className="mt-1 text-xs text-muted">
             요인별 기여는 섀플리 분해라 합이 전체 상방({recipe.gap.totalPotentialUpliftPct}%)과 맞는다.
-            &quot;관측 끝&quot; 표시는 그 방향으로 더 올릴 여지를 아직 확인하지 못했다는 뜻이다.
+            &quot;관측 끝&quot;은 그 방향으로 더 올릴 여지를 아직 확인하지 못했다는 뜻이고,
+            &quot;곡률 미확인&quot;은 이차항 계수의 신뢰구간이 0을 걸쳐 정점 위치를 잡음이
+            정하는 요인이라 조작 지시를 내지 않는다는 뜻이다.
           </p>
         </div>
 
@@ -451,18 +463,27 @@ export default async function OptimizationPage({
         </div>
 
         <div className="rounded bg-surface p-3 text-sm text-body">
-          <span className="font-medium">다음 실험 제안</span>
-          {recipe.suggestions.length > 0 ? (
+          <span className="font-medium">이번 사이클 무작위 처리</span>
+          {recipe.assignment ? (
             <>
               {" "}
-              {recipe.suggestions
-                .map((s) => `${s.label}→${s.suggestValue}${s.unit}`)
-                .join(" · ")}
-              <p className="mt-1 text-xs text-muted">{recipe.suggestNote}</p>
+              {recipe.assignment.label} {recipe.assignment.recipeValue}
+              {recipe.assignment.unit} → <strong>{recipe.assignment.assignedValue}
+              {recipe.assignment.unit}</strong> {recipe.assignment.direction} (예측 수율 손실{" "}
+              {recipe.assignment.expectedYieldCostPct}%)
+              <p className="mt-1 text-xs text-muted">{recipe.assignment.reason}</p>
             </>
           ) : (
-            <p className="mt-1 text-xs text-muted">{recipe.suggestNote}</p>
+            <span className="text-muted"> 없음 — 흔들 축이 남아 있지 않다.</span>
           )}
+          <p className="mt-1 text-xs text-muted">
+            추첨 대상{" "}
+            {recipe.suggestions.length > 0
+              ? recipe.suggestions.map((s) => `${s.label}→${s.suggestValue}${s.unit}`).join(" · ")
+              : "없음"}
+            . 누적 무작위 배정 {Math.round(recipe.randomizedShare * 100)}%.
+          </p>
+          <p className="mt-1 text-xs text-muted">{recipe.suggestNote}</p>
         </div>
 
         <p className="text-xs text-brand">{recipe.hybridNote}</p>
