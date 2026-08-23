@@ -7,14 +7,18 @@ export async function GET(request: NextRequest) {
   try {
     // 개설 순(1호점 → 2호점 → 3호점). 정렬이 없으면 DB 반환 순서에 맡겨져
     // 목록 첫 항목이 매번 달라지고, 앱은 첫 지점을 기본 선택한다.
-    const projects = await prisma.project.findMany({
-      orderBy: { createdAt: "asc" },
-      include: {
-        escrow: true,
-        milestones: true,
-        _count: { select: { tokenHoldings: true } },
-      },
-    });
+    // 등록 공간 수는 C-01 KPI 한 칸이다. 목록과 같이 내려 홈이 요청을 하나만 하게 한다.
+    const [projects, spaceCount] = await Promise.all([
+      prisma.project.findMany({
+        orderBy: { createdAt: "asc" },
+        include: {
+          escrow: true,
+          milestones: true,
+          _count: { select: { tokenHoldings: true } },
+        },
+      }),
+      prisma.space.count(),
+    ]);
 
     const result = projects.map((p) => {
       const fundingPercent =
@@ -29,7 +33,7 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    return NextResponse.json({ projects: serializeBigInt(result) });
+    return NextResponse.json({ projects: serializeBigInt(result), spaceCount });
   } catch (error) {
     console.error("GET /api/projects error:", error);
     return NextResponse.json(

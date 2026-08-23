@@ -18,6 +18,10 @@ export type ProjectSummary = {
   fundingEnd: string | null;
   fundingPercent: number;
   investorCount: number;
+  /** 카드 표기 (C-01 · I-01). 값이 없으면 그 칸을 그리지 않는다. */
+  esgTag: string | null;
+  targetReturnPct: number | null;
+  paybackMonths: number | null;
   milestones?: MilestoneSummary[];
 };
 
@@ -105,6 +109,16 @@ export function useProjects() {
     queryKey: ["projects"],
     queryFn: () => getJson<{ projects: ProjectSummary[] }>("/api/projects"),
     select: (d) => d.projects,
+  });
+}
+
+/** C-01 KPI의 `등록 공간` 한 칸. 목록과 같은 응답에서 읽는다. */
+export function useSpaceCount() {
+  return useQuery({
+    queryKey: ["projects"],
+    queryFn: () =>
+      getJson<{ projects: ProjectSummary[]; spaceCount: number }>("/api/projects"),
+    select: (d) => d.spaceCount,
   });
 }
 

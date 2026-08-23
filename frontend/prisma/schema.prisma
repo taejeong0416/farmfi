@@ -209,6 +209,10 @@ model Project {
   contractAddress String?
   status        String       @default("operating") // upcoming, funding, funded, operating, paused, rejected, completed, failed
   failedAt      DateTime?    // 마일스톤 기한 초과로 실패 전환된 시각 (status="failed"와 함께 기록)
+  // ─── 프로젝트 카드 표기 (C-01 · I-01). 값이 없으면 그 칸을 그리지 않는다. ───
+  esgTag           String?   // 공실 재생 · 로컬 유통 · 에너지 절감
+  targetReturnPct  Int?      // 목표 총 회수율 (%). 원금 비보장 배지와 같이 쓴다
+  paybackMonths    Int?      // 예상 회수기간 (개월)
   imageUrl      String?
   institutionId String?      // 도입 기관 (성과 리포트 집계 단위)
   institution   Institution? @relation(fields: [institutionId], references: [id])
