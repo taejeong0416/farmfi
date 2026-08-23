@@ -6,7 +6,6 @@ import {
   Button,
   Card,
   EmptyState,
-  ProgressBar,
   Shell,
   SkeletonBlock,
   StepList,
@@ -102,6 +101,39 @@ export function OperatorHomeScreen() {
     },
   ];
 
+  // `.fig` O-09 오른쪽 열. 값이 없는 항목은 `예정`으로 둔다 — 지어내지 않는다.
+  const firstMilestone = [...(milestones ?? [])].sort((a, b) => a.seq - b.seq)[0];
+  const readiness = [
+    {
+      label: "공간 사용 협약",
+      done: Boolean(application.contractSignedAt),
+      value: application.contractSignedAt ? "완료" : "예정",
+    },
+    {
+      label: "리모델링 일정",
+      done: Boolean(application.confirmedAt),
+      value: application.confirmedAt ? shortDate(application.confirmedAt) : "예정",
+    },
+    {
+      label: "설비 투자 모집",
+      done: false,
+      value: firstMilestone ? firstMilestone.project.name : "예정",
+    },
+    {
+      label: "설비 설치·검수",
+      done: firstMilestone?.status === "completed",
+      value: firstMilestone
+        ? (MILESTONE_STATUS_LABEL[firstMilestone.status] ?? firstMilestone.status)
+        : "예정",
+    },
+  ];
+
+  const certChecks = [
+    { label: "필수 교육 수료", done: Boolean(application.educationDoneAt) },
+    { label: "운영 계약 서명", done: Boolean(application.contractSignedAt) },
+    { label: "공간 배정 확정", done: Boolean(application.confirmedAt) },
+  ];
+
   const doneCount = steps.filter((s) => s.done).length;
   const progress = Math.round((doneCount / steps.length) * 100);
   const next = steps.find((s) => !s.done);
@@ -117,16 +149,27 @@ export function OperatorHomeScreen() {
 
       <div className="mt-7 flex items-start gap-8">
         <div className="flex-1">
-          <div className="rounded-12 bg-brand px-7 py-7">
-            <p className="text-13 font-medium text-brand-soft">전체 준비도</p>
-            <p className="mt-2 font-num text-3xl font-bold text-white">
-              {progress}%
-            </p>
-            <p className="mt-3 text-11 text-brand-soft">
-              {application.certificateNo
-                ? "보증서가 발급됐어요. 이제 공간과 설비 준비를 마치면 운영을 시작할 수 있어요."
-                : "남은 단계를 마치면 보증서가 발급됩니다."}
-            </p>
+          {/* `.fig` O-09 ProgressCard — 왼쪽 라벨·퍼센트, 오른쪽 막대와 안내문. */}
+          <div className="flex items-center gap-10 rounded-14 bg-brand px-6 py-6">
+            <div className="shrink-0">
+              <p className="text-13 font-medium text-[#D1E0D6]">전체 준비도</p>
+              <p className="mt-1 font-num text-[34px] font-bold leading-tight text-white">
+                {progress}%
+              </p>
+            </div>
+            <div className="flex-1">
+              <div className="h-3 w-full overflow-hidden rounded-6 bg-line-soft">
+                <div
+                  className="h-full rounded-6 bg-[#F2D680]"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <p className="mt-3 text-11 text-[#D1E0D6]">
+                {application.certificateNo
+                  ? "보증서가 발급됐어요. 이제 공간과 설비 준비를 마치면 운영을 시작할 수 있어요."
+                  : "남은 단계를 마치면 보증서가 발급됩니다."}
+              </p>
+            </div>
           </div>
 
           <h2 className="mt-8 text-20 font-semibold text-ink">내가 준비할 것</h2>
@@ -221,15 +264,60 @@ export function OperatorHomeScreen() {
             )}
           </Card>
 
-          <Card>
-            <h2 className="text-20 font-semibold text-ink">공간 준비 현황</h2>
-            <div className="mt-4">
-              <ProgressBar value={progress} label={`준비도 ${progress}%`} />
+          {/* `.fig` O-09 ReadinessListCard — 네 줄. 값이 없는 줄은 `예정`으로 둔다. */}
+          <h2 className="text-20 font-semibold text-ink">공간 준비 현황</h2>
+          <Card className="mt-4" padded={false}>
+            <div className="px-6">
+              {readiness.map((r, i) => (
+                <div
+                  key={r.label}
+                  className="flex items-center gap-4 border-b border-line py-4 last:border-b-0"
+                >
+                  <span
+                    className={`flex h-5 w-5 items-center justify-center rounded-full text-10 font-bold ${
+                      r.done ? "bg-surface text-brand" : "bg-line-soft text-body"
+                    }`}
+                  >
+                    {i + 1}
+                  </span>
+                  <span className="flex-1 text-13 font-medium text-ink">
+                    {r.label}
+                  </span>
+                  <span
+                    className={`text-12 font-medium ${r.done ? "text-brand" : "text-body"}`}
+                  >
+                    {r.value}
+                  </span>
+                </div>
+              ))}
             </div>
-            <p className="mt-4 text-12 text-muted">
-              단계가 끝날 때마다 담당 매니저가 확인 결과를 알려드려요.
-            </p>
           </Card>
+
+          {/* `.fig` O-09 CertStatusCard — 보증서 발급 근거 세 가지. */}
+          <div className="rounded-12 bg-surface px-6 py-6">
+            <div className="flex gap-10">
+              <div className="shrink-0">
+                <p className="text-15 font-semibold text-brand">
+                  완료된 운영자 자격
+                </p>
+                <ul className="mt-3.5 space-y-2">
+                  {certChecks.map((c) => (
+                    <li
+                      key={c.label}
+                      className={`text-12 font-medium ${c.done ? "text-brand" : "text-body"}`}
+                    >
+                      ✓&nbsp;&nbsp;{c.label}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <p className="text-11 text-muted">
+                {application.certificateNo
+                  ? "교육·공간 확정·계약이 확인되어 보증서가 발급됐어요."
+                  : "교육·공간 확정·계약이 모두 확인되면 보증서가 발급됩니다."}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </Shell>
