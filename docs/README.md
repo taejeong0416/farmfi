@@ -19,6 +19,7 @@
 | `feature-spec.md` | 웹 기능명세서 — 투자·구독·운영자·관리자 전 범위 | 레퍼런스 |
 | `app-feature-spec.md` | 운영자 앱 기능명세서 — 매장 운영·모니터링·픽업·증빙 | 레퍼런스 |
 | `build-plan.md` | 웹 화면 62개 + 기능 개발 계획 — 체크박스가 진행 상황의 정본 | 레퍼런스 |
+| `figma-route-map.md` | Figma 화면 ID ↔ Next.js 라우트 · 티어 · 역할 내비 | 레퍼런스 |
 | `architecture.md` | 개발 구조 지향점 — 층 구분·집행 게이트·체인 경계·어댑터 근거 | 근거 |
 | `optimization-rationale.md` | 운영최적화 계산 해설 — 식·가정·한계·파라미터 근거 | 근거 |
 | `growth-recipe-rationale.md` | 생육 레시피 계산 해설 — 좌표계·품종 이전·불확실성·목적함수 | 근거 |
