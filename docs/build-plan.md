@@ -330,8 +330,11 @@ Phase A~K는 화면과 그 화면이 도는 데 필요한 최소 API를 만들�
 
 ## Phase W · 운영 고도화
 
-- [ ] **W1** 생육 레시피
-  `GET /api/spaces/[id]/recipe` · `POST .../recipe/apply`. 학습 스택(`lib/growth-recipe*.ts`)과 `/optimization/[projectId]` 표시는 되어 있고, API와 적용 경로가 없다. 그래서 9.2 최적대 판정과 9.5 목표 DLI는 여전히 `crop-profiles`의 문헌값을 본다 — 이 항목이 그 둘을 학습값에 연결한다. 적용은 운영자가 누를 때만 하고, 산출값과 적용값을 함께 남긴다
+- [x] **W1** 생육 레시피 — `lib/applied-setpoints.ts` · `GET|POST /api/projects/[id]/setpoints`
+  라우트 이름은 계획의 `/api/spaces/[id]/recipe` 대신 `projects/[id]/setpoints`로 냈다. 이 값이 붙는 대상이 공간이 아니라 운영 중인 프로젝트이고, W2의 봉투와 같은 자원을 다루므로 한 라우트로 합쳤다.
+  **9.2 최적대 판정과 9.5 목표 DLI가 이제 학습값을 본다.** 적용된 설정점을 중심으로 최적대를 좁히고 목표 DLI를 그 값으로 바꾼다. 원칙은 봉투와 같다 — **좁힐 수만 있고 넓힐 수 없다.** 문헌 범위 밖으로는 절대 안 나가고, **고장 게이트는 건드리지 않는다**(물리 한계는 학습의 대상이 아니다).
+  `APPLIED`가 아닌 요인은 쓰지 않는다. 규칙이 클램프하거나 거부한 값은 "규칙이 잘라낸 자리"지 이 매장의 최적이 아니다.
+  확인: 적용 전 온도 최적대 `[18, 24]`·목표 DLI `15` → 적용 후 `[20.3, 23.3]`·`15.8`.
 - [ ] **W1a** 레시피 관측을 실데이터로
   지금 학습 입력은 `growth-recipe-synth.ts`의 합성 관측이다. `HarvestRecord`(수확량)와 `IotData`(사이클 환경 평균)를 조인해 실 관측으로 바꾼다. 6요인 원천은 `IotData`에 다 있다(`ecLevel`은 nullable — 공개데이터 온실 계열처럼 EC를 안 재는 원천이 섞인다). 관측을 만들 때 `ecLevel`이 null인 사이클을 **뺄지 작물 프로파일 `ecTarget` 중앙으로 채울지**가 이 항목의 결정이다. 채우면 EC 방향 학습이 죽고, 빼면 표본이 준다
 - [x] **W2** 최적화 적용 — `lib/setpoint-envelope.ts` · `GET|POST /api/projects/[id]/setpoints`

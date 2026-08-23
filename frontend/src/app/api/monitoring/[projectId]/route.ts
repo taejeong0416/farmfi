@@ -6,6 +6,7 @@ import { resolveDataWindow } from "@/lib/data-window";
 import type { IoTReading } from "@/lib/iot-health";
 import { requireRole } from "@/lib/auth";
 import { guardProject } from "@/lib/operator-scope";
+import type { AppliedDecision } from "@/lib/applied-setpoints";
 
 // GET /api/monitoring/[projectId]?days=7
 // 실시간 생육 모니터링 — 시계열 판독 + 이상탐지(Z-score/CUSUM/고장게이트/최적대) +
@@ -83,11 +84,21 @@ export async function GET(
     const recordedAts = records.map((r) => r.recordedAt);
     const growthRates = records.map((r) => r.growthRate);
 
+    // 이 매장에 적용된 설정점이 있으면 최적대와 목표 DLI가 그 값을 중심으로
+    // 좁혀진다(W1). 없으면 문헌값 그대로다. 고장 게이트는 어느 쪽이든 안 바뀐다.
+    const lastApplied = await prisma.setpointApplication.findFirst({
+      where: { projectId },
+      orderBy: { appliedAt: "desc" },
+      select: { decisions: true },
+    });
+    const appliedSetpoints = (lastApplied?.decisions ?? null) as AppliedDecision[] | null;
+
     const analysis = analyzeGrowthMonitoring(
       readings,
       recordedAts,
       growthRates,
-      cropKey
+      cropKey,
+      appliedSetpoints
     );
 
     return NextResponse.json({

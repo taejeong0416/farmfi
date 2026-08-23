@@ -24,6 +24,7 @@ import {
 } from "./iot-health";
 import { cusumDrift } from "./optimization";
 import { getCrop, faultRanges, luxToDli } from "./crop-profiles";
+import { deriveRanges, type AppliedDecision } from "./applied-setpoints";
 
 export type SensorKey = keyof IoTReading;
 
@@ -292,13 +293,16 @@ function slope(values: number[]): number {
 
 function assessLight(
   daily: DailyMetric[],
-  cropKey: string | undefined
+  cropKey: string | undefined,
+  /** 적용된 설정점에서 온 목표 DLI. 없으면 문헌값. */
+  dliTargetOverride?: number
 ): LightAssessment {
   const crop = getCrop(cropKey);
+  const dliTarget = dliTargetOverride ?? crop.dliTarget;
   const usable = daily.filter((d) => d.complete);
   if (usable.length === 0) {
     return {
-      dliTarget: crop.dliTarget,
+      dliTarget: dliTarget,
       recentDli: 0,
       ratioPct: 0,
       status: "unknown",
@@ -309,7 +313,7 @@ function assessLight(
   }
   const recent = usable.slice(-7);
   const recentDli = recent.reduce((s, d) => s + d.dli, 0) / recent.length;
-  const ratioPct = Math.round((recentDli / crop.dliTarget) * 1000) / 10;
+  const ratioPct = Math.round((recentDli / dliTarget) * 1000) / 10;
   // 추세는 최근 2주만 본다. 창 전체로 회귀하면 오래된 정상 구간이 최근 열화를
   // 희석해, 조도가 눈에 띄게 빠지는 중인데도 기울기가 0 근처로 나온다.
   const trendWindow = usable.slice(-14);
@@ -334,7 +338,7 @@ function assessLight(
     message += ` 최근 추세가 하루 ${Math.abs(trendPerDay).toFixed(2)} mol씩 감소 중 — LED 광량 열화가 의심됩니다.`;
   }
   return {
-    dliTarget: crop.dliTarget,
+    dliTarget: dliTarget,
     recentDli: Math.round(recentDli * 100) / 100,
     ratioPct,
     status,
@@ -461,10 +465,18 @@ export function analyzeGrowthMonitoring(
   readings: IoTReading[],
   recordedAts: Array<string | Date>,
   growthRates?: number[],
-  cropKey?: string
+  cropKey?: string,
+  /**
+   * 이 매장에 **적용된** 설정점(`SetpointApplication.decisions`).
+   * 주면 최적대와 목표 DLI가 그 값을 중심으로 좁혀진다 — 학습 결과가 판정에
+   * 반영되는 지점이다. 없으면 문헌값 그대로 간다(W1 이전과 같은 동작).
+   * 고장 게이트는 어느 경우에도 바뀌지 않는다.
+   */
+  appliedSetpoints?: AppliedDecision[] | null
 ): GrowthMonitoringResult {
   const crop = getCrop(cropKey);
-  const optimalRanges = crop.healthyRanges as Record<
+  const derived = deriveRanges(cropKey, appliedSetpoints);
+  const optimalRanges = derived.optimal as Record<
     SensorKey,
     [number, number]
   >;
@@ -475,7 +487,7 @@ export function analyzeGrowthMonitoring(
 
   if (n === 0) {
     const daily: DailyMetric[] = [];
-    const light = assessLight(daily, cropKey);
+    const light = assessLight(daily, cropKey, derived.dliTarget);
     return {
       cropKey: crop.key,
       points: [],
@@ -574,7 +586,7 @@ export function analyzeGrowthMonitoring(
 
   // ⑤⑥ 일적산 지표 → 광량 판정 → 수확 예측
   const daily = buildDaily(allBuckets, points, cropKey);
-  const light = assessLight(daily, cropKey);
+  const light = assessLight(daily, cropKey, derived.dliTarget);
   const harvest = forecastHarvest(points, daily, light, cropKey);
 
   const summary: MonitoringSummary = {
