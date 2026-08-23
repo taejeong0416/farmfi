@@ -266,7 +266,7 @@ Phase A~K는 화면과 그 화면이 도는 데 필요한 최소 API를 만들�
 - [x] **P4** 발행 콘솔 — `GET/POST /api/admin/issuances`
   계획의 `chain-jobs` 대신 `issuances`로 냈다. 잡 큐가 따로 없고 발행 행이 곧 큐라 이름을 실체에 맞췄다. POST에 `id`를 주면 그 건만 재시도(`CHAIN_FAILED`도 되살린다), 안 주면 전체 드레인
 - [x] **P5** 대사 — `lib/reconciliation.ts`
-  Vercel Cron이 `/api/cron/reconcile`을 부른다(`CRON_SECRET` 없으면 503으로 닫힘 — 열어 두면 아무나 가스를 태우는 버튼이 된다). 영수증 10분, 전체 대사 하루 한 번. `sweepReceipts()`가 해시만 남고 확정되지 않은 건의 영수증을 다시 읽는다. Relay는 "해시가 있으면 성공"으로 넘기지만 여기서는 영수증을 실제로 확인해 되돌려진 트랜잭션을 잡는다 — revert면 해시를 지워 Relay가 성공으로 오인하지 못하게 한다. `reconcileHoldings()`는 지갑별 확정 구좌 합과 `balanceOf`를 비교한다. **불일치는 고치지 않는다** — 어느 쪽이 정본인지 모르는 상태에서 한쪽에 맞추면 틀린 쪽을 정본으로 만든다. `ReconciliationEntry`(OPEN·RESOLVED)에 적고 알림을 남긴다. 조회·해소는 `GET/POST /api/admin/reconciliation`(해소 사유 필수)
+  Vercel Cron이 `/api/cron/reconcile`을 부른다(`CRON_SECRET` 없으면 503으로 닫힘 — 열어 두면 아무나 가스를 태우는 버튼이 된다). Vercel Hobby는 하루 1회 크론만 허용해 둘 다 하루 한 번이다(영수증 03:00, 전체 대사 03:20). 되돌려진 트랜잭션을 최대 하루 늦게 잡는다는 뜻이므로, 그 사이가 문제가 되면 Pro로 올리거나 `/api/cron/reconcile`을 직접 호출한다. `sweepReceipts()`가 해시만 남고 확정되지 않은 건의 영수증을 다시 읽는다. Relay는 "해시가 있으면 성공"으로 넘기지만 여기서는 영수증을 실제로 확인해 되돌려진 트랜잭션을 잡는다 — revert면 해시를 지워 Relay가 성공으로 오인하지 못하게 한다. `reconcileHoldings()`는 지갑별 확정 구좌 합과 `balanceOf`를 비교한다. **불일치는 고치지 않는다** — 어느 쪽이 정본인지 모르는 상태에서 한쪽에 맞추면 틀린 쪽을 정본으로 만든다. `ReconciliationEntry`(OPEN·RESOLVED)에 적고 알림을 남긴다. 조회·해소는 `GET/POST /api/admin/reconciliation`(해소 사유 필수)
 
 **컨트랙트 매핑 (P2 결정)** — 명세의 `HoldingLedger`를 새로 배포하지 않고 이미 배포된 `FarmToken`이 그 역할을 한다. `mintHolding` → `FarmToken.mint(address,uint256)`. 근거: `decimals() == 0`이라 1구좌 = 정수 1로 그대로 맞고, `_update`의 화이트리스트 게이트가 `from == address(0)`(발행)을 예외로 두어 신원 등록 전에도 발행이 된다. 2차 이전(`transferHolding`)은 송·수신 지갑 모두 `registerIdentity`가 필요하므로 그때 별도 단위로 뺀다.
 
