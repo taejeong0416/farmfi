@@ -108,6 +108,15 @@ export async function seedScenario(prisma: PrismaClient) {
     identityVerified: true, verifiedAt: now, realName: name,
     investorAnnualLimit: BigInt(20_000_000),
   });
+  // 시연 계정 — 본인확인 화면부터 흐름 전체를 보여주려고 일부러 미인증으로 둔다.
+  // DEMO_ACCOUNTS 에 등록돼 있어 신분증 제출 없이 그 자리를 통과한다.
+  await prisma.user.create({
+    data: {
+      name: "시연", role: "investor", email: "demo@farmfi.test", passwordHash: pw,
+      balance: BigInt(5_000_000),
+      investorAnnualLimit: BigInt(20_000_000),
+    },
+  });
   const investor1 = await prisma.user.create({ data: verifiedInvestor("김투자", "investor@farmfi.test") });
   const investor2 = await prisma.user.create({ data: verifiedInvestor("이서연", "investor2@farmfi.test") });
   const investor3 = await prisma.user.create({ data: verifiedInvestor("박준혁", "investor3@farmfi.test") });
