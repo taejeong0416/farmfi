@@ -7,9 +7,7 @@ import { useAuth } from "@/lib/auth";
 import { C, FRAME_MAX_WIDTH, FS, FW, SP } from "@/farmfi/theme";
 import { PrimaryButton, RoundField, useGo } from "@/farmfi/ui";
 
-// 데모 계정. 우회 로그인이 아니라 이 자격으로 실제 세션을 발급받는다 —
-// 운영 데이터 API가 operator 세션을 요구하므로 세션 없이는 화면이 빈다.
-const DEMO_ACCOUNT = { email: "operator@farmfi.test", password: "farmfi123" };
+import { SESSION_ACCOUNT as DEMO_ACCOUNT } from "@/lib/session-account";
 
 export default function LoginScreen() {
   const go = useGo();

@@ -1,11 +1,12 @@
 // Splash — 앱이 어디로 갈지 정하는 통과 지점.
-// 세션이 있으면 매장 선택으로, 없으면 로그인으로 넘긴다.
+// 세션이 있으면 보증서 확인으로, 없으면 로그인으로 넘긴다.
 import { useEffect } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 
 import { useAuth } from "@/lib/auth";
+import { SESSION_ACCOUNT } from "@/lib/session-account";
 import { C, FRAME_MAX_WIDTH, FS, FW, SP } from "@/farmfi/theme";
 import { AppIcon } from "@/farmfi/icons";
 import { useGo } from "@/farmfi/ui";
@@ -16,7 +17,7 @@ import { useGo } from "@/farmfi/ui";
 const HOLD_MS = 2000;
 
 export default function SplashScreen() {
-  const { user, loading } = useAuth();
+  const { user, loading, login } = useAuth();
   const go = useGo();
 
   const fade = useSharedValue(0);
@@ -28,9 +29,24 @@ export default function SplashScreen() {
   // 로고를 잠깐 보여준 뒤 넘어간다. 세션 확인이 끝나기 전에는 기다린다.
   useEffect(() => {
     if (loading) return;
-    const t = setTimeout(() => go.replace(user ? "/store-select" : "/login"), HOLD_MS);
+    // 시안에 로그인 화면이 숨겨져 있어(00 로그인 frame hidden) 흐름에서 뺐다.
+    // 대신 세션이 없으면 여기서 조용히 발급받는다 — 운영 API가 전부 JWT를 요구해
+    // 세션 없이는 어느 화면도 데이터를 못 그린다.
+    // 발급이 실패했을 때만 로그인 화면을 띄운다. 막다른 길을 만들지 않는다.
+    const t = setTimeout(async () => {
+      if (user) {
+        go.replace("/scan");
+        return;
+      }
+      try {
+        await login(SESSION_ACCOUNT.email, SESSION_ACCOUNT.password);
+        go.replace("/scan");
+      } catch {
+        go.replace("/login");
+      }
+    }, HOLD_MS);
     return () => clearTimeout(t);
-  }, [loading, user, go]);
+  }, [loading, user, go, login]);
 
   return (
     <SafeAreaView style={s.stage} edges={["top", "bottom"]}>
