@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getVerifier } from "@/lib/identity/verifier";
 import { evaluate } from "@/lib/identity/investor-limit";
 import { getServerSession } from "@/lib/auth";
+import { isDemoEmail } from "@/lib/demo-account";
 import { prisma } from "@/lib/db";
 
 function serializeBigInt(obj: any): any {
@@ -27,15 +28,6 @@ function parseBirthDate(raw: unknown): Date | null {
 /** QR을 잠깐 보여준 뒤 넘어간다. 즉시 통과하면 화면이 깜빡이고 지나가버린다. */
 const DEMO_PASS_DELAY_MS = 3500;
 
-function isDemoAccount(email: string | null | undefined): boolean {
-  if (!email) return false;
-  const allowed = (process.env.DEMO_ACCOUNTS ?? "")
-    .split(",")
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean);
-  return allowed.includes(email.toLowerCase());
-}
-
 /**
  * 시연 계정이면 신분증 제출 자리를 대신 채운다.
  *
@@ -51,7 +43,7 @@ async function passIfDemoAccount(txId: string, userId: string): Promise<void> {
     where: { id: userId },
     select: { email: true, name: true },
   });
-  if (!isDemoAccount(user?.email)) return;
+  if (!isDemoEmail(user?.email)) return;
 
   const row = await prisma.identityVerification.findUnique({ where: { txId } });
   if (!row || row.status !== "pending") return;

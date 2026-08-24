@@ -92,6 +92,10 @@ export async function getServerSession(): Promise<SessionPayload | null> {
 /**
  * Assert an authenticated session with the given role (admin always passes).
  * Throws a Response (403/401) that route handlers can rethrow directly.
+ *
+ * 시연 계정도 통과시킨다 — 발표 한 번에 투자자·운영자·관리자 화면을 오가야 하는데
+ * 역할이 하나뿐이라 계정을 갈아타야 한다. 조회는 막힐 뻔한 순간에만 하므로
+ * 평상시 경로에는 질의가 붙지 않는다. 대상은 `DEMO_ACCOUNTS`뿐이다.
  */
 export async function requireRole(role: Role): Promise<SessionPayload> {
   const session = await getServerSession();
@@ -102,10 +106,13 @@ export async function requireRole(role: Role): Promise<SessionPayload> {
     });
   }
   if (session.role !== role && session.role !== "admin") {
-    throw new Response(JSON.stringify({ error: "Forbidden" }), {
-      status: 403,
-      headers: { "content-type": "application/json" },
-    });
+    const { isDemoUser } = await import("@/lib/demo-account");
+    if (!(await isDemoUser(session.userId))) {
+      throw new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
+        headers: { "content-type": "application/json" },
+      });
+    }
   }
   return session;
 }
