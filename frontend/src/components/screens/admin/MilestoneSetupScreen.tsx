@@ -109,7 +109,7 @@ export function MilestoneSetupScreen({ projectId }: { projectId: string }) {
       <Card padded={false}>
         <div className="grid grid-cols-[60px_1fr_200px_220px_110px] border-b border-line bg-surface px-5 py-3">
           <span className="text-11 text-muted">순서</span>
-          <span className="text-11 text-muted">단계명</span>
+          <span className="text-12 text-muted">단계명</span>
           <span className="text-right text-11 text-muted">집행 금액</span>
           <span className="text-11 text-muted">필수 증빙</span>
           <span className="text-right text-11 text-muted">상태</span>

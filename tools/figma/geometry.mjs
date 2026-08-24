@@ -107,17 +107,27 @@ for (const [sid, spec] of Object.entries(geometry)) {
   const route = ROUTES[sid];
   if (!route) continue;
   const [role, url] = route;
-  const page = await ctxs[role].newPage();
+  // dev 서버는 첫 방문에 라우트를 컴파일한다. 한 번에 안 열리면 다시 연다 —
+  // 여기서 비어 나오면 "화면이 다르다"가 아니라 "안 열렸다"인데 둘이 구분되지 않는다.
   let found = [];
+  for (let attempt = 0; attempt < 2 && found.length === 0; attempt += 1) {
+  const page = await ctxs[role].newPage();
   try {
-    await page.goto(BASE + url, { waitUntil: "networkidle", timeout: 30000 });
-    await page.waitForTimeout(700);
+    await page.goto(BASE + url, { waitUntil: "networkidle", timeout: 60000 });
+    await page.waitForTimeout(attempt === 0 ? 700 : 2500);
     found = await page.evaluate((nodes) => {
       const norm = (s) => (s ?? "").replace(/[\s ]+/g, "").replace(/[’'‘]/g, "");
       // 잎 노드만 본다. 부모 컨테이너는 자식 글자를 다 품어 상자가 훨씬 크다.
-      const leaves = [...document.querySelectorAll("body *")].filter(
-        (el) => el.children.length === 0 && norm(el.textContent).length > 0,
-      );
+      // `option`은 화면에 그려지는 상자가 없어 좌표가 0으로 나온다 — 빼지 않으면
+      // 드롭다운이 있는 화면마다 수백 px씩 어긋난 것처럼 보인다.
+      const SKIP = new Set(["OPTION", "SCRIPT", "STYLE", "TITLE", "NOSCRIPT"]);
+      const leaves = [...document.querySelectorAll("body *")].filter((el) => {
+        if (el.children.length > 0 || SKIP.has(el.tagName)) return false;
+        if (norm(el.textContent).length === 0) return false;
+        const r = el.getBoundingClientRect();
+        // 크기가 0이면 감춰졌거나 그려지지 않은 것이다.
+        return r.width > 0 && r.height > 0;
+      });
       const byText = new Map();
       for (const el of leaves) {
         const k = norm(el.textContent);
@@ -153,6 +163,7 @@ for (const [sid, spec] of Object.entries(geometry)) {
     found = [];
   }
   await page.close();
+  }
 
   const dxs = found.map((f) => f.dx);
   const dys = found.map((f) => f.dy);

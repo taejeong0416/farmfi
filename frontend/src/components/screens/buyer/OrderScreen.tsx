@@ -96,7 +96,7 @@ export function OrderScreen() {
     <PanelShell>
       <SubscribeStepLine current="order" />
 
-      <h1 className="text-24 font-bold text-ink">정기구독 주문서</h1>
+      <h1 className="text-28 font-bold text-ink">정기구독 주문서</h1>
       <p className="mt-3 text-14 text-body">
         픽업 정보와 할인, 자동결제 내용을 확인해 주세요.
       </p>
@@ -104,7 +104,7 @@ export function OrderScreen() {
       <Card className="mt-7">
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-13 text-muted">구독 상품</p>
+            <p className="text-15 text-muted">구독 상품</p>
             <p className="mt-2 text-17 font-bold text-ink">
               {packSize}종 믹스팩 · 주 {draft.perWeek}회
             </p>
@@ -142,7 +142,7 @@ export function OrderScreen() {
       <Card className="mt-4">
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-13 text-muted">쿠폰 · 할인</p>
+            <p className="text-15 text-muted">쿠폰 · 할인</p>
             <p className="mt-2 text-15 font-medium text-ink">
               {draft.couponCode
                 ? (COUPONS.find((c) => c.code === draft.couponCode)?.title ??
@@ -188,7 +188,7 @@ export function OrderScreen() {
 
       <Card className="mt-4" padded={false}>
         <div className="px-6 py-5">
-          <p className="mb-3 text-13 font-medium text-ink">결제 요약</p>
+          <p className="mb-3 text-18 font-medium text-ink">결제 요약</p>
           <Row label={`${packSize}종 믹스팩`} value={won(base)} />
           <Row
             label="첫 구독 쿠폰"
@@ -244,7 +244,7 @@ export function OrderScreen() {
       <p className="mt-4 text-center text-12 text-muted">
         결제 후 남은 생산 슬롯 1개가 확정됩니다.
       </p>
-      <p className="mt-2 text-center text-12 text-muted">
+      <p className="mt-2 text-center text-11 text-muted">
         다음 결제 전날까지 이번 회차 건너뛰기·일시정지가 가능해요.
       </p>
 

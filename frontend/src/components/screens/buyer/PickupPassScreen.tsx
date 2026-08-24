@@ -157,8 +157,8 @@ export function PickupPassScreen({ pickupId }: { pickupId: string }) {
 
   return (
     <PanelShell className="max-w-modal">
-      <p className="text-13 font-medium text-brand">이번 픽업</p>
-      <h1 className="mt-3 text-22 font-bold text-ink">
+      <p className="text-14 font-medium text-brand">이번 픽업</p>
+      <h1 className="mt-3 text-24 font-bold text-ink">
         준비되면 알림으로 알려드릴게요
       </h1>
       <p className="mt-3 text-14 leading-6 text-muted">
@@ -223,7 +223,7 @@ export function PickupPassScreen({ pickupId }: { pickupId: string }) {
       {error ? <p className="mt-4 text-12 text-danger">{error}</p> : null}
 
       <Card className="mt-5">
-        <p className="text-15 font-semibold text-ink">오늘 받기 어렵다면</p>
+        <p className="text-18 font-semibold text-ink">오늘 받기 어렵다면</p>
         <p className="mt-2 text-13 text-muted">
           픽업 시작 3시간 전까지 일정 변경 또는 이번 회차 건너뛰기가 가능해요.
         </p>

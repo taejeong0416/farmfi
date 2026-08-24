@@ -51,7 +51,7 @@ export function CertificateScreen() {
 
   return (
     <Shell>
-      <h1 className="text-28 font-bold text-ink">
+      <h1 className="text-30 font-bold text-ink">
         {active ? "운영 준비가 모두 확인됐어요" : "지금은 운영 기능을 쓸 수 없어요"}
       </h1>
       <p className="mt-3 text-14 text-body">
@@ -123,7 +123,7 @@ export function CertificateScreen() {
             </div>
           ) : null}
 
-          <p className="mt-8 text-12 text-brand-soft">
+          <p className="mt-8 text-11 text-brand-soft">
             {active && daysLeft <= 30
               ? `유효기간이 ${daysLeft}일 남았습니다. 계약 갱신 후 재발급받으세요.`
               : "공간 배정과 운영 자격이 유효한 동안 사용할 수 있습니다."}

@@ -199,7 +199,7 @@ export function NotifyScreen() {
               </p>
               <p className="mt-2 text-11 text-muted">지금 · {scopeName}</p>
             </div>
-            <p className="mt-4 text-14 font-bold text-ink">발송 요약</p>
+            <p className="mt-4 text-11 font-bold text-ink">발송 요약</p>
             <div className="mt-2 space-y-1.5">
               <div className="flex justify-between text-12">
                 <span className="text-muted">예상 수신자</span>

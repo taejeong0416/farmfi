@@ -240,7 +240,7 @@ export function MySubscriptionsScreen() {
               </Card>
 
               <Card className="w-[320px] shrink-0">
-                <h3 className="text-14 font-bold text-ink">다음 픽업</h3>
+                <h3 className="text-17 font-bold text-ink">다음 픽업</h3>
                 {next ? (
                   <>
                     <p className="mt-4 text-15 font-medium text-ink">

@@ -140,7 +140,7 @@ export function SpacesScreen() {
 
   return (
     <Shell>
-      <h1 className="text-28 font-bold text-ink">
+      <h1 className="text-30 font-bold text-ink">
         어디에서 시작할지, 지도에서 먼저 살펴보세요
       </h1>
       <p className="mt-3 text-14 text-body">
@@ -165,7 +165,7 @@ export function SpacesScreen() {
         <span className="rounded-6 border border-line px-3.5 py-2 text-12 text-body">
           25평 내외
         </span>
-        <span className="rounded-6 border border-line px-3.5 py-2 text-12 text-body">
+        <span className="rounded-6 border border-line px-3.5 py-2 text-13 text-body">
           개점 예정일 전체
         </span>
         <input

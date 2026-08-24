@@ -50,7 +50,7 @@ export function ApplyStepLine({
         </p>
         <span className="inline-flex items-center gap-2 rounded-full bg-surface px-3 py-1.5">
           <span className="text-11 font-medium text-brand">✓ 자동 저장됨</span>
-          <span className="text-12 text-body">방금 전</span>
+          <span className="text-11 text-body">방금 전</span>
         </span>
       </div>
       <StepLine steps={steps} />

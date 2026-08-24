@@ -80,7 +80,7 @@ export function ApplyEducationScreen() {
     <Shell>
       <ApplyStepLine application={application} current="education" />
 
-      <h1 className="text-24 font-bold text-ink">
+      <h1 className="text-30 font-bold text-ink">
         운영에 필요한 기준부터 익혀요
       </h1>
       <p className="mt-3 text-14 leading-6 text-body">

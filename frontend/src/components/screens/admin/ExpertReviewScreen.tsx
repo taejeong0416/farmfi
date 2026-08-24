@@ -165,7 +165,7 @@ export function ExpertReviewScreen() {
                 {selected.reason}
               </p>
 
-              <p className="mt-6 text-12 text-muted">검토 자료</p>
+              <p className="mt-6 text-14 text-muted">검토 자료</p>
               {selected.attachmentUrl ? (
                 <a
                   href={selected.attachmentUrl}

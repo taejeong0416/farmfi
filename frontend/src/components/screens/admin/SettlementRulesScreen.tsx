@@ -165,7 +165,7 @@ export function SettlementRulesScreen() {
         <>
           {/* `.fig` A-10 — 매출이 어느 순서로 나뉘는지 먼저 보여준다. 편집값이 아니라
               규칙 그 자체라 읽기 전용이다. */}
-          <h2 className="text-15 font-bold text-ink">월 정산 기준</h2>
+          <h2 className="text-14 font-bold text-ink">월 정산 기준</h2>
           <Card className="mt-4" padded={false}>
             <div className="grid grid-cols-[1fr_200px_1fr] border-b border-line bg-surface px-6 py-3">
               <span className="text-11 text-muted">항목</span>

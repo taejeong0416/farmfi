@@ -201,7 +201,7 @@ export function SettlementsScreen() {
             </span>
           </div>
           <div className="flex items-center justify-between border-b border-surface py-3.5">
-            <span className="text-13 text-body">선택한 회수 조건</span>
+            <span className="text-12 text-body">선택한 회수 조건</span>
             <span className="text-13 text-ink">정산 규칙에 따름</span>
           </div>
           <div className="flex items-center justify-between py-3.5">

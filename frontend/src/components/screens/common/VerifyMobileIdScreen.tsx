@@ -106,7 +106,7 @@ export function VerifyMobileIdScreen() {
             </span>
           )}
         </div>
-        <p className="mt-3 text-center text-11 text-muted">일회성 QR</p>
+        <p className="mt-3 text-center text-12 text-muted">일회성 QR</p>
 
         <div className="mt-5 flex items-center justify-center gap-2">
           <span className="text-12 text-muted">유효시간</span>

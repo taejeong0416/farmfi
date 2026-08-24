@@ -21,7 +21,7 @@ export function VerifyMethodScreen() {
         <p className="mt-3 text-12 text-ink">
           모바일 신분증이 있으면 바로 진행할 수 있어요
         </p>
-        <p className="mt-1.5 text-12 text-brand">→ 필요한 것 · 본인 명의 휴대폰</p>
+        <p className="mt-1.5 text-14 text-brand">→ 필요한 것 · 본인 명의 휴대폰</p>
       </div>
 
       <h2 className="mt-8 text-17 font-bold text-ink">본인확인 방법</h2>
@@ -54,11 +54,11 @@ export function VerifyMethodScreen() {
       </div>
 
       <p className="mt-6 text-center">
-        <Link href="/projects" className="text-13 font-semibold text-brand">
+        <Link href="/projects" className="text-12 font-semibold text-brand">
           나중에 확인하고 프로젝트 둘러보기
         </Link>
       </p>
-      <p className="mt-3 text-center text-11 text-muted">
+      <p className="mt-3 text-center text-12 text-muted">
         선택한 방법은 다음 화면에서 변경할 수 있어요.
       </p>
     </AuthShell>

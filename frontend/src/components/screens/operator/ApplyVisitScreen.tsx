@@ -97,7 +97,7 @@ export function ApplyVisitScreen() {
     <Shell>
       <ApplyStepLine application={application} current="visit" />
 
-      <h1 className="text-24 font-bold text-ink">직접 보고 결정할 수 있어요</h1>
+      <h1 className="text-30 font-bold text-ink">직접 보고 결정할 수 있어요</h1>
       <p className="mt-3 text-15 leading-6 text-body">
         채광, 전력, 급배수와 픽업 동선을 담당 매니저와 함께 확인합니다. 방문 뒤에도 신청을 취소할 수 있어요.
       </p>
@@ -151,7 +151,7 @@ export function ApplyVisitScreen() {
       </Card>
 
       <Card className="mt-4 rounded-10">
-        <h2 className="text-15 font-bold text-ink">방문 시간</h2>
+        <h2 className="text-16 font-bold text-ink">방문 시간</h2>
         <div className="mt-4 space-y-3">
           {SLOTS.map((s) => (
             <button

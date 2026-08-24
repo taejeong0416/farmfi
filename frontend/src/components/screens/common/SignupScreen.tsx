@@ -52,7 +52,7 @@ export function SignupScreen() {
     <AuthShell header>
       <form onSubmit={submit}>
         <h1 className="text-20 font-bold text-ink">회원가입</h1>
-        <p className="mt-3 text-13 text-muted">
+        <p className="mt-3 text-12 text-muted">
           가입 후 투자자 또는 구매자로 이용할 서비스를 선택할 수 있어요.
         </p>
 

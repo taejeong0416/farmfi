@@ -280,7 +280,7 @@ export function CertificatesScreen() {
 
       <div className="mt-8 flex items-baseline justify-between">
         <h2 className="text-15 font-bold text-ink">발급 이력</h2>
-        <span className="text-12 text-muted">발급 이력 전체 보기 →</span>
+        <span className="text-11 text-muted">발급 이력 전체 보기 →</span>
       </div>
       <div className="mt-4">
         <DataTable

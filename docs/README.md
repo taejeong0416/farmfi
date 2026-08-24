@@ -28,8 +28,9 @@
 | `growth-recipe-rationale.md` | 생육 레시피 계산 해설 — 좌표계·품종 이전·불확실성·목적함수 | 근거 |
 | `dev-log.md` | 진행상황·결정 기록 | 기록 |
 
-디자인이 코드에 얼마나 옮겨졌는지는 `tools/figma`가 기계로 센다 — `labels.py`가 덤프에서
-화면별 고정 문구를 뽑고 `audit.mjs`가 실제 렌더와 대조한다. 결과는 `build-plan.md` Phase X다.
+디자인이 코드에 얼마나 옮겨졌는지는 `tools/figma`가 기계로 센다. 대조는 두 겹이다 —
+`labels.py`+`audit.mjs`가 "문구가 있는가"(Phase X), `geometry.py`+`geometry.mjs`가
+"어디에, 얼마나 크게"(Phase Y). 결과는 `build-plan.md`의 그 두 절이다.
 
 유저플로우는 별도 파일로 두지 않는다. 화면 ID·라우트·흐름도가 각 명세서 안에 있다(웹 1.4~1.5, 앱 1장). 화면을 고칠 때 흐름도를 같이 고치라고 한 문서에 넣은 것이다.
 

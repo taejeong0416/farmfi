@@ -445,6 +445,82 @@ node tools/figma/audit.mjs        # 렌더와 대조
 
 ---
 
+## Phase Y · 좌표·글자 크기 대조
+
+문구가 **어디에, 얼마나 크게** 있는지를 센다. Phase X가 "있는가"를 볼 때 여기서는 자리를 본다.
+
+```
+npm run seed
+python tools/figma/geometry.py     # 덤프 → 문구 + 좌표 + 글자 크기
+node tools/figma/geometry.mjs      # 렌더 좌표와 대조
+python tools/figma/sizefix.py --apply   # 판정이 하나로 정해지는 글자 크기만 반영
+```
+
+**읽는 법**
+- `밀림`은 화면 전체가 어느 쪽으로 얼마나 갔는지의 중앙값이다. 개별 어긋남보다 이게 먼저다 —
+  0에서 멀면 그 화면은 통째로 틀어져 있다는 뜻이고, 한 줄 고치면 다 따라온다.
+- `가로`·`세로`는 그 밀림을 빼고도 남는 개수다 (가로 8px·세로 24px 초과).
+- 세로는 데이터 길이에 따라 얼마든지 달라진다. 가로와 글자 크기를 더 무겁게 읽는다.
+- dev 서버가 라우트를 컴파일하는 동안에는 빈 화면이 나온다. 도구가 한 번 더 열어보지만
+  `맞춘문구 0`인 화면이 있으면 그 줄은 믿지 말고 다시 돌린다.
+
+합계 — 가로 어긋남 **436** · 세로 어긋남 **480** · 글자 크기 **194** (맞춘 문구 896).
+
+**남은 글자 크기 194건 중 162건은 기계로 못 정한다** — 같은 문구가 여러 화면에 있거나,
+크기가 그 요소가 아니라 부모·공용 컴포넌트에서 온다. 손으로 볼 자리다.
+
+- [ ] **A-11** 가로 18 · 세로 28 · 글자 13 (밀림 x0 y49) — `/admin/settlements`
+- [ ] **I-01** 가로 22 · 세로 33 · 글자 5 (밀림 x-4 y59) — `/projects/[3호점]`
+- [ ] **A-10** 가로 12 · 세로 24 · 글자 15 (밀림 x0 y89) — `/admin/settlement-rules`
+- [ ] **O-13** 가로 15 · 세로 16 · 글자 11 (밀림 x-2 y120) — `/operator/settlements`
+- [ ] **B-04** 가로 18 · 세로 13 · 글자 7 (밀림 x-40 y97) — `/subscribe/order`
+- [ ] **A-14** 가로 18 · 세로 7 · 글자 5 (밀림 x0 y27) — `/admin/notifications`
+- [ ] **O-03** 가로 16 · 세로 17 · 글자 6 (밀림 x8 y125) — `/operator/apply`
+- [ ] **O-09** 가로 18 · 세로 11 · 글자 4 (밀림 x22 y143) — `/operator`
+- [ ] **A-16** 가로 11 · 세로 20 · 글자 9 (밀림 x0 y30) — `/admin/ledger`
+- [ ] **I-05** 가로 12 · 세로 5 · 글자 7 (밀림 x-17 y75) — `/investor/applications`
+- [ ] **I-07** 가로 14 · 세로 9 · 글자 5 (밀림 x-40 y1) — `/investor/holdings`
+- [ ] **A-09** 가로 12 · 세로 21 · 글자 7 (밀림 x0 y50) — `/admin/expert-review`
+- [ ] **I-10** 가로 8 · 세로 15 · 글자 10 (밀림 x0 y31) — `/investor/notifications/settings`
+- [ ] **O-02** 가로 15 · 세로 20 · 글자 2 (밀림 x-41 y-1) — `/operator/spaces/[공간]`
+- [ ] **O-06** 가로 13 · 세로 13 · 글자 4 (밀림 x0 y80) — `/operator/apply/confirm`
+- [ ] **O-10** 가로 13 · 세로 17 · 글자 3 (밀림 x-22 y174) — `/operator/milestones`
+- [ ] **O-11** 가로 9 · 세로 17 · 글자 7 (밀림 x0 y113) — `/operator/milestones/[마일스톤]/evidence`
+- [ ] **B-07** 가로 12 · 세로 8 · 글자 3 (밀림 x-56 y1) — `/subscriptions`
+- [ ] **A-01** 가로 9 · 세로 14 · 글자 6 (밀림 x0 y38) — `/admin`
+- [ ] **I-06** 가로 13 · 세로 3 · 글자 1 (밀림 x-21 y-1) — `/investor`
+- [ ] **B-08** 가로 10 · 세로 5 · 글자 4 (밀림 x-348 y887) — `/subscriptions/change`
+- [ ] **A-06** 가로 8 · 세로 13 · 글자 6 (밀림 x0 y30) — `/admin/projects`
+- [ ] **O-04** 가로 10 · 세로 10 · 글자 3 (밀림 x-23 y43) — `/operator/apply/visit`
+- [ ] **I-09** 가로 8 · 세로 3 · 글자 3 (밀림 x-31 y0) — `/investor/notifications`
+- [ ] **B-06** 가로 6 · 세로 5 · 글자 5 (밀림 x-74 y-52) — `/subscribe/done`
+- [ ] **O-08** 가로 9 · 세로 12 · 글자 2 (밀림 x-5 y86) — `/operator/certificate`
+- [ ] **A-07** 가로 6 · 세로 8 · 글자 5 (밀림 x0 y30) — `/admin/projects/[1호점]/milestones`
+- [ ] **C-04** 가로 6 · 세로 5 · 글자 4 (밀림 x25 y44) — `/start`
+- [ ] **O-05** 가로 7 · 세로 5 · 글자 3 (밀림 x-22 y-1) — `/operator/apply/education`
+- [ ] **A-12** 가로 6 · 세로 6 · 글자 4 (밀림 x0 y22) — `/admin/audit-logs`
+- [ ] **A-13** 가로 6 · 세로 6 · 글자 4 (밀림 x0 y12) — `/admin/roles`
+- [ ] **A-15** 가로 5 · 세로 11 · 글자 5 (밀림 x0 y28) — `/admin/aml`
+- [ ] **C-01** 가로 9 · 세로 3 · 글자 0 (밀림 x0 y-27) — `/`
+- [ ] **O-07** 가로 7 · 세로 5 · 글자 2 (밀림 x-6 y-1) — `/operator/apply/contract`
+- [ ] **O-01** 가로 4 · 세로 8 · 글자 4 (밀림 x0 y-1) — `/operator/spaces`
+- [ ] **C-I01** 가로 6 · 세로 1 · 글자 1 (밀림 x24 y80) — `/verify`
+- [ ] **C-I02** 가로 6 · 세로 4 · 글자 1 (밀림 x33 y126) — `/verify/mobile-id`
+- [ ] **O-11E** 가로 6 · 세로 11 · 글자 1 (밀림 x0 y87) — `/operator/milestones/[마일스톤]/appeal`
+- [ ] **A-03** 가로 6 · 세로 13 · 글자 1 (밀림 x0 y26) — `/admin/certificates`
+- [ ] **B-09** 가로 6 · 세로 8 · 글자 0 (밀림 x-10 y-91) — `/subscriptions/pickup/[회차]`
+- [ ] **C-I03** 가로 4 · 세로 4 · 글자 1 (밀림 x-55 y152) — `/verify/account`
+- [ ] **B-01** 가로 4 · 세로 2 · 글자 1 (밀림 x-34 y65) — `/subscribe`
+- [ ] **A-02** 가로 3 · 세로 8 · 글자 2 (밀림 x0 y30) — `/admin/operators`
+- [ ] **C-03** 가로 2 · 세로 2 · 글자 1 (밀림 x23 y136) — `/signup`
+- [ ] **B-02** 가로 2 · 세로 1 · 글자 1 (밀림 x-28 y-1) — `/subscribe/plan`
+- [ ] **C-02** 가로 2 · 세로 0 · 글자 0 (밀림 x24 y26) — `/login`
+- [ ] **A-04** 가로 2 · 세로 6 · 글자 0 (밀림 x0 y20) — `/admin/spaces`
+- [ ] **C-I05** 가로 1 · 세로 0 · 글자 0 (밀림 x34 y85) — `/verify/done`
+- [ ] **A-08** 가로 1 · 세로 4 · 글자 0 (밀림 x0 y24) — `/admin/evidence`
+
+---
+
 ## 검증
 
 - 타입: `cd frontend && npx tsc --noEmit`
