@@ -604,9 +604,14 @@ model SalesRecord {
   project   Project  @relation(fields: [projectId], references: [id])
   productId String
   product   Product  @relation(fields: [productId], references: [id])
-  quantity  Int      // 판매 수량 (봉)
-  amount    Int      // 매출 (원)
+  quantity  Int      // 판매 수량 (봉). 취소·환불은 음수.
+  amount    Int      // 매출 (원). 취소·환불은 음수.
   soldAt    DateTime @default(now())
+  // POS가 준 거래번호. 같은 거래를 두 번 밀어넣어도 한 번만 기록된다.
+  // 수동 입력분은 null — POS 없이도 매출을 적을 수 있어야 한다.
+  posTxId   String?  @unique
+  // manual(운영자 입력) · pos(POS 수집). 어디서 온 숫자인지 구분한다.
+  channel   String   @default("manual")
 
   @@index([projectId, soldAt])
 }

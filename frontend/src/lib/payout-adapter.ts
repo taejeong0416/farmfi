@@ -40,10 +40,29 @@ export type PayoutProviderStatus = {
   provider: string;
 };
 
+/**
+ * 이체 결과 조회 응답.
+ *
+ * `unknown`은 "실패"가 아니다. 지급사가 아직 모른다는 뜻이고, 그때 재송금하면
+ * 이중 이체가 된다. 그래서 성공·실패와 따로 둔다.
+ */
+export type PayoutInquiry =
+  | { state: "sent"; providerTransferId: string; transferredAt: Date }
+  | { state: "failed"; code: string; message: string }
+  | { state: "not_found" }
+  | { state: "unknown"; message: string };
+
 export interface PayoutAdapter {
   readonly provider: string;
   status(): PayoutProviderStatus;
   transfer(request: PayoutRequest): Promise<PayoutResult>;
+  /**
+   * 같은 거래번호로 결과를 조회한다.
+   *
+   * 이체 요청이 응답 없이 끊겼을 때 재송금 대신 이걸 부른다 — 돈이 이미 나갔는지
+   * 지급사에게 묻는 게 유일하게 안전한 길이다. 명세 16.2 지급 어댑터 규약.
+   */
+  inquire(payoutId: string): Promise<PayoutInquiry>;
 }
 
 /**
@@ -95,6 +114,15 @@ class MockPayoutAdapter implements PayoutAdapter {
       };
     }
 
+    if (this.scenario === "timeout") {
+      // 보냈는지 아닌지 모르는 상태. 호출부가 재송금 대신 조회로 가야 한다.
+      return {
+        ok: false,
+        code: "PAYOUT_TIMEOUT",
+        message: "지급사 응답이 없습니다. 결과를 조회한 뒤 처리합니다.",
+      };
+    }
+
     console.info(
       `[payout:mock] ${request.payeeName} · ${request.amount.toString()}원 · ${request.memo}`,
     );
@@ -104,6 +132,22 @@ class MockPayoutAdapter implements PayoutAdapter {
       providerTransferId: `mock_transfer_${request.payoutId}`,
       transferredAt: new Date(),
     };
+  }
+
+  async inquire(payoutId: string): Promise<PayoutInquiry> {
+    // Mock은 실제로 보낸 적이 없으므로 시나리오가 답을 정한다.
+    // timeout 시나리오는 "사실은 나갔더라"를 재현한다 — 재송금했다면 이중 이체였을 상황.
+    if (this.scenario === "timeout") {
+      return {
+        state: "sent",
+        providerTransferId: `mock_transfer_${payoutId}`,
+        transferredAt: new Date(),
+      };
+    }
+    if (this.scenario === "timeout_unknown") {
+      return { state: "unknown", message: "지급사가 아직 결과를 확정하지 못했습니다." };
+    }
+    return { state: "not_found" };
   }
 }
 

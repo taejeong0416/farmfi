@@ -138,6 +138,70 @@ export async function POST(
     maskedNumber: bankAccount?.maskedNumber ?? null,
   });
 
+  // 응답이 없어 결과를 모르는 경우. 여기서 재송금하면 이중 이체가 된다 —
+  // 같은 거래번호로 지급사에 물어보는 것이 유일하게 안전한 길이다(명세 16.2).
+  if (!result.ok && result.code === "PAYOUT_TIMEOUT") {
+    const inquiry = await adapter.inquire(payout.id);
+
+    if (inquiry.state === "sent") {
+      // 이미 나갔다. 실패로 적었으면 사람이 다시 보냈을 상황이다.
+      const paid = await prisma.payout.update({
+        where: { id },
+        data: {
+          status: "paid",
+          paidAt: inquiry.transferredAt,
+          failureCode: null,
+          failureReason: null,
+          memo: payout.memo
+            ? `${payout.memo} · ${inquiry.providerTransferId} (조회 확인)`
+            : `${inquiry.providerTransferId} (조회 확인)`,
+        },
+      });
+      const chainTxHash = await recordPayoutOnChain({
+        eventId: `payout:${payout.id}:${inquiry.providerTransferId}`,
+        projectId: payout.projectId,
+        payoutId: payout.id,
+        payeeRef: payout.payeeUserId ?? payout.id,
+        amount: payout.amount,
+        bankTransferId: inquiry.providerTransferId,
+      });
+      await recordAudit({
+        actorId: session.userId,
+        actorRole: "admin",
+        action: "payout.processed",
+        entityType: "payout",
+        entityId: id,
+        projectId: payout.projectId,
+        summary: `지급 완료(조회 확인) · ${payout.payeeName} ${Number(payout.amount).toLocaleString("ko-KR")}원`,
+        detail: { providerTransferId: inquiry.providerTransferId, inquiry: true, chainTxHash },
+      });
+      return NextResponse.json(
+        serialize({ ok: true, payout: paid, inquiry: true, chainTxHash, provider: adapter.status() }),
+      );
+    }
+
+    if (inquiry.state === "unknown") {
+      // 지급사도 아직 모른다. 결정을 미루고 사람이 다시 부르게 둔다.
+      const pending = await prisma.payout.update({
+        where: { id },
+        data: {
+          status: "processing",
+          failureCode: "PAYOUT_INQUIRY_PENDING",
+          failureReason: inquiry.message,
+        },
+      });
+      return NextResponse.json(
+        serialize({
+          ok: false,
+          code: "PAYOUT_INQUIRY_PENDING",
+          error: `${inquiry.message} 잠시 후 다시 확인해 주세요. 재송금하지 않았습니다.`,
+          payout: pending,
+        }),
+      );
+    }
+    // not_found · failed — 나간 적이 없다. 아래 실패 처리로 내려간다.
+  }
+
   if (!result.ok) {
     const failed = await prisma.payout.update({
       where: { id },
