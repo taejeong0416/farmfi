@@ -24,6 +24,14 @@ type AdminUser = {
   createdAt: string;
 };
 
+/** 화면에 적는 소속. 계정 자체에는 조직 필드가 없어 역할에서 읽는다. */
+const ROLE_GROUP: Record<string, string> = {
+  investor: "일반 투자자",
+  landlord: "공간 제공자",
+  operator: "운영자",
+  admin: "플랫폼 운영팀",
+};
+
 const ROLE_LABEL: Record<string, string> = {
   investor: "투자자",
   landlord: "공간주",
@@ -84,17 +92,19 @@ export function RolesScreen() {
   }
 
   const columns: Column<AdminUser>[] = [
-    { key: "name", header: "이름", render: (u) => u.name },
+    { key: "name", header: "사용자", render: (u) => u.name },
     {
       key: "email",
-      header: "계정",
+      header: "소속 · 계정",
       render: (u) => (
-        <span className="text-12 text-muted">{u.email ?? "-"}</span>
+        <span className="text-12 text-muted">
+          {ROLE_GROUP[u.role] ?? "—"} · {u.email ?? "-"}
+        </span>
       ),
     },
     {
       key: "role",
-      header: "역할",
+      header: "권한",
       width: "180px",
       render: (u) => (
         <Select
@@ -112,13 +122,13 @@ export function RolesScreen() {
       ),
     },
     {
-      key: "verified",
-      header: "본인확인",
+      key: "status",
+      header: "상태",
       align: "right",
       width: "120px",
       render: (u) => (
         <Badge tone={u.identityVerified ? "pass" : "plain"}>
-          {u.identityVerified ? "확인 완료" : "확인 전"}
+          {u.identityVerified ? "활성" : "본인확인 전"}
         </Badge>
       ),
     },

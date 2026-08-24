@@ -88,6 +88,11 @@ export function ApplyContractScreen() {
     <PanelShell>
       <ApplyStepLine application={application} current="contract" />
 
+      <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-surface px-3 py-1.5">
+        <span className="text-11 font-medium text-brand">✓ 자동 저장됨</span>
+        <span className="text-12 text-body">방금 전</span>
+      </span>
+
       <h1 className="text-24 font-bold text-ink">
         확정된 공간과 조건을 계약서로 확인해요
       </h1>
@@ -107,6 +112,11 @@ export function ApplyContractScreen() {
                 : "확정 후 표시"
             }
           />
+          <InfoRow
+            label="정산 기준"
+            value="월별 운영 실적에 따라 계약서 기준 적용"
+          />
+          <InfoRow label="중도 해지" value="30일 전 통지 및 인수인계" />
           <InfoRow label="계약서 판" value={`${contract.contentHash.slice(0, 12)}…`} />
         </div>
         <p className="mt-5 max-h-[320px] overflow-y-auto whitespace-pre-wrap border-t border-line-soft pt-5 text-13 leading-6 text-body">
@@ -178,6 +188,20 @@ export function ApplyContractScreen() {
               onClick={sign}
             >
               {busy ? "서명 중" : "계약 서명하기"}
+            </Button>
+          </div>
+
+          <p className="mt-5 text-12 text-body">
+            서명 완료 후 관리자가 최종 확인하면 운영자 보증서가 발급됩니다.
+          </p>
+
+          {/* `.fig` O-07 Step navigation — 되돌아가기와 나중에 이어하기. */}
+          <div className="mt-6 flex gap-3">
+            <Button variant="secondary" href="/operator/apply/confirm">
+              ← 이전 단계
+            </Button>
+            <Button variant="ghost" href="/operator">
+              저장하고 나가기
             </Button>
           </div>
         </>
