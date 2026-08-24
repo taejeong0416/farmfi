@@ -2,14 +2,32 @@
 
 import Link from "next/link";
 import { AuthShell, Button } from "@/components/ui";
+import { useAuth } from "@/lib/useAuth";
 
 export function StartScreen() {
+  const { user, isAuthenticated } = useAuth();
+  const needsVerify = isAuthenticated && user != null && !user.identityVerified;
+
   return (
     <AuthShell wide header>
-      <h1 className="text-28 font-bold text-ink">어떤 서비스를 이용할까요?</h1>
+      <h1 className="text-24 font-bold text-ink">어떤 서비스를 이용할까요?</h1>
       <p className="mt-3 text-14 text-muted">
         로그인한 계정으로 투자, 정기구독, 운영 서비스를 이용할 수 있어요.
       </p>
+
+      {needsVerify ? (
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-10 border border-line bg-surface px-[17px] py-[17px]">
+          <div>
+            <p className="text-14 font-semibold text-ink">
+              본인확인이 아직 남아 있어요
+            </p>
+            <p className="mt-1.5 text-12 text-body">
+              모바일 신분증으로 확인하면 투자 한도가 함께 계산됩니다.
+            </p>
+          </div>
+          <Button href="/verify">이어서 확인하기</Button>
+        </div>
+      ) : null}
 
       <div className="mt-10 grid grid-cols-2 gap-6">
         <PurposeCard
@@ -40,7 +58,7 @@ export function StartScreen() {
         <p className="mt-4 text-12 text-body">
           지도에서 운영할 공간을 찾고, 개점 준비와 보증서를 관리해요.
         </p>
-        <p className="mt-3.5 text-11 font-medium text-brand">
+        <p className="mt-3.5 text-12 font-medium text-brand">
           운영 자격 확인이 필요해요
         </p>
         <div className="mt-3.5">
