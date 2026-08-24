@@ -250,6 +250,18 @@ export async function seedScenario(prisma: PrismaClient) {
       ],
     });
 
+    // ─── 설비 (베드별 LED·순환팬·관수 펌프) ───
+    // 베드는 품목 수만큼 생긴다 — 위 재고 3품목이 곧 베드 A·B·C다. 앱 모니터링 화면이
+    // 이 행을 읽어 토글하고, 그 결과가 DeviceCommand로 남는다. 시드가 없으면 제어 화면이
+    // 빈 목록이 된다.
+    await prisma.device.createMany({
+      data: ["A", "B", "C"].flatMap((bed) => [
+        { projectId: proj.id, bed, kind: "led", name: "LED 조명", isOn: true },
+        { projectId: proj.id, bed, kind: "fan", name: "순환팬", isOn: true },
+        { projectId: proj.id, bed, kind: "pump", name: "관수 펌프", isOn: false },
+      ]),
+    });
+
     // 수확·판매 실적 14일치 (판매-재배 추이 + 기관 리포트 집계용)
     const harvests: { projectId: string; productId: string; quantity: number; harvestedAt: Date }[] = [];
     const sales: { projectId: string; productId: string; quantity: number; amount: number; soldAt: Date }[] = [];
