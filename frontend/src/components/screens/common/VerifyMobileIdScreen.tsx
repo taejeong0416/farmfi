@@ -14,7 +14,6 @@ import type {
   IdentityOffer,
   IdentityStatusResponse,
 } from "@/components/farmfi/identity/types";
-import { useAuth } from "@/lib/useAuth";
 import { won } from "../api";
 
 const POLL_INTERVAL_MS = 2500;
@@ -22,7 +21,6 @@ const OFFER_TTL_SEC = 300;
 
 export function VerifyMobileIdScreen() {
   const router = useRouter();
-  const { user } = useAuth();
   const queryClient = useQueryClient();
   const [offer, setOffer] = useState<IdentityOffer | null>(null);
   const [left, setLeft] = useState(OFFER_TTL_SEC);
@@ -174,18 +172,20 @@ export function VerifyMobileIdScreen() {
         />
       </div>
 
-      {user?.role === "admin" ? (
-        <div className="mt-4">
-          <Button
-            full
-            variant="ghost"
-            onClick={() => confirmMutation.mutate()}
-            disabled={!offer || confirmMutation.isPending}
-          >
-            데모: 확인 완료 처리 (admin)
-          </Button>
-        </div>
-      ) : null}
+      {/* 발표 자리에서 실물 신분증을 꺼낼 수 없을 때 이 한 칸을 대신 채운다. */}
+      <div className="mt-4">
+        <Button
+          full
+          variant="ghost"
+          onClick={() => confirmMutation.mutate()}
+          disabled={!offer || confirmMutation.isPending}
+        >
+          {confirmMutation.isPending ? "처리 중" : "시연 넘어가기"}
+        </Button>
+        <p className="mt-2 text-center text-11 text-muted">
+          신분증 없이 다음 단계로 넘어갑니다
+        </p>
+      </div>
 
       <p className="mt-6 text-12 leading-5 text-muted">
         FarmFi는 실명·성인 여부 등 필요한 확인값만 저장하고 신분증 원문은 보관하지 않아요.
