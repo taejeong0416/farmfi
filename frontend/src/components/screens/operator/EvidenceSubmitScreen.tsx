@@ -41,9 +41,37 @@ type MilestoneDetail = {
   project: { id: string; name: string; location: string | null };
 };
 
+/**
+ * 요건 한 줄의 상태 (`.fig` O-11 ChecklistCard).
+ * 센서는 사람이 올리는 게 아니라 설비가 보내는 것이라 `연동 대기`로 따로 둔다.
+ */
+function signalState(
+  signal: string,
+  verdict: string | undefined,
+  hasEvidence: boolean,
+): { label: string; tone: "pass" | "fail" | "idle" } {
+  if (verdict === "met") return { label: "제출완료", tone: "pass" };
+  if (verdict === "unmet") return { label: "보완 요청", tone: "fail" };
+  if (signal === "iot") return { label: "연동 대기", tone: "idle" };
+  return hasEvidence
+    ? { label: "제출완료", tone: "pass" }
+    : { label: "제출 전", tone: "idle" };
+}
+
 export function EvidenceSubmitScreen({ milestoneId }: { milestoneId: string }) {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const { data: verification } = useQuery({
+    queryKey: ["milestone-verification", milestoneId],
+    queryFn: () =>
+      getJson<{ items: { signal: string; verdict: string }[] }>(
+        `/api/milestones/${milestoneId}/verification`,
+      ),
+    select: (d) => d.items,
+    enabled: Boolean(milestoneId),
+    retry: false,
+  });
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["milestone-evidence", milestoneId],
@@ -62,6 +90,7 @@ export function EvidenceSubmitScreen({ milestoneId }: { milestoneId: string }) {
   const [note, setNote] = useState("");
   const [urls, setUrls] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
+  const [savedAt, setSavedAt] = useState<Date | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   if (isLoading || !data) {
@@ -98,6 +127,19 @@ export function EvidenceSubmitScreen({ milestoneId }: { milestoneId: string }) {
     }
   }
 
+  /**
+   * 임시 저장 (`.fig` O-11). 제출은 아니다 — 쓰던 값을 이 브라우저에 남겨
+   * 나갔다 돌아와도 다시 채워 넣지 않게 한다. 제출하면 지운다.
+   */
+  function saveDraft() {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(
+      `evidence-draft:${milestoneId}`,
+      JSON.stringify({ docType, amount, date, counterparty, docNo, note, urls }),
+    );
+    setSavedAt(new Date());
+  }
+
   async function submit() {
     if (urls.length === 0) {
       setError("증빙 파일을 한 개 이상 첨부해 주세요.");
@@ -121,6 +163,7 @@ export function EvidenceSubmitScreen({ milestoneId }: { milestoneId: string }) {
         urls,
         note: summary,
       });
+      window.localStorage.removeItem(`evidence-draft:${milestoneId}`);
       await refetch();
       router.push("/operator/milestones");
     } catch (e) {
@@ -152,25 +195,41 @@ export function EvidenceSubmitScreen({ milestoneId }: { milestoneId: string }) {
             <Card className="mt-4" padded={false}>
               <div className="px-4">
                 {m.requiredSignals.map((s) => {
-                  const done = m.evidenceUrls.length > 0;
+                  const st = signalState(
+                    s,
+                    verification?.find((v) => v.signal === s)?.verdict,
+                    m.evidenceUrls.length > 0,
+                  );
                   return (
                     <div
                       key={s}
                       className="flex items-center justify-between border-b border-surface py-3.5 last:border-b-0"
                     >
-                      <span className="text-13 text-ink">
+                      <span
+                        className={`text-13 ${st.tone === "idle" ? "text-body" : "text-ink"}`}
+                      >
                         {SIGNAL_LABEL[s] ?? s}
                       </span>
                       <span className="flex items-center gap-2">
                         <span
                           className={`h-[7px] w-[7px] rounded-full ${
-                            done ? "bg-brand" : "bg-line"
+                            st.tone === "pass"
+                              ? "bg-brand"
+                              : st.tone === "fail"
+                                ? "bg-danger"
+                                : "bg-muted"
                           }`}
                         />
                         <span
-                          className={`text-12 ${done ? "font-medium text-brand" : "text-muted"}`}
+                          className={`text-11 font-medium ${
+                            st.tone === "pass"
+                              ? "text-brand"
+                              : st.tone === "fail"
+                                ? "text-danger"
+                                : "text-muted"
+                          }`}
                         >
-                          {done ? "제출완료" : "제출 전"}
+                          {st.label}
                         </span>
                       </span>
                     </div>
@@ -195,7 +254,7 @@ export function EvidenceSubmitScreen({ milestoneId }: { milestoneId: string }) {
             <Card className="mt-4" padded={false}>
               <div className="px-4">
                 <div className="flex items-center justify-between border-b border-surface py-3">
-                  <span className="text-12 text-ink">최근 제출</span>
+                  <span className="text-12 text-ink">1차 제출</span>
                   <span className="text-12 text-muted">
                     {m.evidenceSubmittedAt
                       ? formatDate(m.evidenceSubmittedAt)
@@ -203,9 +262,9 @@ export function EvidenceSubmitScreen({ milestoneId }: { milestoneId: string }) {
                   </span>
                 </div>
                 <div className="flex items-center justify-between py-3">
-                  <span className="text-12 text-body">재검토 판정</span>
+                  <span className="text-12 text-body">보완 요청 접수</span>
                   <span className="text-12 text-muted">
-                    {m.reviewedAt ? formatDate(m.reviewedAt) : "없음"}
+                    {m.reviewNote && m.reviewedAt ? formatDate(m.reviewedAt) : "없음"}
                   </span>
                 </div>
               </div>
@@ -225,9 +284,17 @@ export function EvidenceSubmitScreen({ milestoneId }: { milestoneId: string }) {
                 집행 예정액 {won(m.releaseAmount)}
               </p>
             </div>
-            <Button onClick={submit} disabled={busy}>
-              {busy ? "처리 중" : "제출하기"}
-            </Button>
+            <div className="flex items-center gap-3">
+              {savedAt ? (
+                <span className="text-11 text-brand">✓ 자동 저장됨</span>
+              ) : null}
+              <Button variant="secondary" onClick={saveDraft} disabled={busy}>
+                임시 저장
+              </Button>
+              <Button onClick={submit} disabled={busy}>
+                {busy ? "처리 중" : "제출하기"}
+              </Button>
+            </div>
           </div>
 
           <h3 className="mt-8 text-18 font-bold text-ink">문서 · 영수증</h3>
