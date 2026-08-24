@@ -163,9 +163,6 @@ export function MySubscriptionsScreen() {
                       다시 시작
                     </Button>
                   )}
-                  <Button size="sm" variant="ghost" href="/investor/payouts">
-                    결제 내역
-                  </Button>
                   <Button
                     size="sm"
                     variant="danger"
