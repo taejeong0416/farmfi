@@ -52,6 +52,7 @@ type VerificationItem = {
 };
 
 type Verification = {
+  evidenceUrls: string[];
   milestone: {
     id: string;
     seq: number;
@@ -369,6 +370,82 @@ export function MilestonesScreen() {
                           {VERDICT_LABEL[it.verdict] ?? it.verdict}
                         </span>
                       </div>
+                    ))
+                  )}
+                </div>
+              </Card>
+
+              {/* `.fig` O-10 현장 신호 요약 — 항목마다 충족 여부와 무엇이 판단했는지. */}
+              <h3 className="mt-8 text-18 font-bold text-ink">현장 신호 요약</h3>
+              <Card className="mt-3.5" padded={false}>
+                <div className="px-6">
+                  {(verification?.items ?? []).length === 0 ? (
+                    <p className="py-8 text-center text-12 text-muted">
+                      아직 판정된 신호가 없습니다.
+                    </p>
+                  ) : (
+                    (verification?.items ?? []).map((it) => (
+                      <div
+                        key={`sig-${it.signal}`}
+                        className="grid grid-cols-3 items-center border-b border-surface py-3 last:border-b-0"
+                      >
+                        <span className="text-13 text-ink">{it.label}</span>
+                        <span className="flex items-center gap-2">
+                          <span
+                            className={`h-[7px] w-[7px] rounded-full ${
+                              it.verdict === "met"
+                                ? "bg-brand"
+                                : it.verdict === "unmet"
+                                  ? "bg-danger"
+                                  : "bg-muted"
+                            }`}
+                          />
+                          <span
+                            className={`text-12 ${
+                              it.verdict === "met"
+                                ? "text-brand"
+                                : it.verdict === "unmet"
+                                  ? "text-danger"
+                                  : "text-muted"
+                            }`}
+                          >
+                            {it.verdict === "met"
+                              ? "충족"
+                              : it.verdict === "unmet"
+                                ? "미충족"
+                                : "판정 전"}
+                          </span>
+                        </span>
+                        <span className="text-12 text-muted">
+                          {it.decidedAt
+                            ? "사람이 확인"
+                            : it.autoDraft == null
+                              ? "자동 검증 전"
+                              : "자동 검증 초안"}
+                        </span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </Card>
+
+              <h3 className="mt-8 text-18 font-bold text-ink">제출된 증빙</h3>
+              <Card className="mt-3.5" padded={false}>
+                <div className="px-6">
+                  {(verification?.evidenceUrls ?? []).length === 0 ? (
+                    <p className="py-8 text-center text-12 text-muted">
+                      올라온 증빙이 없습니다.
+                    </p>
+                  ) : (
+                    (verification?.evidenceUrls ?? []).map((u) => (
+                      <a
+                        key={u}
+                        href={u}
+                        className="flex items-center justify-between border-b border-surface py-3 text-13 text-brand last:border-b-0"
+                      >
+                        {decodeURIComponent(u.split("/").pop() ?? u)}
+                        <span className="text-12 text-muted">열기</span>
+                      </a>
                     ))
                   )}
                 </div>
