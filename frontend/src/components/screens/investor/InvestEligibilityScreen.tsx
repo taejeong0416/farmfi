@@ -159,6 +159,53 @@ function IneligibleView({
   const limit = investment.annualLimit;
   const renewal = new Date(new Date().getFullYear() + 1, 0, 1);
 
+  /*
+   * 부적격 사유는 하나가 아니다. 본인확인을 안 마친 사람에게 한도 이야기를 하면
+   * 실명 확인이 끝난 것처럼 읽히고, 정작 해야 할 일(신분증·계좌 확인)은 화면 어디에도
+   * 없다. 사유가 본인확인이면 그 화면으로 데려간다.
+   */
+  const identityBlocked = !investment.eligible && investment.status === "IDENTITY_REQUIRED";
+  const backHere = `/projects/${projectId}/invest/eligibility?amount=${investment.amount}`;
+
+  if (identityBlocked) {
+    return (
+      <PanelShell className="max-w-modal">
+        <h1 className="text-24 font-bold text-ink">본인확인을 먼저 마쳐 주세요</h1>
+        <p className="mt-3 text-13 leading-6 text-muted">
+          {investment.eligibilityMemo ?? "첫 투자 전에는 본인확인이 필요합니다."}
+        </p>
+
+        <Card className="mt-6" padded={false}>
+          <div className="px-5">
+            <Row label="모바일 신분증 확인" ok={false} />
+            <Row label="본인 명의 계좌 확인" ok={false} />
+          </div>
+        </Card>
+
+        <div className="mt-5 rounded-8 border border-brand bg-brand-soft px-5 py-4">
+          <p className="text-13 font-bold text-brand">확인을 마치면 이 신청으로 돌아와요</p>
+          <p className="mt-2 text-12 text-body">
+            입력한 금액 {won(investment.amount)}은 그대로 남습니다. 신분증과 계좌를 확인한 뒤
+            바로 이어서 신청할 수 있어요.
+          </p>
+        </div>
+
+        <div className="mt-6 space-y-3">
+          <Button full href={`/verify?next=${encodeURIComponent(backHere)}`}>
+            본인확인 시작하기
+          </Button>
+          <Button full variant="ghost" href={`/projects/${projectId}`}>
+            프로젝트로 돌아가기
+          </Button>
+        </div>
+
+        <p className="mt-5 text-12 text-muted">
+          FarmFi는 실명·성인 여부 등 필요한 확인값만 저장하고 신분증 원문은 보관하지 않아요.
+        </p>
+      </PanelShell>
+    );
+  }
+
   return (
     <PanelShell className="max-w-modal">
       <h1 className="text-24 font-bold text-ink">지금은 투자 신청이 어려워요</h1>

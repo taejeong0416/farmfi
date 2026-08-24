@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { AuthShell, Button, OptionCard } from "@/components/ui";
+import { withNext } from "@/lib/safe-next";
 
-export function VerifyMethodScreen() {
+/** next: 확인을 마친 뒤 돌아갈 앱 내부 경로. 투자 신청에서 들어오면 그 신청으로 돌아간다. */
+export function VerifyMethodScreen({ next }: { next?: string }) {
   const router = useRouter();
   const [method, setMethod] = useState<"mobile-id" | "simple">("mobile-id");
 
@@ -44,7 +46,11 @@ export function VerifyMethodScreen() {
         <Button
           full
           onClick={() =>
-            router.push(method === "mobile-id" ? "/verify/mobile-id" : "/projects")
+            router.push(
+              method === "mobile-id"
+                ? withNext("/verify/mobile-id", next)
+                : (next ?? "/projects"),
+            )
           }
         >
           {method === "mobile-id"

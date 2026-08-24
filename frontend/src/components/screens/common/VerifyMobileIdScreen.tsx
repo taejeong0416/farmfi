@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AuthShell, Button, InfoRow, StepList } from "@/components/ui";
+import { withNext } from "@/lib/safe-next";
 import {
   confirmIdentity,
   createIdentityOffer,
@@ -19,7 +20,8 @@ import { won } from "../api";
 const POLL_INTERVAL_MS = 2500;
 const OFFER_TTL_SEC = 300;
 
-export function VerifyMobileIdScreen() {
+/** next: 확인을 마친 뒤 돌아갈 앱 내부 경로. 계좌 확인까지 그대로 넘긴다. */
+export function VerifyMobileIdScreen({ next }: { next?: string }) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [offer, setOffer] = useState<IdentityOffer | null>(null);
@@ -71,10 +73,10 @@ export function VerifyMobileIdScreen() {
 
   useEffect(() => {
     if (status === "verified") {
-      const t = setTimeout(() => router.push("/verify/account"), 700);
+      const t = setTimeout(() => router.push(withNext("/verify/account", next)), 700);
       return () => clearTimeout(t);
     }
-  }, [status, router]);
+  }, [status, router, next]);
 
   if (failed) return <FailureView onRetry={() => offerMutation.mutate()} expired={expired} />;
 

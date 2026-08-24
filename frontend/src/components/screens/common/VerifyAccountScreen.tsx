@@ -16,6 +16,9 @@ const BANKS = [
   "토스뱅크",
 ];
 
+/** 시연용 계좌. 예금주 조회는 지급사 어댑터가 본인확인 이름을 그대로 돌려준다. */
+const DEMO_ACCOUNT = { bank: "부산은행", number: "1012345678901" };
+
 /** next: 등록을 마친 뒤 돌아갈 앱 내부 경로. 없으면 본인확인 완료로 간다. */
 export function VerifyAccountScreen({ next }: { next?: string }) {
   const router = useRouter();
@@ -39,15 +42,34 @@ export function VerifyAccountScreen({ next }: { next?: string }) {
     }
   }
 
-  async function register() {
+  async function register(bankName = bank, accountNumber = number) {
     setError(null);
     setBusy(true);
     try {
-      await registerBankAccount(bank, number);
+      await registerBankAccount(bankName, accountNumber);
       router.push(next ?? "/verify/done");
     } catch (e) {
       setError(e instanceof Error ? e.message : "계좌를 등록하지 못했습니다.");
     } finally {
+      setBusy(false);
+    }
+  }
+
+  /**
+   * 발표 자리에서는 실제 계좌번호를 부를 수 없다. 신분증 화면의 `시연 넘어가기`와
+   * 짝이 되는 한 칸으로, 시연용 계좌를 채우고 확인·등록을 한 번에 끝낸다.
+   */
+  async function demoFill() {
+    setError(null);
+    setBusy(true);
+    setBank(DEMO_ACCOUNT.bank);
+    setNumber(DEMO_ACCOUNT.number);
+    try {
+      setHolder(await verifyAccountHolder(DEMO_ACCOUNT.bank, DEMO_ACCOUNT.number));
+      await registerBankAccount(DEMO_ACCOUNT.bank, DEMO_ACCOUNT.number);
+      router.push(next ?? "/verify/done");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "시연 계좌를 등록하지 못했습니다.");
       setBusy(false);
     }
   }
@@ -113,9 +135,19 @@ export function VerifyAccountScreen({ next }: { next?: string }) {
       </div>
 
       <div className="mt-6">
-        <Button full disabled={!holder || busy} onClick={register}>
+        <Button full disabled={!holder || busy} onClick={() => void register()}>
           계좌 확인하기
         </Button>
+      </div>
+
+      {/* 발표 자리에서 실제 계좌번호를 부를 수 없을 때 이 한 칸을 대신 채운다. */}
+      <div className="mt-4">
+        <Button full variant="ghost" disabled={busy} onClick={() => void demoFill()}>
+          {busy ? "처리 중" : "시연 넘어가기"}
+        </Button>
+        <p className="mt-2 text-center text-11 text-muted">
+          시연용 계좌로 확인·등록을 한 번에 마칩니다
+        </p>
       </div>
 
       <p className="mt-4 text-11 text-muted">
