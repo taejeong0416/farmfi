@@ -65,7 +65,8 @@ export default function ScheduleScreen() {
   const listed = picked ? inMonth.filter((e) => e.at.getDate() === picked) : inMonth;
 
   return (
-    <DetailShell title="재배 일정" subtitle={project?.name}>
+    <DetailShell
+      requiresProject title="재배 일정" subtitle={project?.name}>
       {inv.loading && <SkeletonBlock height={340} radius={R.lg} />}
       {inv.error && <StateNotice tone="error" message={inv.error} onRetry={inv.reload} />}
 

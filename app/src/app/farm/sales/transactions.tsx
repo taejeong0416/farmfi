@@ -54,7 +54,8 @@ export default function TransactionsScreen() {
   );
 
   return (
-    <DetailShell title="거래 내역" subtitle={project?.name}>
+    <DetailShell
+      requiresProject title="거래 내역" subtitle={project?.name}>
       {sales.loading && <SkeletonBlock height={180} radius={R.lg} />}
       {sales.error && <StateNotice tone="error" message={sales.error} onRetry={sales.reload} />}
 

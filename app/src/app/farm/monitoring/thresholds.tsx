@@ -54,6 +54,7 @@ export default function ThresholdsScreen() {
 
   return (
     <DetailShell
+      requiresProject
       title="센서 임계값"
       subtitle={project?.name}
       footer={

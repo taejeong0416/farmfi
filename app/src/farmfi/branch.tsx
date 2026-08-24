@@ -28,6 +28,9 @@ type ProjectsState = {
   loading: boolean;
   error: string | null;
   reload: () => void;
+  /** 원본 오류. 화면이 401/403(로그인 필요)과 그 외를 구분해 안내하려면 문구가 아니라
+   *  이 값이 필요하다. `describeApiError`를 거치면 상태 코드가 사라진다. */
+  rawError: unknown;
 };
 
 const ProjectsContext = createContext<ProjectsState | undefined>(undefined);
@@ -37,6 +40,7 @@ export function BranchProvider({ children }: { children: ReactNode }) {
   const [projectId, setProjectId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [rawError, setRawError] = useState<unknown>(null);
   const [nonce, setNonce] = useState(0);
 
   const reload = useCallback(() => setNonce((n) => n + 1), []);
@@ -45,6 +49,7 @@ export function BranchProvider({ children }: { children: ReactNode }) {
     let alive = true;
     setLoading(true);
     setError(null);
+    setRawError(null);
 
     apiFetch<{ projects: FarmProject[] }>("/api/projects")
       .then((res) => {
@@ -62,6 +67,7 @@ export function BranchProvider({ children }: { children: ReactNode }) {
       .catch((e) => {
         if (!alive) return;
         setError(describeApiError(e, "지점 목록을 불러오지 못했습니다."));
+        setRawError(e);
         setLoading(false);
       });
 
@@ -79,8 +85,9 @@ export function BranchProvider({ children }: { children: ReactNode }) {
       loading,
       error,
       reload,
+      rawError,
     }),
-    [projects, projectId, loading, error, reload]
+    [projects, projectId, loading, error, rawError, reload]
   );
 
   return <ProjectsContext.Provider value={value}>{children}</ProjectsContext.Provider>;

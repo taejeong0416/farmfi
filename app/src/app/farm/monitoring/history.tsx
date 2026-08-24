@@ -65,7 +65,8 @@ export default function SensorHistoryScreen() {
   }, [mon.data, key]);
 
   return (
-    <DetailShell title="센서 이력" subtitle={project?.name}>
+    <DetailShell
+      requiresProject title="센서 이력" subtitle={project?.name}>
       <View style={s.tabRow}>
         {KEYS.map((k) => (
           <Pill

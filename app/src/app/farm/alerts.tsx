@@ -43,7 +43,8 @@ export default function AlertsScreen() {
   const shown = onlyUnread ? unread : all;
 
   return (
-    <DetailShell title="설비 알림" subtitle={project?.name}>
+    <DetailShell
+      requiresProject title="설비 알림" subtitle={project?.name}>
       <View style={s.filter}>
         <Pill label={`전체 ${all.length}`} active={!onlyUnread} onPress={() => setOnlyUnread(false)} />
         <Pill label={`미확인 ${unread.length}`} active={onlyUnread} onPress={() => setOnlyUnread(true)} />

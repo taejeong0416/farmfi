@@ -62,7 +62,8 @@ export default function GrowthDetailScreen() {
 
   if (inv.loading) {
     return (
-      <DetailShell title="생육 상세">
+      <DetailShell
+      requiresProject title="생육 상세">
         <SkeletonBlock height={154} radius={R.lg} />
         <SkeletonBlock height={167} radius={R.lg} />
       </DetailShell>

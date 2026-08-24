@@ -12,9 +12,11 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
+import { useFarmProjects } from "../branch";
 import { C, FRAME_MAX_WIDTH, FS, FW, GUTTER, R, SP } from "../theme";
 import { AppIcon, type IconName } from "../icons";
 import { PrimaryButton, GhostButton, T } from "./primitives";
+import { isAuthError } from "@/lib/api";
 
 // typedRoutes가 켜져 있어 Href 유니온은 `.expo/types`가 생성될 때만 새 경로를 안다.
 // 라우트를 추가할 때마다 호출부에서 캐스팅하지 않도록 여기 한 곳에서만 좁힌다.
@@ -86,6 +88,46 @@ function TopBar({ storeName, onStorePress }: { storeName?: string; onStorePress?
 }
 
 // ─── 탭 화면 셸 ───
+/**
+ * 지점 로딩 실패를 화면 대신 셸이 말한다.
+ *
+ * 매장 화면은 전부 `projectId`로 API 경로를 만들고, `useApiResource`는 path가
+ * null이면 요청하지 않고 loading을 유지한다. 그래서 지점 목록을 못 불러오면
+ * 화면이 스켈레톤만 영원히 띄운다 — 이유도, 재시도 버튼도, 로그인 안내도 없이.
+ * 로그인이 풀렸을 때가 대표적이다.
+ *
+ * 화면 16개가 같은 함정을 공유하므로 각자 고치지 않고 셸에서 한 번 막는다.
+ */
+function useBranchGate(children: ReactNode, enabled: boolean): ReactNode {
+  const go = useGo();
+  const branch = useFarmProjects();
+
+  if (!enabled) return children;
+
+  if (branch.error) {
+    return (
+      <>
+        <StateNotice tone="error" message={branch.error} onRetry={branch.reload} />
+        {isAuthError(branch.rawError) && (
+          <PrimaryButton label="로그인하러 가기" onPress={() => go.push("/login")} />
+        )}
+      </>
+    );
+  }
+
+  if (!branch.loading && branch.projects.length === 0) {
+    return (
+      <StateNotice
+        tone="info"
+        message="배정된 매장이 없습니다. 관리자에게 매장 배정을 요청해 주세요."
+        onRetry={branch.reload}
+      />
+    );
+  }
+
+  return children;
+}
+
 export function AppShell({
   active,
   storeName,
@@ -105,16 +147,18 @@ export function AppShell({
   }, [enter]);
   const aStyle = useAnimatedStyle(() => ({ opacity: enter.value }));
 
+  const body = useBranchGate(children, true);
+
   return (
     <SafeAreaView style={s.stage} edges={["top", "bottom"]}>
       <Animated.View style={[s.frame, aStyle]}>
         <TopBar storeName={storeName} onStorePress={onStorePress} />
         {scroll ? (
           <ScrollView contentContainerStyle={s.content} showsVerticalScrollIndicator={false}>
-            {children}
+            {body}
           </ScrollView>
         ) : (
-          <View style={[s.content, { flex: 1 }]}>{children}</View>
+          <View style={[s.content, { flex: 1 }]}>{body}</View>
         )}
         <BottomNav active={active} />
       </Animated.View>
@@ -130,6 +174,7 @@ export function DetailShell({
   children,
   footer,
   scroll = true,
+  requiresProject = false,
 }: {
   title: string;
   subtitle?: string;
@@ -137,8 +182,11 @@ export function DetailShell({
   children: ReactNode;
   footer?: ReactNode;
   scroll?: boolean;
+  /** 이 화면이 선택된 매장(projectId)에 의존하면 true. 지점 로딩 실패를 셸이 안내한다. */
+  requiresProject?: boolean;
 }) {
   const go = useGo();
+  const body = useBranchGate(children, requiresProject);
   return (
     <SafeAreaView style={s.stage} edges={["top", "bottom"]}>
       <View style={s.frame}>
@@ -164,10 +212,10 @@ export function DetailShell({
         </View>
         {scroll ? (
           <ScrollView contentContainerStyle={s.content} showsVerticalScrollIndicator={false}>
-            {children}
+            {body}
           </ScrollView>
         ) : (
-          <View style={[s.content, { flex: 1 }]}>{children}</View>
+          <View style={[s.content, { flex: 1 }]}>{body}</View>
         )}
         {footer && <View style={s.footer}>{footer}</View>}
       </View>

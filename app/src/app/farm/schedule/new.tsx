@@ -45,6 +45,7 @@ export default function ScheduleNewScreen() {
 
   return (
     <DetailShell
+      requiresProject
       title="재배 일정 등록"
       footer={<PrimaryButton label="일정 등록" onPress={() => setDone(true)} disabled={!ready} />}
     >

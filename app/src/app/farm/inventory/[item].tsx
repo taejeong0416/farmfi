@@ -54,7 +54,8 @@ export default function InventoryDetailScreen() {
 
   if (inv.loading) {
     return (
-      <DetailShell title="재고 상세">
+      <DetailShell
+      requiresProject title="재고 상세">
         <SkeletonBlock height={215} radius={R.lg} />
         <SkeletonBlock height={280} radius={R.lg} />
       </DetailShell>

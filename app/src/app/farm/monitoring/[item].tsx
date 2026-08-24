@@ -74,7 +74,8 @@ export default function BedDetailScreen() {
 
   if (inv.loading || mon.loading) {
     return (
-      <DetailShell title="베드 상세">
+      <DetailShell
+      requiresProject title="베드 상세">
         <SkeletonBlock height={200} radius={R.lg} />
         <SkeletonBlock height={240} radius={R.lg} />
       </DetailShell>
