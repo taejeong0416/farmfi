@@ -208,10 +208,9 @@ export async function seedScenario(prisma: PrismaClient) {
   const sangchu = await prisma.product.create({ data: { name: "상추", category: "leafy", unitPrice: 3000, growDays: 28 } });
   const rucola = await prisma.product.create({ data: { name: "루꼴라", category: "leafy", unitPrice: 3500, growDays: 30 } });
   const basil = await prisma.product.create({ data: { name: "바질", category: "herb", unitPrice: 4000, growDays: 35 } });
-  // 방울토마토 — 운영자 앱의 베드 4칸(A~D)과 토마토 스프라이트를 채우는 품목.
-  // 앱 cropKindOf()가 이름 "토마토"로 tomato 스프라이트에 매핑한다.
-  const tomato = await prisma.product.create({ data: { name: "방울토마토", category: "fruit", unitPrice: 6000, growDays: 45 } });
-  const products = [sangchu, rucola, basil, tomato];
+  // 방울토마토는 뺐다. 앱 스프라이트(tomato)와 토마토 베드 아트는 코드에 남아 있어
+  // 품목을 다시 넣으면 그대로 살아난다 — cropKindOf()가 이름 "토마토"로 매핑한다.
+  const products = [sangchu, rucola, basil];
 
   // ─── 지점 2곳 (기관 소속) ───
   // 1호점은 이미 모집이 끝난(funded) 라운드라 청약 기간을 과거로 둔다. 이 fundingStart가
@@ -242,13 +241,12 @@ export async function seedScenario(prisma: PrismaClient) {
 
   for (const proj of projects) {
     // 재고-생육: '오늘 할 일'이 나오도록 — 상추=수확 임박+재고부족, 바질=오늘 수확,
-    // 루꼴라=여유, 방울토마토=생육 초중반(할 일 목록을 더 늘리지 않도록 재고도 넉넉히)
+    // 루꼴라=여유
     await prisma.inventory.createMany({
       data: [
         { projectId: proj.id, productId: sangchu.id, inStock: 4, growing: 120, plantedAt: new Date(now.getTime() - 27 * DAY), expectedHarvestAt: new Date(now.getTime() - 1 * DAY) },
         { projectId: proj.id, productId: rucola.id, inStock: 22, growing: 80, plantedAt: new Date(now.getTime() - 10 * DAY), expectedHarvestAt: new Date(now.getTime() + 12 * DAY) },
         { projectId: proj.id, productId: basil.id, inStock: 3, growing: 60, plantedAt: new Date(now.getTime() - 35 * DAY), expectedHarvestAt: now },
-        { projectId: proj.id, productId: tomato.id, inStock: 18, growing: 90, plantedAt: new Date(now.getTime() - 20 * DAY), expectedHarvestAt: new Date(now.getTime() + 25 * DAY) },
       ],
     });
 

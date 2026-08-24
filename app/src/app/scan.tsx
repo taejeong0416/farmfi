@@ -47,6 +47,10 @@ export default function ScanScreen() {
   const [error, setError] = useState<string | null>(null);
   // 카메라는 프레임마다 콜백을 때린다. 한 번 읽으면 잠근다.
   const locked = useRef(false);
+  // 실패한 코드를 기억한다. 카메라는 계속 같은 QR을 읽으므로, 이걸 안 두면
+  // 오류 문구가 초당 몇 번씩 다시 뜬다 — 사용자는 화면이 깜빡인다고 느낀다.
+  // 다른 코드를 비추거나 "다시 시도"를 누르면 풀린다.
+  const lastFailed = useRef<string | null>(null);
 
   const sweep = useSharedValue(0);
   useEffect(() => {
@@ -62,6 +66,8 @@ export default function ScanScreen() {
     const scanned = credentialNoFrom(rawValue);
     if (!scanned) {
       setError("보증서 번호를 읽지 못했습니다. 번호를 직접 입력해 주세요.");
+      lastFailed.current = rawValue;
+      setManualOpen(true);
       locked.current = false;
       return;
     }
@@ -100,7 +106,10 @@ export default function ScanScreen() {
         credentialNo: res.credential.credentialNo,
       });
     } catch (e) {
+      // 같은 코드로는 다시 시도하지 않는다. 통신이 끊긴 상태에서 카메라가 계속
+      // 읽으면 같은 오류가 끝없이 반복된다.
       setError(describeApiError(e, "보증서를 확인하지 못했습니다."));
+      lastFailed.current = rawValue;
       setStage({ kind: "scanning" });
       locked.current = false;
     }
@@ -174,6 +183,8 @@ export default function ScanScreen() {
             active={!checking}
             onScan={(data) => {
               if (locked.current) return;
+              // 방금 실패한 그 코드면 무시한다. 다른 코드를 비추면 바로 풀린다.
+              if (data === lastFailed.current) return;
               locked.current = true;
               void verify(data);
             }}
@@ -191,7 +202,21 @@ export default function ScanScreen() {
           )}
         </View>
 
-        {error && <Text style={s.error}>{error}</Text>}
+        {error && (
+          <View style={s.errorBox}>
+            <Text style={s.error}>{error}</Text>
+            <Pressable
+              onPress={() => {
+                lastFailed.current = null;
+                locked.current = false;
+                setError(null);
+              }}
+              hitSlop={8}
+            >
+              <Text style={s.retry}>다시 시도</Text>
+            </Pressable>
+          </View>
+        )}
 
         {manualOpen ? (
           <View style={s.manualBox}>
@@ -208,7 +233,10 @@ export default function ScanScreen() {
             <Pressable
               style={[s.primary, (!manual.trim() || checking) && s.primaryOff]}
               disabled={!manual.trim() || checking}
-              onPress={() => void verify(manual)}
+              onPress={() => {
+                lastFailed.current = null;
+                void verify(manual);
+              }}
             >
               <Text style={s.primaryText}>번호로 확인</Text>
             </Pressable>
@@ -276,7 +304,9 @@ const s = StyleSheet.create({
   line: { position: "absolute", left: 0, right: 0, height: 2, backgroundColor: C.brand },
 
   caption: { fontSize: FS.cap, color: C.paper, opacity: 0.7 },
+  errorBox: { alignItems: "center", gap: SP.xs },
   error: { fontSize: FS.cap, color: C.danger, textAlign: "center" },
+  retry: { fontSize: FS.body, color: C.paper, textDecorationLine: "underline", paddingVertical: SP.xs },
 
   primary: {
     height: 48,
