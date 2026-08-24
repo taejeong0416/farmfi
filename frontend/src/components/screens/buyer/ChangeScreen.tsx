@@ -5,7 +5,7 @@ import {
   Button,
   Card,
   EmptyState,
-  PanelShell,
+  Shell,
   SkeletonBlock,
 } from "@/components/ui";
 import { DRESSING_COUNT } from "@/lib/pickup-subscription";
@@ -46,21 +46,21 @@ export function ChangeScreen() {
 
   if (isLoading) {
     return (
-      <PanelShell>
+      <Shell>
         <SkeletonBlock height={420} />
-      </PanelShell>
+      </Shell>
     );
   }
 
   if (!active) {
     return (
-      <PanelShell>
+      <Shell>
         <EmptyState
           title="변경할 구독이 없습니다"
           desc="정기구독을 먼저 시작해 주세요."
           action={<Button href="/subscribe">정기구독 둘러보기</Button>}
         />
-      </PanelShell>
+      </Shell>
     );
   }
 
@@ -117,7 +117,7 @@ export function ChangeScreen() {
     productIds.length === active.packSize && dressings.length === DRESSING_COUNT;
 
   return (
-    <PanelShell>
+    <Shell>
       <h1 className="text-24 font-bold text-ink">
         다음 회차부터 바꿀 내용을 선택하세요
       </h1>
@@ -136,7 +136,10 @@ export function ChangeScreen() {
         </p>
       </Card>
 
-      <Card className="mt-4">
+      {/* `.fig` B-08 MainContentRow — 왼쪽 982(484 두 칸), 오른쪽 318. */}
+      <div className="mt-4 flex items-start gap-8">
+        <div className="grid flex-1 grid-cols-2 items-start gap-4">
+      <Card>
         <div className="flex items-center justify-between">
           <p className="text-15 font-bold text-ink">
             {active.packSize}종 믹스팩 · 주 {active.perWeek}회
@@ -203,7 +206,7 @@ export function ChangeScreen() {
         </div>
       </Card>
 
-      <Card className="mt-4">
+      <Card>
         <p className="text-15 font-bold text-ink">수령 주기</p>
         <div className="mt-4 flex gap-2">
           {[1, 2].map((n) => (
@@ -227,7 +230,7 @@ export function ChangeScreen() {
         </p>
       </Card>
 
-      <Card className="mt-4">
+      <Card>
         <p className="text-15 font-bold text-ink">픽업 지점 · 결제</p>
         <p className="mt-3 text-13 text-ink">{active.project.name}</p>
         <p className="mt-1.5 text-12 text-muted">
@@ -247,30 +250,8 @@ export function ChangeScreen() {
         </div>
       </Card>
 
-      <Card className="mt-4">
-        <p className="text-18 font-bold text-ink">선택한 작물이 부족할 때</p>
-        <div className="mt-4 space-y-3">
-          {SHORTAGE_OPTIONS.map((o) => (
-            <button
-              key={o}
-              type="button"
-              onClick={() => setShortage(o)}
-              className={`block w-full rounded-10 border px-5 py-4 text-left text-13 ${
-                shortage === o
-                  ? "border-brand font-medium text-brand"
-                  : "border-line text-body hover:bg-surface"
-              }`}
-            >
-              {o}
-            </button>
-          ))}
-        </div>
-        <p className="mt-3 text-12 text-muted">
-          대체가 어려우면 해당 회차 금액에서 자동 차감됩니다.
-        </p>
-      </Card>
 
-      <Card className="mt-4">
+      <Card>
         <p className="text-15 font-bold text-ink">이번 회차 건너뛰기</p>
         <p className="mt-2 text-12 text-muted">
           픽업 3시간 전까지 건너뛸 수 있어요. 또는 구독을 잠시 멈출 수 있어요.
@@ -307,7 +288,7 @@ export function ChangeScreen() {
         ) : null}
       </Card>
 
-      <Card className="mt-4">
+      <Card className="col-span-2">
         <p className="text-15 font-bold text-ink">구독 해지</p>
         <p className="mt-2 text-12 text-muted">
           다음 결제일 전날까지 해지할 수 있어요. 해지해도 남은 회차는 그대로 받습니다.
@@ -348,8 +329,36 @@ export function ChangeScreen() {
         ) : null}
       </Card>
 
+        </div>
+
+        <div className="w-[318px] shrink-0">
+        <Card>
+          <p className="text-18 font-bold text-ink">선택한 작물이 부족할 때</p>
+          <div className="mt-4 space-y-3">
+            {SHORTAGE_OPTIONS.map((o) => (
+              <button
+                key={o}
+                type="button"
+                onClick={() => setShortage(o)}
+                className={`block w-full rounded-10 border px-5 py-4 text-left text-13 ${
+                  shortage === o
+                    ? "border-brand font-medium text-brand"
+                    : "border-line text-body hover:bg-surface"
+                }`}
+              >
+                {o}
+              </button>
+            ))}
+          </div>
+          <p className="mt-3 text-12 text-muted">
+            대체가 어려우면 해당 회차 금액에서 자동 차감됩니다.
+          </p>
+        </Card>
+        </div>
+      </div>
+
       {error ? <p className="mt-4 text-12 text-danger">{error}</p> : null}
       {saved ? <p className="mt-4 text-12 text-brand">저장했습니다.</p> : null}
-    </PanelShell>
+    </Shell>
   );
 }
