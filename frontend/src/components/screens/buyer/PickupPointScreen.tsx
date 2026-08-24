@@ -49,8 +49,56 @@ export function PickupPointScreen() {
         </div>
       ) : (
         <>
-          <h2 className="mt-8 text-16 font-semibold text-ink">가까운 픽업 지점</h2>
-          <div className="mt-4 max-w-panel space-y-3">
+          {/* `.fig` B-01 MainContentRow — 왼쪽 842 지도, 오른쪽 454 목록. */}
+          <div className="mt-6 flex items-start gap-9">
+            <div className="relative h-[578px] flex-1 overflow-hidden rounded-14 border border-line bg-line-soft">
+              {[14, 26, 38, 50, 62, 74, 86].map((x) => (
+                <span
+                  key={x}
+                  className="absolute top-[4%] h-[88%] w-3 rounded-6 bg-white"
+                  style={{ left: `${x}%` }}
+                />
+              ))}
+              {[20, 44, 68].map((y) => (
+                <span
+                  key={y}
+                  className="absolute left-[5%] h-3 w-[88%] rounded-6 bg-white"
+                  style={{ top: `${y}%` }}
+                />
+              ))}
+              {points.map((p, i) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => update({ projectId: p.id })}
+                  className="absolute -translate-x-1/2 text-center"
+                  style={{ left: `${28 + i * 22}%`, top: `${30 + (i % 2) * 26}%` }}
+                >
+                  <span
+                    className={`mx-auto block h-[34px] w-[34px] rounded-full border-4 border-white ${
+                      draft.projectId === p.id ? "bg-brand" : "bg-muted"
+                    }`}
+                  />
+                  <span className="mt-1.5 block whitespace-nowrap text-12 font-semibold text-ink">
+                    {p.name.split(" ").slice(-1)[0]}
+                  </span>
+                </button>
+              ))}
+              <div className="absolute bottom-5 left-5 flex items-center gap-5 rounded-6 border border-line bg-white px-4 py-2.5">
+                <span className="flex items-center gap-2 text-12 text-body">
+                  <span className="h-[9px] w-[9px] rounded-full bg-brand" />
+                  선택 지점
+                </span>
+                <span className="flex items-center gap-2 text-12 text-body">
+                  <span className="h-[9px] w-[9px] rounded-full bg-muted" />
+                  다른 지점
+                </span>
+              </div>
+            </div>
+
+            <div className="w-[454px] shrink-0">
+          <h2 className="text-16 font-semibold text-ink">가까운 픽업 지점</h2>
+          <div className="mt-4 space-y-3">
             {points.map((p) => (
               <OptionCard
                 key={p.id}
@@ -69,7 +117,7 @@ export function PickupPointScreen() {
             ))}
           </div>
 
-          <div className="mt-8 max-w-panel">
+          <div className="mt-6">
             <Button
               full
               disabled={!draft.projectId}
@@ -79,9 +127,11 @@ export function PickupPointScreen() {
             </Button>
           </div>
 
-          <p className="mt-4 max-w-panel text-12 text-muted">
+          <p className="mt-4 text-12 text-muted">
             배송 상품이 아니라 지정한 팜에서 직접 픽업하는 서비스입니다.
           </p>
+            </div>
+          </div>
         </>
       )}
     </Shell>
