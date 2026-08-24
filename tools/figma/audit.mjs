@@ -29,7 +29,7 @@ const ids = JSON.parse(
   process.env.AUDIT_IDS ??
     fs.readFileSync(path.join(HERE, "audit-ids.json"), "utf8"),
 );
-const { P1, P2, P3, M1, PICKUP } = ids;
+const { P1, P3, M1, PICKUP, SPACE } = ids;
 
 const ROUTES = {
   "C-01": ["investor", "/"],
@@ -56,7 +56,7 @@ const ROUTES = {
   "B-08": ["investor", "/subscriptions/change"],
   "B-09": ["investor", `/subscriptions/pickup/${PICKUP}`],
   "O-01": ["operator", "/operator/spaces"],
-  "O-02": ["operator", `/operator/spaces/${P3}`],
+  "O-02": ["operator", `/operator/spaces/${SPACE}`],
   "O-03": ["operator", "/operator/apply"],
   "O-04": ["operator", "/operator/apply/visit"],
   "O-05": ["operator", "/operator/apply/education"],

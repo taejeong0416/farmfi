@@ -1,8 +1,9 @@
 {
-  "_": "시드를 다시 넣으면 바뀐다. /api/projects 응답에서 다시 뽑아 채운다.",
+  "_": "시드를 다시 넣으면 바뀐다. /api/projects · /api/spaces/available 응답에서 다시 뽑는다.",
   "P1": "cmt65ligz000oegudustw74x9",
   "P2": "cmt65liie000pegud2xl7e7tr",
   "P3": "cmt65lsg004neegudtztqrjgd",
   "M1": "cmt65llyr04n7egudtl5q5b7j",
-  "PICKUP": "cmt667am20003osudxhmrpthy"
+  "PICKUP": "cmt667am20003osudxhmrpthy",
+  "SPACE": "cmt65li9a000iegudyu6xgtw8"
 }

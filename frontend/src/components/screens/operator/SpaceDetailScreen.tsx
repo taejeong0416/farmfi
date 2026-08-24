@@ -7,7 +7,6 @@ import {
   Card,
   EmptyState,
   InfoRow,
-  PhotoSlot,
   Shell,
   SkeletonBlock,
 } from "@/components/ui";
@@ -70,11 +69,27 @@ export function SpaceDetailScreen({ id }: { id: string }) {
 
       <div className="mt-7 flex items-start gap-8">
         <div className="flex-1">
-          <PhotoSlot
-            label="공간 사진"
-            src="/assets/farm-building-indoor.png"
-            className="h-[330px] w-full rounded-10"
-          />
+          {/* `.fig` O-02 MapArea — 사진이 아니라 위치 지도다. */}
+          <div className="relative h-[330px] w-full overflow-hidden rounded-14 border border-line bg-line-soft">
+            {[10, 22, 34, 46, 58, 70, 82, 94].map((x) => (
+              <span
+                key={x}
+                className="absolute top-[5%] h-[85%] w-2.5 rounded-5 bg-white"
+                style={{ left: `${x}%` }}
+              />
+            ))}
+            {[24, 51, 78].map((y) => (
+              <span
+                key={y}
+                className="absolute left-[3%] h-2.5 w-[92%] rounded-5 bg-white"
+                style={{ top: `${y}%` }}
+              />
+            ))}
+            <span className="absolute left-1/2 top-1/2 h-[42px] w-[42px] -translate-x-1/2 -translate-y-1/2 rounded-full border-[5px] border-white bg-brand" />
+            <p className="absolute bottom-4 left-5 text-12 font-medium text-body">
+              {space.address}
+            </p>
+          </div>
 
           <h2 className="mt-8 text-20 font-semibold text-ink">
             이 공간은 여기까지 준비됐어요
@@ -122,21 +137,20 @@ export function SpaceDetailScreen({ id }: { id: string }) {
         <Card className="w-[444px] shrink-0 rounded-14">
           <h2 className="text-17 font-bold text-ink">운영 조건</h2>
           <div className="mt-5">
-            <InfoRow label="전력" value={space.electricity} />
-            <InfoRow label="급수" value={space.water} />
-            <InfoRow label="채광" value={space.lighting} />
-            <InfoRow label="면적" value={space.area} />
+            <InfoRow label="예상 운영 시간" value="하루 약 3.5시간" />
             <InfoRow
-              label="스마트팜 적합도"
-              value={
-                space.suitabilityScore != null
-                  ? `${space.suitabilityScore}점`
-                  : "-"
-              }
+              label="표준 회수 플랜"
+              value={space.suitabilityScore != null ? "15개월" : "-"}
             />
             <InfoRow
-              label="예상 월 임대"
+              label="예상 월 실수령"
               value={space.estimatedRent ? won(space.estimatedRent) : "-"}
+            />
+            <InfoRow label="필수 교육" value="온라인 2시간 + 현장 1회" />
+            <InfoRow label="운영 시작" value="개점 준비 완료 후" />
+            <InfoRow
+              label="설비 조건"
+              value={`전력 ${space.electricity} · 급수 ${space.water} · 채광 ${space.lighting}`}
             />
           </div>
 
