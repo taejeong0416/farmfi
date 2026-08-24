@@ -83,7 +83,7 @@ export function ApplicationsScreen() {
     },
     {
       key: "amount",
-      header: "신청 금액",
+      header: "투자 금액",
       align: "right",
       width: "150px",
       render: (i) => (
@@ -145,7 +145,7 @@ export function ApplicationsScreen() {
 
   return (
     <Shell>
-      <h1 className="text-22 font-bold text-ink">투자 신청 · 취소 내역</h1>
+      <h1 className="text-22 font-bold text-ink">투자 신청 내역</h1>
       <p className="mt-3 text-13 text-muted">전체 {data?.length ?? 0}건</p>
 
       <div className="mt-6 flex items-center gap-2">

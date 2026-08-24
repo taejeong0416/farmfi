@@ -10,7 +10,7 @@ import {
   SkeletonBlock,
 } from "@/components/ui";
 import { formatDate } from "@/lib/format";
-import { useNotifications } from "../api";
+import { patchJson, useNotifications } from "../api";
 
 const TYPE_LABEL: Record<string, string> = {
   verification_failed: "검증",
@@ -22,16 +22,31 @@ const TYPE_LABEL: Record<string, string> = {
 
 const FILTERS = [
   { key: "all", label: "전체" },
+  { key: "apply", label: "투자 신청" },
   { key: "verify", label: "집행 · 검증" },
   { key: "payout", label: "회수금" },
 ] as const;
 
 export function NotificationsScreen() {
-  const { data, isLoading, isError, error } = useNotifications();
+  const { data, isLoading, isError, error, refetch } = useNotifications();
   const [filter, setFilter] = useState<string>("all");
+
+  /** 안 읽은 것을 한꺼번에 확인 처리한다. 서버가 멱등이라 실패해도 재시도가 안전하다. */
+  async function markAllRead() {
+    const unreadIds = (data ?? []).filter((n) => !n.isRead).map((n) => n.id);
+    for (const id of unreadIds) {
+      await patchJson("/api/notifications", { id }).catch(() => null);
+    }
+    await refetch();
+  }
 
   const rows = useMemo(() => {
     const list = data ?? [];
+    if (filter === "apply") {
+      return list.filter(
+        (n) => n.type.includes("invest") || n.type.includes("project_status"),
+      );
+    }
     if (filter === "verify") {
       return list.filter((n) => n.milestoneId || n.type.includes("verif"));
     }
@@ -55,7 +70,7 @@ export function NotificationsScreen() {
     <Shell>
       <div className="flex items-end justify-between">
         <div>
-          <h1 className="text-22 font-bold text-ink">투자자 알림함</h1>
+          <h1 className="text-22 font-bold text-ink">투자 소식</h1>
           <p className="mt-3 text-13 text-muted">안읽음 {unread}건</p>
         </div>
         <Link
@@ -81,6 +96,13 @@ export function NotificationsScreen() {
             {f.label}
           </button>
         ))}
+        <button
+          type="button"
+          className="ml-auto text-12 text-muted hover:text-ink"
+          onClick={() => void markAllRead()}
+        >
+          모두 읽음
+        </button>
       </div>
 
       {isError ? (

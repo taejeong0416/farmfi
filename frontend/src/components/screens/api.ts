@@ -88,6 +88,22 @@ export async function postJson<T>(url: string, body?: unknown): Promise<T> {
   return data as T;
 }
 
+export async function patchJson<T>(url: string, body?: unknown): Promise<T> {
+  const res = await fetch(url, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+  const data = (await res.json().catch(() => null)) as
+    | (T & { error?: string })
+    | null;
+  if (!res.ok) {
+    throw new Error(data?.error ?? "요청에 실패했습니다.");
+  }
+  return data as T;
+}
+
 export async function putJson<T>(url: string, body?: unknown): Promise<T> {
   const res = await fetch(url, {
     method: "PUT",
