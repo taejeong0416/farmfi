@@ -5,6 +5,7 @@ import { useLocalSearchParams } from "expo-router";
 
 import { useFarmProjects } from "@/farmfi/branch";
 import { useApiResource } from "@/farmfi/useApiResource";
+import { apiFetch } from "@/lib/api";
 import {
   SENSOR_META,
   cropKindOf,
@@ -13,6 +14,10 @@ import {
   rackIdAt,
   readingSeverity,
   stageLabel,
+  type DeviceCommandResult,
+  type DeviceKind,
+  type DeviceRecord,
+  type DevicesResponse,
   type InventoryResponse,
   type MonitoringDetailResponse,
   type SensorKey,
@@ -37,11 +42,10 @@ import {
 
 const KEYS: SensorKey[] = ["temperature", "humidity", "co2Level", "phLevel"];
 
-const DEVICES: { id: string; name: string; icon: IconName }[] = [
-  { id: "led", name: "LED 조명", icon: "led" },
-  { id: "fan", name: "순환팬", icon: "fan" },
-  { id: "pump", name: "관수 펌프", icon: "drop" },
-];
+const DEVICE_ICON: Record<DeviceKind, IconName> = { led: "led", fan: "fan", pump: "drop" };
+
+// 도면 순서(LED → 순환팬 → 관수 펌프). 서버는 kind 알파벳순으로 내려준다.
+const KIND_ORDER: DeviceKind[] = ["led", "fan", "pump"];
 
 export default function BedDetailScreen() {
   const go = useGo();
@@ -57,20 +61,67 @@ export default function BedDetailScreen() {
     "센서 값을 불러오지 못했습니다."
   );
 
-  // 설비 제어 API가 아직 없다. 스위치는 이 화면 안에서만 움직인다.
-  const [on, setOn] = useState<Record<string, boolean>>({ led: true, fan: true, pump: false });
-  const [result, setResult] = useState<{
-    ok: boolean;
-    name: string;
-    next: boolean;
-    at: string;
-  } | null>(null);
-
   const items = inv.data?.projects[0]?.items ?? [];
   const index = items.findIndex((i) => i.productId === itemId);
   const item = index >= 0 ? items[index] : null;
+  const bed = index >= 0 ? rackIdAt(index) : null;
+
+  // 설비는 지점이 아니라 베드에 달린다 — 이 베드 것만 읽는다.
+  const dev = useApiResource<DevicesResponse>(
+    projectId && bed ? `/api/devices?projectId=${projectId}&bed=${bed}` : null,
+    "설비 상태를 불러오지 못했습니다."
+  );
+
+  // 명령이 성공한 설비의 확정 상태. 목록을 다시 받지 않고 이 값만 덮어쓴다.
+  const [applied, setApplied] = useState<Record<string, boolean>>({});
+  const [busy, setBusy] = useState<string | null>(null);
+  const [result, setResult] = useState<{
+    ok: boolean;
+    name: string;
+    state: boolean;
+    at: string;
+    simulated?: boolean;
+    reason?: string;
+  } | null>(null);
+
   const latest = mon.data?.points.at(-1) ?? null;
   const ranges = mon.data?.healthyRanges;
+
+  const devices = [...(dev.data?.devices ?? [])].sort(
+    (a, b) => KIND_ORDER.indexOf(a.kind) - KIND_ORDER.indexOf(b.kind)
+  );
+  const stateOf = (d: DeviceRecord) => applied[d.id] ?? d.isOn;
+
+  // 제어 결과는 서버가 판정한다 — 응답이 성공이라고 말할 때만 스위치가 움직인다.
+  const toggle = async (device: DeviceRecord, next: boolean) => {
+    if (busy) return;
+    setBusy(device.id);
+    try {
+      const res = await apiFetch<DeviceCommandResult>("/api/devices", {
+        method: "POST",
+        body: JSON.stringify({ deviceId: device.id, targetState: next }),
+      });
+      setApplied((prev) => ({ ...prev, [device.id]: res.isOn }));
+      setResult({
+        ok: true,
+        name: device.name,
+        state: res.isOn,
+        at: new Date().toISOString(),
+        simulated: res.simulated === true,
+      });
+    } catch (e) {
+      // 중복 명령(409)·권한(401) 등 서버 판단을 그대로 보여준다. 바뀐 척하지 않는다.
+      setResult({
+        ok: false,
+        name: device.name,
+        state: stateOf(device),
+        at: new Date().toISOString(),
+        reason: e instanceof Error ? e.message : "제어 명령을 보내지 못했습니다.",
+      });
+    } finally {
+      setBusy(null);
+    }
+  };
 
   if (inv.loading || mon.loading) {
     return (
@@ -94,18 +145,10 @@ export default function BedDetailScreen() {
     );
   }
 
-  const bedName = `베드 ${rackIdAt(index)}`;
+  const bedName = `베드 ${bed}`;
   const anyAlert = KEYS.some(
     (k) => latest && readingSeverity(k, latest[k], ranges) === "critical"
   );
-
-  // 센서가 멈춘 지점은 설비가 바뀌었는지 확인할 길이 없다 — 성공이라고 말하지 않는다.
-  const canConfirm = Boolean(mon.data && !mon.data.stale);
-
-  const toggle = (id: string, name: string, next: boolean) => {
-    if (canConfirm) setOn((prev) => ({ ...prev, [id]: next }));
-    setResult({ ok: canConfirm, name, next, at: new Date().toISOString() });
-  };
 
   return (
     <DetailShell
@@ -168,14 +211,28 @@ export default function BedDetailScreen() {
       {/* 설비 제어 */}
       <Card style={s.card}>
         <CardTitle>설비 제어</CardTitle>
-        {DEVICES.map((d) => (
+        {dev.error && <StateNotice tone="error" message={dev.error} onRetry={dev.reload} />}
+        {!dev.error && devices.length === 0 && (
+          <Text style={s.rangeNote}>이 베드에 등록된 설비가 없습니다.</Text>
+        )}
+        {devices.map((d) => (
           <DeviceRow
             key={d.id}
-            icon={d.icon}
+            icon={DEVICE_ICON[d.kind]}
             name={d.name}
-            state={on[d.id] ? "가동 중" : "정지"}
-            on={on[d.id]}
-            onToggle={(next) => toggle(d.id, d.name, next)}
+            state={
+              busy === d.id
+                ? "명령 전송 중"
+                : d.pending
+                  ? "이전 명령 처리 중"
+                  : !d.controllable
+                    ? "자동 제어"
+                    : stateOf(d)
+                      ? "가동 중"
+                      : "정지"
+            }
+            on={stateOf(d)}
+            onToggle={d.controllable ? (next) => toggle(d, next) : undefined}
           />
         ))}
       </Card>
@@ -205,14 +262,14 @@ export default function BedDetailScreen() {
           !result
             ? ""
             : result.ok
-              ? `${result.name} — ${result.next ? "가동" : "정지"} 상태로 바꿨습니다. 실제 설비 반영은 제어 API 연결 후 이뤄집니다.`
-              : `${result.name}이(가) 응답하지 않습니다. 실제 설비 상태를 다시 확인해주세요.\n실패 시각 ${formatStamp(
-                  result.at
-                )} · 현재 설비 상태 ${on[
-                  DEVICES.find((d) => d.name === result.name)?.id ?? ""
-                ]
-                  ? "가동"
-                  : "정지"}`
+              ? `${result.name} — ${result.state ? "가동" : "정지"} 상태로 바꿨습니다.${
+                  result.simulated
+                    ? "\n설비 게이트웨이가 붙기 전이라 서버가 명령을 즉시 확정 처리했습니다. 실제 설비 상태를 함께 확인해주세요."
+                    : ""
+                }`
+              : `${result.reason}\n요청 시각 ${formatStamp(result.at)} · 현재 설비 상태 ${
+                  result.state ? "가동" : "정지"
+                }`
         }
         cancelLabel={result?.ok ? undefined : "닫기"}
         confirmLabel={result?.ok ? "확인" : "다시 시도"}

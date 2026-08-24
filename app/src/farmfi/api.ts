@@ -177,6 +177,36 @@ export type MonitoringDetailResponse = Omit<MonitoringSummaryResponse, "points">
   optimalRanges: Record<string, [number, number]>;
 };
 
+// ─── GET /api/devices?projectId=&bed= · POST /api/devices ───
+// 설비는 센서와 달리 베드 단위로 달린다. pending은 앞선 명령이 아직 안 끝났다는 뜻이고,
+// 그동안은 같은 설비에 명령을 더 보낼 수 없다(서버가 409로 막는다).
+export type DeviceKind = "led" | "fan" | "pump";
+
+export type DeviceRecord = {
+  id: string;
+  bed: string;
+  kind: DeviceKind;
+  name: string;
+  isOn: boolean;
+  controllable: boolean;
+  pending: boolean;
+  updatedAt: string;
+};
+
+export type DevicesResponse = {
+  projectId: string;
+  devices: DeviceRecord[];
+};
+
+export type DeviceCommandResult = {
+  deviceId: string;
+  isOn: boolean;
+  status: "success" | "noop";
+  commandId?: string;
+  // 설비 게이트웨이가 아직 안 붙어 서버가 즉시 확정 처리했다는 표식.
+  simulated?: boolean;
+};
+
 export const SENSOR_META: Record<SensorKey, { label: string; unit: string; digits: number }> = {
   temperature: { label: "온도", unit: "℃", digits: 1 },
   humidity: { label: "습도", unit: "%", digits: 0 },
