@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Button, Card, EmptyState, InfoRow, PanelShell } from "@/components/ui";
+import { Button, Card, EmptyState, InfoRow, Shell } from "@/components/ui";
 import { formatDate } from "@/lib/format";
 import {
   patchApplication,
@@ -20,13 +20,13 @@ export function ApplyConfirmScreen() {
 
   if (!application) {
     return (
-      <PanelShell>
+      <Shell>
         <EmptyState
           title="진행 중인 신청이 없습니다"
           desc="자격·서류 신청을 먼저 마쳐 주세요."
           action={<Button href="/operator/apply">신청 시작</Button>}
         />
-      </PanelShell>
+      </Shell>
     );
   }
 
@@ -50,7 +50,7 @@ export function ApplyConfirmScreen() {
   }
 
   return (
-    <PanelShell>
+    <Shell>
       <ApplyStepLine application={application} current="confirm" />
 
       <h1 className="text-24 font-bold text-ink">확인한 공간을 최종 배정받아요</h1>
@@ -114,6 +114,6 @@ export function ApplyConfirmScreen() {
           다른 공간 상담하기
         </Button>
       </div>
-    </PanelShell>
+    </Shell>
   );
 }

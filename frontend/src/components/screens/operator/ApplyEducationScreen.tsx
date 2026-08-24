@@ -6,7 +6,7 @@ import {
   Button,
   Card,
   EmptyState,
-  PanelShell,
+  Shell,
   ProgressBar,
   SkeletonBlock,
 } from "@/components/ui";
@@ -36,21 +36,21 @@ export function ApplyEducationScreen() {
 
   if (!application) {
     return (
-      <PanelShell>
+      <Shell>
         <EmptyState
           title="진행 중인 신청이 없습니다"
           desc="자격·서류 신청을 먼저 마쳐 주세요."
           action={<Button href="/operator/apply">신청 시작</Button>}
         />
-      </PanelShell>
+      </Shell>
     );
   }
 
   if (isLoading || !data) {
     return (
-      <PanelShell>
+      <Shell>
         <SkeletonBlock height={420} />
-      </PanelShell>
+      </Shell>
     );
   }
 
@@ -77,7 +77,7 @@ export function ApplyEducationScreen() {
   }
 
   return (
-    <PanelShell>
+    <Shell>
       <ApplyStepLine application={application} current="education" />
 
       <h1 className="text-24 font-bold text-ink">
@@ -166,6 +166,6 @@ export function ApplyEducationScreen() {
           저장하고 나가기
         </Button>
       </div>
-    </PanelShell>
+    </Shell>
   );
 }

@@ -47,7 +47,7 @@ export function AdminShell({
   return (
     <div className="mx-auto flex max-w-shell">
       <nav className="flex w-[195px] shrink-0 flex-col self-stretch border-r border-line-soft pt-6">
-        <ul className="space-y-[18px] px-6">
+        <ul className="space-y-[18px] px-12">
           {NAV.map((item) => {
             const active = item === current;
             return (
@@ -67,7 +67,7 @@ export function AdminShell({
         <button
           type="button"
           onClick={() => void logout()}
-          className="mt-auto px-6 pb-6 pt-12 text-left text-12 text-body hover:text-ink"
+          className="mt-auto px-12 pb-6 pt-12 text-left text-12 text-body hover:text-ink"
         >
           로그아웃
         </button>

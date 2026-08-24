@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Button, Card, EmptyState, PanelShell } from "@/components/ui";
+import { Button, Card, EmptyState, Shell } from "@/components/ui";
 import {
   cancelVisit,
   reserveVisit,
@@ -52,13 +52,13 @@ export function ApplyVisitScreen() {
 
   if (!application) {
     return (
-      <PanelShell>
+      <Shell>
         <EmptyState
           title="진행 중인 신청이 없습니다"
           desc="자격·서류 신청을 먼저 마쳐 주세요."
           action={<Button href="/operator/apply">신청 시작</Button>}
         />
-      </PanelShell>
+      </Shell>
     );
   }
 
@@ -94,7 +94,7 @@ export function ApplyVisitScreen() {
   }
 
   return (
-    <PanelShell>
+    <Shell>
       <ApplyStepLine application={application} current="visit" />
 
       <h1 className="text-24 font-bold text-ink">직접 보고 결정할 수 있어요</h1>
@@ -197,6 +197,6 @@ export function ApplyVisitScreen() {
           저장하고 나가기
         </Button>
       </div>
-    </PanelShell>
+    </Shell>
   );
 }
