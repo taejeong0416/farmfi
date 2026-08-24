@@ -118,7 +118,7 @@ export default function ScheduleNewScreen() {
         message="이 기기에만 남습니다. 서버 저장은 일정 API 연결 후 반영됩니다."
         onConfirm={() => {
           setDone(false);
-          go.back();
+          go.back("/farm/schedule");
         }}
         onCancel={() => setDone(false)}
       />

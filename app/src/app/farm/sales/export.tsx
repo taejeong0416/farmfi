@@ -116,7 +116,7 @@ export default function ExportScreen() {
         message={`${period.label} · ${format.toUpperCase()} · ${sections.length}개 항목. 파일 생성은 리포트 API 연결 후 이뤄집니다.`}
         onConfirm={() => {
           setDone(false);
-          go.back();
+          go.back("/farm/sales");
         }}
         onCancel={() => setDone(false)}
       />

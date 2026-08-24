@@ -77,7 +77,7 @@ export default function InventoryNewScreen() {
         message="이 기기에만 남습니다. 서버 저장은 품목 등록 API 연결 후 반영됩니다."
         onConfirm={() => {
           setDone(false);
-          go.back();
+          go.back("/farm/inventory");
         }}
         onCancel={() => setDone(false)}
       />

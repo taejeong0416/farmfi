@@ -143,7 +143,9 @@ export default function EvidenceSubmitScreen() {
             검증과 관리자 승인을 거치면 {formatWon(m.releaseAmount)}원이 집행됩니다.
             결과는 알림으로 알려드릴게요.
           </Text>
-          <PrimaryButton label="단계 목록으로" onPress={() => go.replace("/farm/evidence")} />
+          {/* 이 화면은 단계 목록에서 열린다. replace로 목록을 또 쌓으면 스택에
+              목록이 두 겹이 되어, 돌아간 뒤 뒤로가기가 같은 화면을 다시 그린다. */}
+          <PrimaryButton label="단계 목록으로" onPress={() => go.back("/farm/evidence")} />
         </Card>
       </DetailShell>
     );
