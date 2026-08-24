@@ -119,6 +119,19 @@ const AUDIT_TRAIL_ABI = [
   },
   {
     type: "function",
+    name: "recordHoldingReversal",
+    inputs: [
+      { name: "eventId", type: "bytes32" },
+      { name: "projectRef", type: "bytes32" },
+      { name: "investorRef", type: "bytes32" },
+      { name: "units", type: "uint256" },
+      { name: "reasonCode", type: "bytes32" },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
     name: "recorded",
     inputs: [{ name: "", type: "bytes32" }],
     outputs: [{ name: "", type: "bool" }],
@@ -139,7 +152,8 @@ type Fn =
   | "submitEvidenceHash"
   | "recordDisbursement"
   | "confirmSettlement"
-  | "recordPayout";
+  | "recordPayout"
+  | "recordHoldingReversal";
 
 async function write(fn: Fn, args: readonly unknown[]): Promise<string | null> {
   if (!isAuditTrailEnabled()) return null;
@@ -260,6 +274,29 @@ export function recordPayoutOnChain(input: {
     ref("payee", input.payeeRef),
     input.amount,
     ref("bank", input.bankTransferId),
+  ]);
+}
+
+/**
+ * 구좌 회수·환불을 체인에 남긴다 (명세 9.1 반대 이벤트).
+ *
+ * 토큰을 소각하지 않는다. 소각하려면 FarmToken을 재배포해야 하고 그러면 이미
+ * 발행된 잔고가 사라진다. 명세가 요구하는 것은 "기록을 지우지 않는 것"이고,
+ * 되돌린 사실이 쌓이면 그 요구는 충족된다. 잔고의 정본은 서버 원장이다.
+ */
+export function recordHoldingReversalOnChain(input: {
+  eventId: string;
+  projectId: string;
+  investorUserId: string;
+  units: number;
+  reason: string;
+}): Promise<string | null> {
+  return write("recordHoldingReversal", [
+    ref(input.eventId),
+    ref("project", input.projectId),
+    ref("investor", input.investorUserId),
+    BigInt(input.units),
+    ref("reason", input.reason),
   ]);
 }
 

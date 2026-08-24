@@ -137,4 +137,19 @@ contract AuditTrailTest is Test {
         vm.prank(relay);
         trail.submitEvidenceHash(id, PROJECT, 3, HASH);
     }
+    /// 구좌 회수는 기록으로 남는다 (§9.1 반대 이벤트)
+    function test_holdingReversal_isRecorded() public {
+        bytes32 id = keccak256("reversal:1");
+        vm.expectEmit(true, true, false, true);
+        emit AuditTrail.HoldingReversed(id, PROJECT, keccak256("inv"), 120, keccak256("refund"));
+        vm.prank(relay);
+        trail.recordHoldingReversal(id, PROJECT, keccak256("inv"), 120, keccak256("refund"));
+        assertEq(trail.entryCount(), 1);
+    }
+
+    function test_zeroUnitsReversal_reverts() public {
+        vm.prank(relay);
+        vm.expectRevert("AuditTrail: zero units");
+        trail.recordHoldingReversal(keccak256("r0"), PROJECT, HASH, 0, HASH);
+    }
 }

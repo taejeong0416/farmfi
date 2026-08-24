@@ -1,3 +1,4 @@
+import { recordHoldingReversalOnChain } from "@/lib/audit-trail";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { serializeBigInt as serialize } from "@/lib/serialize";
@@ -135,6 +136,18 @@ export async function POST(
       },
       { maxWait: 5000, timeout: 15000 } // 보유자별 잔액·거래 쓰기 다수 — pooler 지연 대비
     );
+
+    // 회수를 체인에 남긴다 (명세 9.1 — 기록을 지우지 않고 반대 이벤트를 더한다).
+    // TokenHolding은 그대로 두고 "N구좌만큼 되돌렸다"는 사실만 쌓는다.
+    for (const p of payouts) {
+      await recordHoldingReversalOnChain({
+        eventId: `reversal:${id}:${p.userId}:${escrow.id}`,
+        projectId: id,
+        investorUserId: p.userId,
+        units: p.tokenAmount,
+        reason: "refund",
+      });
+    }
 
     await recordAudit({
       actorId: session.userId,

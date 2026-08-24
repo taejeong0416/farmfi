@@ -69,6 +69,15 @@ contract AuditTrail is AccessControl {
         bytes32 ruleHash
     );
 
+    /// 발행된 구좌를 되돌린 사실. 명세 §9.1 — 기록을 지우지 않고 반대 이벤트를 더한다.
+    event HoldingReversed(
+        bytes32 indexed eventId,
+        bytes32 indexed projectRef,
+        bytes32 investorRef,
+        uint256 units,
+        bytes32 reasonCode
+    );
+
     event PayoutRecorded(
         bytes32 indexed eventId,
         bytes32 indexed projectRef,
@@ -171,5 +180,22 @@ contract AuditTrail is AccessControl {
         require(amount > 0, "AuditTrail: zero amount");
         if (!_claim(eventId)) return;
         emit PayoutRecorded(eventId, projectRef, payoutRef, payeeRef, amount, bankRef);
+    }
+    /// @notice 구좌 회수·환불을 기록한다 (§9.1 — "회수 완료·환불은 기존 기록을
+    ///         삭제하지 않고 반대 이벤트를 추가한다").
+    /// @dev 토큰을 소각하지 않는다. 소각하려면 FarmToken을 재배포해야 하고 그러면
+    ///      이미 발행된 잔고가 사라진다. 명세가 요구하는 것은 "지우지 않는 것"이고,
+    ///      되돌린 사실이 남으면 그 요구는 충족된다. 잔고의 정본은 서버 원장이다.
+    /// @param reasonCode 회수 사유 코드의 해시. 원문 사유는 서버에 남는다.
+    function recordHoldingReversal(
+        bytes32 eventId,
+        bytes32 projectRef,
+        bytes32 investorRef,
+        uint256 units,
+        bytes32 reasonCode
+    ) external onlyRole(RELAY_ROLE) {
+        require(units > 0, "AuditTrail: zero units");
+        if (!_claim(eventId)) return;
+        emit HoldingReversed(eventId, projectRef, investorRef, units, reasonCode);
     }
 }
