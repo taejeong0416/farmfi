@@ -3,6 +3,7 @@ import type { PrismaClient } from "../generated/prisma/client";
 import { buildIotRecords } from "./iot-seed";
 import { syncAgreements } from "./agreements";
 import { syncCourses } from "./operator-apply";
+import { credentialNo } from "./credential";
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -91,7 +92,7 @@ export async function seedScenario(prisma: PrismaClient) {
   const pw = await bcrypt.hash("farmfi123", 10);
 
   // ─── 사용자 (비밀번호 farmfi123) ───
-  await prisma.user.create({
+  const admin = await prisma.user.create({
     data: { name: "관리자", role: "admin", email: "admin@farmfi.test", passwordHash: pw },
   });
   const operator = await prisma.user.create({
@@ -122,6 +123,31 @@ export async function seedScenario(prisma: PrismaClient) {
       availableHours: "주 5일 · 하루 4시간",
       status: "approved",
       educationProgress: 100,
+      educationDoneAt: now,
+      visitAt: new Date(now.getTime() - 21 * DAY),
+      visitDoneAt: new Date(now.getTime() - 21 * DAY),
+      confirmedAt: new Date(now.getTime() - 14 * DAY),
+      contractSignedAt: new Date(now.getTime() - 7 * DAY),
+      documents: ["/assets/figma/evidence-1.jpg", "/assets/figma/evidence-2.jpg"],
+    },
+  });
+
+  // 계약이 없으면 O-07이 "공간 확정하러 가기" 빈 화면에 멈춘다.
+  await prisma.operatorContract.create({
+    data: {
+      applicationId: operatorApplication.id,
+      body: [
+        "제1조 (목적) 이 계약은 FarmFi가 배정한 매장에서 운영자가 스마트팜을 운영하는 조건을 정한다.",
+        "제2조 (운영 기간) 운영 기간은 계약 시작일로부터 12개월로 하고, 종료 60일 전까지 갱신 여부를 통지한다.",
+        "제3조 (정산) 매출에서 운영비를 먼저 반영하고, 남은 배분 가능액을 정산 규칙에 따라 나눈다.",
+        "제4조 (중도 해지) 어느 쪽이든 30일 전 통지와 인수인계로 해지할 수 있다.",
+      ].join("\n\n"),
+      contentHash: "seedcontract0001",
+      status: "SIGNED",
+      signature: "정하은",
+      signedAt: new Date(now.getTime() - 7 * DAY),
+      termStart: new Date(now.getTime() - 7 * DAY),
+      termEnd: new Date(now.getTime() + 358 * DAY),
     },
   });
 
@@ -364,6 +390,71 @@ export async function seedScenario(prisma: PrismaClient) {
         projectId: p1.id,
         type: "dli_shortfall",
         message: "일적산광량 미달 · 목표의 78% — LED 광량 열화 의심",
+      },
+    ],
+  });
+
+  // 보증서까지 발급해 둔다 — O-08과 A-03이 빈 화면으로만 보이지 않게.
+  await prisma.operatorCredential.create({
+    data: {
+      credentialNo: credentialNo(operatorApplication.id, now),
+      userId: operator.id,
+      applicationId: operatorApplication.id,
+      projectId: p2.id,
+      status: "active",
+      issuedAt: new Date(now.getTime() - 7 * DAY),
+      expiresAt: new Date(now.getTime() + 358 * DAY),
+    },
+  });
+
+  // ─── 보완 요청과 이의제기 (O-10 · O-11 · O-11E · A-08 · A-09) ───
+  // 이 두 줄이 없으면 분쟁 화면들이 전부 빈 상태로만 보여, 무엇을 만들었는지
+  // 화면에서 확인할 수가 없다.
+  const p1Step1 = await prisma.milestone.findFirstOrThrow({
+    where: { projectId: p1.id, seq: 1 },
+  });
+  await prisma.milestone.update({
+    where: { id: p1Step1.id },
+    data: {
+      status: "revision_required",
+      evidenceUrls: ["/assets/figma/evidence-1.jpg", "/assets/figma/evidence-2.jpg"],
+      evidenceSubmittedAt: new Date(now.getTime() - 2 * DAY),
+      reviewNote:
+        "영수증 금액이 계약서와 다릅니다. 변경합의서가 있다면 함께 올려주세요.",
+      reviewedAt: new Date(now.getTime() - DAY),
+    },
+  });
+  await prisma.milestoneReviewItem.createMany({
+    data: [
+      { milestoneId: p1Step1.id, signal: "contract", verdict: "met", note: "공간사용 협약서 확인", autoDraft: false },
+      { milestoneId: p1Step1.id, signal: "receipt", verdict: "unmet", note: "계약서 금액과 불일치", autoDraft: false },
+      { milestoneId: p1Step1.id, signal: "photo", verdict: "met", note: "현장 사진 2장", autoDraft: false },
+    ],
+  });
+
+  const appeal = await prisma.appeal.create({
+    data: {
+      milestoneId: p1Step1.id,
+      projectId: p1.id,
+      submittedById: operator.id,
+      reason:
+        "변경합의서를 첨부합니다. 설비 사양 변경으로 금액이 조정된 건이라 계약서와 영수증 금액이 다릅니다.",
+      status: "under_review",
+    },
+  });
+  await prisma.appealComment.createMany({
+    data: [
+      {
+        appealId: appeal.id,
+        authorId: operator.id,
+        authorRole: "operator",
+        body: "변경합의서를 올렸습니다. 확인 부탁드립니다.",
+      },
+      {
+        appealId: appeal.id,
+        authorId: admin.id,
+        authorRole: "admin",
+        body: "합의서는 확인했습니다. LED 점등 사진이 흐려 판독되지 않으니 재촬영본을 올려주세요.",
       },
     ],
   });
