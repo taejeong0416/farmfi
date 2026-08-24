@@ -225,7 +225,9 @@ export default function BedDetailScreen() {
 const s = StyleSheet.create({
   card: { gap: SP.md },
   sceneCard: { gap: SP.md, padding: 0, overflow: "hidden" },
-  scene: { height: 200, backgroundColor: C.surface },
+  // 베드 이미지가 1536x1024(3:2)다. 컨테이너를 같은 비율로 잡아야 잘리지도 늘어나지도
+  // 않고, 그래야 식물 슬롯 좌표(%)가 구멍에 정확히 얹힌다.
+  scene: { aspectRatio: 3 / 2, backgroundColor: C.surface },
   sceneHead: { flexDirection: "row", alignItems: "center", gap: SP.md, paddingHorizontal: SP.md },
   sceneBar: { paddingHorizontal: SP.md },
   sceneCopy: { flex: 1, gap: 2 },

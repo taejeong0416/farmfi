@@ -647,6 +647,8 @@ const s = StyleSheet.create({
   linkedPreview: { width: 82, gap: SP.xs },
   linkedBed: { fontSize: FS.body, fontWeight: FW.semibold, color: C.brand },
   linkedThumb: {
+    // 베드 이미지 비율(3:2)을 지켜야 식물이 구멍에 얹힌다. 높이를 두면 폭은 48이 된다.
+    aspectRatio: 3 / 2,
     height: 32,
     borderRadius: R.xs,
     backgroundColor: C.surface,
