@@ -14,7 +14,11 @@ Figma 화면을 옮기면서, 그 화면이 실제로 도는 데 필요한 API·
 
 ## 이어서 하기
 
-**다음 작업 = 아래에서 체크 안 된 첫 항목.**
+**다음 작업 = 아래에서 체크 안 된 첫 항목.** 지금은 없다 — 계획한 화면과 기능은 다 닫혔다.
+
+Phase X와 Phase Y의 목록에는 체크박스가 없다. 도면 대조로 드러난 차이를 적어둔 참고
+자료이지 남은 작업이 아니다. 발표 동선이 정해지면 그 화면만 골라 보는 용도다. 이유는
+각 Phase 머리말에 있다.
 
 작업 단위 하나를 끝낼 때마다:
 1. `- [ ]`를 `- [x]`로 바꾸고
@@ -406,6 +410,15 @@ O-05~O-07은 왼쪽이다. 왼쪽으로 통일했다.
 
 `.fig`의 고정 문구가 실제 렌더에 나오는지 기계로 센다. 빠진 문구가 도면과 코드의 차이다.
 
+**아래 목록은 참고 자료이지 작업 목록이 아니다.** 체크박스를 달지 않은 것은 그래서다.
+문구 1419개를 맞추는 값이 남은 시간에 비해 낮다 — 심사는 도면과 화면을 나란히 놓고
+대조하지 않는다. 목록의 대부분은 관리자 콘솔과 운영자 포털이라 발표에서 열지도 않는다.
+
+손댈 값이 있는 자리는 **미스율이 40%를 넘으면서 발표 동선 안에 있는 화면**이다.
+숫자가 크다는 건 문구가 틀렸다는 뜻이 아니라 화면 일부가 아직 없다는 뜻일 때가 많고,
+그건 도면 대조 문제가 아니라 미완성 화면 문제라 발표에서 그대로 드러난다.
+발표에서 열 화면이 정해지면 그 목록과 아래를 교차해서 겹치는 것만 본다.
+
 ```
 npm run seed                      # 시나리오 먼저 (빈 화면은 통째로 빠진 것처럼 세어진다)
 python tools/figma/labels.py      # 덤프 → 화면별 고정 문구
@@ -420,54 +433,54 @@ node tools/figma/audit.mjs        # 렌더와 대조
 
 합계 **329 / 1419** (그중 가짜 이름 71). 기준선은 509였다.
 
-- [ ] **O-10** 19/46 · 가짜 이름 4 — `/operator/milestones`
-- [ ] **A-07** 21/40 · 가짜 이름 1 — `/admin/projects/[1호점]/milestones`
-- [ ] **O-07** 13/24 · 가짜 이름 2 — `/operator/apply/contract`
-- [ ] **O-11E** 11/31 · 가짜 이름 4 — `/operator/milestones/[마일스톤]/appeal`
-- [ ] **O-03** 13/50 · 가짜 이름 1 — `/operator/apply`
-- [ ] **O-11** 11/43 · 가짜 이름 3 — `/operator/milestones/[마일스톤]/evidence`
-- [ ] **A-06** 10/38 · 가짜 이름 4 — `/admin/projects`
-- [ ] **A-13** 10/43 · 가짜 이름 4 — `/admin/roles`
-- [ ] **A-08** 11/31 · 가짜 이름 1 — `/admin/evidence`
-- [ ] **A-02** 6/32 · 가짜 이름 5 — `/admin/operators`
-- [ ] **A-03** 9/29 · 가짜 이름 2 — `/admin/certificates`
-- [ ] **A-15** 10/38 · 가짜 이름 1 — `/admin/aml`
-- [ ] **A-04** 8/28 · 가짜 이름 2 — `/admin/spaces`
-- [ ] **O-08** 7/28 · 가짜 이름 2 — `/operator/certificate`
-- [ ] **A-12** 5/45 · 가짜 이름 4 — `/admin/audit-logs`
-- [ ] **O-09** 7/30 · 가짜 이름 1 — `/operator`
-- [ ] **O-12** 6/12 · 가짜 이름 2 — `/operator/milestones/[마일스톤]/done`
-- [ ] **A-01** 5/34 · 가짜 이름 3 — `/admin`
-- [ ] **A-09** 6/37 · 가짜 이름 2 — `/admin/expert-review`
-- [ ] **C-01** 4/33 · 가짜 이름 3 — `/`
-- [ ] **B-08** 5/19 · 가짜 이름 1 — `/subscriptions/change`
-- [ ] **O-05** 5/15 · 가짜 이름 1 — `/operator/apply/education`
-- [ ] **O-01** 4/21 · 가짜 이름 1 — `/operator/spaces`
-- [ ] **O-02** 4/31 · 가짜 이름 1 — `/operator/spaces/[공간]`
-- [ ] **O-06** 3/21 · 가짜 이름 2 — `/operator/apply/confirm`
-- [ ] **B-01** 2/13 · 가짜 이름 2 — `/subscribe`
-- [ ] **B-02** 3/7 · 가짜 이름 1 — `/subscribe/plan`
-- [ ] **B-07** 3/17 · 가짜 이름 1 — `/subscriptions`
-- [ ] **I-05** 3/20 — `/investor/applications`
-- [ ] **I-06** 3/20 — `/investor`
-- [ ] **I-07** 3/31 — `/investor/holdings`
-- [ ] **I-09** 3/16 — `/investor/notifications`
-- [ ] **B-04** 2/24 · 가짜 이름 1 — `/subscribe/order`
-- [ ] **B-05** 2/39 · 가짜 이름 1 — `/subscribe/payment`
-- [ ] **B-09** 3/11 — `/subscriptions/pickup/[회차]`
-- [ ] **O-04** 1/15 · 가짜 이름 2 — `/operator/apply/visit`
-- [ ] **A-14** 2/40 · 가짜 이름 1 — `/admin/notifications`
-- [ ] **A-16** 2/41 · 가짜 이름 1 — `/admin/ledger`
-- [ ] **C-02** 2/10 — `/login`
-- [ ] **C-03** 2/13 — `/signup`
-- [ ] **C-I03** 2/7 — `/verify/account`
-- [ ] **I-01** 2/51 — `/projects/[3호점]`
-- [ ] **I-02** 2/60 — `/projects/[3호점]/invest/eligibility`
-- [ ] **B-06** 1/11 · 가짜 이름 1 — `/subscribe/done`
-- [ ] **O-13** 1/26 · 가짜 이름 1 — `/operator/settlements`
-- [ ] **C-I05** 1/8 — `/verify/done`
-- [ ] **A-10** 0/40 · 가짜 이름 1 — `/admin/settlement-rules`
-- [ ] **A-11** 0/42 · 가짜 이름 1 — `/admin/settlements`
+- **O-10** 19/46 · 가짜 이름 4 — `/operator/milestones`
+- **A-07** 21/40 · 가짜 이름 1 — `/admin/projects/[1호점]/milestones`
+- **O-07** 13/24 · 가짜 이름 2 — `/operator/apply/contract`
+- **O-11E** 11/31 · 가짜 이름 4 — `/operator/milestones/[마일스톤]/appeal`
+- **O-03** 13/50 · 가짜 이름 1 — `/operator/apply`
+- **O-11** 11/43 · 가짜 이름 3 — `/operator/milestones/[마일스톤]/evidence`
+- **A-06** 10/38 · 가짜 이름 4 — `/admin/projects`
+- **A-13** 10/43 · 가짜 이름 4 — `/admin/roles`
+- **A-08** 11/31 · 가짜 이름 1 — `/admin/evidence`
+- **A-02** 6/32 · 가짜 이름 5 — `/admin/operators`
+- **A-03** 9/29 · 가짜 이름 2 — `/admin/certificates`
+- **A-15** 10/38 · 가짜 이름 1 — `/admin/aml`
+- **A-04** 8/28 · 가짜 이름 2 — `/admin/spaces`
+- **O-08** 7/28 · 가짜 이름 2 — `/operator/certificate`
+- **A-12** 5/45 · 가짜 이름 4 — `/admin/audit-logs`
+- **O-09** 7/30 · 가짜 이름 1 — `/operator`
+- **O-12** 6/12 · 가짜 이름 2 — `/operator/milestones/[마일스톤]/done`
+- **A-01** 5/34 · 가짜 이름 3 — `/admin`
+- **A-09** 6/37 · 가짜 이름 2 — `/admin/expert-review`
+- **C-01** 4/33 · 가짜 이름 3 — `/`
+- **B-08** 5/19 · 가짜 이름 1 — `/subscriptions/change`
+- **O-05** 5/15 · 가짜 이름 1 — `/operator/apply/education`
+- **O-01** 4/21 · 가짜 이름 1 — `/operator/spaces`
+- **O-02** 4/31 · 가짜 이름 1 — `/operator/spaces/[공간]`
+- **O-06** 3/21 · 가짜 이름 2 — `/operator/apply/confirm`
+- **B-01** 2/13 · 가짜 이름 2 — `/subscribe`
+- **B-02** 3/7 · 가짜 이름 1 — `/subscribe/plan`
+- **B-07** 3/17 · 가짜 이름 1 — `/subscriptions`
+- **I-05** 3/20 — `/investor/applications`
+- **I-06** 3/20 — `/investor`
+- **I-07** 3/31 — `/investor/holdings`
+- **I-09** 3/16 — `/investor/notifications`
+- **B-04** 2/24 · 가짜 이름 1 — `/subscribe/order`
+- **B-05** 2/39 · 가짜 이름 1 — `/subscribe/payment`
+- **B-09** 3/11 — `/subscriptions/pickup/[회차]`
+- **O-04** 1/15 · 가짜 이름 2 — `/operator/apply/visit`
+- **A-14** 2/40 · 가짜 이름 1 — `/admin/notifications`
+- **A-16** 2/41 · 가짜 이름 1 — `/admin/ledger`
+- **C-02** 2/10 — `/login`
+- **C-03** 2/13 — `/signup`
+- **C-I03** 2/7 — `/verify/account`
+- **I-01** 2/51 — `/projects/[3호점]`
+- **I-02** 2/60 — `/projects/[3호점]/invest/eligibility`
+- **B-06** 1/11 · 가짜 이름 1 — `/subscribe/done`
+- **O-13** 1/26 · 가짜 이름 1 — `/operator/settlements`
+- **C-I05** 1/8 — `/verify/done`
+- **A-10** 0/40 · 가짜 이름 1 — `/admin/settlement-rules`
+- **A-11** 0/42 · 가짜 이름 1 — `/admin/settlements`
 
 ---
 
@@ -476,11 +489,15 @@ node tools/figma/audit.mjs        # 렌더와 대조
 문구가 **어디에, 얼마나 크게** 있는지를 센다. Phase X가 "있는가"를 볼 때 여기서는 자리를 본다.
 
 ```
-npm run seed
+npm run seed                       # DB에 시나리오가 이미 있으면 건너뛴다 (아래 주의)
 python tools/figma/geometry.py     # 덤프 → 문구 + 좌표 + 글자 크기
 node tools/figma/geometry.mjs      # 렌더 좌표와 대조
 python tools/figma/sizefix.py --apply   # 판정이 하나로 정해지는 글자 크기만 반영
 ```
+
+`npm run seed`는 테이블 44개를 지우고 다시 만든다. `DATABASE_URL`이 배포 중인
+Supabase를 가리키면 라이브 데이터가 사라진다 — 시나리오가 이미 들어 있으면 돌리지 않는다.
+`audit-ids.json`의 id가 현재 DB와 맞는지만 확인하면 대조는 그대로 돈다.
 
 **읽는 법**
 - `밀림`은 화면 전체가 어느 쪽으로 얼마나 갔는지의 중앙값이다. 개별 어긋남보다 이게 먼저다 —
@@ -489,62 +506,91 @@ python tools/figma/sizefix.py --apply   # 판정이 하나로 정해지는 글�
 - 세로는 데이터 길이에 따라 얼마든지 달라진다. 가로와 글자 크기를 더 무겁게 읽는다.
 - dev 서버가 라우트를 컴파일하는 동안에는 빈 화면이 나온다. 도구가 한 번 더 열어보지만
   `맞춘문구 0`인 화면이 있으면 그 줄은 믿지 말고 다시 돌린다.
+- **합계는 두 번 돌린 것끼리만 비교한다.** Supabase 풀러가 Playwright의 동시 요청에
+  끊기면(`DatabaseNotReachable`) 그 화면은 빈 채로 측정돼 `맞춘문구`가 뚝 떨어지고,
+  어긋남 합계도 같이 줄어 개선처럼 보인다. 화면별 `맞춘문구`가 이전 실행과 같은지
+  먼저 보고, 다르면 합계를 읽지 않는다.
 
-합계 — 가로 어긋남 **356** · 세로 어긋남 **472** · 글자 크기 **194** (맞춘 문구 896).
+합계 — 가로 어긋남 **355** · 세로 어긋남 **475** · 글자 크기 **193** (맞춘 문구 900).
 기준선은 가로 519 · 세로 471 · 글자 218이었다.
 
-**남은 글자 크기 중 162건은 기계로 못 정한다** — 같은 문구가 여러 화면에 있거나,
-크기가 그 요소가 아니라 부모·공용 컴포넌트에서 온다. 손으로 볼 자리다.
+**밀림을 고쳐도 이 합계는 움직이지 않는다.** `가로`·`세로`가 밀림 중앙값을 뺀 나머지를
+세기 때문이다. 화면이 통째로 제자리를 찾아도 숫자는 그대로다 — 합계를 성과 지표로 쓰면
+정작 눈에 보이는 교정을 놓친다. 밀림은 화면별 `밀림 x·y` 값으로 따로 본다.
 
-- [ ] **A-11** 가로 18 · 세로 28 · 글자 13 (밀림 x0 y49) — `/admin/settlements`
-- [ ] **A-10** 가로 12 · 세로 24 · 글자 15 (밀림 x0 y89) — `/admin/settlement-rules`
-- [ ] **I-01** 가로 18 · 세로 33 · 글자 5 (밀림 x-2 y59) — `/projects/[3호점]`
-- [ ] **A-14** 가로 18 · 세로 7 · 글자 5 (밀림 x0 y27) — `/admin/notifications`
-- [ ] **I-07** 가로 16 · 세로 9 · 글자 5 (밀림 x-40 y1) — `/investor/holdings`
-- [ ] **O-03** 가로 15 · 세로 17 · 글자 6 (밀림 x8 y125) — `/operator/apply`
-- [ ] **O-13** 가로 10 · 세로 16 · 글자 11 (밀림 x0 y120) — `/operator/settlements`
-- [ ] **A-16** 가로 11 · 세로 20 · 글자 9 (밀림 x0 y30) — `/admin/ledger`
-- [ ] **O-02** 가로 17 · 세로 20 · 글자 2 (밀림 x-41 y-1) — `/operator/spaces/[공간]`
-- [ ] **O-09** 가로 15 · 세로 11 · 글자 4 (밀림 x24 y143) — `/operator`
-- [ ] **A-09** 가로 12 · 세로 21 · 글자 7 (밀림 x0 y50) — `/admin/expert-review`
-- [ ] **O-10** 가로 13 · 세로 17 · 글자 3 (밀림 x-15 y174) — `/operator/milestones`
-- [ ] **I-05** 가로 8 · 세로 5 · 글자 7 (밀림 x-1 y75) — `/investor/applications`
-- [ ] **I-10** 가로 5 · 세로 15 · 글자 10 (밀림 x4 y31) — `/investor/notifications/settings`
-- [ ] **A-01** 가로 9 · 세로 14 · 글자 6 (밀림 x0 y38) — `/admin`
-- [ ] **A-06** 가로 8 · 세로 13 · 글자 6 (밀림 x0 y30) — `/admin/projects`
-- [ ] **B-08** 가로 9 · 세로 6 · 글자 4 (밀림 x0 y103) — `/subscriptions/change`
-- [ ] **O-11** 가로 6 · 세로 17 · 글자 7 (밀림 x0 y113) — `/operator/milestones/[마일스톤]/evidence`
-- [ ] **B-04** 가로 5 · 세로 12 · 글자 7 (밀림 x1 y81) — `/subscribe/order`
-- [ ] **I-06** 가로 10 · 세로 3 · 글자 1 (밀림 x-10 y-1) — `/investor`
-- [ ] **B-06** 가로 6 · 세로 5 · 글자 5 (밀림 x-74 y-52) — `/subscribe/done`
-- [ ] **O-06** 가로 7 · 세로 13 · 글자 4 (밀림 x1 y80) — `/operator/apply/confirm`
-- [ ] **A-07** 가로 6 · 세로 8 · 글자 5 (밀림 x0 y30) — `/admin/projects/[1호점]/milestones`
-- [ ] **C-04** 가로 6 · 세로 5 · 글자 4 (밀림 x25 y44) — `/start`
-- [ ] **A-12** 가로 6 · 세로 6 · 글자 4 (밀림 x0 y22) — `/admin/audit-logs`
-- [ ] **A-13** 가로 6 · 세로 6 · 글자 4 (밀림 x0 y12) — `/admin/roles`
-- [ ] **A-15** 가로 5 · 세로 11 · 글자 5 (밀림 x0 y28) — `/admin/aml`
-- [ ] **O-04** 가로 6 · 세로 10 · 글자 3 (밀림 x-3 y43) — `/operator/apply/visit`
-- [ ] **C-01** 가로 8 · 세로 3 · 글자 0 (밀림 x0 y-27) — `/`
-- [ ] **O-08** 가로 6 · 세로 12 · 글자 2 (밀림 x-1 y86) — `/operator/certificate`
-- [ ] **C-I01** 가로 6 · 세로 1 · 글자 1 (밀림 x24 y80) — `/verify`
-- [ ] **C-I02** 가로 6 · 세로 4 · 글자 1 (밀림 x33 y126) — `/verify/mobile-id`
-- [ ] **I-09** 가로 4 · 세로 3 · 글자 3 (밀림 x-2 y0) — `/investor/notifications`
-- [ ] **B-07** 가로 4 · 세로 0 · 글자 3 (밀림 x1 y10) — `/subscriptions`
-- [ ] **O-05** 가로 4 · 세로 5 · 글자 3 (밀림 x-1 y-1) — `/operator/apply/education`
-- [ ] **A-03** 가로 6 · 세로 13 · 글자 1 (밀림 x0 y26) — `/admin/certificates`
-- [ ] **O-07** 가로 4 · 세로 5 · 글자 2 (밀림 x0 y-1) — `/operator/apply/contract`
-- [ ] **C-I03** 가로 4 · 세로 4 · 글자 1 (밀림 x-55 y152) — `/verify/account`
-- [ ] **B-09** 가로 5 · 세로 8 · 글자 0 (밀림 x-10 y-91) — `/subscriptions/pickup/[회차]`
-- [ ] **O-01** 가로 1 · 세로 8 · 글자 4 (밀림 x0 y-1) — `/operator/spaces`
-- [ ] **A-02** 가로 3 · 세로 8 · 글자 2 (밀림 x0 y30) — `/admin/operators`
-- [ ] **O-11E** 가로 3 · 세로 11 · 글자 1 (밀림 x0 y87) — `/operator/milestones/[마일스톤]/appeal`
-- [ ] **C-03** 가로 2 · 세로 2 · 글자 1 (밀림 x23 y136) — `/signup`
-- [ ] **C-02** 가로 2 · 세로 0 · 글자 0 (밀림 x24 y26) — `/login`
-- [ ] **B-01** 가로 1 · 세로 2 · 글자 1 (밀림 x-2 y65) — `/subscribe`
-- [ ] **A-04** 가로 2 · 세로 6 · 글자 0 (밀림 x0 y20) — `/admin/spaces`
-- [ ] **C-I05** 가로 1 · 세로 0 · 글자 0 (밀림 x34 y85) — `/verify/done`
-- [ ] **B-02** 가로 0 · 세로 1 · 글자 1 (밀림 x-4 y-1) — `/subscribe/plan`
-- [ ] **A-08** 가로 1 · 세로 4 · 글자 0 (밀림 x0 y24) — `/admin/evidence`
+**남은 글자 크기 중 162건은 기계로 못 정한다** — 같은 문구가 여러 화면에 있거나,
+크기가 그 요소가 아니라 부모·공용 컴포넌트에서 온다. `sizefix.py`가 판정할 수 있는
+몫은 이미 반영했고, 남은 162건이 손으로 볼 자리다.
+
+### 닫은 것 — 본인확인·로그인 패널의 밀림
+
+`AuthShell`(C-02 · C-03 · C-04 · C-I01~C-I05)의 `main`이 `max-w-modal`(465)과 `px-6`을
+함께 걸고 있었다. Tailwind는 `border-box`라 465 **안에서** 좌우 48을 떼어가므로, 흰 패널이
+417로 좁아지고 가운데 정렬이 오른쪽으로 24px 밀렸다. 여백을 폭 제한 밖으로 빼서 도면의
+465(C-04는 730)를 되찾았다.
+
+```
+C-02  x24 → x0     C-I01  x24 → x0     C-I02  x33 → x9
+C-03  x23 → x-1    C-I05  x34 → x10
+C-04  x25 → x2     C-I03  x-55 → x-79  (맞춘 문구 4/22 — 중앙값을 믿을 수 없다)
+```
+
+이 일곱 화면은 로그인과 본인확인이라 발표에서 실제로 열린다. 나머지 화면의 밀림은
+발표 동선 밖이라 두었다 — 관리자 콘솔이 `y+30` 근처로, 운영자 포털이 `y+80~174`로
+뭉쳐 있어 셸에 원인이 하나씩 더 있을 것이다.
+
+**아래 목록도 Phase X와 같이 참고 자료다.** 개별 어긋남 830건은 발표에서 열지 않는 화면의
+픽셀 차이라 값이 낮다. 발표 동선이 정해지면 그 화면의 `밀림`부터 본다.
+
+- **A-11** 가로 18 · 세로 28 · 글자 13 (밀림 x0 y49) — `/admin/settlements`
+- **A-10** 가로 12 · 세로 24 · 글자 15 (밀림 x0 y89) — `/admin/settlement-rules`
+- **I-01** 가로 18 · 세로 33 · 글자 5 (밀림 x-2 y59) — `/projects/[3호점]`
+- **A-14** 가로 18 · 세로 7 · 글자 5 (밀림 x0 y27) — `/admin/notifications`
+- **I-07** 가로 16 · 세로 9 · 글자 5 (밀림 x-40 y1) — `/investor/holdings`
+- **O-03** 가로 15 · 세로 17 · 글자 6 (밀림 x8 y125) — `/operator/apply`
+- **O-13** 가로 10 · 세로 16 · 글자 11 (밀림 x0 y120) — `/operator/settlements`
+- **A-16** 가로 11 · 세로 20 · 글자 9 (밀림 x0 y30) — `/admin/ledger`
+- **O-02** 가로 17 · 세로 20 · 글자 2 (밀림 x-41 y-1) — `/operator/spaces/[공간]`
+- **O-09** 가로 15 · 세로 11 · 글자 4 (밀림 x24 y143) — `/operator`
+- **A-09** 가로 12 · 세로 21 · 글자 7 (밀림 x0 y50) — `/admin/expert-review`
+- **O-10** 가로 13 · 세로 17 · 글자 3 (밀림 x-15 y174) — `/operator/milestones`
+- **I-05** 가로 8 · 세로 5 · 글자 7 (밀림 x-1 y75) — `/investor/applications`
+- **I-10** 가로 5 · 세로 15 · 글자 10 (밀림 x4 y31) — `/investor/notifications/settings`
+- **A-01** 가로 9 · 세로 14 · 글자 6 (밀림 x0 y38) — `/admin`
+- **A-06** 가로 8 · 세로 13 · 글자 6 (밀림 x0 y30) — `/admin/projects`
+- **B-08** 가로 9 · 세로 6 · 글자 4 (밀림 x0 y103) — `/subscriptions/change`
+- **O-11** 가로 6 · 세로 17 · 글자 7 (밀림 x0 y113) — `/operator/milestones/[마일스톤]/evidence`
+- **B-04** 가로 5 · 세로 12 · 글자 7 (밀림 x1 y81) — `/subscribe/order`
+- **I-06** 가로 10 · 세로 3 · 글자 1 (밀림 x-10 y-1) — `/investor`
+- **B-06** 가로 6 · 세로 5 · 글자 5 (밀림 x-74 y-52) — `/subscribe/done`
+- **O-06** 가로 7 · 세로 13 · 글자 4 (밀림 x1 y80) — `/operator/apply/confirm`
+- **A-07** 가로 6 · 세로 8 · 글자 5 (밀림 x0 y30) — `/admin/projects/[1호점]/milestones`
+- **C-04** 가로 6 · 세로 5 · 글자 4 (밀림 x25 y44) — `/start`
+- **A-12** 가로 6 · 세로 6 · 글자 4 (밀림 x0 y22) — `/admin/audit-logs`
+- **A-13** 가로 6 · 세로 6 · 글자 4 (밀림 x0 y12) — `/admin/roles`
+- **A-15** 가로 5 · 세로 11 · 글자 5 (밀림 x0 y28) — `/admin/aml`
+- **O-04** 가로 6 · 세로 10 · 글자 3 (밀림 x-3 y43) — `/operator/apply/visit`
+- **C-01** 가로 8 · 세로 3 · 글자 0 (밀림 x0 y-27) — `/`
+- **O-08** 가로 6 · 세로 12 · 글자 2 (밀림 x-1 y86) — `/operator/certificate`
+- **C-I01** 가로 6 · 세로 1 · 글자 1 (밀림 x24 y80) — `/verify`
+- **C-I02** 가로 6 · 세로 4 · 글자 1 (밀림 x33 y126) — `/verify/mobile-id`
+- **I-09** 가로 4 · 세로 3 · 글자 3 (밀림 x-2 y0) — `/investor/notifications`
+- **B-07** 가로 4 · 세로 0 · 글자 3 (밀림 x1 y10) — `/subscriptions`
+- **O-05** 가로 4 · 세로 5 · 글자 3 (밀림 x-1 y-1) — `/operator/apply/education`
+- **A-03** 가로 6 · 세로 13 · 글자 1 (밀림 x0 y26) — `/admin/certificates`
+- **O-07** 가로 4 · 세로 5 · 글자 2 (밀림 x0 y-1) — `/operator/apply/contract`
+- **C-I03** 가로 4 · 세로 4 · 글자 1 (밀림 x-55 y152) — `/verify/account`
+- **B-09** 가로 5 · 세로 8 · 글자 0 (밀림 x-10 y-91) — `/subscriptions/pickup/[회차]`
+- **O-01** 가로 1 · 세로 8 · 글자 4 (밀림 x0 y-1) — `/operator/spaces`
+- **A-02** 가로 3 · 세로 8 · 글자 2 (밀림 x0 y30) — `/admin/operators`
+- **O-11E** 가로 3 · 세로 11 · 글자 1 (밀림 x0 y87) — `/operator/milestones/[마일스톤]/appeal`
+- **C-03** 가로 2 · 세로 2 · 글자 1 (밀림 x23 y136) — `/signup`
+- **C-02** 가로 2 · 세로 0 · 글자 0 (밀림 x24 y26) — `/login`
+- **B-01** 가로 1 · 세로 2 · 글자 1 (밀림 x-2 y65) — `/subscribe`
+- **A-04** 가로 2 · 세로 6 · 글자 0 (밀림 x0 y20) — `/admin/spaces`
+- **C-I05** 가로 1 · 세로 0 · 글자 0 (밀림 x34 y85) — `/verify/done`
+- **B-02** 가로 0 · 세로 1 · 글자 1 (밀림 x-4 y-1) — `/subscribe/plan`
+- **A-08** 가로 1 · 세로 4 · 글자 0 (밀림 x0 y24) — `/admin/evidence`
 
 ---
 
