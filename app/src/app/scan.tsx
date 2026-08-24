@@ -10,7 +10,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { CameraView, useCameraPermissions } from "expo-camera";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -24,6 +23,7 @@ import { AppIcon } from "@/farmfi/icons";
 import { useGo } from "@/farmfi/ui";
 import { apiFetch, describeApiError } from "@/lib/api";
 import { credentialNoFrom } from "@/farmfi/credential-qr";
+import { QrScanner } from "@/farmfi/qr-scanner";
 
 const BOX = 343;
 
@@ -42,7 +42,6 @@ type Stage =
 export default function ScanScreen() {
   const go = useGo();
   const [stage, setStage] = useState<Stage>({ kind: "scanning" });
-  const [permission, requestPermission] = useCameraPermissions();
   const [manual, setManual] = useState("");
   const [manualOpen, setManualOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -154,7 +153,6 @@ export default function ScanScreen() {
   }
 
   const checking = stage.kind === "checking";
-  const canScan = permission?.granted === true && !checking;
 
   return (
     <SafeAreaView style={s.stage} edges={["top", "bottom"]}>
@@ -169,51 +167,30 @@ export default function ScanScreen() {
         </View>
 
         <View style={[s.box, checking && s.boxDetected]}>
-          {canScan ? (
-            <CameraView
-              style={StyleSheet.absoluteFill}
-              facing="back"
-              barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
-              onBarcodeScanned={({ data }) => {
-                if (locked.current) return;
-                locked.current = true;
-                void verify(data);
-              }}
-            />
-          ) : (
+          {/* 스캐너는 계속 켜 둔다. 대조 중이라고 언마운트하면 카메라가 꺼졌다
+              켜지며 깜빡이고, 대조에 실패해 돌아올 때마다 다시 연다. */}
+          <QrScanner
+            active={!checking}
+            onScan={(data) => {
+              if (locked.current) return;
+              locked.current = true;
+              void verify(data);
+            }}
+            onUnavailable={(reason) => {
+              setError(reason);
+              setManualOpen(true);
+            }}
+          />
+          {checking ? (
             <View style={s.boxIdle}>
-              <Text style={s.boxIdleText}>
-                {checking
-                  ? "확인하는 중"
-                  : permission?.granted === false
-                    ? "카메라 권한이 없습니다"
-                    : "카메라를 켜면 스캔이 시작됩니다"}
-              </Text>
+              <Text style={s.boxIdleText}>확인하는 중</Text>
             </View>
+          ) : (
+            <Animated.View style={[s.line, lineStyle]} pointerEvents="none" />
           )}
-          {!checking && canScan && <Animated.View style={[s.line, lineStyle]} />}
         </View>
 
         {error && <Text style={s.error}>{error}</Text>}
-
-        {!permission?.granted && !checking && (
-          <Pressable
-            style={s.primary}
-            onPress={async () => {
-              const res = await requestPermission();
-              if (!res.granted) {
-                setError(
-                  Platform.OS === "web"
-                    ? "브라우저에서 카메라를 차단했습니다. 주소창 옆 자물쇠에서 허용하거나 번호를 입력해 주세요."
-                    : "카메라 권한이 필요해요. 설정에서 허용해 주세요."
-                );
-                setManualOpen(true);
-              }
-            }}
-          >
-            <Text style={s.primaryText}>카메라 켜기</Text>
-          </Pressable>
-        )}
 
         {manualOpen ? (
           <View style={s.manualBox}>
@@ -283,7 +260,17 @@ const s = StyleSheet.create({
     overflow: "hidden",
   },
   boxDetected: { borderColor: C.brand },
-  boxIdle: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: SP.lg },
+  boxIdle: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: SP.lg,
+    backgroundColor: "rgba(0,0,0,0.45)",
+  },
   boxIdleText: { fontSize: FS.body, color: C.paper, opacity: 0.7, textAlign: "center" },
   line: { position: "absolute", left: 0, right: 0, height: 2, backgroundColor: C.brand },
 

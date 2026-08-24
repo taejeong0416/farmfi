@@ -50,7 +50,9 @@ export default function SplashScreen() {
     void Promise.all([hold, session]).then(([, ok]) => {
       if (!alive) return;
       if (ok) setStarted(true);
-      else go.replace("/login");
+      // 표식을 붙여 보낸다. 로그인 화면은 이 표식이 있을 때만 머문다 —
+      // 없으면 주소창으로 잘못 들어온 것이라 스플래시로 되돌린다.
+      else go.replace("/login?e=session");
     });
 
     return () => {
