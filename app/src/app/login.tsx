@@ -1,7 +1,9 @@
 // 00 로그인
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+import { useLocalSearchParams } from "expo-router";
 
 import { useAuth } from "@/lib/auth";
 import { C, FRAME_MAX_WIDTH, FS, FW, SP } from "@/farmfi/theme";
@@ -11,6 +13,16 @@ import { SESSION_ACCOUNT as DEMO_ACCOUNT } from "@/lib/session-account";
 
 export default function LoginScreen() {
   const go = useGo();
+  // 시안에서 이 화면은 흐름에 없다(00 로그인 frame hidden). 스플래시가 세션을
+  // 발급받고, 그게 실패했을 때만 여기로 온다 — 그때는 `?e=session`이 붙는다.
+  //
+  // 표식 없이 들어왔다는 건 주소창 자동완성이나 옛 북마크로 왔다는 뜻이다.
+  // 그대로 두면 사용자는 없어진 화면에 갇힌다. 스플래시로 되돌린다.
+  const params = useLocalSearchParams<{ e?: string }>();
+  const strayEntry = params.e !== "session";
+  useEffect(() => {
+    if (strayEntry) go.replace("/");
+  }, [strayEntry, go]);
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
