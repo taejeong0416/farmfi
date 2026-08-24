@@ -75,6 +75,10 @@ export default function BedDetailScreen() {
   // 명령이 성공한 설비의 확정 상태. 목록을 다시 받지 않고 이 값만 덮어쓴다.
   const [applied, setApplied] = useState<Record<string, boolean>>({});
   const [busy, setBusy] = useState<string | null>(null);
+  // 팝업은 여닫힘(open)과 내용(result)을 따로 든다. 하나로 묶어 닫을 때 내용을 비우면
+  // 페이드아웃하는 동안 실패 문구가 스쳐 지나간다 — 성공을 확인하고 닫았는데 "제어 실패"가
+  // 뒤따라 보인다.
+  const [open, setOpen] = useState(false);
   const [result, setResult] = useState<{
     ok: boolean;
     name: string;
@@ -83,6 +87,11 @@ export default function BedDetailScreen() {
     simulated?: boolean;
     reason?: string;
   } | null>(null);
+
+  const show = (next: NonNullable<typeof result>) => {
+    setResult(next);
+    setOpen(true);
+  };
 
   const latest = mon.data?.points.at(-1) ?? null;
   const ranges = mon.data?.healthyRanges;
@@ -102,7 +111,7 @@ export default function BedDetailScreen() {
         body: JSON.stringify({ deviceId: device.id, targetState: next }),
       });
       setApplied((prev) => ({ ...prev, [device.id]: res.isOn }));
-      setResult({
+      show({
         ok: true,
         name: device.name,
         state: res.isOn,
@@ -111,7 +120,7 @@ export default function BedDetailScreen() {
       });
     } catch (e) {
       // 중복 명령(409)·권한(401) 등 서버 판단을 그대로 보여준다. 바뀐 척하지 않는다.
-      setResult({
+      show({
         ok: false,
         name: device.name,
         state: stateOf(device),
@@ -254,7 +263,7 @@ export default function BedDetailScreen() {
 
       {/* 20 제어 결과 성공 · 21 제어 결과 실패 */}
       <Popup
-        visible={result !== null}
+        visible={open}
         glyph={result?.ok ? "✓" : "!"}
         tone={result?.ok ? "brand" : "danger"}
         title={result?.ok ? "제어 명령이 처리됐어요" : "제어 실패"}
@@ -273,8 +282,8 @@ export default function BedDetailScreen() {
         }
         cancelLabel={result?.ok ? undefined : "닫기"}
         confirmLabel={result?.ok ? "확인" : "다시 시도"}
-        onConfirm={() => setResult(null)}
-        onCancel={() => setResult(null)}
+        onConfirm={() => setOpen(false)}
+        onCancel={() => setOpen(false)}
       />
     </DetailShell>
   );
