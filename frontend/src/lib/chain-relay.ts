@@ -36,6 +36,23 @@ const FARM_TOKEN_ABI = [
   },
   {
     type: "function",
+    name: "registerIdentity",
+    inputs: [
+      { name: "wallet", type: "address" },
+      { name: "didHash", type: "bytes32" },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "identity",
+    inputs: [{ name: "", type: "address" }],
+    outputs: [{ name: "", type: "bytes32" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
     name: "balanceOf",
     inputs: [{ name: "account", type: "address" }],
     outputs: [{ name: "", type: "uint256" }],
@@ -93,7 +110,65 @@ export async function enqueueMintHolding(
  */
 export async function ensureWalletForInvestor(userId: string) {
   if (!isCustodyEnabled()) return null;
-  return getOrCreateCustodyWallet(userId);
+  const wallet = await getOrCreateCustodyWallet(userId);
+  // 지갑을 만들었으면 신원과 묶는다. 이게 §9.3 양도제한이 성립하는 근거다 —
+  // FarmToken._update가 2차 이전 시 송·수신 지갑 모두 isVerified를 요구한다.
+  // 실패해도 발행은 진행된다. mint는 신원 게이트 예외라 막히지 않는다.
+  await registerIdentityOnChain(userId, wallet.chainAddress).catch((e) =>
+    console.error("[relay] 신원 바인딩 실패:", e),
+  );
+  return wallet;
+}
+
+/**
+ * 수탁 지갑 ↔ 신원 해시를 온체인에 묶는다 (명세 5.6 · FarmToken.registerIdentity).
+ *
+ * didHash는 `ciHash`를 쓴다 — 이미 서버 시크릿을 섞은 sha256이라 CI 원문이
+ * 아니고, 1신원=1지갑을 강제하는 데 필요한 동일성만 갖는다. ciHash가 없는
+ * 계정(신원 미검증)은 묶지 않는다. 묶을 신원이 없기 때문이다.
+ *
+ * 컨트랙트가 재등록을 거부하므로(이미 등록된 지갑·DID는 revert) 중복 호출은
+ * 조용히 넘긴다. 여기서 던지면 입금 처리가 통째로 멈춘다.
+ */
+export async function registerIdentityOnChain(
+  userId: string,
+  chainAddress: string,
+): Promise<string | null> {
+  if (!FARM_TOKEN_ADDRESS || FARM_TOKEN_ADDRESS.length !== 42) return null;
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { ciHash: true, identityVerified: true },
+  });
+  if (!user?.identityVerified || !user.ciHash) return null;
+
+  const didHash = `0x${user.ciHash.replace(/^0x/, "")}` as `0x${string}`;
+  if (didHash.length !== 66) return null;
+
+  try {
+    const { wallet: signer, pub } = getClients();
+    // 이미 묶여 있으면 보내지 않는다 — 컨트랙트가 revert하고 가스만 태운다.
+    const existing = (await pub.readContract({
+      address: FARM_TOKEN_ADDRESS,
+      abi: FARM_TOKEN_ABI,
+      functionName: "identity",
+      args: [chainAddress as `0x${string}`],
+    })) as string;
+    if (existing && existing !== `0x${"0".repeat(64)}`) return null;
+
+    const hash = await signer.writeContract({
+      address: FARM_TOKEN_ADDRESS,
+      abi: FARM_TOKEN_ABI,
+      functionName: "registerIdentity",
+      args: [chainAddress as `0x${string}`, didHash],
+      ...GAS_OPTS,
+    });
+    await pub.waitForTransactionReceipt({ hash });
+    return hash;
+  } catch (e) {
+    console.error("registerIdentity 실패:", e);
+    return null;
+  }
 }
 
 /** 아웃박스에서 처리할 때가 된 발행 건을 집어 체인에 올린다. */

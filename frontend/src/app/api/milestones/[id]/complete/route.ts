@@ -4,6 +4,7 @@ import { serializeBigInt as serialize } from "@/lib/serialize";
 import { requireRole } from "@/lib/auth";
 import { recordAudit } from "@/lib/audit";
 import { releaseTrancheOnChain, MILESTONE_TIMEOUT_MS } from "@/lib/onchain";
+import { recordDisbursementOnChain } from "@/lib/audit-trail";
 import { canRelease } from "@/lib/milestone-gate";
 
 export async function POST(
@@ -149,6 +150,17 @@ export async function POST(
       console.error("releaseTrancheOnChain failed:", e);
     }
 
+    // 집행 결과를 감사 원장에도 남긴다 (명세 9.6 recordDisbursement).
+    // releaseTranche는 Escrow의 잔액을 움직이는 집행이고, 이건 "얼마가 언제 어느
+    // 은행 건으로 나갔나"의 기록이다. 명세가 둘을 다른 함수로 나눠 뒀다.
+    const disbursementTxHash = await recordDisbursementOnChain({
+      eventId: `disbursement:${id}:${milestone.seq}`,
+      projectId: milestone.projectId,
+      milestoneSeq: milestone.seq,
+      amount: releaseAmount,
+      bankTransferId: txHash,
+    });
+
     await recordAudit({
       actorId: session.userId,
       actorRole: "admin",
@@ -157,7 +169,7 @@ export async function POST(
       entityId: id,
       projectId: milestone.projectId,
       summary: `마일스톤 ${milestone.seq} "${milestone.name}" 집행 — 트랜치 ${Number(releaseAmount).toLocaleString("ko-KR")}원 해제`,
-      detail: { releaseAmount: Number(releaseAmount), txHash },
+      detail: { releaseAmount: Number(releaseAmount), txHash, disbursementTxHash },
     });
 
     return NextResponse.json(
@@ -165,6 +177,7 @@ export async function POST(
         success: true,
         milestone: updatedMilestone,
         txHash,
+        disbursementTxHash,
       })
     );
   } catch (error) {

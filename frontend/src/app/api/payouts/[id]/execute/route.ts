@@ -5,6 +5,7 @@ import { requireRole } from "@/lib/auth";
 import { recordAudit } from "@/lib/audit";
 import { getPayoutAdapter } from "@/lib/payout-adapter";
 import { payoutFailurePolicy } from "@/lib/payout-failure";
+import { recordPayoutOnChain } from "@/lib/audit-trail";
 
 /**
  * POST /api/payouts/[id]/execute — 지급 어댑터로 이체를 실행한다.
@@ -171,6 +172,18 @@ export async function POST(
     },
   });
 
+  // 지급 성공만 체인에 남긴다 (명세 9.6 recordPayout — 선행조건: 정산 확정·은행 지급 성공).
+  // 실패 건은 올리지 않는다. 체인에 남길 것은 "돈이 실제로 나갔다"는 사실이다.
+  const payoutTxHash = await recordPayoutOnChain({
+    eventId: `payout:${payout.id}:${result.providerTransferId}`,
+    projectId: payout.projectId,
+    payoutId: payout.id,
+    // 수취인 원문(이름·계좌)은 올리지 않는다. 계정 없는 수취인은 여기 오지 않는다.
+    payeeRef: payout.payeeUserId ?? payout.id,
+    amount: payout.amount,
+    bankTransferId: result.providerTransferId,
+  });
+
   await recordAudit({
     actorId: session.userId,
     actorRole: "admin",
@@ -179,10 +192,14 @@ export async function POST(
     entityId: id,
     projectId: payout.projectId,
     summary: `지급 완료 · ${payout.payeeName} ${Number(payout.amount).toLocaleString("ko-KR")}원 (${adapter.provider})`,
-    detail: { providerTransferId: result.providerTransferId, provider: adapter.provider },
+    detail: {
+      providerTransferId: result.providerTransferId,
+      provider: adapter.provider,
+      chainTxHash: payoutTxHash,
+    },
   });
 
   return NextResponse.json(
-    serialize({ ok: true, payout: paid, provider: adapter.status() }),
+    serialize({ ok: true, payout: paid, provider: adapter.status(), chainTxHash: payoutTxHash }),
   );
 }

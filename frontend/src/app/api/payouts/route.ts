@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { serializeBigInt as serialize } from "@/lib/serialize";
 import { getServerSession, requireRole } from "@/lib/auth";
+import { recordSettlementOnChain } from "@/lib/audit-trail";
 import { recordAudit } from "@/lib/audit";
 import {
   buildPayoutPlan,
@@ -199,6 +200,22 @@ export async function POST(request: NextRequest) {
 
     const skipped = plan.lines.length - created.count;
 
+    // 정산 확정을 체인에 남긴다 (명세 9.6 confirmSettlement — 선행조건: 매출·비용 검증 완료).
+    // 배분 재원은 운영자 매출이 아니라 FarmFi 수수료 풀이다(waterfall.ts). ruleHash에
+    // 그때 적용한 규칙을 넣어 두면, 나중에 규칙을 바꿔도 무엇으로 계산했는지 남는다.
+    const settlementTxHash = await recordSettlementOnChain({
+      eventId: `settlement:${projectId}:${plan.period}`,
+      projectId,
+      period: plan.period,
+      distributable: plan.total,
+      ruleSignature: JSON.stringify({
+        perToken: plan.perToken,
+        operatorRevenue: plan.operatorRevenue,
+        operatingCost: plan.operatingCost,
+        recordConfirmed: plan.recordConfirmed,
+      }),
+    });
+
     await recordAudit({
       actorId: session.userId,
       actorRole: "admin",
@@ -217,6 +234,7 @@ export async function POST(request: NextRequest) {
         operatorRevenueMeasured: plan.operatorRevenueMeasured,
         recordConfirmed: plan.recordConfirmed,
         operatingCost: plan.operatingCost,
+        settlementTxHash,
       },
     });
 
@@ -226,7 +244,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(
-      serialize({ created: created.count, skipped, plan, payouts }),
+      serialize({ created: created.count, skipped, plan, payouts, settlementTxHash }),
       { status: 201 }
     );
   } catch (error) {

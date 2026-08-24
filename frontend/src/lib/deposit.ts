@@ -5,6 +5,7 @@ import {
   mintEventId,
   processIssuance,
 } from "@/lib/chain-relay";
+import { recordDepositOnChain } from "@/lib/audit-trail";
 import { getFundCustodyAdapter, fundCustodyStatus } from "@/lib/fund-custody";
 import { settleInvestment } from "@/lib/investment";
 import {
@@ -217,6 +218,16 @@ export async function confirmBankDeposit(input: {
   });
 
   if (outcome === "CONFIRMED") {
+    // 입금 확인을 체인에 남긴다 (명세 9.6 confirmDeposit — 선행조건: 은행 입금 검증 완료).
+    // 구좌 발행(mint)과는 다른 기록이다. 발행은 "얼마를 배정했나", 이건 "얼마가
+    // 들어왔나"다. 계좌번호는 올리지 않고 거래번호 해시만 간다(명세 9.2).
+    await recordDepositOnChain({
+      eventId: `deposit:${input.providerTransactionId}:confirm`,
+      projectId: investment.projectId,
+      providerTransactionId: input.providerTransactionId,
+      amount: input.amount,
+    });
+
     // 분리보관 계정 기록. 데모는 Mock이고 출시 시 신탁사 어댑터로 교체된다.
     await getFundCustodyAdapter()
       .recordDeposit({ investmentId: investment.id, amount: input.amount })

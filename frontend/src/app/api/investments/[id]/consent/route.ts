@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { getServerSession } from "@/lib/auth";
 import { serializeBigInt } from "@/lib/serialize";
 import { missingRequiredConsents, agreementHashFor } from "@/lib/agreements";
+import { recordAgreementOnChain } from "@/lib/audit-trail";
 
 // POST /api/investments/[id]/consent — 최종 확인·전자서명 (I-03).
 // 필수 문서에 전부 동의했는지 확인하고, 동의한 문서들을 묶은 해시를 신청에 남긴 뒤
@@ -64,5 +65,18 @@ export async function POST(
     },
   });
 
-  return NextResponse.json({ investment: serializeBigInt(updated) });
+  // 동의 사실을 체인에 남긴다 (명세 9.6 registerAgreement — 선행조건: 본인확인·계약 동의 완료).
+  // 문서 원문이 아니라 해시만 올린다(명세 3.3). 나중에 문서를 고쳐 쓰면 해시가 어긋난다.
+  // 동의 문서가 없으면 해시도 없다. 그런 건 올릴 것이 없으므로 건너뛴다.
+  const chainTxHash = agreementHash
+    ? await recordAgreementOnChain({
+        eventId: `agreement:${id}:${agreementHash}`,
+        projectId: updated.projectId,
+        investorUserId: session.userId,
+        agreementHash,
+        agreedAt: updated.consentedAt ?? new Date(),
+      })
+    : null;
+
+  return NextResponse.json({ investment: serializeBigInt(updated), chainTxHash });
 }

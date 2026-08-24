@@ -4,6 +4,7 @@ import { serializeBigInt } from "@/lib/serialize";
 import { getServerSession } from "@/lib/auth";
 import { recordAudit } from "@/lib/audit";
 import { canSubmitEvidence } from "@/lib/milestone-gate";
+import { recordEvidenceOnChain } from "@/lib/audit-trail";
 
 // GET /api/milestones/[id]/evidence — 제출 화면(O-11)이 쓰는 단계 상세.
 export async function GET(
@@ -116,6 +117,20 @@ export async function POST(
     },
   });
 
+  // 증빙 해시를 체인에 남긴다 (명세 9.6 submitEvidenceHash). 나중에 파일을 다시
+  // 해시해 이 값과 맞춰보면 교체 여부를 알 수 있다. 순차로 보내는 이유는 같은
+  // 운영키로 동시에 쏘면 nonce가 충돌하기 때문이다.
+  const evidenceTxHashes: string[] = [];
+  for (const [index, fileHash] of fileHashes.entries()) {
+    const tx = await recordEvidenceOnChain({
+      eventId: `evidence:${id}:${index}:${fileHash}`,
+      projectId: milestone.projectId,
+      milestoneSeq: milestone.seq,
+      fileSha256: fileHash,
+    });
+    if (tx) evidenceTxHashes.push(tx);
+  }
+
   await recordAudit({
     actorId: session.userId,
     actorRole: session.role,
@@ -124,8 +139,11 @@ export async function POST(
     entityId: id,
     projectId: milestone.projectId,
     summary: `${milestone.project.name} ${milestone.seq}단계 증빙 제출 (${fileUrls.length}건)`,
-    detail: { urls: fileUrls, hashes: fileHashes },
+    detail: { urls: fileUrls, hashes: fileHashes, chainTxHashes: evidenceTxHashes },
   });
 
-  return NextResponse.json({ milestone: serializeBigInt(updated) });
+  return NextResponse.json({
+    milestone: serializeBigInt(updated),
+    chainTxHashes: evidenceTxHashes,
+  });
 }
