@@ -10,7 +10,7 @@ import {
   SkeletonBlock,
 } from "@/components/ui";
 import { formatDate } from "@/lib/format";
-import { getJson, num, won } from "../api";
+import { getJson, num } from "../api";
 import { useOperatorMilestones } from "./MilestonesScreen";
 
 type MilestoneDetail = {

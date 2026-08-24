@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 import { serializeBigInt } from "@/lib/serialize";
 import { requireRole } from "@/lib/auth";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // 개설 순(1호점 → 2호점 → 3호점). 정렬이 없으면 DB 반환 순서에 맡겨져
     // 목록 첫 항목이 매번 달라지고, 앱은 첫 지점을 기본 선택한다.

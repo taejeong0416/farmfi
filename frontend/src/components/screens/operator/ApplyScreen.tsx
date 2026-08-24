@@ -44,7 +44,6 @@ export function ApplyScreen() {
   const [availableHours, setAvailableHours] = useState(HOURS[1]);
   const [documents, setDocuments] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
-  const [savedAt, setSavedAt] = useState<Date | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -96,7 +95,6 @@ export function ApplyScreen() {
       }
       await patchApplication(app.id, { documents, spaceId });
       await refetch();
-      setSavedAt(new Date());
     } catch (e) {
       setError(e instanceof Error ? e.message : "저장에 실패했습니다.");
     } finally {
@@ -207,9 +205,6 @@ export function ApplyScreen() {
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-3 pt-1">
-          {savedAt ? (
-            <span className="text-11 text-brand">✓ 자동 저장됨</span>
-          ) : null}
           <button
             type="button"
             disabled={busy}

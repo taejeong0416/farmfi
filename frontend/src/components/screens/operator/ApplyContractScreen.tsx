@@ -88,11 +88,6 @@ export function ApplyContractScreen() {
     <PanelShell>
       <ApplyStepLine application={application} current="contract" />
 
-      <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-surface px-3 py-1.5">
-        <span className="text-11 font-medium text-brand">✓ 자동 저장됨</span>
-        <span className="text-12 text-body">방금 전</span>
-      </span>
-
       <h1 className="text-24 font-bold text-ink">
         확정된 공간과 조건을 계약서로 확인해요
       </h1>

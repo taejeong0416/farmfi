@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { StepLine, type Step } from "@/components/ui";
 import type { OperatorApplication } from "../api";
 
@@ -38,13 +39,29 @@ export function ApplyStepLine({
   }));
 
   const index = STEPS.findIndex((s) => s.key === current) + 1;
+  const prev = STEPS[index - 2];
 
   return (
     <div className="mb-7">
-      <p className="mb-4 text-13 font-medium text-brand">
-        운영 신청 {index} / {STEPS.length}
-      </p>
+      {/* `.fig` O-03~O-07 공통 — 단계선 위에 자동 저장 표시, 아래에 이전 단계. */}
+      <div className="mb-4 flex items-center justify-between">
+        <p className="text-13 font-medium text-brand">
+          운영 신청 {index} / {STEPS.length}
+        </p>
+        <span className="inline-flex items-center gap-2 rounded-full bg-surface px-3 py-1.5">
+          <span className="text-11 font-medium text-brand">✓ 자동 저장됨</span>
+          <span className="text-12 text-body">방금 전</span>
+        </span>
+      </div>
       <StepLine steps={steps} />
+      {prev ? (
+        <Link
+          href={prev.href}
+          className="mt-4 inline-block text-13 font-medium text-ink"
+        >
+          ← 이전 단계
+        </Link>
+      ) : null}
     </div>
   );
 }
