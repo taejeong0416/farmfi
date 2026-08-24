@@ -128,6 +128,15 @@ export function AmlScreen() {
         </Badge>
       ),
     },
+    {
+      key: "action",
+      header: "처리",
+      align: "right",
+      width: "90px",
+      render: () => (
+        <span className="text-12 font-medium text-brand">검토</span>
+      ),
+    },
   ];
 
   return (
