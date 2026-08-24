@@ -5,6 +5,7 @@ import { getServerSession } from "@/lib/auth";
 import { recordAudit } from "@/lib/audit";
 import { canSubmitEvidence } from "@/lib/milestone-gate";
 import { recordEvidenceOnChain } from "@/lib/audit-trail";
+import { ownsProject } from "@/lib/operator-scope";
 
 // GET /api/milestones/[id]/evidence — 제출 화면(O-11)이 쓰는 단계 상세.
 export async function GET(
@@ -86,14 +87,10 @@ export async function POST(
   if (!milestone) {
     return NextResponse.json({ error: "단계를 찾을 수 없습니다." }, { status: 404 });
   }
-  // 남의 지점 단계에 증빙을 밀어 넣는 경로를 막는다.
-  if (
-    session.role === "operator" &&
-    milestone.project.operatorId &&
-    milestone.project.operatorId !== session.userId
-  ) {
+  // 남의 지점, 그리고 아직 주인이 없는 지점에 증빙을 밀어 넣는 경로를 막는다.
+  if (!ownsProject(session, milestone.project)) {
     return NextResponse.json(
-      { error: "이 지점의 운영자만 제출할 수 있습니다." },
+      { error: "배정된 지점의 운영자만 제출할 수 있습니다." },
       { status: 403 },
     );
   }

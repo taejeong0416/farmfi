@@ -101,6 +101,23 @@ export async function operatorGate(
   return { session, scope: await allowedProjectIds(session), projectId: null };
 }
 
+/**
+ * 이미 읽어 온 매장 행으로 소유를 판정한다. 조회가 아니라 판정이라 prisma를 타지 않는다 —
+ * 라우트가 단계·증빙을 읽으면서 매장을 함께 가져오는 경우가 있고, 그때 같은 행을 두 번
+ * 읽을 이유가 없다.
+ *
+ * **운영자에게 미배정 매장(`operatorId == null`)은 남의 매장과 같다.** 인수 기준이
+ * "운영자는 배정되지 않은 공간의 증빙을 제출할 수 없다"이므로, 주인이 없는 매장은
+ * 아무나 쓸 수 있는 매장이 아니라 아직 아무도 쓸 수 없는 매장이다.
+ */
+export function ownsProject(
+  session: { userId: string; role: string },
+  project: { operatorId: string | null },
+): boolean {
+  if (session.role === "admin") return true;
+  return project.operatorId !== null && project.operatorId === session.userId;
+}
+
 /** `scope`를 prisma where 절에 끼우는 형태로. admin(null)이면 빈 객체 — 제한 없음. */
 export function scopeFilter(scope: string[] | null, field = "projectId"): Record<string, unknown> {
   if (scope === null) return {};
