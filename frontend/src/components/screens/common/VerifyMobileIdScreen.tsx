@@ -94,12 +94,16 @@ export function VerifyMobileIdScreen() {
 
       <div className="mt-6 rounded-10 border border-line px-6 py-7">
         <div className="mx-auto flex h-[174px] w-[166px] items-center justify-center rounded-10 border border-line bg-surface p-3">
-          {offer ? (
+          {!offer ? (
+            <span className="text-11 text-muted">요청 발급 중</span>
+          ) : offer.qrData.startsWith("data:image") ? (
+            // OACX는 QR을 PNG 데이터 URI로 준다. 그 외 제공자는 스캔할 페이로드 문자열.
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img src={offer.qrData} alt="본인확인 QR" className="h-full w-full object-contain" />
+          ) : (
             <span className="break-all text-center font-mono text-[9px] leading-[1.5] text-body">
               {offer.qrData}
             </span>
-          ) : (
-            <span className="text-11 text-muted">요청 발급 중</span>
           )}
         </div>
         <p className="mt-3 text-center text-11 text-muted">일회성 QR</p>
