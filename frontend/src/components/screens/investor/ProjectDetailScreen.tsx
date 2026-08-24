@@ -18,6 +18,7 @@ import {
   milestoneTone,
   num,
   shortDate,
+  usePortfolio,
   useProject,
   useProjectNav,
   won,
@@ -53,11 +54,30 @@ const DOCUMENTS = [
 export function ProjectDetailScreen({ id }: { id: string }) {
   const { data: p, isLoading, isError } = useProject(id);
   const { data: navInfo } = useProjectNav(id);
+  const { data: portfolio } = usePortfolio();
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
+
+  // 이 지점에서 내가 가진 구좌. 로그인 전이거나 아직 없으면 null이고, 화면은 "—"를 쓴다.
+  const myUnits = useMemo(
+    () => portfolio?.holdings.find((h) => h.projectId === id)?.tokenAmount ?? null,
+    [portfolio, id],
+  );
 
   const unit = p?.tokenPrice ?? 0;
   const [amount, setAmount] = useState(0);
+
+  /*
+   * 신청 버튼이 가는 곳. 적합성 판정은 본인확인이 끝난 뒤에야 의미가 있으므로,
+   * 확인 전인 사용자는 판정 화면이 아니라 본인확인부터 거친다. 확인을 마치면
+   * `next`를 타고 지금 입력한 금액 그대로 이 신청으로 돌아온다.
+   */
+  const eligibilityHref = `/projects/${id}/invest/eligibility?amount=${amount}`;
+  const applyHref = !user
+    ? `/login?next=${encodeURIComponent(eligibilityHref)}`
+    : user.identityVerified
+      ? eligibilityHref
+      : `/verify?next=${encodeURIComponent(eligibilityHref)}`;
 
   const milestones = useMemo(
     () => [...(p?.milestones ?? [])].sort((a, b) => a.seq - b.seq),
@@ -142,26 +162,30 @@ export function ProjectDetailScreen({ id }: { id: string }) {
 
           {navInfo?.available ? (
             <>
-              <h2 className="mt-10 text-15 font-bold text-ink">지점 기준가</h2>
+              <h2 className="mt-10 text-15 font-bold text-ink">투자 배분 현황</h2>
               <p className="mt-1.5 text-12 text-muted">
-                신탁 잔액 · 집행으로 생긴 자산 · 누적 회수금을 발행 구좌 수로 나눈 값입니다.
-                거래 가격이 아니라 산정 기준입니다.
+                이 지점에 배정된 전체 구좌 가운데 내 몫이 얼마인지 보여줍니다.
+                아래 세 값은 배정의 근거가 되는 신탁 잔액 · 집행으로 생긴 자산 · 누적 회수금입니다.
               </p>
               <Card className="mt-4" padded={false}>
                 <div className="grid grid-cols-3">
-                  <Metric label="1구좌 기준가" value={won(Math.round(navInfo.nav))} accent />
                   <Metric
-                    label="발행가 대비"
+                    label="내 배분 비율"
                     value={
-                      navInfo.issuePrice > 0
-                        ? `${(((navInfo.nav - navInfo.issuePrice) / navInfo.issuePrice) * 100).toFixed(1)}%`
-                        : "-"
+                      myUnits != null && navInfo.basis.holdings > 0
+                        ? `${((myUnits / navInfo.basis.holdings) * 100).toFixed(1)}%`
+                        : "—"
                     }
+                    accent
+                  />
+                  <Metric
+                    label="총 배정 토큰"
+                    value={`${num(navInfo.basis.holdings)}구좌`}
                     bordered
                   />
                   <Metric
-                    label="직전 대비"
-                    value={`${navInfo.changeRate.toFixed(1)}%`}
+                    label="내 보유 토큰"
+                    value={myUnits != null ? `${num(myUnits)}구좌` : "—"}
                     bordered
                   />
                 </div>
@@ -312,17 +336,29 @@ export function ProjectDetailScreen({ id }: { id: string }) {
           </div>
 
           <div className="mt-6">
+            {/*
+              세션을 확인하는 동안에는 문구를 바꾸지 않는다. 로그인한 사람에게
+              "로그인하고 신청하기"가 잠깐 스쳤다가 바뀌면 눌러도 되는 버튼인지
+              알 수 없다.
+            */}
             <Button
               full
-              disabled={!canApply || amount < unit}
-              onClick={() =>
-                router.push(
-                  `/projects/${p.id}/invest/eligibility?amount=${amount}`,
-                )
-              }
+              disabled={authLoading || !canApply || amount < unit}
+              onClick={() => router.push(applyHref)}
             >
-              투자 신청하기
+              {authLoading
+                ? "투자 신청하기"
+                : !user
+                  ? "로그인하고 신청하기"
+                  : user.identityVerified
+                    ? "투자 신청하기"
+                    : "본인확인하고 신청하기"}
             </Button>
+            {!authLoading && user && !user.identityVerified ? (
+              <p className="mt-2 text-center text-11 text-muted">
+                모바일 신분증과 본인 명의 계좌를 확인한 뒤 이 신청으로 돌아옵니다
+              </p>
+            ) : null}
           </div>
           <p className="mt-4 text-12 leading-5 text-muted">
             투자금 사용 내역은 프로젝트 진행과 함께 공개돼요. 운영 결과에 따라 회수 금액과 기간이 달라질 수 있습니다.
