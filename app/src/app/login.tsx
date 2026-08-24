@@ -5,13 +5,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "@/lib/auth";
 import { C, FRAME_MAX_WIDTH, FS, FW, SP } from "@/farmfi/theme";
-import { PrimaryButton, RoundField } from "@/farmfi/ui";
+import { PrimaryButton, RoundField, useGo } from "@/farmfi/ui";
 
 // 데모 계정. 우회 로그인이 아니라 이 자격으로 실제 세션을 발급받는다 —
 // 운영 데이터 API가 operator 세션을 요구하므로 세션 없이는 화면이 빈다.
 const DEMO_ACCOUNT = { email: "operator@farmfi.test", password: "farmfi123" };
 
 export default function LoginScreen() {
+  const go = useGo();
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -75,6 +76,12 @@ export default function LoginScreen() {
           <Pressable onPress={onDemo} disabled={busy} hitSlop={8}>
             <Text style={s.demo}>데모 계정으로 바로 들어가기</Text>
           </Pressable>
+
+          {/* 보증서 확인(M-02) 입구. 스플래시에도 같은 버튼이 있지만 그 화면은 1.1초
+              뒤 자동으로 넘어가서 누를 틈이 없다. 머무는 화면에도 길을 둔다. */}
+          <Pressable onPress={() => go.push("/scan")} hitSlop={8}>
+            <Text style={s.scanLink}>QR로 보증서 확인</Text>
+          </Pressable>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -98,5 +105,11 @@ const s = StyleSheet.create({
   form: { gap: SP.md },
   error: { fontSize: FS.cap, color: C.danger, textAlign: "center" },
   submit: { marginTop: SP.sm },
+  scanLink: {
+    fontSize: FS.body,
+    color: C.body,
+    textAlign: "center",
+    paddingVertical: SP.xs,
+  },
   demo: { fontSize: FS.cap, color: C.body, textAlign: "center", paddingVertical: SP.sm },
 });

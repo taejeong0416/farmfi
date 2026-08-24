@@ -10,7 +10,10 @@ import { C, FRAME_MAX_WIDTH, FS, FW, SP } from "@/farmfi/theme";
 import { AppIcon } from "@/farmfi/icons";
 import { useGo } from "@/farmfi/ui";
 
-const HOLD_MS = 1100;
+// 로고를 보여주는 시간. 웹은 이 앞에 번들 로딩이 붙어 실제로는 더 짧게 스친다.
+// 1.1초로는 화면을 봤다는 인상도, QR 버튼을 누를 틈도 남지 않아 2초로 늘렸다.
+// 보증서 확인 입구는 로그인 화면에도 따로 두었다 — 여기만 두면 자동 이동에 먹힌다.
+const HOLD_MS = 2000;
 
 export default function SplashScreen() {
   const { user, loading } = useAuth();
