@@ -54,6 +54,20 @@ export function OrderScreen() {
   const requiredAgreed = CONSENTS.every((c) => !c.required || consents[c.key]);
   const { data } = useCatalog(draft.projectId);
   const [couponOpen, setCouponOpen] = useState(false);
+  const [couponInput, setCouponInput] = useState("");
+  const [couponError, setCouponError] = useState<string | null>(null);
+
+  /** 코드를 직접 넣어 적용한다 (`.fig` B-04). 없는 코드면 이유를 적는다. */
+  function applyCouponCode() {
+    const code = couponInput.trim().toUpperCase();
+    const found = COUPONS.find((c) => c.code === code);
+    if (!found) {
+      setCouponError("쓸 수 없는 쿠폰 코드입니다.");
+      return;
+    }
+    setCouponError(null);
+    update({ couponCode: found.code, discount: found.discount });
+  }
 
   if (!ready) {
     return (
@@ -70,6 +84,13 @@ export function OrderScreen() {
   const base = monthlyPrice(packSize, draft.perWeek);
   const total = Math.max(0, base - draft.discount);
   const firstPickup = upcomingPickups(draft.perWeek, 1)[0];
+  // 다음 자동결제 — 다음 달 1일. 도면의 `매월 1일 자동결제`와 같은 날이다.
+  const nextBilling = (() => {
+    const d = new Date();
+    d.setDate(1);
+    d.setMonth(d.getMonth() + 1);
+    return d;
+  })();
 
   return (
     <PanelShell>
@@ -133,21 +154,60 @@ export function OrderScreen() {
             보유 쿠폰 {COUPONS.length}장
           </Button>
         </div>
+        <div className="mt-4 flex gap-2 border-t border-line-soft pt-4">
+          <input
+            value={couponInput}
+            onChange={(e) => setCouponInput(e.target.value)}
+            placeholder="쿠폰 코드를 입력하세요"
+            className="h-10 flex-1 rounded-6 border border-line px-3.5 text-12 text-ink outline-none placeholder:text-muted focus:border-brand"
+          />
+          <Button size="sm" variant="secondary" onClick={applyCouponCode}>
+            쿠폰 적용
+          </Button>
+        </div>
+        {couponError ? (
+          <p className="mt-2 text-12 text-danger">{couponError}</p>
+        ) : null}
+      </Card>
+
+      {/* `.fig` B-04 — 주문서에서 결제수단을 확인하고 바꾼다. */}
+      <Card className="mt-4">
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-13 text-muted">결제수단</p>
+            <p className="mt-2 text-15 font-medium text-ink">
+              신한카드 **** 4821
+            </p>
+            <p className="mt-1.5 text-12 text-muted">매월 1일 자동결제</p>
+          </div>
+          <Button size="sm" variant="ghost" href="/subscribe/payment">
+            변경
+          </Button>
+        </div>
       </Card>
 
       <Card className="mt-4" padded={false}>
         <div className="px-6 py-5">
-          <Row label="구독 상품" value={won(base)} />
+          <p className="mb-3 text-13 font-medium text-ink">결제 요약</p>
+          <Row label={`${packSize}종 믹스팩`} value={won(base)} />
           <Row
-            label="쿠폰 할인"
+            label="첫 구독 쿠폰"
             value={draft.discount ? `-${won(draft.discount)}` : "-"}
           />
+          <Row label="픽업 비용" value={won(0)} />
           <div className="mt-3 flex items-center justify-between border-t border-line-soft pt-4">
             <span className="text-14 font-medium text-ink">오늘 결제</span>
             <span className="font-num text-22 font-medium text-brand">
               {won(total)}
             </span>
           </div>
+          <div className="mt-3 flex items-center justify-between">
+            <span className="text-13 text-muted">다음 자동결제</span>
+            <span className="text-13 text-body">
+              {shortDate(nextBilling)} · {won(base)}
+            </span>
+          </div>
+          <p className="mt-2 text-12 text-muted">결제 1일 전 알림</p>
         </div>
       </Card>
 
