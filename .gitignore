@@ -12,3 +12,5 @@ design/images/
 #   python tools/figma/labels.py && node tools/figma/audit.mjs
 tools/figma/labels.json
 tools/figma/audit.json
+tools/figma/geometry.json
+tools/figma/geometry-report.json
