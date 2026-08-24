@@ -39,6 +39,8 @@ export function NotifyScreen() {
   const [message, setMessage] = useState("");
   const [channels, setChannels] = useState({ app: true, email: false, sms: false });
   const [busy, setBusy] = useState(false);
+  const [audience, setAudience] = useState("all");
+  const [tested, setTested] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
 
@@ -74,6 +76,31 @@ export function NotifyScreen() {
       <div className="flex items-start gap-8">
         <Card className="flex-1">
           <div className="space-y-4">
+            {/* `.fig` A-14 — 역할로 먼저 좁히고, 그 안에서 지점 범위를 고른다. */}
+            <div>
+              <p className="mb-2 text-12 text-muted">수신 대상</p>
+              <div className="flex gap-2">
+                {[
+                  { key: "investor", label: "투자자" },
+                  { key: "operator", label: "운영자" },
+                  { key: "all", label: "전체" },
+                ].map((a) => (
+                  <button
+                    key={a.key}
+                    type="button"
+                    onClick={() => setAudience(a.key)}
+                    className={`h-9 rounded-6 border px-4 text-12 ${
+                      audience === a.key
+                        ? "border-brand font-medium text-brand"
+                        : "border-line text-body hover:bg-surface"
+                    }`}
+                  >
+                    {a.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <Field label="범위">
               <Select
                 value={projectId}
@@ -135,18 +162,67 @@ export function NotifyScreen() {
           {error ? <p className="mt-4 text-12 text-danger">{error}</p> : null}
           {sent ? <p className="mt-4 text-12 text-brand">발송했습니다.</p> : null}
 
-          <div className="mt-6">
+          <div className="mt-6 flex gap-3">
             <Button
-              full
+              variant="secondary"
               disabled={busy || !title.trim() || !message.trim()}
-              onClick={send}
+              onClick={() => setTested(true)}
             >
-              {busy ? "발송 중" : `${scopeName}에게 발송`}
+              테스트 발송
             </Button>
+            <div className="flex-1">
+              <Button
+                full
+                disabled={busy || !title.trim() || !message.trim()}
+                onClick={send}
+              >
+                {busy ? "발송 중" : `${scopeName}에게 발송`}
+              </Button>
+            </div>
           </div>
+          {tested ? (
+            <p className="mt-3 text-12 text-brand">
+              내 계정으로 테스트 알림을 보냈습니다.
+            </p>
+          ) : null}
         </Card>
 
         <Card className="w-[360px] shrink-0" padded={false}>
+          <div className="border-b border-line-soft px-5 py-4">
+            <p className="text-14 font-bold text-ink">미리보기</p>
+            <div className="mt-3 rounded-8 border border-line px-4 py-3">
+              <p className="text-13 font-medium text-ink">
+                {title || "제목이 여기 보입니다"}
+              </p>
+              <p className="mt-1.5 text-12 text-body">
+                {message || "내용이 여기 보입니다"}
+              </p>
+              <p className="mt-2 text-11 text-muted">지금 · {scopeName}</p>
+            </div>
+            <p className="mt-4 text-14 font-bold text-ink">발송 요약</p>
+            <div className="mt-2 space-y-1.5">
+              <div className="flex justify-between text-12">
+                <span className="text-muted">예상 수신자</span>
+                <span className="text-ink">{scopeName}</span>
+              </div>
+              <div className="flex justify-between text-12">
+                <span className="text-muted">채널</span>
+                <span className="text-ink">
+                  {[
+                    channels.app ? "앱" : null,
+                    channels.email ? "이메일" : null,
+                    channels.sms ? "SMS" : null,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ") || "선택 없음"}
+                </span>
+              </div>
+              <div className="flex justify-between text-12">
+                <span className="text-muted">발송 예정</span>
+                <span className="text-ink">즉시</span>
+              </div>
+            </div>
+          </div>
           <div className="border-b border-line-soft px-5 py-4">
             <h2 className="text-14 font-bold text-ink">발송 이력</h2>
           </div>

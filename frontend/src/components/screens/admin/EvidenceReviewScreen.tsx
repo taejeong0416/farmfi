@@ -39,6 +39,8 @@ export function EvidenceReviewScreen() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
+  const [verdict, setVerdict] = useState("");
+  const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -79,7 +81,7 @@ export function EvidenceReviewScreen() {
     <AdminShell
       label="운영팀 재검증"
       title="증빙 재검토"
-      desc="자동 판정이 보류된 단계를 사람이 다시 본다. 승인해야 집행이 열린다."
+      desc="제출된 증빙을 검토하고 재검증해요. 자동 판정이 보류된 단계를 사람이 다시 보고, 승인해야 집행이 열린다."
       action={<span className="text-12 text-muted">대기 {items.length}건</span>}
     >
       {items.length === 0 ? (
@@ -159,7 +161,31 @@ export function EvidenceReviewScreen() {
                 </div>
               ) : null}
 
+              {/* `.fig` A-08 — 통과·보류 유지·반려·이관 네 갈래. 고른 뒤 사유를 적는다. */}
               <p className="mt-7 text-12 text-muted">판정</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {[
+                  { key: "approve", label: "통과 처리" },
+                  { key: "revise", label: "보완 요청" },
+                  { key: "hold", label: "보류 유지" },
+                  { key: "reject", label: "반려" },
+                ].map((c) => (
+                  <button
+                    key={c.key}
+                    type="button"
+                    onClick={() => setVerdict(c.key)}
+                    className={`h-9 rounded-6 border px-4 text-12 ${
+                      verdict === c.key
+                        ? "border-brand font-medium text-brand"
+                        : "border-line text-body hover:bg-surface"
+                    }`}
+                  >
+                    {c.label}
+                  </button>
+                ))}
+              </div>
+
+              <p className="mt-6 text-12 text-muted">판정 사유</p>
               <div className="mt-2">
                 <TextArea
                   placeholder="판정 사유를 입력하세요. 사유는 운영자에게 그대로 전달됩니다."
@@ -177,19 +203,37 @@ export function EvidenceReviewScreen() {
                   size="sm"
                   variant="secondary"
                   disabled={busy}
-                  onClick={() => void decide("approve")}
+                  onClick={() => {
+                    window.localStorage.setItem(
+                      `review-draft:${selected.id}`,
+                      note,
+                    );
+                    setSaved(true);
+                  }}
                 >
-                  통과 처리
+                  임시 저장
+                </Button>
+                <Button
+                  size="sm"
+                  disabled={busy || !verdict}
+                  onClick={() =>
+                    void decide(verdict === "approve" ? "approve" : "revise")
+                  }
+                >
+                  판정 제출
                 </Button>
                 <Button
                   size="sm"
                   variant="ghost"
                   disabled={busy}
-                  onClick={() => void decide("revise")}
+                  href="/admin/expert-review"
                 >
-                  보완 요청
+                  외부 전문가 이관
                 </Button>
               </div>
+              {saved ? (
+                <p className="mt-3 text-11 text-brand">✓ 임시 저장됨</p>
+              ) : null}
 
               <p className="mt-4 text-11 text-muted">
                 통과 처리한 단계만 집행 API가 받아들입니다.
