@@ -57,7 +57,7 @@ export function SignupScreen() {
         </p>
 
         <div className="mt-8 space-y-5">
-          <Field label="이름">
+          <Field label="이름" required>
             <TextInput
               placeholder="실명을 입력하세요"
               value={name}
@@ -65,7 +65,7 @@ export function SignupScreen() {
               required
             />
           </Field>
-          <Field label="이메일">
+          <Field label="이메일" required>
             <TextInput
               type="email"
               autoComplete="email"
@@ -75,18 +75,18 @@ export function SignupScreen() {
               required
             />
           </Field>
-          <Field label="비밀번호">
+          <Field label="비밀번호" required>
             <TextInput
               type="password"
               autoComplete="new-password"
-              placeholder="영문 · 숫자 · 특수문자 포함 10자 이상"
+              placeholder="8자 이상"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               minLength={8}
               required
             />
           </Field>
-          <Field label="비밀번호 확인">
+          <Field label="비밀번호 확인" required>
             <TextInput
               type="password"
               autoComplete="new-password"

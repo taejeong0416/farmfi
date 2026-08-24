@@ -14,17 +14,27 @@ export function Field({
   label,
   hint,
   error,
+  required,
   children,
 }: {
   label?: string;
   hint?: string;
   error?: string;
+  /** 라벨 옆에 * 를 붙인다. 입력 자체의 required 는 컨트롤에 따로 준다. */
+  required?: boolean;
   children: ReactNode;
 }) {
   return (
     <label className="block">
       {label ? (
-        <span className="mb-2 block text-12 text-muted">{label}</span>
+        <span className="mb-2 block text-12 text-muted">
+          {label}
+          {required ? (
+            <span className="ml-1 text-danger" aria-hidden>
+              *
+            </span>
+          ) : null}
+        </span>
       ) : null}
       {children}
       {error ? (
