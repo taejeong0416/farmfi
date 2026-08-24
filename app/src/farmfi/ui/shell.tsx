@@ -1,7 +1,7 @@
 // 앱 껍데기 — 상단 바, 하단 탭, 상세 헤더, 팝업.
 // Figma의 Status Bar·Home Indicator 프레임은 기기 크롬을 흉내 낸 목업이라 옮기지
 // 않는다. 실제 기기에서는 OS가 그리고 SafeAreaView가 자리를 잡는다.
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useMemo, type ReactNode } from "react";
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { usePathname, useRouter, type Href } from "expo-router";
@@ -17,16 +17,22 @@ import { C, FRAME_MAX_WIDTH, FS, FW, GUTTER, R, SP } from "../theme";
 import { AppIcon, type IconName } from "../icons";
 import { PrimaryButton, GhostButton, T } from "./primitives";
 import { isAuthError } from "@/lib/api";
+import { useAuth } from "@/lib/auth";
 
 // typedRoutes가 켜져 있어 Href 유니온은 `.expo/types`가 생성될 때만 새 경로를 안다.
 // 라우트를 추가할 때마다 호출부에서 캐스팅하지 않도록 여기 한 곳에서만 좁힌다.
+// 반환 객체는 메모이즈한다. 매 렌더 새 객체를 주면 이걸 effect 의존성에 넣은
+// 화면이 렌더마다 effect를 다시 돌려 무한 루프에 빠진다.
 export function useGo() {
   const router = useRouter();
-  return {
-    push: (path: string) => router.push(path as Href),
-    replace: (path: string) => router.replace(path as Href),
-    back: () => router.back(),
-  };
+  return useMemo(
+    () => ({
+      push: (path: string) => router.push(path as Href),
+      replace: (path: string) => router.replace(path as Href),
+      back: () => router.back(),
+    }),
+    [router]
+  );
 }
 
 // ─── 하단 탭 ───
@@ -100,6 +106,7 @@ function TopBar({ storeName, onStorePress }: { storeName?: string; onStorePress?
  */
 function useBranchGate(children: ReactNode, enabled: boolean): ReactNode {
   const go = useGo();
+  const { logout } = useAuth();
   const branch = useFarmProjects();
 
   if (!enabled) return children;
@@ -109,7 +116,16 @@ function useBranchGate(children: ReactNode, enabled: boolean): ReactNode {
       <>
         <StateNotice tone="error" message={branch.error} onRetry={branch.reload} />
         {isAuthError(branch.rawError) && (
-          <PrimaryButton label="로그인하러 가기" onPress={() => go.push("/login")} />
+          // 토큰만 만료되고 context의 user는 남아 있는 상태다. 그대로 /login으로
+          // 밀면 로그인 화면이 두 번 튕겨낸다 — user가 있으니 useProtectedRoute가
+          // /store-select로 되돌리고, 표식이 없으니 스플래시로도 되돌린다.
+          // 먼저 세션을 비우고 표식을 붙여 보내야 로그인 화면에 머문다.
+          <PrimaryButton
+            label="로그인하러 가기"
+            onPress={() => {
+              void logout().then(() => go.replace("/login?e=session"));
+            }}
+          />
         )}
       </>
     );

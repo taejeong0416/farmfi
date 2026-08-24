@@ -1,7 +1,9 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
   type ReactNode,
 } from "react";
@@ -60,7 +62,10 @@ function useProtectedRoute(user: User | null, loading: boolean) {
     const seg = segments as string[];
     const open = seg.length === 0 || seg[0] === "login" || seg[0] === "scan";
     if (!user && !open) {
-      router.replace("/login");
+      // 표식을 붙여 보낸다. 로그인 화면은 `?e=session`이 없으면 주소창으로 잘못
+      // 들어온 것으로 보고 스플래시로 되돌리므로, 표식 없이 보내면 아무도
+      // 로그인 화면에 머물지 못한다.
+      router.replace("/login?e=session" as Href);
     } else if (user && seg[0] === "login") {
       // typedRoutes 유니온은 `.expo/types`가 만들어질 때만 새 경로를 안다.
       router.replace("/store-select" as Href);
@@ -91,32 +96,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useProtectedRoute(user, loading);
 
-  const login = async (email: string, password: string) => {
+  // 세 함수와 아래 value는 identity를 고정한다. 매 렌더 새로 만들면 이걸
+  // effect 의존성으로 쓰는 화면이 렌더마다 effect를 다시 돌려 무한 루프가 된다.
+  const login = useCallback(async (email: string, password: string) => {
     const res = await apiFetch<{ token: string; user: User }>(
       "/api/auth/login",
       { method: "POST", body: JSON.stringify({ email, password }) }
     );
     await setToken(res.token);
     setUser(res.user);
-  };
+  }, []);
 
-  const signup: AuthState["signup"] = async (input) => {
+  const signup: AuthState["signup"] = useCallback(async (input) => {
     const res = await apiFetch<{ token: string; user: User }>(
       "/api/auth/signup",
       { method: "POST", body: JSON.stringify(input) }
     );
     await setToken(res.token);
     setUser(res.user);
-  };
+  }, []);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     await clearToken();
     setUser(null);
-  };
+  }, []);
+
+  const value = useMemo(
+    () => ({ user, loading, login, signup, logout }),
+    [user, loading, login, signup, logout]
+  );
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
   );
 }
