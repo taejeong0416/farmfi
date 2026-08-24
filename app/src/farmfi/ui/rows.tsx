@@ -423,7 +423,9 @@ export function StoreSelectCard({
     <Card onPress={onPress} selected={selected} style={s.storeCard}>
       {/* Figma는 "이미지 준비 중" 자리표시자다. 매장 도면 에셋으로 채운다. */}
       <View style={s.storeImage}>
-        <Image source={STORE_FLOOR_PLAN} style={s.storeImageFill} contentFit="cover" />
+        {/* 도면은 1254x1254 정사각인데 이 칸은 2:1에 가깝다. cover로 채우면 위아래
+            절반이 잘려 평면도 구실을 못 한다. 전체를 보여주고 남는 폭은 surface로 둔다. */}
+        <Image source={STORE_FLOOR_PLAN} style={s.storeImageFill} contentFit="contain" />
       </View>
       <View style={s.storeInfo}>
         <View style={s.storeHead}>
