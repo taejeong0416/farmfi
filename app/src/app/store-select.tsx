@@ -5,10 +5,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { C, FRAME_MAX_WIDTH, FS, FW, GUTTER, SP } from "@/farmfi/theme";
 import { useFarmProjects } from "@/farmfi/branch";
+import { useAuth } from "@/lib/auth";
 import { useApiResource } from "@/farmfi/useApiResource";
 import { projectStatusLabel, type InventoryResponse } from "@/farmfi/api";
 import {
   EmptyState,
+  GhostButton,
   PrimaryButton,
   StateNotice,
   StoreSelectCard,
@@ -18,6 +20,7 @@ import {
 
 export default function StoreSelectScreen() {
   const go = useGo();
+  const { logout } = useAuth();
   const { projects, projectId, setProjectId, loading, error, reload } = useFarmProjects();
   const [picked, setPicked] = useState<string | null>(null);
 
@@ -79,10 +82,25 @@ export default function StoreSelectScreen() {
           )}
         </ScrollView>
 
-        {projects.length > 0 && (
+        {/* 고를 게 없으면 "선택 완료"도 없다. 그 화면에는 뒤로가기도 탭도 없어서
+            빠져나갈 문이 하나도 남지 않는다 — 배정 대기 중인 계정이 여기 갇힌다.
+            계정을 잘못 골랐을 수도 있으니 로그인 화면으로 가는 문은 열어둔다. */}
+        {projects.length > 0 ? (
           <View style={s.footer}>
             <PrimaryButton label="선택 완료" onPress={confirm} disabled={!selected} />
           </View>
+        ) : (
+          !loading && (
+            <View style={s.footer}>
+              <GhostButton
+                label="다른 계정으로 로그인"
+                icon="logout"
+                onPress={() => {
+                  void logout().then(() => go.replace("/login?e=session"));
+                }}
+              />
+            </View>
+          )
         )}
       </View>
     </SafeAreaView>
