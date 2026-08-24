@@ -58,9 +58,10 @@ function thisPeriod(): string {
 // 임대료는 여기 없다. 파트너 계약(ProjectPartner)의 월 고정 임대료가 지급 원장에서
 // 따로 빠지므로, 여기 또 적으면 운영자 몫에서 두 번 차감된다.
 const DEFAULT_COSTS: CostLine[] = [
-  { id: "utility", label: "전기 · 수도", amount: "" },
   { id: "labor", label: "인건비", amount: "" },
+  { id: "utility", label: "전력 · 수도", amount: "" },
   { id: "supply", label: "자재 · 소모품", amount: "" },
+  { id: "etc", label: "기타 운영비", amount: "" },
 ];
 
 export function LedgerScreen() {
@@ -190,9 +191,25 @@ export function LedgerScreen() {
       title="이번 기간의 매출과 비용을 입력해요"
       desc="입력값을 저장하면 정산 규칙에 따라 정산 결과가 자동 산출됩니다. 입력 · 수정 이력은 감사 로그에 기록됩니다."
       action={
-        <span className="text-12 text-muted">
-          기준일 {data?.dataAsOf ? shortDate(data.dataAsOf) : "-"}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-12 text-muted">
+            기준일 {data?.dataAsOf ? shortDate(data.dataAsOf) : "-"}
+          </span>
+          <button
+            type="button"
+            disabled={confirmed || save.isPending}
+            onClick={() => save.mutate()}
+            className="h-8 rounded-6 border border-line px-3.5 text-11 font-medium text-ink hover:bg-surface disabled:opacity-50"
+          >
+            임시 저장
+          </button>
+          <a
+            href="/admin/settlements"
+            className="flex h-8 items-center rounded-6 bg-brand px-3.5 text-11 font-medium text-white"
+          >
+            정산 산출
+          </a>
+        </div>
       }
     >
       <div className="mb-5 flex max-w-[640px] gap-4">
@@ -223,14 +240,24 @@ export function LedgerScreen() {
       ) : (
         <>
           <Card padded={false}>
-            <div className="grid grid-cols-3">
-              <Stat label={`${period} 확정 매출`} value={`${num(revenue)}원`} />
-              <Stat label="운영 비용" value={`${num(totalCost)}원`} bordered />
+            <div className="grid grid-cols-5">
+              <Stat label="기간 매출" value={`${num(revenue)}원`} />
+              <Stat label="비용 합계" value={`${num(totalCost)}원`} bordered />
               <Stat
                 label="분배 대상"
                 value={`${num(distributable)}원`}
                 bordered
                 accent
+              />
+              <Stat
+                label="손익 구간"
+                value={distributable > 0 ? "정산 가능" : "미달"}
+                bordered
+              />
+              <Stat
+                label="월 배분 가능액"
+                value={`${num(Math.max(0, distributable))}원`}
+                bordered
               />
             </div>
           </Card>
@@ -258,6 +285,30 @@ export function LedgerScreen() {
                 />
               </div>
               <span className="shrink-0 text-12 text-muted">원</span>
+            </div>
+            <div className="mt-4 space-y-2 border-t border-line-soft pt-4">
+              <div className="flex items-center justify-between text-12">
+                <span className="text-body">자체몰 판매</span>
+                <span className="flex items-center gap-4">
+                  <span className="font-num text-ink">
+                    {num(records?.salesTotal ?? 0)}원
+                  </span>
+                  <span className="w-[56px] text-right text-muted">연동</span>
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-12">
+                <span className="text-body">보정 · 직접 입력</span>
+                <span className="flex items-center gap-4">
+                  <span className="font-num text-ink">
+                    {num(revenue - (records?.salesTotal ?? 0))}원
+                  </span>
+                  <span className="w-[56px] text-right text-muted">직접 입력</span>
+                </span>
+              </div>
+              <div className="flex items-center justify-between border-t border-line-soft pt-2 text-12 font-medium">
+                <span className="text-ink">매출 합계</span>
+                <span className="font-num text-ink">{num(revenue)}원</span>
+              </div>
             </div>
             <p className="mt-3 text-12 text-muted">
               판매 기록 합계 {num(records?.salesTotal ?? 0)}원. 반품·현장 판매 보정을 넣어 확정합니다.
@@ -299,6 +350,12 @@ export function LedgerScreen() {
                 </div>
               </div>
             ))}
+            <div className="grid grid-cols-[1fr_220px] items-center border-t border-line px-6 py-3">
+              <span className="text-13 font-medium text-ink">비용 합계</span>
+              <span className="text-right font-num text-13 font-medium text-ink">
+                {num(totalCost)}원
+              </span>
+            </div>
           </Card>
 
           <div className="mt-4 flex flex-wrap items-center gap-2">
