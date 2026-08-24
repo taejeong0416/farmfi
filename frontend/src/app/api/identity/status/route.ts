@@ -24,6 +24,56 @@ function parseBirthDate(raw: unknown): Date | null {
   return d;
 }
 
+/** QR을 잠깐 보여준 뒤 넘어간다. 즉시 통과하면 화면이 깜빡이고 지나가버린다. */
+const DEMO_PASS_DELAY_MS = 3500;
+
+function isDemoAccount(email: string | null | undefined): boolean {
+  if (!email) return false;
+  const allowed = (process.env.DEMO_ACCOUNTS ?? "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+  return allowed.includes(email.toLowerCase());
+}
+
+/**
+ * 시연 계정이면 신분증 제출 자리를 대신 채운다.
+ *
+ * 화면 흐름은 실제와 똑같이 돈다 — QR도 딥링크도 진짜 OACX가 발급한 것이고,
+ * 앱에서 제출이 올라오기를 기다리는 그 한 칸만 여기서 메운다. 발표 자리에서
+ * 실물 신분증을 꺼내지 않고도 사용자 흐름 전체를 보여주기 위한 것이다.
+ *
+ * `DEMO_ACCOUNTS`에 적힌 이메일에만 적용된다. 목록이 비면 아무 일도 하지
+ * 않으므로 일반 계정의 인증 경로는 그대로다.
+ */
+async function passIfDemoAccount(txId: string, userId: string): Promise<void> {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { email: true, name: true },
+  });
+  if (!isDemoAccount(user?.email)) return;
+
+  const row = await prisma.identityVerification.findUnique({ where: { txId } });
+  if (!row || row.status !== "pending") return;
+  if (row.userId !== null && row.userId !== userId) return;
+  if (Date.now() - row.createdAt.getTime() < DEMO_PASS_DELAY_MS) return;
+
+  const birth = new Date();
+  birth.setFullYear(birth.getFullYear() - 25);
+  await prisma.identityVerification.update({
+    where: { txId },
+    data: {
+      status: "verified",
+      userId,
+      claims: {
+        realName: user?.name ?? "시연",
+        birthDate: birth.toISOString().slice(0, 10),
+        adult: true,
+      },
+    },
+  });
+}
+
 /**
  * GET /api/identity/status?txId=...
  * 인증 세션 상태를 폴링한다. verified가 되면 클레임을 조회해
@@ -38,6 +88,9 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    const session = await getServerSession();
+    if (session) await passIfDemoAccount(txId, session.userId);
+
     const verifier = getVerifier();
     const status = await verifier.getStatus(txId);
 
@@ -48,7 +101,6 @@ export async function GET(request: NextRequest) {
     const claims = await verifier.getClaims(txId);
     const eligibility = evaluate(claims);
 
-    const session = await getServerSession();
     if (session) {
       // txId 소유자 확인 — 다른 유저에게 연결된 인증 세션(txId)으로는 내 계정을
       // 인증 완료 처리할 수 없다. userId가 비어 있으면(로그인 전 발급) 현재
