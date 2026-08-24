@@ -201,7 +201,7 @@ export function ChangeScreen() {
             disabled={busy || !composeReady}
             onClick={() => void act({ action: "compose", productIds, dressings })}
           >
-            작물 · 드레싱 변경 저장
+            변경 내용 저장
           </Button>
         </div>
       </Card>
@@ -277,7 +277,7 @@ export function ChangeScreen() {
               })
             }
           >
-            {active.status === "paused" ? "구독 다시 시작" : "구독 일시정지"}
+            {active.status === "paused" ? "구독 다시 시작" : "건너뛰기·일시정지"}
           </Button>
         </div>
         {/* 마감이 지났으면 버튼을 막고 이유를 쓴다. 눌러 보고 거절당하게 두지 않는다. */}
@@ -291,7 +291,8 @@ export function ChangeScreen() {
       <Card className="col-span-2">
         <p className="text-15 font-bold text-ink">구독 해지</p>
         <p className="mt-2 text-12 text-muted">
-          다음 결제일 전날까지 해지할 수 있어요. 해지해도 남은 회차는 그대로 받습니다.
+          구독 해지는 다음 결제일 전까지 가능하며, 이미 결제된 회차는 픽업 완료 후
+          종료됩니다.
         </p>
         <p className="mt-2 text-12 text-body">
           다음 결제일 {active.nextPaymentAt ? formatDate(active.nextPaymentAt) : "미정"}

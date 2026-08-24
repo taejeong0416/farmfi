@@ -201,6 +201,9 @@ export function MySubscriptionsScreen() {
                         <Button href={`/subscriptions/pickup/${next.id}`}>
                           픽업 확인증 열기
                         </Button>
+                        <Button variant="ghost" href="/subscriptions/change">
+                          수량 변경
+                        </Button>
                         <Button
                           variant="ghost"
                           disabled={busy}
