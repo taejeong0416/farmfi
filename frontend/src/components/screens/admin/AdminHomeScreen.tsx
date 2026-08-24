@@ -11,7 +11,6 @@ import {
 import { formatDate } from "@/lib/format";
 import { useAuth } from "@/lib/useAuth";
 import {
-  MILESTONE_STATUS_LABEL,
   PROJECT_STATUS_LABEL,
   getJson,
   num,
@@ -29,6 +28,16 @@ type PendingMilestone = {
   evidenceSubmittedAt: string | null;
   project: { id: string; name: string };
 };
+
+/** 접수 후 지금까지. 도면 A-01의 `경과` 열이다. */
+function elapsedText(at: string | null): string {
+  if (!at) return "-";
+  const min = Math.max(0, Math.round((Date.now() - new Date(at).getTime()) / 60000));
+  if (min < 60) return `${min}분`;
+  const h = Math.floor(min / 60);
+  if (h < 24) return `${h}시간 ${min % 60}분`;
+  return `${Math.floor(h / 24)}일 ${h % 24}시간`;
+}
 
 export function AdminHomeScreen() {
   const { user } = useAuth();
@@ -58,6 +67,16 @@ export function AdminHomeScreen() {
       ),
     },
     {
+      key: "kind",
+      header: "유형",
+      width: "110px",
+      render: (m) => (
+        <span className="text-12 text-body">
+          {m.status === "revision_required" ? "보완 요청" : "재검증 요청"}
+        </span>
+      ),
+    },
+    {
       key: "content",
       header: "내용",
       render: (m) => (
@@ -67,17 +86,8 @@ export function AdminHomeScreen() {
       ),
     },
     {
-      key: "amount",
-      header: "집행 금액",
-      align: "right",
-      width: "140px",
-      render: (m) => (
-        <span className="font-num text-13">{won(m.releaseAmount)}</span>
-      ),
-    },
-    {
       key: "at",
-      header: "제출 시각",
+      header: "접수 시각",
       align: "right",
       width: "150px",
       render: (m) => (
@@ -87,16 +97,24 @@ export function AdminHomeScreen() {
       ),
     },
     {
-      key: "status",
-      header: "상태",
+      key: "elapsed",
+      header: "경과",
       align: "right",
-      width: "100px",
+      width: "110px",
       render: (m) => (
-        <Link
-          href="/admin/evidence"
-          className="text-12 font-medium text-brand"
-        >
-          {MILESTONE_STATUS_LABEL[m.status] ?? m.status}
+        <span className="text-12 text-muted">
+          {elapsedText(m.evidenceSubmittedAt)}
+        </span>
+      ),
+    },
+    {
+      key: "go",
+      header: "바로가기",
+      align: "right",
+      width: "90px",
+      render: () => (
+        <Link href="/admin/evidence" className="text-12 font-medium text-brand">
+          이동
         </Link>
       ),
     },
@@ -109,6 +127,11 @@ export function AdminHomeScreen() {
     <AdminShell
       title={`${user?.name ?? "관리자"} 관리자님, 안녕하세요.`}
       desc={`처리 대기 ${pending?.length ?? 0}건`}
+      action={
+        <Link href="/admin/evidence" className="text-12 font-medium text-brand">
+          더보기
+        </Link>
+      }
     >
       {isLoading ? (
         <SkeletonBlock height={360} />
@@ -131,7 +154,17 @@ export function AdminHomeScreen() {
             </div>
           </Card>
 
-          <h2 className="mt-8 text-15 font-bold text-ink">처리 대기 목록</h2>
+          <div className="mt-8 flex items-center gap-2">
+            <span className="rounded-6 border border-brand px-4 py-2 text-12 font-medium text-brand">
+              처리 대기 목록
+            </span>
+            <Link
+              href="/admin/aml"
+              className="rounded-6 border border-line px-4 py-2 text-12 text-body hover:bg-surface"
+            >
+              이상거래 목록
+            </Link>
+          </div>
           <div className="mt-4">
             <DataTable
               columns={columns}
