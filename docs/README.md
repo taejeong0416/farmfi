@@ -23,6 +23,8 @@
 | `architecture.md` | 개발 구조 지향점 — 층 구분·집행 게이트·체인 경계·어댑터 근거 | 근거 |
 | `identity-and-signing.md` | 신원 확인(OACX)과 체인 서명(운영지갑)의 경계 — 왜 다른 주체가 하는지, 중계·터널이 왜 필요한지 | 근거 |
 | `oacx-status.md` | OACX 국내 중계 운영 절차 — 실측·구조·시연 스크립트·되돌리기 | 레퍼런스 |
+| `identity-wallet-setup.md` | 신원 지갑 준비 — 모바일 운전면허증 발급법·OpenDID 지갑 부재·시연 선택지 | 레퍼런스 |
+| `opendid-verifier-연동.md` | 오라클 자체호스팅 OpenDID 구축 기록 — 포트·정책ID·크리덴셜 체인·삽질 로그 | 기록 |
 | `toss-setup.md` | 토스페이먼츠 가상계좌 연동 절차 — 키·웹훅·확인·되돌리기·시연 입금 | 레퍼런스 |
 | `optimization-rationale.md` | 운영최적화 계산 해설 — 식·가정·한계·파라미터 근거 | 근거 |
 | `growth-recipe-rationale.md` | 생육 레시피 계산 해설 — 좌표계·품종 이전·불확실성·목적함수 | 근거 |
