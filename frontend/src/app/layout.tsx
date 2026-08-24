@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { AppFooter, SiteHeader } from "@/components/ui";
+import { AppFooter, SiteHeader, VerifyBanner } from "@/components/ui";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
@@ -31,6 +31,7 @@ export default function RootLayout({
       <body className="bg-white text-ink">
         <Providers>
           <SiteHeader />
+          <VerifyBanner />
           {children}
           <AppFooter />
         </Providers>

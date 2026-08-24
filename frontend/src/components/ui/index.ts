@@ -22,3 +22,4 @@ export { AppHeader, AppFooter, Shell, PanelShell } from "./AppHeader";
 export { AuthShell } from "./AuthShell";
 export type { NavItem } from "./AppHeader";
 export { SiteHeader } from "./SiteHeader";
+export { VerifyBanner } from "./VerifyBanner";
