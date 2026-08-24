@@ -1,50 +1,76 @@
-# OACX(실제 모바일 신분증) 전환 — 막힌 지점
+# OACX(실물 모바일 운전면허증) — 국내 중계로 붙였다
 
-## 결론
+프로덕션 `farmfi.co.kr`이 실제 모바일 운전면허증으로 본인확인한다.
+확인: `POST /api/identity/offer` → `mobileid://verify?...`, QR 922바이트, HTTP 200.
 
-**로컬에서는 되고 Vercel에서는 안 된다.** 라온시큐어 해커톤 서버가 접근을
-제한하는 것으로 보인다. 프로덕션은 OpenDID로 되돌려 뒀다.
+## 왜 중계가 필요한가
 
-## 확인한 것
+`cx.raonsecure.co.kr:18543`은 국내 IP만 통과시킨다. 실측:
 
-| 환경 | 결과 |
+| 출발지 | 결과 |
 |---|---|
-| 로컬(`localhost:3210`) | ✅ QR 914바이트 + `mobileid://` 딥링크 정상 |
-| Vercel 프로덕션 | ❌ `ConnectTimeoutError: cx.raonsecure.co.kr:18543 (10s)` |
+| 노트북 (한국 LG U+) | **HTTP 404 · 0.066초** ← 도달 |
+| Vercel (미국) | connect timeout 10초 ← 조용히 드롭 |
+| Oracle (**오사카**) | connect timeout 25초 ← 조용히 드롭 |
+
+서버는 살아 있다. 66밀리초에 응답한다. 막는 건 방화벽이고, TCP 연결 자체가
+조용히 죽는다. Oracle 인스턴스가 일본 리전이라 그걸 프록시로 쓰는 길도 없다.
+
+## 구조
 
 ```
-POST /api/identity/offer error: [TypeError: fetch failed]
-  [cause]: ConnectTimeoutError: Connect Timeout Error
-           (attempted address: cx.raonsecure.co.kr:18543, timeout: 10000ms)
+브라우저 ─→ farmfi.co.kr (Vercel, 미국)
+                 │  OACX_BASE_URL = 터널 URL
+                 │  X-Relay-Token
+                 ▼
+         cloudflared 터널
+                 ▼
+    scripts/oacx-relay.mjs (노트북, 국내 회선)
+                 ▼
+      cx.raonsecure.co.kr:18543  ✅
 ```
 
-같은 코드·같은 요청인데 나가는 IP만 다르다. **IP 화이트리스트**의 전형적인
-증상이다. 국내 IP 제한이거나 참가자 IP만 열어둔 구성일 수 있다.
+`OACX_BASE_URL` 하나로 끼워진다 — `OacxVerifier`의 모든 호출이 `call()` 하나를
+지나기 때문이다.
 
-## 지금 설정
+## 시연 당일
 
-| | 값 | 결과 |
-|---|---|---|
-| 로컬 `.env` | `IDENTITY_PROVIDER=oacx` | 실제 모바일 운전면허증 |
-| Vercel 프로덕션 | `IDENTITY_PROVIDER=opendid` | Oracle 자체 OpenDID(8092) |
+```bash
+./scripts/oacx-up.sh
+```
 
-코드는 둘 다 지원한다(`getVerifier()`). **환경변수 한 줄로 전환된다.**
+중계·터널을 띄우고, 배포 환경변수를 맞추고, 배포하고, 딥링크가 `mobileid://`인지
+확인까지 한다. **Ctrl-C를 누르면 OpenDID로 되돌리고 정리한다.**
 
-## 풀려면
+창을 닫으면 배포본의 본인확인이 끊긴다. 노트북이 국내 회선에 붙어 있어야 한다.
 
-1. **라온시큐어에 Vercel 아웃바운드 허용 요청** — 서버리스라 고정 IP가 없어
-   대역을 주기 어렵다. "허용 IP 없이 열어달라"가 현실적이다.
-2. **Oracle을 프록시로** — Oracle 인스턴스(168.138.36.235)는 국내 IP이고
-   이미 OpenDID를 돌린다. 거기에 OACX 중계를 두면 Vercel → Oracle → OACX로
-   나간다. 다만 인증 정보가 한 단계 더 지나가고, Oracle이 죽으면 본인확인도
-   같이 죽는다.
-3. **시연을 로컬에서** — 노트북에서 앱·웹을 띄우면 지금 그대로 실제 운전면허증이
-   된다. 가장 확실하지만 배포본과 다른 것을 보여주게 된다.
+## 중계 잠금장치
 
-## 시연 관점
+파싱 API(`/trans/{token}`)에 자체 인증이 없다 — 그 토큰을 쥔 사람은 누구나
+개인정보를 읽는다. 그래서 중계 토큰이 유일한 방벽이고, 그만큼 조였다.
 
-OpenDID 경로도 **모바일 신분증 흐름 자체는 같다** — QR·딥링크·VP 제출·검증.
-다른 것은 "누가 발급한 신분증인가"다(우리 자체 발급 vs 정부 발급).
+- 상위 호스트 고정 — 열린 프록시가 될 수 없다
+- 경로는 `/oacx/api/v1.0/` 접두사만 (그 외 403)
+- `X-Relay-Token` 32자 이상, `timingSafeEqual` 상수시간 비교 (그 외 401)
+- 토큰 없이는 아예 뜨지 않는다
+- 127.0.0.1 바인드 — 공개 노출은 터널만
+- 본문 1MB 제한
+- **본문은 로그로 남기지 않는다** — 이름·생년월일·CI·전화번호·주소가 지나간다.
+  401일 때 길이만 찍어 "헤더 없음"과 "값 다름"을 구분한다.
 
-실물 운전면허증을 보여줘야 한다면 **로컬에서 그 부분만** 시연하고 나머지는
-배포본으로 하는 게 지금으로선 안전하다.
+## 되돌리기
+
+```bash
+printf 'opendid' | vercel env add IDENTITY_PROVIDER production --sensitive --force
+cd frontend && vercel --prod --yes
+```
+
+OpenDID(Oracle 자체 발급)로 돌아간다. 흐름은 같고 — QR·딥링크·VP 제출·검증 —
+다른 건 "누가 발급한 신분증인가"뿐이다. 노트북과 무관하게 돈다.
+
+## 남은 것
+
+- 터널 URL이 매번 바뀐다. 고정하려면 Cloudflare 계정에 named tunnel을 파고
+  `farmfi.co.kr` 하위 호스트를 붙이면 된다. 지금은 재실행마다 재배포한다.
+- 라온시큐어가 Vercel 아웃바운드를 열어주면 중계 자체가 필요 없다. 서버리스라
+  고정 IP가 없어 대역을 줄 수 없으니 "IP 제한 해제"로 요청해야 한다.
