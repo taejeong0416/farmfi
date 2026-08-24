@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
+import QRCode from "qrcode";
+
 import { checkCredential, CREDENTIAL_STATUS_LABEL } from "@/lib/credential";
 
 /**
@@ -42,9 +44,24 @@ export async function GET() {
 
   const check = checkCredential(credential);
 
+  // 앱(M-02)이 스캔할 QR. 담는 값은 보증서 번호 하나다 — 명세가 "번호 입력 또는
+  // QR 스캔"이라 두 경로가 같은 값을 가리켜야 한다. 번호는 비밀이 아니므로 QR에
+  // 토큰이나 개인정보를 싣지 않는다. 검증은 스캔한 뒤 이 API가 다시 한다.
+  //
+  // 유효하지 않은 보증서는 QR을 만들지 않는다. 스캔되는 순간 서버가 거절할 텐데
+  // 굳이 찍게 만들 이유가 없다.
+  const qrDataUrl = check.valid
+    ? await QRCode.toDataURL(credential.credentialNo, {
+        errorCorrectionLevel: "M",
+        margin: 2,
+        width: 320,
+      }).catch(() => null)
+    : null;
+
   return NextResponse.json({
     credential: {
       credentialNo: credential.credentialNo,
+      qrDataUrl,
       operatorName: credential.user.name,
       project: credential.project,
       status: credential.status,

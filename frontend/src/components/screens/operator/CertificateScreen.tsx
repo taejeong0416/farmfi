@@ -100,6 +100,29 @@ export function CertificateScreen() {
             />
           </div>
 
+          {/* 앱(M-02)이 이 QR을 읽는다. 담긴 값은 보증서 번호 하나다 — 비밀이 아니라
+              대조용 식별자이고, 유효성 판정은 스캔 뒤 서버가 다시 한다.
+              유효하지 않은 보증서는 서버가 QR을 만들지 않는다. */}
+          {credential.qrDataUrl ? (
+            <div className="mt-8 flex items-center gap-6 rounded-14 bg-white/95 p-6">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={credential.qrDataUrl}
+                alt={`보증서 ${credential.credentialNo} QR`}
+                width={128}
+                height={128}
+                className="h-32 w-32 shrink-0"
+              />
+              <div className="min-w-0">
+                <p className="text-14 font-semibold text-ink">앱으로 스캔</p>
+                <p className="mt-2 text-12 leading-5 text-body">
+                  FarmFi 앱을 열고 이 QR을 비추면 매장 운영 화면으로 들어갑니다.
+                  카메라를 쓸 수 없으면 보증서 번호를 직접 입력해도 됩니다.
+                </p>
+              </div>
+            </div>
+          ) : null}
+
           <p className="mt-8 text-12 text-brand-soft">
             {active && daysLeft <= 30
               ? `유효기간이 ${daysLeft}일 남았습니다. 계약 갱신 후 재발급받으세요.`
