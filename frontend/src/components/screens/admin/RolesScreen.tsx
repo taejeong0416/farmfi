@@ -92,7 +92,7 @@ export function RolesScreen() {
   }
 
   const columns: Column<AdminUser>[] = [
-    { key: "name", header: "사용자", render: (u) => u.name },
+    { key: "name", header: "이름", render: (u) => u.name },
     {
       key: "email",
       header: "소속 · 계정",
@@ -104,7 +104,7 @@ export function RolesScreen() {
     },
     {
       key: "role",
-      header: "권한",
+      header: "역할",
       width: "180px",
       render: (u) => (
         <Select
@@ -148,7 +148,15 @@ export function RolesScreen() {
       title="운영자별 접근 권한을 관리해요"
       desc="권한 변경은 즉시 적용되며 변경 전후 값이 감사 로그에 기록됩니다. 외부 전문가 권한은 배정된 건에 한해 기한부로 부여됩니다."
       action={
-        <span className="text-12 text-muted">사용자 {data.users.length}명</span>
+        <div className="flex items-center gap-3">
+          <span className="text-12 text-muted">사용자 {data.users.length}명</span>
+          <a
+            href="/signup"
+            className="flex h-8 items-center rounded-6 border border-line px-3.5 text-11 font-medium text-ink hover:bg-surface"
+          >
+            사용자 추가
+          </a>
+        </div>
       }
     >
       {error ? <p className="mb-4 text-12 text-danger">{error}</p> : null}

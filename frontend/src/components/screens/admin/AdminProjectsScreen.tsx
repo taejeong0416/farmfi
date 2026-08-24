@@ -100,7 +100,7 @@ export function AdminProjectsScreen() {
     },
     {
       key: "created",
-      header: "등록일",
+      header: "신청일",
       align: "right",
       width: "110px",
       render: (p) => (
