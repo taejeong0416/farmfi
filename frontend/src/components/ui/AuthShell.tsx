@@ -30,26 +30,31 @@ export function AuthShell({
       />
       <div className="fixed inset-0 -z-10 bg-black/50" aria-hidden />
 
-      <main
-        className={`mx-auto w-full px-6 pb-20 pt-[118px] ${
-          wide ? "max-w-panel" : "max-w-modal"
-        }`}
-      >
-        <p className="text-center text-22 font-bold leading-[27px] text-white">
-          FarmFi
-        </p>
+      {/* 좁은 화면에서 패널이 가장자리에 붙지 않게 하는 여백은 폭 제한 **밖**에
+          둔다. 안에 두면 border-box라 465(또는 730) 안에서 48을 떼어가, 흰 패널이
+          그만큼 좁아지고 가운데 정렬이 오른쪽으로 24px 밀린다. */}
+      <div className="px-6">
+        <main
+          className={`mx-auto w-full pb-20 pt-[118px] ${
+            wide ? "max-w-panel" : "max-w-modal"
+          }`}
+        >
+          <p className="text-center text-22 font-bold leading-[27px] text-white">
+            FarmFi
+          </p>
 
-        <div className="mt-9 overflow-hidden rounded-10 bg-white">
-          {header ? (
-            <div className="flex h-16 items-center border-b border-line px-[25px]">
-              <p className="text-13 font-bold text-brand">FarmFi</p>
+          <div className="mt-9 overflow-hidden rounded-10 bg-white">
+            {header ? (
+              <div className="flex h-16 items-center border-b border-line px-[25px]">
+                <p className="text-13 font-bold text-brand">FarmFi</p>
+              </div>
+            ) : null}
+            <div className={`px-[33px] pb-8 ${header ? "pt-7" : "pt-[30px]"}`}>
+              {children}
             </div>
-          ) : null}
-          <div className={`px-[33px] pb-8 ${header ? "pt-7" : "pt-[30px]"}`}>
-            {children}
           </div>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }
