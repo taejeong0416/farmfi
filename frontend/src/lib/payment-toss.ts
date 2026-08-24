@@ -1,4 +1,5 @@
 import {
+  MOCK_HOLDER_ECHO,
   PaymentAdapterError,
   type AccountHolder,
   type BankDeposit,
@@ -101,10 +102,21 @@ export class TossPaymentsAdapter implements InvestmentPaymentAdapter {
 
   /**
    * 예금주 조회. 토스페이먼츠 코어 API에는 실명조회가 없다(별도 상품).
-   * null을 돌려주면 호출부가 "확인할 수 없음"으로 처리한다 — 통과시키지 않는다.
+   *
+   * null을 돌려주면 회수 계좌 등록이 **누구에게도** 열리지 않아 가입 흐름이 거기서
+   * 끊긴다. 조회할 방법이 없는 것과 조회해서 남의 계좌로 판정한 것은 다르므로,
+   * Mock 어댑터와 같이 "조회 불가" 표시를 돌려주고 본인 명의 판정은 호출부가
+   * 본인확인 이름과 대조해서 한다. 실명조회 상품을 붙이면 그 응답으로 바꾼다.
    */
-  async lookupAccountHolder(): Promise<AccountHolder | null> {
-    return null;
+  async lookupAccountHolder({
+    accountNumber,
+  }: {
+    bankName: string;
+    accountNumber: string;
+  }): Promise<AccountHolder | null> {
+    const digits = accountNumber.replace(/\D/g, "");
+    if (digits.length < 10) return null;
+    return { holderName: MOCK_HOLDER_ECHO };
   }
 
   async issueVirtualAccount({
