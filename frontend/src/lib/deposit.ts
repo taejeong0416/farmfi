@@ -152,9 +152,22 @@ export async function confirmBankDeposit(input: {
 
   const investment = account.investment;
   const depositedAt = input.depositedAt ?? new Date();
+
+  // 거래번호 멱등(위 `existing`)은 같은 입금이 두 번 통지될 때를 막는다. 이건 다른
+  // 경우다 — **거래번호가 다른 두 번째 입금**이 이미 납입이 끝난 계좌로 들어온 것.
+  // 금액까지 같으면 위 분기가 그대로 CONFIRMED를 내고, 청약 한 건에 보유 구좌가
+  // 두 번 발행돼 "확정 발행 합 == 청약 합"이 깨진다.
+  //
+  // 돈은 실제로 들어왔으므로 없던 일로 만들지 않는다. 확정도 발행도 하지 않고
+  // 입금 사실만 남겨 관리자 환불 판단으로 보낸다(취소된 신청과 같은 처리).
+  const alreadySettled =
+    account.status === "PAID" ||
+    investment.status === "DEPOSIT_CONFIRMED" ||
+    investment.status === "COMPLETED";
+
   // 취소된 신청으로 들어온 입금은 사람이 환불 판단을 한다.
   const outcome: Exclude<DepositOutcome, "DUPLICATE"> =
-    account.status === "CANCELLED" || investment.status === "CANCELLED"
+    account.status === "CANCELLED" || investment.status === "CANCELLED" || alreadySettled
       ? "REVIEW"
       : input.amount !== investment.amount
         ? "AMOUNT_MISMATCH"
