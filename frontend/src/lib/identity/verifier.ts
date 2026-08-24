@@ -340,10 +340,24 @@ export class OmniOneVerifier implements IdentityVerifier {
 class OacxVerifier implements IdentityVerifier {
   constructor(private readonly base: string) {}
 
+  // OACX는 국내 IP만 통과시킨다. 배포본(Vercel)에서는 연결 자체가 조용히
+  // 드롭되므로 국내 회선의 중계(`scripts/oacx-relay.mjs`)를 거친다. 중계는 이
+  // 토큰이 맞을 때만 응답한다. OACX를 직접 부를 때는 비어 있고 헤더도 안 붙는다.
+  //
+  // 호출 시점에 읽는다 — 시크릿은 배포와 따로 도는 값이라 모듈 상수로 굳히지 않는다.
+  private relayToken(): string {
+    return process.env.OACX_RELAY_TOKEN ?? "";
+  }
+
   private async call<T>(path: string, init?: RequestInit): Promise<T> {
+    const relay = this.relayToken();
     const res = await fetch(`${this.base}${path}`, {
       ...init,
-      headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) },
+      headers: {
+        "Content-Type": "application/json",
+        ...(relay ? { "X-Relay-Token": relay } : {}),
+        ...(init?.headers ?? {}),
+      },
       cache: "no-store",
     });
     const text = await res.text();
