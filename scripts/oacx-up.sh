@@ -98,7 +98,10 @@ curl -fsS -m 5 "http://127.0.0.1:$PORT/healthz" >/dev/null || {
 }
 
 echo "▸ 터널 여는 중"
-cloudflared tunnel --url "http://127.0.0.1:$PORT" --no-autoupdate > "$RUN/tunnel.log" 2>&1 &
+# --protocol http2: QUIC(UDP 7844)을 막는 망이 있다. 실제로 여기서 걸렸고
+# cloudflared가 "precheck hard_fail"로 터널을 아예 열지 못했다 — 호스트네임이
+# 등록되지 않아 NXDOMAIN이 났다. http2는 443/TCP만 쓰므로 그런 망도 통과한다.
+cloudflared tunnel --url "http://127.0.0.1:$PORT" --protocol http2 --no-autoupdate > "$RUN/tunnel.log" 2>&1 &
 TUNNEL_PID=$!
 URL=""
 for _ in $(seq 1 40); do
@@ -109,7 +112,37 @@ done
 [ -n "$URL" ] || { echo "터널 URL을 못 얻었다:"; tail -20 "$RUN/tunnel.log"; exit 1; }
 echo "  $URL"
 
-curl -fsS -m 20 "$URL/healthz" >/dev/null || { echo "터널이 중계에 닿지 않는다"; exit 1; }
+# 터널 호스트네임은 발급 직후 DNS에 아직 없다. 그런데 그걸 curl로 두드리면
+# macOS 시스템 리졸버가 NXDOMAIN을 캐시해 버리고, 그 음성 TTL이 전파보다 오래
+# 살아서 이후 모든 curl이 0.001초 만에 "Could not resolve"로 죽는다. 실제로 그렇게
+# 멀쩡한 터널을 두 번 죽은 것으로 오판했다.
+#
+# 그래서 두 가지를 한다.
+#   1) 대기는 dig로 한다 — 시스템 리졸버를 거치지 않아 음성 캐시를 만들지 않는다.
+#   2) 확인 curl은 --resolve로 IP를 직접 물려 리졸버를 통째로 건너뛴다.
+# 어차피 실제 트래픽은 Vercel에서 나가므로 이 노트북의 DNS 캐시와는 무관하다.
+echo "▸ 터널 DNS 전파 대기"
+HOST="${URL#https://}"
+TUNNEL_IP=""
+for _ in $(seq 1 30); do
+  # `|| true` 없으면 아직 안 뜬 동안 grep이 1을 반환하고, set -e+pipefail이
+  # 그 자리에서 스크립트를 죽인다 — 아래 안내 문구에 닿지도 못한다.
+  TUNNEL_IP="$(dig +short "$HOST" 2>/dev/null | grep -E '^[0-9.]+$' | head -1 || true)"
+  [ -n "$TUNNEL_IP" ] && break
+  sleep 2
+done
+[ -n "$TUNNEL_IP" ] || {
+  echo "터널 호스트네임이 60초 안에 DNS에 뜨지 않는다"
+  tail -20 "$RUN/tunnel.log"
+  exit 1
+}
+
+curl -fsS -m 20 --resolve "$HOST:443:$TUNNEL_IP" "$URL/healthz" >/dev/null || {
+  echo "터널이 중계에 닿지 않는다 ($TUNNEL_IP)"
+  tail -20 "$RUN/tunnel.log"
+  exit 1
+}
+echo "  통과 · $TUNNEL_IP"
 
 echo "▸ 배포 환경에 연결"
 printf '%s' "$URL"   | vc env add OACX_BASE_URL production --sensitive --force >/dev/null
