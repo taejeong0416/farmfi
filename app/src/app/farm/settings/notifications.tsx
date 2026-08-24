@@ -65,7 +65,9 @@ export default function NotificationSettingsScreen() {
       .then((res) => {
         if (!alive || !res.settings?.length) return;
         setOn(Object.fromEntries(res.settings.map((x) => [x.type, x.enabled])));
-        setChannel(CHANNELS.find((c) => c.key === res.settings[0].channel) ?? CHANNELS[0]);
+        // 설정이 아직 하나도 없으면 settings는 빈 배열이다. 인덱스 접근을 그대로 두면
+        // 첫 진입에서 터진다.
+        setChannel(CHANNELS.find((c) => c.key === res.settings[0]?.channel) ?? CHANNELS[0]);
       })
       .catch(() => {});
     return () => {

@@ -43,6 +43,11 @@ export default function InventoryScreen() {
   const items = inv.data?.projects[0]?.items ?? [];
   const maxStock = Math.max(...items.map((i) => i.inStock), 1);
   const low = items.filter((i) => i.inStock < RESTOCK_THRESHOLD);
+  // low는 데이터가 오기 전 첫 렌더에서 반드시 빈 배열이다. 그때 `low[0].productId`를
+  // 콜백 안에서 읽으면 화면이 통째로 죽는다 — reactCompiler가 콜백 안의 속성 접근을
+  // 메모 의존성으로 끌어올려 렌더 중에 평가하기 때문이다. 콜백이니 안전하다고 볼 수
+  // 없다. 여기서 한 번 걸러 두고 콜백은 이 값만 본다.
+  const firstLow = low[0] ?? null;
 
   return (
     <AppShell
@@ -117,7 +122,7 @@ export default function InventoryScreen() {
         onClose={() => setDismissed(true)}
         onAdjust={() => {
           setDismissed(true);
-          go.push(`/farm/inventory/${low[0].productId}`);
+          if (firstLow) go.push(`/farm/inventory/${firstLow.productId}`);
         }}
       />
     </AppShell>
