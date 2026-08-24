@@ -140,7 +140,7 @@ export default function NotificationSettingsScreen() {
         message="이 기기에만 적용됩니다. 서버 반영은 알림 설정 API 연결 후 이뤄집니다."
         onConfirm={() => {
           setSaved(false);
-          go.back();
+          go.back("/farm/settings");
         }}
         onCancel={() => setSaved(false)}
       />

@@ -157,7 +157,8 @@ export default function ScanScreen() {
   return (
     <SafeAreaView style={s.stage} edges={["top", "bottom"]}>
       <View style={s.frame}>
-        <Pressable onPress={go.back} hitSlop={12} style={s.close}>
+        {/* 스캔은 로그인 없이 열리는 화면이라 닫으면 시작 화면으로 돌아간다. */}
+        <Pressable onPress={() => go.back("/")} hitSlop={12} style={s.close}>
           <AppIcon name="x" size={22} color={C.paper} />
         </Pressable>
 

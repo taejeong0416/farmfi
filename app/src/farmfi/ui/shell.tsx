@@ -29,7 +29,11 @@ export function useGo() {
     () => ({
       push: (path: string) => router.push(path as Href),
       replace: (path: string) => router.replace(path as Href),
-      back: () => router.back(),
+      // 히스토리가 없으면 router.back()은 조용히 무시된다. 웹 주소창이나 딥링크로
+      // 상세 화면에 바로 들어온 경우가 그렇고, 그때 뒤로가기 버튼은 눌러도
+      // 아무 일이 없는 장식이 된다. 갈 곳을 정해 대신 보낸다.
+      back: (fallback = "/farm/dashboard") =>
+        router.canGoBack() ? router.back() : router.replace(fallback as Href),
     }),
     [router]
   );
@@ -207,7 +211,7 @@ export function DetailShell({
     <SafeAreaView style={s.stage} edges={["top", "bottom"]}>
       <View style={s.frame}>
         <View style={s.detailHeader}>
-          <Pressable onPress={go.back} hitSlop={10} style={s.backBtn}>
+          <Pressable onPress={() => go.back()} hitSlop={10} style={s.backBtn}>
             <AppIcon name="chevron-left" size={22} color={C.body} />
           </Pressable>
           <View style={s.detailTitleCol}>

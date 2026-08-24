@@ -89,7 +89,9 @@ export default function SettingsScreen() {
         onConfirm={async () => {
           setConfirming(false);
           await logout();
-          go.replace("/login");
+          // 표식을 붙여야 로그인 화면이 머문다. 없으면 화면이 스플래시로 되돌리고,
+          // 스플래시는 세션이 없으면 다시 발급받는다 — 로그아웃한 자리로 되돌아온다.
+          go.replace("/login?e=session");
         }}
       />
     </DetailShell>
