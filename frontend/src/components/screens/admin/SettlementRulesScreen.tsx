@@ -163,7 +163,45 @@ export function SettlementRulesScreen() {
         <SkeletonBlock height={320} />
       ) : (
         <>
-          <Card padded={false}>
+          {/* `.fig` A-10 — 매출이 어느 순서로 나뉘는지 먼저 보여준다. 편집값이 아니라
+              규칙 그 자체라 읽기 전용이다. */}
+          <h2 className="text-15 font-bold text-ink">월 정산 기준</h2>
+          <Card className="mt-4" padded={false}>
+            <div className="grid grid-cols-[1fr_200px_1fr] border-b border-line bg-surface px-6 py-3">
+              <span className="text-11 text-muted">항목</span>
+              <span className="text-right text-11 text-muted">비율 · 금액</span>
+              <span className="pl-6 text-11 text-muted">비고</span>
+            </div>
+            {[
+              {
+                label: "변동비 · 고정 운영비",
+                value: "실적 입력값",
+                note: "매출에서 먼저 반영",
+              },
+              {
+                label: "투자자 월 회수액",
+                value: "선택 플랜",
+                note: "원금 + 기간별 프리미엄 분할",
+              },
+              {
+                label: "운영자 실수령",
+                value: "잔여액",
+                note: "운영비와 월 회수액 반영 후",
+              },
+            ].map((r) => (
+              <div
+                key={r.label}
+                className="grid grid-cols-[1fr_200px_1fr] items-center border-b border-surface px-6 py-3 last:border-b-0"
+              >
+                <span className="text-13 text-ink">{r.label}</span>
+                <span className="text-right text-13 text-ink">{r.value}</span>
+                <span className="pl-6 text-12 text-muted">{r.note}</span>
+              </div>
+            ))}
+          </Card>
+
+          <h2 className="mt-8 text-15 font-bold text-ink">수수료 · 배분율</h2>
+          <Card className="mt-4" padded={false}>
             <div className="grid grid-cols-[1fr_200px_1fr] border-b border-line bg-surface px-6 py-3">
               <span className="text-11 text-muted">항목</span>
               <span className="text-right text-12 text-muted">비율 · 금액</span>
@@ -189,6 +227,31 @@ export function SettlementRulesScreen() {
                   </span>
                 </div>
                 <span className="pl-6 text-12 text-muted">{f.note}</span>
+              </div>
+            ))}
+          </Card>
+
+          {/* `.fig` A-10 회수 조건 — 규칙표 아래에 네 줄. */}
+          <h2 className="mt-8 text-15 font-bold text-ink">회수 조건</h2>
+          <Card className="mt-4" padded={false}>
+            {[
+              {
+                label: "회수기간",
+                note: "매장 상황에 맞춰 8~24개월 선택",
+              },
+              {
+                label: "투자자 프리미엄",
+                note: "원금 기준 연 12% 단리 적용",
+              },
+              { label: "정산 주기", note: "월별 · 매출 마감 후 정산" },
+              { label: "매출이 낮은 달", note: "월 회수액 조정 · 원금 비보장" },
+            ].map((r) => (
+              <div
+                key={r.label}
+                className="flex items-center justify-between border-b border-surface px-6 py-3 last:border-b-0"
+              >
+                <span className="text-13 text-ink">{r.label}</span>
+                <span className="text-12 text-muted">{r.note}</span>
               </div>
             ))}
           </Card>

@@ -46,6 +46,7 @@ export function ExpertReviewScreen() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
+  const [verdict, setVerdict] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
 
   if (isLoading) {
@@ -144,21 +145,67 @@ export function ExpertReviewScreen() {
                 />
               </div>
 
+              {/* `.fig` A-09 이전 판정 이력 — 여기까지 누가 무엇으로 봤는지. */}
+              <p className="mt-6 text-12 text-muted">이전 판정 이력</p>
+              <div className="mt-2 rounded-8 border border-line px-5 py-4">
+                <div className="flex items-center justify-between border-b border-surface pb-3">
+                  <span className="text-13 text-ink">자동 검증</span>
+                  <span className="text-12 font-medium text-danger">보류</span>
+                </div>
+                <div className="flex items-center justify-between pt-3">
+                  <span className="text-13 text-ink">운영팀 재검증</span>
+                  <span className="text-12 font-medium text-danger">
+                    {selected.status === "expert_review" ? "보류 유지" : "진행 중"}
+                  </span>
+                </div>
+              </div>
+
               <p className="mt-6 text-12 text-muted">이의제기 사유</p>
               <p className="mt-2 rounded-8 border border-line bg-surface px-5 py-4 text-13 leading-6 text-body">
                 {selected.reason}
               </p>
 
+              <p className="mt-6 text-12 text-muted">검토 자료</p>
               {selected.attachmentUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={selected.attachmentUrl}
-                  alt="첨부 자료"
-                  className="mt-4 h-[180px] w-full rounded-8 border border-line object-cover"
-                />
-              ) : null}
+                <a
+                  href={selected.attachmentUrl}
+                  className="mt-2 block rounded-8 border border-line px-5 py-3 text-13 text-brand"
+                >
+                  {decodeURIComponent(
+                    selected.attachmentUrl.split("/").pop() ?? "첨부 자료",
+                  )}
+                </a>
+              ) : (
+                <p className="mt-2 rounded-8 border border-line px-5 py-3 text-12 text-muted">
+                  올라온 자료가 없습니다.
+                </p>
+              )}
 
-              <p className="mt-7 text-12 text-muted">판정 사유</p>
+              {/* `.fig` A-09 최종 판정 — 세 갈래. 조건부 통과는 통과로 열되
+                  조건을 판정 사유에 남긴다. */}
+              <p className="mt-7 text-12 text-muted">최종 판정</p>
+              <div className="mt-2 flex gap-2">
+                {[
+                  { key: "approve", label: "통과 · 집행 진행" },
+                  { key: "conditional", label: "조건부 통과" },
+                  { key: "reject", label: "반려 · 집행 중지" },
+                ].map((c) => (
+                  <button
+                    key={c.key}
+                    type="button"
+                    onClick={() => setVerdict(c.key)}
+                    className={`h-9 rounded-6 border px-4 text-12 ${
+                      verdict === c.key
+                        ? "border-brand font-medium text-brand"
+                        : "border-line text-body hover:bg-surface"
+                    }`}
+                  >
+                    {c.label}
+                  </button>
+                ))}
+              </div>
+
+              <p className="mt-6 text-12 text-muted">판정 사유</p>
               <div className="mt-2">
                 <TextArea
                   placeholder="판정 의견을 입력하세요. 최종 판정과 의견은 감사 로그에 불변 기록으로 남습니다."
@@ -192,21 +239,17 @@ export function ExpertReviewScreen() {
                 ) : null}
                 <Button
                   size="sm"
-                  variant="secondary"
-                  disabled={busy || !note.trim()}
-                  onClick={() => void decide("approve")}
+                  disabled={busy || !note.trim() || !verdict}
+                  onClick={() =>
+                    void decide(verdict === "reject" ? "reject" : "approve")
+                  }
                 >
-                  인용 (재검증 열기)
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  disabled={busy || !note.trim()}
-                  onClick={() => void decide("reject")}
-                >
-                  기각 (보류 유지)
+                  최종 판정 제출
                 </Button>
               </div>
+              <p className="mt-3 text-12 text-muted">
+                최종 판정 이후에는 동일 단계에 대한 이의제기가 불가합니다.
+              </p>
             </Card>
           ) : null}
         </div>
