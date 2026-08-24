@@ -14,6 +14,7 @@ import { useAuth } from "@/lib/useAuth";
 import {
   patchApplication,
   postJson,
+  shortDate,
   useOperatorApplication,
   type OperatorApplication,
 } from "../api";
@@ -43,6 +44,7 @@ export function ApplyScreen() {
   const [availableHours, setAvailableHours] = useState(HOURS[1]);
   const [documents, setDocuments] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
+  const [savedAt, setSavedAt] = useState<Date | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -79,6 +81,29 @@ export function ApplyScreen() {
     }
   }
 
+  /** 심사 요청 없이 지금까지 쓴 것만 남긴다 (`.fig` O-03 `임시 저장`). */
+  async function saveDraft() {
+    setBusy(true);
+    setError(null);
+    try {
+      let app: OperatorApplication | null = application ?? null;
+      if (!app) {
+        const created = await postJson<{ application: OperatorApplication }>(
+          "/api/operator-applications",
+          { region, cropExperience, availableHours },
+        );
+        app = created.application;
+      }
+      await patchApplication(app.id, { documents, spaceId });
+      await refetch();
+      setSavedAt(new Date());
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "저장에 실패했습니다.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function submit() {
     setBusy(true);
     setError(null);
@@ -105,26 +130,104 @@ export function ApplyScreen() {
     }
   }
 
-  const met = [
-    Boolean(region),
-    Boolean(user?.identityVerified),
-    Boolean(cropExperience),
-    Boolean(application?.educationDoneAt),
-    documents.length > 0,
-    documents.length > 1,
-  ].filter(Boolean).length;
+  // 요건마다 따로 본다. 개수만 세어 앞에서부터 채우면 실제로 낸 서류와 어긋난다.
+  const state: Record<string, { ok: boolean; label: string }> = {
+    business: {
+      ok: documents.length > 0,
+      label: documents.length > 0 ? "제출 완료" : "확인 전",
+    },
+    identity: {
+      ok: Boolean(user?.identityVerified),
+      label: user?.identityVerified ? "확인 완료" : "확인 전",
+    },
+    history: {
+      ok: Boolean(cropExperience),
+      label: cropExperience ? "제출 완료" : "확인 전",
+    },
+    education: {
+      ok: Boolean(application?.educationDoneAt),
+      label: application?.educationDoneAt
+        ? "제출 완료"
+        : application?.reviewNote
+          ? "보완 요청"
+          : "확인 전",
+    },
+    tax: {
+      ok: documents.length > 1,
+      label: documents.length > 1 ? "제출 완료" : "확인 전",
+    },
+    insurance: {
+      ok: documents.length > 2,
+      label: documents.length > 2 ? "제출 완료" : "확인 전",
+    },
+  };
+  const met = Object.values(state).filter((v) => v.ok).length;
+
+  // `.fig` O-03 Review Timeline — 네 칸이 고정이고 상태만 바뀐다.
+  const timeline = [
+    {
+      at: application ? shortDate(application.createdAt) : null,
+      title: "신청 접수",
+      note: application ? "통과" : "예정",
+      tone: application ? "pass" : "idle",
+    },
+    {
+      at: application?.reviewNote ? shortDate(application.createdAt) : null,
+      title: "서류 확인",
+      note: application?.reviewNote ? "보완 요청" : met === 6 ? "통과" : "예정",
+      tone: application?.reviewNote ? "fail" : met === 6 ? "pass" : "idle",
+      desc: application?.reviewNote ? "보완 제출 시 심사가 이어집니다" : undefined,
+    },
+    {
+      at: null,
+      title: "운영 이력 검토",
+      note: application?.visitDoneAt ? "통과" : "예정",
+      tone: application?.visitDoneAt ? "pass" : "idle",
+    },
+    {
+      at: null,
+      title: "자격 승인",
+      note: application?.confirmedAt ? "통과" : "예정",
+      tone: application?.confirmedAt ? "pass" : "idle",
+    },
+  ];
 
   return (
     <PanelShell>
       <ApplyStepLine application={application ?? null} current="docs" />
 
-      <h1 className="text-24 font-bold text-ink">운영 자격을 인증해주세요</h1>
-      <p className="mt-3 text-14 text-body">
-        자격 요건을 확인하고 보완 서류를 제출해주세요.
-      </p>
-      <p className="mt-2 text-12 text-muted">
-        {user?.name ?? "운영자"} · 신청 요건 6가지 중 {met}가지를 채웠습니다.
-      </p>
+      <div className="flex items-start justify-between gap-6">
+        <div>
+          <h1 className="text-24 font-bold text-ink">운영 자격을 인증해주세요</h1>
+          <p className="mt-3 text-14 text-body">
+            자격 요건을 확인하고 보완 서류를 제출해주세요.
+          </p>
+          <p className="mt-2 text-12 text-muted">
+            {user?.name ?? "운영자"} · 신청 요건 6가지 중 {met}가지를 채웠습니다.
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center gap-3 pt-1">
+          {savedAt ? (
+            <span className="text-11 text-brand">✓ 자동 저장됨</span>
+          ) : null}
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => void saveDraft()}
+            className="h-[37px] rounded-6 border border-line px-4 text-11 font-medium text-ink hover:bg-surface disabled:opacity-50"
+          >
+            임시 저장
+          </button>
+          <button
+            type="button"
+            disabled={busy || !region || !cropExperience}
+            onClick={() => void submit()}
+            className="h-8 rounded-6 bg-brand px-4 text-11 font-medium text-white disabled:opacity-50"
+          >
+            자격 심사 요청
+          </button>
+        </div>
+      </div>
 
       <Card className="mt-6" padded={false}>
         <div className="grid grid-cols-3">
@@ -134,28 +237,36 @@ export function ApplyScreen() {
         </div>
       </Card>
 
-      <h2 className="mt-8 text-14 font-bold text-ink">자격 요건</h2>
+      <h2 className="mt-8 text-14 font-medium text-ink">자격 요건</h2>
       <Card className="mt-4" padded={false}>
         <div className="px-6">
-          {REQUIREMENTS.map((r, i) => {
-            const ok = i < met;
+          <div className="grid grid-cols-[140px_1fr_100px] border-b border-surface py-3.5 text-12 text-muted">
+            <span>요건</span>
+            <span>제출 서류</span>
+            <span>상태</span>
+          </div>
+          {REQUIREMENTS.map((r) => {
+            const st = state[r.key];
+            const bad = st.label === "보완 요청";
             return (
               <div
                 key={r.key}
-                className="flex items-center justify-between border-b border-surface py-3.5 last:border-b-0"
+                className="grid grid-cols-[140px_1fr_100px] items-center border-b border-surface py-3.5 last:border-b-0"
               >
                 <span className="text-12 text-ink">{r.label}</span>
-                <span className="flex items-center gap-6">
-                  <span className="text-12 text-body">{r.doc}</span>
-                  <span className="flex items-center gap-2">
-                    <span
-                      className={`h-[7px] w-[7px] rounded-full ${ok ? "bg-brand" : "bg-line"}`}
-                    />
-                    <span
-                      className={`w-[56px] text-12 ${ok ? "font-medium text-brand" : "text-muted"}`}
-                    >
-                      {ok ? "제출완료" : "확인 전"}
-                    </span>
+                <span className="text-12 text-body">{r.doc}</span>
+                <span className="flex items-center gap-2">
+                  <span
+                    className={`h-[7px] w-[7px] rounded-full ${
+                      bad ? "bg-danger" : st.ok ? "bg-brand" : "bg-muted"
+                    }`}
+                  />
+                  <span
+                    className={`text-11 font-medium ${
+                      bad ? "text-danger" : st.ok ? "text-brand" : "text-body"
+                    }`}
+                  >
+                    {st.label}
                   </span>
                 </span>
               </div>
@@ -203,7 +314,50 @@ export function ApplyScreen() {
         </Field>
       </div>
 
-      <h2 className="mt-8 text-14 font-bold text-ink">서류 제출</h2>
+      <h2 className="mt-8 text-14 font-medium text-ink">심사 진행</h2>
+      <Card className="mt-4" padded={false}>
+        <div className="px-6 py-2">
+          {timeline.map((t) => (
+            <div key={t.title} className="flex gap-4 py-3.5">
+              <span
+                className={`mt-1.5 h-[9px] w-[9px] shrink-0 rounded-full border ${
+                  t.tone === "pass"
+                    ? "border-brand bg-brand"
+                    : t.tone === "fail"
+                      ? "border-muted bg-white"
+                      : "border-line bg-white"
+                }`}
+              />
+              <div>
+                <p className="text-12 text-muted">{t.at ?? "—"}</p>
+                <p className="mt-0.5">
+                  <span
+                    className={`text-14 font-medium ${t.tone === "idle" ? "text-body" : "text-ink"}`}
+                  >
+                    {t.title}
+                  </span>
+                  <span
+                    className={`ml-1.5 text-12 font-medium ${
+                      t.tone === "fail"
+                        ? "text-danger"
+                        : t.tone === "pass"
+                          ? "text-brand"
+                          : "text-muted"
+                    }`}
+                  >
+                    · {t.note}
+                  </span>
+                </p>
+                {t.desc ? (
+                  <p className="mt-1 text-12 text-muted">{t.desc}</p>
+                ) : null}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      <h2 className="mt-8 text-14 font-medium text-ink">보완 서류 제출</h2>
       <button
         type="button"
         onClick={() => fileRef.current?.click()}
@@ -233,7 +387,9 @@ export function ApplyScreen() {
                 key={d}
                 className="flex items-center justify-between border-b border-surface py-3 last:border-b-0"
               >
-                <span className="text-12 text-ink">제출 서류 {i + 1}</span>
+                <span className="text-12 text-ink">
+                  {decodeURIComponent(d.split("/").pop() ?? `제출 서류 ${i + 1}`)}
+                </span>
                 <span className="text-12 text-brand">첨부됨</span>
               </div>
             ))}
@@ -253,8 +409,10 @@ export function ApplyScreen() {
         </Button>
       </div>
 
-      <p className="mt-5 text-12 text-muted">
+      <p className="mt-5 text-12 leading-5 text-muted">
         자격 인증은 승인일로부터 2년간 유효하며 만료 60일 전에 갱신 안내가 발송됩니다.
+        <br />
+        인증이 없으면 프로젝트 등록과 마일스톤 집행 신청을 할 수 없습니다.
       </p>
     </PanelShell>
   );
