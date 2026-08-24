@@ -12,7 +12,7 @@ import {
   type Column,
 } from "@/components/ui";
 import { formatDate } from "@/lib/format";
-import { getJson } from "../api";
+import { getJson, useProjects } from "../api";
 import { AdminShell } from "./AdminShell";
 
 type AuditLog = {
@@ -63,9 +63,16 @@ const ROLE_LABEL: Record<string, string> = {
   system: "시스템",
 };
 
+/** 한 번에 보여줄 줄 수. `다음`을 누르면 이만큼씩 더 편다. */
+const PAGE = 30;
+
 export function AuditLogsScreen() {
   const [action, setAction] = useState("");
+  const [projectId, setProjectId] = useState("");
+  const [actor, setActor] = useState("");
   const [q, setQ] = useState("");
+  const [shown, setShown] = useState(PAGE);
+  const { data: projects } = useProjects();
 
   const { data, isLoading } = useQuery({
     queryKey: ["audit-logs", action],
@@ -76,8 +83,23 @@ export function AuditLogsScreen() {
     retry: false,
   });
 
+  /** 행위자 목록은 로그에서 뽑는다 — 따로 내려주는 API가 없다. */
+  const actors = useMemo(() => {
+    const set = new Set<string>();
+    for (const l of data?.logs ?? []) {
+      if (l.actorRole) set.add(ROLE_LABEL[l.actorRole] ?? l.actorRole);
+    }
+    return [...set].sort();
+  }, [data]);
+
   const rows = useMemo(() => {
-    const logs = data?.logs ?? [];
+    let logs = data?.logs ?? [];
+    if (projectId) logs = logs.filter((l) => l.projectId === projectId);
+    if (actor) {
+      logs = logs.filter(
+        (l) => (ROLE_LABEL[l.actorRole ?? ""] ?? l.actorRole) === actor,
+      );
+    }
     if (!q.trim()) return logs;
     const key = q.trim().toLowerCase();
     return logs.filter(
@@ -85,7 +107,7 @@ export function AuditLogsScreen() {
         l.summary.toLowerCase().includes(key) ||
         l.action.toLowerCase().includes(key),
     );
-  }, [data, q]);
+  }, [data, q, projectId, actor]);
 
   const columns: Column<AuditLog>[] = [
     {
@@ -134,8 +156,36 @@ export function AuditLogsScreen() {
         </Button>
       }
     >
+      {/* `.fig` A-12 — 프로젝트·이벤트·사용자 세 갈래로 좁히고 검색한다. */}
       <div className="mb-5 flex items-end gap-3">
-        <div className="w-[280px]">
+        <div className="w-[220px]">
+          <Field label="프로젝트">
+            <Select
+              value={projectId}
+              onChange={(e) => setProjectId(e.target.value)}
+            >
+              <option value="">프로젝트 전체</option>
+              {(projects ?? []).map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </Select>
+          </Field>
+        </div>
+        <div className="w-[220px]">
+          <Field label="사용자">
+            <Select value={actor} onChange={(e) => setActor(e.target.value)}>
+              <option value="">사용자 전체</option>
+              {actors.map((a) => (
+                <option key={a} value={a}>
+                  {a}
+                </option>
+              ))}
+            </Select>
+          </Field>
+        </div>
+        <div className="w-[240px]">
           <Field label="이벤트">
             <Select value={action} onChange={(e) => setAction(e.target.value)}>
               <option value="">전체</option>
@@ -161,12 +211,25 @@ export function AuditLogsScreen() {
       {isLoading ? (
         <SkeletonBlock height={320} />
       ) : (
-        <DataTable
-          columns={columns}
-          rows={rows}
-          rowKey={(l) => l.id}
-          empty="기록이 없습니다."
-        />
+        <>
+          <DataTable
+            columns={columns}
+            rows={rows.slice(0, shown)}
+            rowKey={(l) => l.id}
+            empty="기록이 없습니다."
+          />
+          {rows.length > shown ? (
+            <div className="mt-4 text-center">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setShown((n) => n + PAGE)}
+              >
+                다음
+              </Button>
+            </div>
+          ) : null}
+        </>
       )}
     </AdminShell>
   );
