@@ -3,12 +3,14 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
+  Button,
   PhotoSlot,
   ProgressBar,
   Shell,
   SkeletonBlock,
   StatRow,
 } from "@/components/ui";
+import { useAuth } from "@/lib/useAuth";
 import {
   PROJECT_STATUS_LABEL,
   useProjects,
@@ -107,10 +109,10 @@ export function ProjectCard({ p }: { p: ProjectSummary }) {
         >
           {PROJECT_STATUS_LABEL[p.status] ?? p.status}
         </span>
-        {/* `.fig` C-01 — 사진 오른쪽 위 목표 회수율 배지. 원금 비보장을 같이 적는다. */}
+        {/* `.fig` C-01 — 사진 오른쪽 위 목표 회수율 배지. */}
         {p.targetReturnPct ? (
           <span className="absolute right-3 top-3 rounded-4 border border-line bg-white px-2.5 py-1.5 text-10 font-medium text-brand">
-            목표 {p.targetReturnPct}% · 비보장
+            목표 {p.targetReturnPct}%
           </span>
         ) : null}
       </div>
@@ -175,6 +177,8 @@ function CardFact({ label, value }: { label: string; value: string }) {
 }
 
 export function HomeScreen() {
+  const { user, isLoading: authLoading } = useAuth();
+  const locked = !authLoading && !user;
   const { data: projects, isLoading } = useProjects();
   const { data: spaceCount } = useSpaceCount();
   const [onlyFunding, setOnlyFunding] = useState(false);
@@ -344,23 +348,50 @@ export function HomeScreen() {
           </div>
         </div>
 
-        {isLoading ? (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            <SkeletonBlock height={370} />
-            <SkeletonBlock height={370} />
-            <SkeletonBlock height={370} />
+        {/*
+          로그인 전에는 목록이 있다는 것만 보이고 개별 프로젝트로는 들어가지 못한다.
+          카드를 지우지 않고 덮는 이유는, 무엇이 잠겨 있는지 보여야 로그인할 이유가
+          생기기 때문이다. 세션을 확인하는 동안에는 덮지 않는다 — 로그인한 사용자에게
+          잠금이 깜빡이는 편이 더 나쁘다.
+        */}
+        <div className="relative">
+          <div className={locked ? "pointer-events-none select-none" : undefined} aria-hidden={locked}>
+            {isLoading ? (
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                <SkeletonBlock height={370} />
+                <SkeletonBlock height={370} />
+                <SkeletonBlock height={370} />
+              </div>
+            ) : visible.length === 0 ? (
+              <p className="rounded-10 border border-line bg-white px-6 py-16 text-center text-13 text-muted">
+                조건에 맞는 프로젝트가 없습니다.
+              </p>
+            ) : (
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {visible.map((p) => (
+                  <ProjectCard key={p.id} p={p} />
+                ))}
+              </div>
+            )}
           </div>
-        ) : visible.length === 0 ? (
-          <p className="rounded-10 border border-line bg-white px-6 py-16 text-center text-13 text-muted">
-            조건에 맞는 프로젝트가 없습니다.
-          </p>
-        ) : (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {visible.map((p) => (
-              <ProjectCard key={p.id} p={p} />
-            ))}
-          </div>
-        )}
+
+          {locked ? (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 rounded-10 bg-white/75 px-6 text-center backdrop-blur-[2px]">
+              <div>
+                <p className="text-15 font-bold text-ink">로그인하고 프로젝트를 확인하세요</p>
+                <p className="mt-1.5 text-12 text-muted">
+                  모집 현황과 단계별 집행 내역은 로그인 후 볼 수 있습니다.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                <Button href="/login?next=%2F">로그인</Button>
+                <Button variant="secondary" href="/signup">
+                  회원가입
+                </Button>
+              </div>
+            </div>
+          ) : null}
+        </div>
 
         <p className="mt-6 text-11 text-muted">
           ※ 회수기간과 목표 총 회수율은 각 점포의 사업계획 기준 예상치이며, 실제 매출과 운영비에 따라 달라질 수 있습니다.
