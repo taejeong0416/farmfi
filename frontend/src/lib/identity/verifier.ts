@@ -515,11 +515,27 @@ export function getVerifier(): IdentityVerifier {
     }
     return new OmniOneVerifier(baseUrl);
   }
-  // fail-closed: 프로덕션에서 스텁이 뜨면 누구나 "홍길동" 실명 인증을 통과한다.
-  if (process.env.NODE_ENV === "production") {
+  // fail-closed: 스텁이 뜨면 누구나 "홍길동" 실명 인증을 통과한다.
+  //
+  // 판단 기준은 코드가 도는 곳이 아니라 **어느 DB에 쓰는가**다. 로컬 개발 서버도
+  // DATABASE_URL 이 공용 DB를 가리키면 스텁이 남긴 가짜 인증이 실제 계정에 박힌다
+  // (실측: 로컬에서 화면을 연 것만으로 프로덕션 계정이 verified 가 됐다).
+  if (process.env.NODE_ENV === "production" || !writesToLocalDb()) {
     throw new Error(
-      "프로덕션에서는 StubVerifier를 사용할 수 없습니다 — IDENTITY_PROVIDER=opendid 설정 필요"
+      "실제 DB에는 StubVerifier를 사용할 수 없습니다 — IDENTITY_PROVIDER=oacx 설정 필요"
     );
   }
   return new StubVerifier();
+}
+
+/** DATABASE_URL 이 이 컴퓨터의 DB를 가리키는지. 못 읽으면 아니라고 본다. */
+function writesToLocalDb(): boolean {
+  const url = process.env.DATABASE_URL;
+  if (!url) return false;
+  try {
+    const host = new URL(url).hostname;
+    return host === "localhost" || host === "127.0.0.1" || host === "::1";
+  } catch {
+    return false;
+  }
 }
