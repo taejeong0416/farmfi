@@ -31,7 +31,7 @@ export function AppHeader({
 
   return (
     <header className="border-b border-line bg-white">
-      <div className="mx-auto flex h-16 max-w-shell items-center gap-8 px-[54px]">
+      <div className="mx-auto flex h-16 max-w-shell items-center gap-14 px-[54px]">
         <div className="flex items-center gap-2.5">
           <Link href="/" className="text-17 font-bold text-brand">
             FarmFi
@@ -50,7 +50,7 @@ export function AppHeader({
             <span className="text-14 font-medium text-brand">{badge.text}</span>
           ) : null}
         </div>
-        <nav className="flex flex-1 items-center gap-6">
+        <nav className="flex flex-1 items-center gap-8">
           {nav.map((item) => {
             const active =
               item.href === "/"
