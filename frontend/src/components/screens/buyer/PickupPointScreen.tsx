@@ -29,6 +29,17 @@ export function PickupPointScreen() {
         선택한 지점에서 재배하거나 보유한 작물과 드레싱만 다음 단계에 표시됩니다.
       </p>
 
+      {/* `.fig` B-01 — 지금 어디에서 찾고 있는지. 주소를 바꾸면 가까운 순서가 달라진다. */}
+      <div className="mt-6 flex max-w-panel items-center justify-between rounded-10 border border-line bg-white px-5 py-3.5">
+        <span className="text-13 text-ink">
+          ⌖&nbsp;&nbsp;현재 위치&nbsp;&nbsp;
+          <span className="text-body">
+            {points[0]?.location ?? "위치를 확인하는 중"}
+          </span>
+        </span>
+        <span className="text-12 font-medium text-brand">주소 변경</span>
+      </div>
+
       {points.length === 0 ? (
         <div className="mt-8">
           <EmptyState
