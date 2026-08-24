@@ -9,11 +9,15 @@ export type Stat = {
 /** C-01 상단 지표 줄. 항목 사이를 세로선으로 나눈다. */
 export function StatRow({ items }: { items: Stat[] }) {
   return (
-    <div className="flex items-stretch border-y border-line-soft">
+    // 좁은 화면에서는 한 줄에 다 넣지 않고 두 칸씩 접는다. 다섯 칸을 390에 밀어
+    // 넣으면 숫자가 줄바꿈되거나 잘려 지표를 못 읽는다.
+    <div className="flex flex-wrap items-stretch border-y border-line-soft">
       {items.map((item, i) => (
         <div
           key={item.label}
-          className={`flex-1 py-5 ${i > 0 ? "border-l border-line-soft pl-8" : ""}`}
+          className={`min-w-0 basis-1/2 py-5 sm:flex-1 sm:basis-0 ${
+            i > 0 ? "sm:border-l sm:border-line-soft sm:pl-8" : ""
+          }`}
         >
           <p className="text-12 text-muted">{item.label}</p>
           <p className="mt-1 flex items-baseline gap-1">

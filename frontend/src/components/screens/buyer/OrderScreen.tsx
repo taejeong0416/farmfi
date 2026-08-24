@@ -192,7 +192,7 @@ export function OrderScreen() {
 
         </div>
 
-        <div className="w-[454px] shrink-0 space-y-4">
+        <div className="w-full space-y-4 lg:w-[454px] lg:shrink-0">
           <Card padded={false}>
             <div className="px-6 py-5">
               <p className="mb-3 text-18 font-medium text-ink">결제 요약</p>

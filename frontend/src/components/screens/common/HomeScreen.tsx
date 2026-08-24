@@ -251,7 +251,7 @@ export function HomeScreen() {
     <Shell className="pt-0">
       <section
         // `.fig` Frame 168 — 밭 사진 위에 흰 글자다. 덧씌우는 막은 없다.
-        className="-mx-[54px] flex h-[407px] flex-col justify-center bg-brand bg-cover bg-center px-[54px]"
+        className="-mx-4 flex h-[407px] flex-col justify-center bg-brand bg-cover bg-center px-4 sm:-mx-6 sm:px-6 lg:-mx-[54px] lg:px-[54px]"
         style={{ backgroundImage: "url('/assets/figma/home-field.jpg')" }}
       >
         <div className="mx-auto w-full max-w-[1332px]">
@@ -291,9 +291,9 @@ export function HomeScreen() {
       <StatRow items={stats} />
 
       <section className="pt-8">
-        <div className="mb-5 flex items-center justify-between gap-4">
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
           <h2 className="text-15 font-bold text-ink">진행 중 프로젝트</h2>
-          <div className="flex items-center gap-2">
+          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
             <button
               type="button"
               onClick={() => setOnlyFunding((v) => !v)}
@@ -339,13 +339,13 @@ export function HomeScreen() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="프로젝트 · 위치 검색"
-              className="ml-5 h-[34px] w-[353px] rounded-6 border border-line px-4 text-12 text-ink outline-none placeholder:text-muted focus:border-brand"
+              className="h-[34px] w-full rounded-6 sm:ml-5 sm:w-[353px] border border-line px-4 text-12 text-ink outline-none placeholder:text-muted focus:border-brand"
             />
           </div>
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             <SkeletonBlock height={370} />
             <SkeletonBlock height={370} />
             <SkeletonBlock height={370} />
@@ -355,7 +355,7 @@ export function HomeScreen() {
             조건에 맞는 프로젝트가 없습니다.
           </p>
         ) : (
-          <div className="grid grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {visible.map((p) => (
               <ProjectCard key={p.id} p={p} />
             ))}

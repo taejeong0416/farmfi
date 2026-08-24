@@ -50,7 +50,7 @@ export function AboutScreen() {
   return (
     <Shell className="pt-0">
       <section
-        className="-mx-[54px] flex h-[407px] flex-col justify-center bg-brand bg-cover bg-center px-[54px]"
+        className="-mx-4 flex h-[407px] flex-col justify-center bg-brand bg-cover bg-center px-4 sm:-mx-6 sm:px-6 lg:-mx-[54px] lg:px-[54px]"
         style={{
           backgroundImage:
             "linear-gradient(rgba(20,84,46,0.78), rgba(20,84,46,0.78)), url('/assets/farm-operator-photo.png')",

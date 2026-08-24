@@ -11,7 +11,9 @@ export type Step = {
 /** 여러 화면에 걸친 절차의 현재 위치. 색 대신 글자와 굵기로 구분한다. */
 export function StepLine({ steps }: { steps: Step[] }) {
   return (
-    <ol className="flex items-center gap-2">
+    // 단계가 다섯이면 390 화면에서 한 줄에 들어가지 않는다. 접어서 두 줄로 보여준다 —
+    // 가로로 굴리면 현재 단계가 화면 밖에 있을 수 있다.
+    <ol className="flex flex-wrap items-center gap-2">
       {steps.map((s, i) => {
         const chip = (
           <span

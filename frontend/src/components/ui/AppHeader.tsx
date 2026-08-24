@@ -31,8 +31,13 @@ export function AppHeader({
 
   return (
     <header className="border-b border-line bg-white">
-      <div className="mx-auto flex h-16 max-w-shell items-center gap-14 px-[54px]">
-        <div className="flex items-center gap-2.5">
+      {/*
+        좁은 화면에서는 좌우 여백(54)과 항목 간격(14)이 본문보다 넓어져 헤더가 뷰포트를
+        밀어냈다. 폭이 좁을수록 여백과 간격을 줄이고, 그래도 모자라면 내비만 가로로
+        굴린다 — 로고와 오른쪽 버튼은 항상 제자리에 둔다.
+      */}
+      <div className="mx-auto flex h-16 max-w-shell items-center gap-4 px-4 sm:gap-8 sm:px-6 lg:gap-14 lg:px-[54px]">
+        <div className="flex shrink-0 items-center gap-2.5">
           <Link href="/" className="text-17 font-bold text-brand">
             FarmFi
           </Link>
@@ -50,7 +55,7 @@ export function AppHeader({
             <span className="text-14 font-medium text-brand">{badge.text}</span>
           ) : null}
         </div>
-        <nav className="flex flex-1 items-center gap-8">
+        <nav className="flex min-w-0 flex-1 items-center gap-4 overflow-x-auto whitespace-nowrap sm:gap-6 lg:gap-8">
           {nav.map((item) => {
             const active =
               item.href === "/"
@@ -69,7 +74,7 @@ export function AppHeader({
             );
           })}
         </nav>
-        {right}
+        <div className="flex shrink-0 items-center">{right}</div>
       </div>
     </header>
   );
@@ -96,7 +101,10 @@ export function AppFooter() {
   );
 }
 
-/** 1440 본문 폭. 화면 본문을 감싸는 기본 컨테이너. 좌우 54는 `.fig` 전 화면 공통이다. */
+/**
+ * 1440 본문 폭. 화면 본문을 감싸는 기본 컨테이너. 좌우 54는 `.fig` 전 화면 공통이지만
+ * 그건 1440 기준 값이다. 390 화면에서 그대로 쓰면 여백만 108이라 본문이 남지 않는다.
+ */
 export function Shell({
   children,
   className,
@@ -105,7 +113,7 @@ export function Shell({
   className?: string;
 }) {
   return (
-    <main className={`mx-auto max-w-shell px-[54px] py-6 ${className ?? ""}`}>
+    <main className={`mx-auto max-w-shell px-4 py-6 sm:px-6 lg:px-[54px] ${className ?? ""}`}>
       {children}
     </main>
   );

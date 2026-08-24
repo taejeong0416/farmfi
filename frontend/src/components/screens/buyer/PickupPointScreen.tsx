@@ -96,7 +96,7 @@ export function PickupPointScreen() {
               </div>
             </div>
 
-            <div className="w-[454px] shrink-0">
+            <div className="w-full lg:w-[454px] lg:shrink-0">
           <h2 className="text-16 font-semibold text-ink">가까운 픽업 지점</h2>
           <div className="mt-4 space-y-3">
             {points.map((p) => (

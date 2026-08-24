@@ -58,12 +58,12 @@ export function ProjectsScreen() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="프로젝트 · 위치 검색"
-          className="ml-auto h-[34px] w-[353px] rounded-6 border border-line px-4 text-12 text-ink outline-none placeholder:text-muted focus:border-brand"
+          className="h-[34px] w-full rounded-6 sm:ml-auto sm:w-[353px] border border-line px-4 text-12 text-ink outline-none placeholder:text-muted focus:border-brand"
         />
       </div>
 
       {isLoading ? (
-        <div className="grid grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           <SkeletonBlock height={370} />
           <SkeletonBlock height={370} />
           <SkeletonBlock height={370} />
@@ -73,7 +73,7 @@ export function ProjectsScreen() {
           조건에 맞는 프로젝트가 없습니다.
         </p>
       ) : (
-        <div className="grid grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((p) => (
             <ProjectCard key={p.id} p={p} />
           ))}
