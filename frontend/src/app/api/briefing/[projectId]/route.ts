@@ -11,6 +11,8 @@ import { getCrop } from "@/lib/crop-profiles";
 import { generateBriefing } from "@/lib/briefing";
 import { runHarness, inferSeason } from "@/lib/llm-harness";
 import { HEALTHY_RANGES, type IoTReading } from "@/lib/iot-health";
+import { requireRole } from "@/lib/auth";
+import { guardProject } from "@/lib/operator-scope";
 
 // GET /api/briefing/[projectId]?crop=leafy&ledKw=4
 // 알고리즘 결과를 취합해 운영자용 아침 브리핑 JSON 반환.
@@ -19,8 +21,19 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ projectId: string }> }
 ) {
+  // 발주 수량·수요 예측·설비 점검 지시가 담긴다. 배정 매장의 운영자만 본다.
+  let session;
+  try {
+    session = await requireRole("operator");
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
+
   try {
     const { projectId } = await params;
+    const denied = await guardProject(session, projectId);
+    if (denied) return denied;
     const sp = request.nextUrl.searchParams;
     const cropKey = sp.get("crop") ?? "leafy";
     const ledPowerKw = Number(sp.get("ledKw") ?? 4);

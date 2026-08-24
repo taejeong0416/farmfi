@@ -3,6 +3,8 @@ import { prisma } from "@/lib/db";
 import { buildOptimizationReport } from "@/lib/optimization-report";
 import { fetchSalesData, fetchOpenData, alignExternalSeries } from "@/lib/opendata";
 import { IoTReading } from "@/lib/iot-health";
+import { requireRole } from "@/lib/auth";
+import { guardProject } from "@/lib/operator-scope";
 import fleetBaseline from "../../../../../prisma/fleet-baseline.json";
 
 // GET /api/optimization/[projectId]?crop=leafy&tariff=tou|agri&ledKw=4&indoor=1
@@ -12,8 +14,20 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ projectId: string }> }
 ) {
+  // 매장의 생육 목표값·전력 요금·수율 모델이 통째로 나가는 라우트다.
+  // monitoring과 같은 관문을 쓴다 — 배정 매장이 아니면 열리지 않는다.
+  let session;
+  try {
+    session = await requireRole("operator");
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
+
   try {
     const { projectId } = await params;
+    const denied = await guardProject(session, projectId);
+    if (denied) return denied;
     const sp = request.nextUrl.searchParams;
 
     const project = await prisma.project.findUnique({
