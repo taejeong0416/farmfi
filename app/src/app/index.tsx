@@ -1,22 +1,31 @@
-// Splash — 앱이 어디로 갈지 정하는 통과 지점.
-// 세션이 있으면 매장 선택으로, 없으면 로그인으로 넘긴다.
-import { useEffect } from "react";
+// 시안의 첫 두 화면을 한 파일에 담는다.
+//
+//   ① Splash (Figma 6:1820) — 로고만. 지나가는 화면이다.
+//   ② 시작 (Figma 1:1009)   — 로고 + "QR로 바로 시작하기". **여기 머문다.**
+//
+// 둘을 합쳐 자동으로 넘겨버리면 ②에 머물 수가 없어 QR 버튼을 누를 틈이 없다.
+// 실제로 그렇게 만들어놨다가 스캔 화면에 들어갈 길이 사라졌다.
+//
+// ① 구간에서 세션을 조용히 발급받는다. 시안에 로그인 화면이 숨겨져 있어
+// (00 로그인 frame hidden) 흐름에서 뺐는데, 운영 API가 전부 JWT를 요구해
+// 세션 없이는 어느 화면도 데이터를 못 그린다. 발급이 실패했을 때만 로그인
+// 화면을 띄운다 — 막다른 길을 만들지 않는다.
+import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 
 import { useAuth } from "@/lib/auth";
+import { SESSION_ACCOUNT } from "@/lib/session-account";
 import { C, FRAME_MAX_WIDTH, FS, FW, SP } from "@/farmfi/theme";
 import { AppIcon } from "@/farmfi/icons";
 import { useGo } from "@/farmfi/ui";
 
-// 로고를 보여주는 시간. 웹은 이 앞에 번들 로딩이 붙어 실제로는 더 짧게 스친다.
-// 1.1초로는 화면을 봤다는 인상도, QR 버튼을 누를 틈도 남지 않아 2초로 늘렸다.
-// 보증서 확인 입구는 로그인 화면에도 따로 두었다 — 여기만 두면 자동 이동에 먹힌다.
-const HOLD_MS = 2000;
+/** 로고만 보여주는 구간. 세션 발급이 더 걸리면 그쪽을 기다린다. */
+const SPLASH_MS = 1200;
 
 export default function SplashScreen() {
-  const { user, loading } = useAuth();
+  const { user, loading, login } = useAuth();
   const go = useGo();
 
   const fade = useSharedValue(0);
@@ -25,12 +34,29 @@ export default function SplashScreen() {
   }, [fade]);
   const aStyle = useAnimatedStyle(() => ({ opacity: fade.value }));
 
-  // 로고를 잠깐 보여준 뒤 넘어간다. 세션 확인이 끝나기 전에는 기다린다.
+  // ① 구간: 로고를 보여주면서 세션을 확보한다. 둘 다 끝나야 ②로 넘어간다.
+  const [started, setStarted] = useState(false);
   useEffect(() => {
     if (loading) return;
-    const t = setTimeout(() => go.replace(user ? "/store-select" : "/login"), HOLD_MS);
-    return () => clearTimeout(t);
-  }, [loading, user, go]);
+    let alive = true;
+
+    const hold = new Promise((r) => setTimeout(r, SPLASH_MS));
+    const session = user
+      ? Promise.resolve(true)
+      : login(SESSION_ACCOUNT.email, SESSION_ACCOUNT.password)
+          .then(() => true)
+          .catch(() => false);
+
+    void Promise.all([hold, session]).then(([, ok]) => {
+      if (!alive) return;
+      if (ok) setStarted(true);
+      else go.replace("/login");
+    });
+
+    return () => {
+      alive = false;
+    };
+  }, [loading, user, go, login]);
 
   return (
     <SafeAreaView style={s.stage} edges={["top", "bottom"]}>
@@ -40,10 +66,13 @@ export default function SplashScreen() {
           <Text style={s.tagline}>도심 속 신선한 내일을 심다</Text>
         </Animated.View>
 
-        <Pressable style={s.qrButton} onPress={() => go.push("/scan")}>
-          <AppIcon name="qr" size={18} color={C.paper} />
-          <Text style={s.qrText}>QR로 바로 시작하기</Text>
-        </Pressable>
+        {/* ② 구간에서만 나온다. 시안 6:1820에는 이 버튼이 없다. */}
+        {started ? (
+          <Pressable style={s.qrButton} onPress={() => go.push("/scan")}>
+            <AppIcon name="qr" size={18} color={C.paper} />
+            <Text style={s.qrText}>QR로 바로 시작하기</Text>
+          </Pressable>
+        ) : null}
       </View>
     </SafeAreaView>
   );

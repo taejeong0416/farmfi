@@ -145,6 +145,9 @@ export default function ScanScreen() {
           >
             <Text style={s.approvedNext}>다시 스캔</Text>
           </Pressable>
+          <Pressable onPress={() => go.replace("/store-select")} hitSlop={8}>
+            <Text style={s.skip}>나중에 하기</Text>
+          </Pressable>
         </View>
       </SafeAreaView>
     );
@@ -241,6 +244,12 @@ export default function ScanScreen() {
         <Text style={s.caption}>
           {checking ? "보증서를 확인하는 중입니다" : "스캔 영역에 QR을 맞춰주세요"}
         </Text>
+
+        {/* 막다른 길을 만들지 않는다. 보증서가 아직 없거나 카메라를 못 쓰는 사람도
+            매장 화면까지는 간다 — 거기서 운영 데이터는 서버 권한이 다시 막는다. */}
+        <Pressable onPress={() => go.replace("/store-select")} hitSlop={8}>
+          <Text style={s.skip}>나중에 하기</Text>
+        </Pressable>
       </View>
     </SafeAreaView>
   );
@@ -292,6 +301,7 @@ const s = StyleSheet.create({
   primaryOff: { opacity: 0.4 },
   primaryText: { fontSize: FS.md, fontWeight: FW.semibold, color: C.paper },
 
+  skip: { fontSize: FS.cap, color: C.paper, opacity: 0.55, paddingVertical: SP.xs },
   manualLink: { fontSize: FS.body, color: C.paper, opacity: 0.75, paddingVertical: SP.xs },
   manualBox: { width: "100%", gap: SP.sm },
   input: {

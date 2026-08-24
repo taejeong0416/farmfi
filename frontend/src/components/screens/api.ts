@@ -716,6 +716,8 @@ export const CREDENTIAL_REASON_LABEL: Record<string, string> = {
 export type OperatorCredential = {
   id: string;
   credentialNo: string;
+  /** 앱이 스캔할 QR (data URI). 유효하지 않은 보증서는 서버가 만들지 않아 null이다. */
+  qrDataUrl?: string | null;
   operatorName: string;
   spaceAddress: string | null;
   status: string;
