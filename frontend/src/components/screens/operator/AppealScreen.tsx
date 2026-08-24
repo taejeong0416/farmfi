@@ -54,6 +54,17 @@ export function AppealScreen({ milestoneId }: { milestoneId: string }) {
   const router = useRouter();
   const qc = useQueryClient();
 
+  const { data: verification } = useQuery({
+    queryKey: ["milestone-verification", milestoneId],
+    queryFn: () =>
+      getJson<{ items: { signal: string; label: string; verdict: string }[] }>(
+        `/api/milestones/${milestoneId}/verification`,
+      ),
+    select: (d) => d.items,
+    enabled: Boolean(milestoneId),
+    retry: false,
+  });
+
   const { data: milestone, isLoading } = useQuery({
     queryKey: ["milestone", milestoneId],
     queryFn: () =>
@@ -80,6 +91,7 @@ export function AppealScreen({ milestoneId }: { milestoneId: string }) {
 
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
 
@@ -139,14 +151,75 @@ export function AppealScreen({ milestoneId }: { milestoneId: string }) {
           <Button variant="ghost" href={`/operator/milestones/${milestoneId}/evidence`}>
             증빙 다시 제출
           </Button>
+          <Button
+            variant="secondary"
+            disabled={busy || !text.trim()}
+            onClick={() => {
+              window.localStorage.setItem(`appeal-draft:${milestoneId}`, text);
+              setSaved(true);
+            }}
+          >
+            임시 저장
+          </Button>
           <Button disabled={busy || !text.trim()} onClick={submit}>
             {busy ? "보내는 중" : appealId ? "코멘트 남기기" : "이의제기 접수"}
           </Button>
         </div>
       </div>
 
-      <div className="mt-7 grid grid-cols-[1fr_460px] gap-6">
-        <div className="space-y-4">
+      <div className="mt-7 flex items-start gap-8">
+        <div className="w-[300px] shrink-0 space-y-4">
+          <div>
+            <p className="text-18 font-bold text-ink">필수 증빙</p>
+            <Card className="mt-3.5" padded={false}>
+              <div className="px-4">
+                {(verification ?? []).length === 0 ? (
+                  <p className="py-6 text-center text-12 text-muted">
+                    판정된 항목이 없습니다.
+                  </p>
+                ) : (
+                  (verification ?? []).map((v) => {
+                    const idle = v.verdict === "undecided";
+                    const bad = v.verdict === "unmet";
+                    const label = bad
+                      ? "보완 요청"
+                      : idle
+                        ? v.signal === "iot"
+                          ? "연동 대기"
+                          : "판정 전"
+                        : "제출완료";
+                    return (
+                      <div
+                        key={v.signal}
+                        className="flex items-center justify-between border-b border-surface py-3 last:border-b-0"
+                      >
+                        <span
+                          className={`text-12 ${idle ? "text-body" : "text-ink"}`}
+                        >
+                          {v.label}
+                        </span>
+                        <span className="flex items-center gap-2">
+                          <span
+                            className={`h-[7px] w-[7px] rounded-full ${
+                              bad ? "bg-danger" : idle ? "bg-muted" : "bg-brand"
+                            }`}
+                          />
+                          <span
+                            className={`text-11 font-medium ${
+                              bad ? "text-danger" : idle ? "text-muted" : "text-brand"
+                            }`}
+                          >
+                            {label}
+                          </span>
+                        </span>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </Card>
+          </div>
+
           <Card>
             <p className="text-14 font-bold text-ink">보완 요청 사유</p>
             <p className="mt-3 text-12 leading-5 text-body">
@@ -182,13 +255,18 @@ export function AppealScreen({ milestoneId }: { milestoneId: string }) {
           </Card>
         </div>
 
-        <div className="space-y-4">
-          <Card>
-            <p className="text-14 font-bold text-ink">판정</p>
-            <p className="mt-3 text-12 leading-5 text-body">
-              {appeal?.decision ??
-                "아직 최종 판정이 나오지 않았습니다. 운영팀 재검증이 진행 중입니다."}
-            </p>
+        <div className="flex-1 space-y-4">
+          <Card padded={false}>
+            <div className="px-5 py-4">
+              <p className="text-11 font-medium text-danger">
+                판정 : {appeal?.decision ?? "보류 유지"} ·{" "}
+                {appeal?.decidedAt ? "외부 전문가 판정" : "운영팀 재검증"}
+              </p>
+              <p className="mt-2 text-12 text-muted">
+                {milestone.reviewNote ??
+                  "아직 최종 판정이 나오지 않았습니다. 운영팀 재검증이 진행 중입니다."}
+              </p>
+            </div>
           </Card>
 
           <Card>
@@ -221,6 +299,9 @@ export function AppealScreen({ milestoneId }: { milestoneId: string }) {
                 onChange={(e) => setText(e.target.value)}
               />
             </div>
+            {saved ? (
+              <p className="mt-3 text-11 text-brand">✓ 임시 저장됨</p>
+            ) : null}
             {error ? <p className="mt-3 text-12 text-danger">{error}</p> : null}
             <p className="mt-3 text-12 text-muted">
               외부 전문가 최종 판정 이후에는 동일 단계에 대한 이의제기가 불가합니다.
