@@ -17,6 +17,7 @@ import {
   analyzeGrowthRecipe,
   fitResponseSurface,
   optimumZ,
+  curvatureUnresolved,
   zBounds,
   recipeGapAnalysis,
   FEATURES,
@@ -57,7 +58,7 @@ function bootstrapOptimum(
   y: number[],
   w: number[],
   clamp: boolean,
-  replicates = 200,
+  replicates = 400,
   seed = 11
 ): BootstrapOptimum {
   const n = Z.length;
@@ -65,6 +66,17 @@ function bootstrapOptimum(
   // 탐색범위는 원표본으로 고정한다. 재표본마다 상자를 다시 잡으면 산포에
   // "상자가 흔들린 몫"이 섞여 최적점 자체의 불확실성이 아니게 된다.
   const bounds = zBounds(Z, clamp);
+
+  // 곡률 게이트도 원표본으로 한 번 판정하고 모든 재표본에 같은 축을 고정한다.
+  // 이걸 빼면 점추정은 "게이트 통과 후 조건부 최적점"이고 구간은 "게이트 없는
+  // 최적점의 표집분포"라, 같은 양의 점추정과 구간이 아니게 된다. 실제로 그 차이가
+  // EC에서 정상범위 반폭의 66%까지 벌어진다.
+  const wSum = w.reduce((a, b) => a + b, 0) || 1;
+  const zMeanW = FEATURES.map((_, i) => Z.reduce((s, z, k) => s + w[k] * z[i], 0) / wSum);
+  const unresolved = curvatureUnresolved(Z, y, w);
+  const pinned = unresolved.map((u, i) =>
+    u ? Math.max(bounds[i][0], Math.min(bounds[i][1], zMeanW[i])) : null
+  );
 
   let s = seed >>> 0;
   const rand = () => {
@@ -84,7 +96,7 @@ function bootstrapOptimum(
       wi.push(w[j]);
     }
     const beta = fitResponseSurface(zi, yi, wi);
-    const opt = optimumZ(beta, bounds);
+    const opt = optimumZ(beta, bounds, pinned);
     if (opt.every((v) => Number.isFinite(v))) draws.push(opt);
   }
 
@@ -340,8 +352,17 @@ export function activeLearningSuggest(
   });
   suggestions.sort((a, b) => b.uncertaintyRatio - a.uncertaintyRatio);
 
+  // 한 사이클에서 무작위화되는 요인은 여섯 중 하나다. 나머지 다섯은 μ_post로
+  // 결정론적으로 고정되고 계절과 교락된 채 남는다. 그래서 "배정 표식이 붙은 행의
+  // 비율"을 인과 근거로 말하면 실제보다 여섯 배 넓게 읽힌다. 요인별로 센다.
+  const randomizedByFeature = FEATURES.map(
+    (f) => obs.filter((o) => o.assignment?.feature === f).length
+  );
   const randomizedShare =
     obs.length === 0 ? 0 : Math.round((obs.filter((o) => o.assignment).length / obs.length) * 1000) / 1000;
+  const causalFeatures = FEATURES.map((f, i) => ({ f, n: randomizedByFeature[i] }))
+    .filter((x) => x.n > 0)
+    .sort((a, b) => b.n - a.n);
 
   const assignment = drawAssignment(eligible, setpoints, target, opts);
 
@@ -350,8 +371,10 @@ export function activeLearningSuggest(
       ? ` 다만 남은 요인은 모두 흔들었을 때 예측 손실이 ${MAX_NUDGE_LOSS_PCT}%를 넘어 배정하지 않는다 — 그 축은 탐색이 아니라 이동 대상이다.`
       : "";
   const causalPart =
-    randomizedShare > 0
-      ? ` 쌓인 관측의 ${Math.round(randomizedShare * 100)}%가 무작위 배정이라 그만큼은 인과로 읽을 수 있다.`
+    causalFeatures.length > 0
+      ? ` 무작위 배정이 쌓인 요인은 ${causalFeatures
+          .map((x) => `${FEATURE_LABEL[x.f]} ${x.n}회`)
+          .join(" · ")}뿐이고, 인과로 읽을 수 있는 것도 그 요인들까지다 — 나머지는 관측이다.`
       : ` 쌓인 관측에 무작위 배정 표식이 하나도 없다 — 지금 설정점은 개입 권고가 아니라 가설이다.`;
 
   return {

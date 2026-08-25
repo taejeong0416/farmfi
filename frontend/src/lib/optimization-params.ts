@@ -79,6 +79,15 @@ export const PARAMS = {
     asOf: "2026-04",
     replaceWith: "농사용 적용 확정 시 고시 단가",
   }),
+  // 계약전력은 사용설비 용량 합계로 정해진다. 최적화의 하드 제약이기도 하다 —
+  // LED와 보조부하의 동시 합이 이 값을 넘는 운전점은 실행할 수 없다.
+  contractPowerKw: p(7, {
+    basis: "가정",
+    label: "1호점 계약전력 (kW)",
+    source: "LED 설계 4kW + 보조부하 2.2kW에 여유를 둔 계약",
+    asOf: "2026-08",
+    replaceWith: "전기사용계약서",
+  }),
   demandChargePerKw: p(6160, {
     basis: "고시",
     label: "기본요금 단가 (원/kW·월)",

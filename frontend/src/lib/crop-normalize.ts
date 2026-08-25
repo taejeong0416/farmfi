@@ -14,7 +14,7 @@
 // 편차를 ℃로 볼 것이냐 범위 상대로 볼 것이냐뿐이다. GDD가 실제로 필요한 곳은
 // 품종 이전이 아니라 사이클 안의 시간 적분(하루치 온도열 → 사이클 한 값)이다.
 
-import { CROP_PROFILES, CropProfile, getCrop } from "./crop-profiles";
+import { CropProfile, getCrop } from "./crop-profiles";
 import { FEATURES, GrowthFeature, GrowthObservation } from "./growth-recipe";
 
 export interface FeatureScale {
@@ -81,15 +81,28 @@ const DESCRIPTORS: ((c: CropProfile) => number)[] = [
   (c) => Math.log(c.cycleDays), // 사이클 길이는 배수로 보는 게 맞다
 ];
 
-// 기술자별 산포로 나눠 단위를 없앤다 — 등록된 품종 전체에서 계산한다.
+// 기술자별 산포로 나눠 단위를 없앤다. 스케일은 **고정 상수**여야 한다.
+//
+// 등록된 품종 집합에서 산포를 계산하면 유사도가 그 목록에 좌우된다. 실제로 그랬다 —
+// 체리토마토를 목록에서 빼기만 해도 sim(상추, 마이크로그린)이 0.812에서 0.476으로
+// 41% 떨어졌다. 유사도는 §이전 상한 δ(w)를 통해 권장 설정점에 직접 들어가므로,
+// **한 번도 기르지 않은 품종을 프로파일 표에 등록했다는 사실만으로 다른 품종의
+// 권장값이 밀린다.** 재배 특성이 아니라 표의 구성이 답을 정하는 것이다.
+//
+// 아래 값은 원예 작물이 실제로 갖는 범위를 기술자마다 직접 적은 것이다. 품종을
+// 추가해도 기존 유사도가 움직이지 않는다.
+// sd는 "이 기술자에서 1σ만큼 다르면 재배가 얼마나 다른가"로 읽는다. 시설재배
+// 품목이 실제로 갖는 폭의 절반쯤으로 잡아야 엽채↔과채가 2σ 밖으로 벌어진다.
+const DESCRIPTOR_SCALE: { mean: number; sd: number }[] = [
+  { mean: 7, sd: 2.5 }, // GDD 기저온도 (℃) — 저온성 4 ~ 고온성 10
+  { mean: 22, sd: 2 }, // 정상범위 중앙온도 (℃)
+  { mean: 2.0, sd: 0.6 }, // 양액 EC 중앙 (dS/m) — 엽채 1.5 ~ 과채 2.75
+  { mean: 17, sd: 4.5 }, // 목표 DLI (mol/㎡·d) — 엽채 12 ~ 과채 24
+  { mean: Math.log(45), sd: 0.6 }, // log 사이클일수 — 20일 ~ 100일
+];
+
 function descriptorStats(): { mean: number; sd: number }[] {
-  const crops = Object.values(CROP_PROFILES);
-  return DESCRIPTORS.map((d) => {
-    const vals = crops.map(d);
-    const mean = vals.reduce((a, b) => a + b, 0) / vals.length;
-    const varr = vals.reduce((s, v) => s + (v - mean) ** 2, 0) / vals.length;
-    return { mean, sd: Math.sqrt(varr) || 1 };
-  });
+  return DESCRIPTOR_SCALE;
 }
 
 /** 0~1. 1이면 같은 품종, 0에 가까우면 이전할 것이 없다. */

@@ -190,7 +190,11 @@ test("표식 없는 관측에서는 인과 주장을 하지 않는다", () => {
   );
   const after = activeLearningSuggest(marked, "leafy", { seed: 3 });
   assert.equal(after.randomizedShare, 0.5);
-  assert.match(after.note, /인과로 읽을 수 있다/);
+  // 인과 주장은 배정이 붙은 **요인**까지만 간다. 행의 절반에 표식이 있어도
+  // 무작위화된 것은 온도 하나뿐이므로, 문장이 "관측의 50%"가 아니라 요인을 짚어야 한다.
+  assert.match(after.note, /온도 120회/);
+  assert.match(after.note, /나머지는 관측이다/);
+  assert.doesNotMatch(after.note, /관측의 50%/);
 });
 
 test("표면 민감도 순위가 참 반응면의 순위와 맞는다", () => {

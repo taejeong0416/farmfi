@@ -73,6 +73,9 @@ export interface ProfitRecipe {
 /** 이 모델에서 비용이 붙는 요인 */
 const COSTED: GrowthFeature[] = ["dli", "co2", "temp"];
 
+// 보조부하가 동시에 걸릴 때의 합계 kW. 계약전력에서 LED가 쓸 수 있는 몫을 정한다.
+const AUX_PEAK_KW = PARAMS.auxLoads.value.reduce((s, l) => s + l.kw, 0);
+
 export interface ProfitOptions {
   cropKey?: string;
   ledPowerKw?: number;
@@ -84,6 +87,16 @@ export interface ProfitOptions {
   avgTariff?: number;
   /** 공조 비용을 가르는 외기 평균온도(℃) */
   externalTempC?: number;
+  /**
+   * 계약전력(kW). LED와 보조부하의 합이 이 값을 넘는 운전점은 실행할 수 없다.
+   *
+   * 이 제약이 없으면 최적화가 계약 밖 구간을 평가한다. 상추 프로파일 기준으로
+   * 목표 DLI 16에서 이미 LED 5.07 + 보조 2.2 = 7.27kW라 계약 7kW를 넘는다 —
+   * 즉 수율 최적점 자체가 실행 불가능한 점이 되고, 그걸 기준으로 잰 "수익 최적점의
+   * 개선폭"도 도달할 수 없는 값 대비가 된다. 스케줄 층은 이 제약을 이미 쓰므로,
+   * 두 층이 같은 목적함수를 본다는 주장이 성립하려면 제약 집합도 같아야 한다.
+   */
+  contractKw?: number;
 }
 
 function evaluate(
@@ -132,7 +145,12 @@ function evaluate(
       total: Math.round(total),
     },
     profitPerDay: Math.round(revenuePerDay - total),
-    feasible: light.feasible && light.photoperiodSafe,
+    // 광주기·정격에 더해 계약전력도 하드 제약이다. LED와 보조부하가 동시에 걸리는
+    // 순간이 계약을 넘으면 그 운전점은 존재하지 않는다.
+    feasible:
+      light.feasible &&
+      light.photoperiodSafe &&
+      light.ledPowerKw + AUX_PEAK_KW <= o.contractKw,
   };
 }
 
@@ -160,6 +178,7 @@ export function profitOptimalRecipe(
     avgTariff:
       opts.avgTariff ?? TARIFF_FLAT_GENERAL.reduce((a, b) => a + b, 0) / TARIFF_FLAT_GENERAL.length,
     externalTempC: opts.externalTempC ?? PARAMS.targetRoomTempC.value,
+    contractKw: opts.contractKw ?? PARAMS.contractPowerKw.value,
   };
 
   const Z = obs.map((ob) => toNormalized(ob, ob.cropKey ?? cropKey));
@@ -180,7 +199,11 @@ export function profitOptimalRecipe(
   const GRID = 41;
   const SWEEPS = 3;
   const best = [...yieldZ];
-  let bestProfit = evaluate(best, fit, o).profitPerDay;
+  // 출발점이 실행 불가능하면 그 이익을 기준선으로 쓸 수 없다. 계약전력을 넘는 점은
+  // 언제나 빛을 더 쓰므로 이익이 높게 나오고, 그러면 어떤 실행 가능한 후보도 그 바를
+  // 넘지 못해 탐색이 제자리에 머문다 — 답이 실행 불가능한 점으로 나온다.
+  const startPoint = evaluate(best, fit, o);
+  let bestProfit = startPoint.feasible ? startPoint.profitPerDay : -Infinity;
   for (let s = 0; s < SWEEPS; s++) {
     for (let i = 0; i < FEATURES.length; i++) {
       const [lo, hi] = bounds[i];

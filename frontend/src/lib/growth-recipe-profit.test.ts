@@ -29,12 +29,30 @@ test("전력에 값이 붙으면 목표 DLI가 수율 최적점보다 내려온�
 });
 
 test("전력·탄산이 공짜면 수율 최적점으로 돌아온다", () => {
-  const free = run({ avgTariff: 0, co2CostPerKg: 0 });
+  // 계약전력을 넉넉히 열어 가격 효과만 남긴다. 기본 계약(7kW)에서는 설비 제약이
+  // 먼저 걸려 "가격이 0이면 안 움직인다"를 확인할 수 없다 — 아래 테스트가 그 경우다.
+  const free = run({ avgTariff: 0, co2CostPerKg: 0, contractKw: 99 });
   const dli = at(free, "dli");
   const co2 = at(free, "co2");
   // 격자 해상도(구간의 1/40)만큼의 오차는 허용한다
   assert.ok(Math.abs(dli.shift) < 0.5, `공짜인데 DLI가 ${dli.shift} 움직였다`);
   assert.ok(Math.abs(co2.shift) < 25, `공짜인데 CO₂가 ${co2.shift} 움직였다`);
+});
+
+test("계약전력은 가격과 무관하게 목표를 끌어내린다", () => {
+  // 전기가 공짜여도 계약을 넘는 운전점은 존재하지 않는다. 비용 제약과 설비 제약은
+  // 다른 축이고, 후자는 단가를 0으로 둬도 사라지지 않는다.
+  const capped = run({ avgTariff: 0, co2CostPerKg: 0, contractKw: 7 });
+  const open = run({ avgTariff: 0, co2CostPerKg: 0, contractKw: 99 });
+
+  assert.ok(
+    at(capped, "dli").profitOptimum < at(open, "dli").profitOptimum,
+    "계약전력이 목표 DLI를 못 끌어내렸다"
+  );
+  assert.equal(capped.atProfitOptimum.feasible, true, "답으로 낸 점이 계약을 넘는다");
+  // 수율 최적점은 계약 밖이라는 사실이 그대로 표시돼야 한다 — 그게 이 운전점 대비
+  // 개선폭을 읽는 사람이 알아야 할 전제다.
+  assert.equal(capped.atYieldOptimum.feasible, false);
 });
 
 test("전기가 비쌀수록 목표 DLI가 더 내려간다", () => {
