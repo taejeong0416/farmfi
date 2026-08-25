@@ -35,13 +35,30 @@ export function PlanScreen() {
   }
 
   const point = (data?.pickupPoints ?? []).find((p) => p.id === draft.projectId);
-  // 지점이 지금 내줄 수 있는 작물 수. 이걸 넘는 팩은 다음 단계에서 구성할 수 없으니 여기서 막는다.
+  // 지점이 지금 내줄 수 있는 작물 수. 이걸 넘는 팩은 다음 단계에서 구성할 수 없으니 아예 보여주지 않는다.
   const selectableCount = (data?.crops ?? []).filter((c) => c.available).length;
-  const countKnown = Boolean(draft.projectId) && !isLoading && Boolean(data);
+  const countKnown = !isLoading && Boolean(data);
+  const sizes = countKnown
+    ? PACK_SIZES.filter((size) => size <= selectableCount)
+    : PACK_SIZES;
+  const hidden = PACK_SIZES.length - sizes.length;
 
   function choose(size: PackSize) {
     update({ packSize: size, productIds: [] });
     router.push("/subscribe/compose");
+  }
+
+  if (sizes.length === 0) {
+    return (
+      <Shell>
+        <SubscribeStepLine current="plan" />
+        <EmptyState
+          title="이 지점은 지금 믹스팩을 만들 만큼 작물이 없습니다"
+          desc={`가장 작은 팩도 작물 ${PACK_SIZES[0]}종이 필요합니다. 다른 지점을 골라 주세요.`}
+          action={<Button href="/subscribe">지점 다시 고르기</Button>}
+        />
+      </Shell>
+    );
   }
 
   return (
@@ -82,11 +99,17 @@ export function PlanScreen() {
         ))}
       </div>
 
+      {hidden > 0 ? (
+        <p className="mt-6 text-12 text-muted">
+          이 지점은 지금 작물 {selectableCount}종을 내줄 수 있어 {sizes.join("·")}종
+          팩만 열려 있습니다.
+        </p>
+      ) : null}
+
       <div className="mt-6 grid grid-cols-3 gap-5">
-        {PACK_SIZES.map((size) => {
+        {sizes.map((size) => {
           const price = monthlyPrice(size, draft.perWeek);
           const selected = draft.packSize === size;
-          const tooBig = countKnown && size > selectableCount;
           return (
             <Card
               key={size}
@@ -100,13 +123,11 @@ export function PlanScreen() {
                 월 {won(price)}
               </p>
               <p className="mt-4 text-12 text-muted">
-                {tooBig
-                  ? `이 지점은 지금 ${selectableCount}종까지 고를 수 있습니다.`
-                  : `다음 단계에서 ${point?.name ?? "지점"}의 작물·드레싱을 고릅니다.`}
+                다음 단계에서 {point?.name ?? "지점"}의 작물·드레싱을 고릅니다.
               </p>
               <div className="mt-6">
-                <Button full disabled={tooBig} onClick={() => choose(size)}>
-                  {tooBig ? "작물이 모자랍니다" : `${size}종 구성하기`}
+                <Button full onClick={() => choose(size)}>
+                  {size}종 구성하기
                 </Button>
               </div>
             </Card>
