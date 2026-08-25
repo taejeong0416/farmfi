@@ -437,7 +437,10 @@ function cvR2(X: number[][], y: number[], w: number[], nFolds = 5): number | nul
       ssTot += w[i] * (y[i] - yMean) ** 2;
     }
   }
-  return ssTot > 0 ? Math.max(0, 1 - ssRes / ssTot) : 0;
+  // 음수를 0으로 자르지 않는다. 음수는 "평균보다 못 맞힌다"는 판정이고, 0은 "설명력이
+  // 없다"는 판정이다. 잘라서 합치면 화면에서 두 상태가 같은 숫자로 나가고, 그건 이 모듈이
+  // null(판정 불가)과 0(판정 결과)을 구분하는 이유와 정면으로 어긋난다.
+  return ssTot > 0 ? 1 - ssRes / ssTot : 0;
 }
 
 // ── 반응표면 적합 → 결합 최적점 · 요인별 민감도 ──────────────────────────────
@@ -613,6 +616,7 @@ export function recipeGapAnalysis(
       ...(Object.fromEntries(FEATURES.map((f) => [f, pick(f)])) as Record<GrowthFeature, number>),
       yield: 0,
     });
+  const gapScales = cropScales(recipe._cropKey);
   const currentPhys = (f: GrowthFeature) => current[f] ?? spMap.get(f)?.current ?? 0;
   const optimalPhys = (f: GrowthFeature) => spMap.get(f)?.optimum ?? currentPhys(f);
   const curZ = toNormalized(asObs(currentPhys), recipe._cropKey);
@@ -660,9 +664,13 @@ export function recipeGapAnalysis(
       const fi = FEATURES.indexOf(sp.feature as GrowthFeature);
       const cur = currentPhys(sp.feature as GrowthFeature);
       const gap = sp.optimum - cur;
-      // 계측 잡음 안에서 흔들리는 차이를 조작 지시로 바꾸지 않는다 — 범위폭의 2%
-      const half = Math.abs(sp.optimum - sp.current) || Math.abs(sp.optimum) || 1;
-      const deadband = 0.02 * half;
+      // 계측 잡음 안에서 흔들리는 차이를 조작 지시로 바꾸지 않는다 — 정상범위 반폭의 2%.
+      //
+      // 데드밴드를 gap에 비례시키면 안 된다. 호출부가 관측 평균을 current로 넘기면
+      // gap과 기준폭이 같은 값이 되어 조건이 |gap| < 0.02·|gap|이 되고, gap이 0인
+      // 경우를 빼면 절대 참이 되지 않는다 — 문턱이 있는 척만 하고 전부 통과시킨다.
+      // 잡음 문턱은 차이의 함수가 아니라 그 요인의 계측 스케일에서 와야 한다.
+      const deadband = 0.02 * gapScales[sp.feature as GrowthFeature].half;
       return {
         label: sp.label,
         current: Math.round(cur * 100) / 100,
