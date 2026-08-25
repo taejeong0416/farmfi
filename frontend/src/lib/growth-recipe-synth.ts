@@ -53,6 +53,32 @@ export interface SynthSpec {
   litHoursPerCycle: number;
   /** 초과 1시간당 수율 손실 (kg/㎡) */
   stressPenaltyPerHour: number;
+
+  /** 형태 오설정 — 적합 모형이 표현할 수 없는 반응. 없으면 순수 이차형이다 */
+  misspec?: SynthMisspec;
+}
+
+// ── 형태 오설정 ──────────────────────────────────────────────────────────────
+// 위 스펙은 생성기와 적합 모형이 **같은 함수형**이다. 그래서 회수 테스트가 재는 것은
+// 계수 추정의 정확도이지 "이차형이 이 작물에 맞는가"가 아니다. 후자가 이 파이프라인의
+// 가장 큰 한계인데, 지금까지 그걸 시험할 수단이 베드 안에 없었다.
+//
+// 실제 작물 반응은 두 방향으로 이차 대칭형과 다르다.
+//   ① 비대칭 — 저온은 생장이 느려질 뿐이고 고온은 추대·조직 손상으로 간다.
+//      한쪽 팔이 훨씬 가파르다.
+//   ② 포화 — 광량은 정점이 없다. 광포화점까지 단조 증가하고 그 뒤로 평평해진다.
+//      이차형은 정점 위에서 반드시 **감소**한다고 말하는데, 그건 없는 하강 팔이다.
+//
+// 두 경우 모두 적합된 포물선의 정점이 참 최적점에서 밀린다. 얼마나 밀리는지를 숫자로
+// 내는 것이 이 구조의 목적이다.
+export interface SynthMisspec {
+  /** 중심 위쪽 이차 계수의 배수. 1이면 대칭, 3이면 고쪽 팔이 3배 가파르다 */
+  asymmetric?: Partial<Record<SynthFeature, number>>;
+  /**
+   * 포화형으로 바꿀 요인. 이차항 대신 `A·(e^(−k(c−lo)) − e^(−k(x−lo)))`을 쓴다 —
+   * center에서 0이고 상한까지 단조 증가하는 오목 곡선이라 **정점이 상자 안에 없다**.
+   */
+  saturating?: Partial<Record<SynthFeature, { amplitude: number; rate: number }>>;
 }
 
 // 엽채류(상추) 테스트 베드. center는 crop-profiles의 정상범위 안쪽에 두어,
@@ -84,9 +110,48 @@ export const LEAFY_SPEC: SynthSpec = {
   stressPenaltyPerHour: 0.0025, // 명기 전체가 초과면 0.84kg/㎡
 };
 
-/** 스펙의 진짜 최적점. 오목성이 성립하는 한 center와 같다. */
+// 상추 오설정 베드. LEAFY_SPEC과 모든 계수가 같고 반응 **형태만** 다르다.
+// 그래야 회수 오차의 차이를 형태 탓으로만 돌릴 수 있다.
+export const MISSPEC_LEAFY_SPEC: SynthSpec = {
+  ...LEAFY_SPEC,
+  misspec: {
+    // 고온 쪽이 3배 가파르다 — 추대·조직 손상은 저온 지연과 대칭이 아니다.
+    asymmetric: { temp: 3, ph: 2.5 },
+    // 광량은 정점이 없다. 진폭 1.6은 상자 폭(8~24)에서 LEAFY_SPEC의 이차항과
+    // 비슷한 크기의 수율 차이를 만들도록 잡았다.
+    saturating: { dli: { amplitude: 1.6, rate: 0.16 } },
+  },
+};
+
+/**
+ * 스펙의 진짜 최적점.
+ *
+ * 순수 이차형이면 center와 같다 — 모든 항이 (x−c)의 2차라 center에서 기울기가 0이고
+ * 헤시안이 음정부호라 그 정류점이 전역 최대다. 오설정 축이 있으면 그 논증이 깨지므로
+ * 상자 위에서 좌표상승으로 직접 찾는다.
+ */
 export function trueOptimum(spec: SynthSpec): Record<SynthFeature, number> {
-  return { ...spec.center };
+  if (!spec.misspec) return { ...spec.center };
+
+  const x = { ...spec.center };
+  // 격자 121점 × 4회 훑기. 상자가 좁고 각 축이 오목이라 이 정도면 수렴한다.
+  for (let sweep = 0; sweep < 4; sweep++) {
+    for (const f of SYNTH_FEATURES) {
+      const [lo, hi] = spec.bounds[f];
+      let best = x[f];
+      let bestY = -Infinity;
+      for (let g = 0; g <= 120; g++) {
+        const cand = lo + ((hi - lo) * g) / 120;
+        const y = trueYield(spec, { ...x, [f]: cand });
+        if (y > bestY) {
+          bestY = y;
+          best = cand;
+        }
+      }
+      x[f] = best;
+    }
+  }
+  return x;
 }
 
 // ── 오목성 검사 ──────────────────────────────────────────────────────────────
@@ -163,7 +228,20 @@ function seededRand(seed: number) {
 export function trueYield(spec: SynthSpec, x: Record<SynthFeature, number>): number {
   const d = (f: SynthFeature) => x[f] - spec.center[f];
   let y = spec.base;
-  for (const f of SYNTH_FEATURES) y -= spec.quad[f] * d(f) ** 2;
+  for (const f of SYNTH_FEATURES) {
+    const sat = spec.misspec?.saturating?.[f];
+    if (sat) {
+      // 정점 없는 오목 증가 곡선. center에서 0이 되도록 평행이동한다.
+      const lo = spec.bounds[f][0];
+      y +=
+        sat.amplitude *
+        (Math.exp(-sat.rate * (spec.center[f] - lo)) - Math.exp(-sat.rate * (x[f] - lo)));
+      continue;
+    }
+    // 비대칭이면 중심 위쪽 팔에만 배수를 건다.
+    const arm = d(f) > 0 ? spec.misspec?.asymmetric?.[f] ?? 1 : 1;
+    y -= spec.quad[f] * arm * d(f) ** 2;
+  }
   for (const [a, b, coef] of spec.cross) y += coef * d(a) * d(b);
   return Math.max(spec.floor, y);
 }

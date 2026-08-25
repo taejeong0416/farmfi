@@ -14,6 +14,7 @@ import assert from "node:assert/strict";
 import {
   LEAFY_SPEC,
   SYNTH_FEATURES,
+  MISSPEC_LEAFY_SPEC,
   concavityCheck,
   assertConcave,
   generateObservations,
@@ -222,6 +223,38 @@ test("주야 진폭이 큰 사이클을 플래그로 세고 권고에 붙인다"
   const plain = analyzeGrowthRecipe(noDif, { cropKey: "leafy" });
   assert.equal(plain.diurnalFlaggedShare, 0);
   assert.doesNotMatch(recipeGapAnalysis(plain, { temp: 19 }).headline, /온도곡선/);
+});
+
+// 이 테스트는 파이프라인이 **잘 하는 것**이 아니라 **못 보는 것**을 못 박는다.
+//
+// 회수 테스트가 쓰는 합성 베드는 생성기와 적합 모형이 같은 이차형이다. 그래서 회수
+// 정밀도가 재는 것은 계수 추정의 정확도이지 "이차형이 이 작물에 맞는가"가 아니다.
+// 후자가 이 설계의 가장 큰 한계인데, 지금까지 그걸 시험할 수단이 없었다.
+//
+// MISSPEC_LEAFY_SPEC은 계수를 전부 그대로 두고 형태만 바꾼다(온도·pH 비대칭, DLI 포화).
+// 그 위에서 확인되는 사실이 둘이다.
+//   ① 두 게이트(CV R²·표면 판정)가 모두 통과한다 — 오설정을 감지하지 못한다.
+//   ② 그런데도 DLI 권고가 상자 폭의 30% 넘게 틀린다.
+// 즉 화면이 "최대점 · R² 0.96"을 띄우는 동안 권고가 크게 빗나갈 수 있다. 이 성질이
+// 바뀌면(=게이트가 오설정을 잡기 시작하면) 이 테스트가 깨지고, 그때 문서 §8을 고친다.
+test("형태 오설정은 두 게이트를 통과하고, 그래도 권고는 크게 빗나간다", () => {
+  const { observations } = generateObservations(MISSPEC_LEAFY_SPEC, 200, 7, "leafy");
+  const truth = trueOptimum(MISSPEC_LEAFY_SPEC);
+  const fit = analyzeGrowthRecipe(observations, { cropKey: "leafy" });
+
+  assert.equal(fit.surface, "최대점", "표면 판정이 오설정을 잡는다면 이 한계 서술을 고쳐야 한다");
+  assert.ok(
+    fit.modelR2 !== null && fit.modelR2 > 0.9,
+    `CV R²가 오설정에서 무너진다면 §8을 고쳐야 한다 (실제 ${fit.modelR2})`
+  );
+
+  const dli = fit.recipe.find((r) => r.feature === "dli")!;
+  const [lo, hi] = MISSPEC_LEAFY_SPEC.bounds.dli;
+  const errRatio = Math.abs(dli.optimum - truth.dli) / (hi - lo);
+  assert.ok(
+    errRatio > 0.25,
+    `포화형 DLI의 회수 오차가 줄었다 — 이차형이 포화 반응을 잡기 시작했다는 뜻이므로 확인이 필요하다 (${errRatio})`
+  );
 });
 
 test("농학 클램프가 최적점을 대신 찍어주지 않는다", () => {
