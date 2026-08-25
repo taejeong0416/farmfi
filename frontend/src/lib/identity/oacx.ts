@@ -11,15 +11,10 @@ import { createHash } from "node:crypto";
  * 누구나 개인정보를 파싱할 수 있다(파싱 API에 별도 인증이 없다).
  */
 
+// OACX는 국내 IP만 통과시킨다. 미국·일본에서 부르면 연결 자체가 조용히 드롭된다
+// (Vercel iad1 실측: connect timeout). 그래서 Vercel 함수 리전을 서울(icn1)로
+// 두고 여기서 직접 부른다 — 프로젝트 설정 Functions → Region.
 const BASE = process.env.OACX_BASE_URL ?? "https://cx.raonsecure.co.kr:18543";
-
-// OACX는 국내 IP만 통과시킨다. Vercel(미국)·Oracle(오사카)에서는 연결 자체가
-// 조용히 드롭된다. 그래서 배포본은 국내 회선의 중계(`scripts/oacx-relay.mjs`)를
-// 거치고, 중계는 이 토큰이 맞을 때만 응답한다. 직접 호출할 때는 비워 둔다.
-//
-// 호출 시점에 읽는다. 번들러가 모듈 상수를 인라인하면 배포 뒤 값을 바꿔도
-// 반영되지 않는데, 시크릿은 배포와 따로 도는 값이라 그 위험을 지지 않는다.
-const relayToken = () => process.env.OACX_RELAY_TOKEN ?? "";
 
 // 운전면허증만 활성(status=y)이다. 주민등록증(comrc)은 현재 꺼져 있어
 // 요청해도 실패하므로 기본값으로 두지 않는다.
@@ -54,7 +49,6 @@ async function call<T>(path: string, init?: RequestInit): Promise<T> {
     ...init,
     headers: {
       "Content-Type": "application/json",
-      ...(relayToken() ? { "X-Relay-Token": relayToken() } : {}),
       ...(init?.headers ?? {}),
     },
     cache: "no-store",

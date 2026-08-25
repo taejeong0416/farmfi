@@ -164,8 +164,8 @@ React Query 한 곳에서 정해진다.
 | OACX (라온시큐어 OmniOne CX) | 정부 모바일 운전면허증 제출·파싱. `mobileid://`. **현재 프로덕션** | `OacxVerifier` (`lib/identity/verifier.ts`) |
 | OpenDID Verifier (KOMSCO K-DID / OmniOne) | 자체 호스팅 Verifier에 VP 제출·검증. `omnione://` | `OmniOneVerifier` (`lib/identity/verifier.ts`) |
 
-OACX 서버는 **국내 IP만 받는다.** Vercel(미국)에서 직접 부르면 조용히 타임아웃한다.
-그래서 국내 회선 중계를 거친다 — `oacx-status.md`. `lib/identity/oacx.ts`에도 같은
+OACX 서버는 **국내 IP만 받는다.** 그래서 Vercel 함수 리전을 서울(`icn1`)로 고정했다 —
+국외 리전에서는 조용히 타임아웃한다. `oacx-status.md`. `lib/identity/oacx.ts`에도 같은
 호출을 하는 함수 묶음이 있지만 프로덕션 경로는 `OacxVerifier` 쪽이다.
 
 두 경로가 같은 인터페이스 `IdentityVerifier`를 구현한다.
