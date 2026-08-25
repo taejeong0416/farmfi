@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { Button, Card, PanelShell } from "@/components/ui";
+import { useEffect, useState, type ReactNode } from "react";
+import { Button, Card } from "@/components/ui";
 import { postJson, shortDate, won, type Investment } from "../api";
 
 const QUESTIONS = [
@@ -77,8 +77,85 @@ export function InvestEligibilityScreen({ projectId }: { projectId: string }) {
   const allChecked = checked.every(Boolean);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-ink/70 p-6">
-      <div className="relative w-full max-w-[730px] rounded-10 bg-white px-[34px] py-[34px]">
+    <Overlay projectId={projectId} width="max-w-panel">
+      <p className="text-14 font-medium text-brand">투자 전 확인</p>
+      <h1 className="mt-4 text-24 font-bold text-ink">
+        나에게 맞는 투자인지 먼저 확인해요
+      </h1>
+      <p className="mt-3 text-14 text-body">
+        투자 구조와 위험을 충분히 이해했는지 함께 확인하는 과정입니다.
+      </p>
+
+      <div className="mt-5 flex items-center justify-between gap-6 rounded-10 bg-surface px-4 py-4">
+        <p className="text-14 font-medium text-ink">약 2분이면 끝나요!</p>
+        <p className="text-12 text-body">
+          답변에 따라 투자 한도가 달라지거나 추가 안내가 필요할 수 있어요.
+        </p>
+      </div>
+
+      <div className="mt-[18px] space-y-[18px]">
+        {QUESTIONS.map((item, i) => (
+          <button
+            key={item.q}
+            type="button"
+            aria-pressed={checked[i]}
+            onClick={() =>
+              setChecked((c) => c.map((v, idx) => (idx === i ? !v : v)))
+            }
+            className="flex w-full items-center gap-4 rounded-10 border border-line bg-white px-4 py-4 text-left"
+          >
+            <span className="flex-1">
+              <span className="block text-18 font-bold text-ink">
+                {i + 1}&nbsp;&nbsp;{item.q}
+              </span>
+              <span className="mt-2 block text-14 font-medium text-brand">
+                {item.a}
+              </span>
+            </span>
+            <span
+              className={`flex h-[19px] w-[19px] shrink-0 items-center justify-center rounded-4 border text-11 text-white ${
+                checked[i] ? "border-brand bg-brand" : "border-line bg-white"
+              }`}
+            >
+              {checked[i] ? "✓" : ""}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {error ? <p className="mt-4 text-12 text-danger">{error}</p> : null}
+
+      <div className="mt-[18px]">
+        <Button full disabled={!allChecked || !investment || busy} onClick={submit}>
+          {busy ? "확인 중" : "확인하고 다음으로"}
+        </Button>
+      </div>
+
+      <p className="mt-[18px] text-center text-12 text-muted">
+        투자 위험과 적합성 기준 자세히 보기
+      </p>
+    </Overlay>
+  );
+}
+
+/**
+ * 이 흐름은 프로젝트 상세 위에 뜨는 모달이다. 질문지와 판정 결과가 같은 층에
+ * 있어야 뒤에 무엇을 보다가 왔는지 유지되고, 닫으면 그 자리로 돌아간다.
+ */
+function Overlay({
+  projectId,
+  width,
+  children,
+}: {
+  projectId: string;
+  width: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-ink/70 p-6">
+      <div
+        className={`relative my-auto w-full ${width} rounded-10 bg-white px-[34px] py-[34px]`}
+      >
         <Link
           href={`/projects/${projectId}`}
           aria-label="닫기"
@@ -86,63 +163,7 @@ export function InvestEligibilityScreen({ projectId }: { projectId: string }) {
         >
           ✕
         </Link>
-
-        <p className="text-14 font-medium text-brand">투자 전 확인</p>
-        <h1 className="mt-4 text-24 font-bold text-ink">
-          나에게 맞는 투자인지 먼저 확인해요
-        </h1>
-        <p className="mt-3 text-14 text-body">
-          투자 구조와 위험을 충분히 이해했는지 함께 확인하는 과정입니다.
-        </p>
-
-        <div className="mt-5 flex items-center justify-between gap-6 rounded-10 bg-surface px-4 py-4">
-          <p className="text-14 font-medium text-ink">약 2분이면 끝나요!</p>
-          <p className="text-12 text-body">
-            답변에 따라 투자 한도가 달라지거나 추가 안내가 필요할 수 있어요.
-          </p>
-        </div>
-
-        <div className="mt-[18px] space-y-[18px]">
-          {QUESTIONS.map((item, i) => (
-            <button
-              key={item.q}
-              type="button"
-              aria-pressed={checked[i]}
-              onClick={() =>
-                setChecked((c) => c.map((v, idx) => (idx === i ? !v : v)))
-              }
-              className="flex w-full items-center gap-4 rounded-10 border border-line bg-white px-4 py-4 text-left"
-            >
-              <span className="flex-1">
-                <span className="block text-18 font-bold text-ink">
-                  {i + 1}&nbsp;&nbsp;{item.q}
-                </span>
-                <span className="mt-2 block text-14 font-medium text-brand">
-                  {item.a}
-                </span>
-              </span>
-              <span
-                className={`flex h-[19px] w-[19px] shrink-0 items-center justify-center rounded-4 border text-11 text-white ${
-                  checked[i] ? "border-brand bg-brand" : "border-line bg-white"
-                }`}
-              >
-                {checked[i] ? "✓" : ""}
-              </span>
-            </button>
-          ))}
-        </div>
-
-        {error ? <p className="mt-4 text-12 text-danger">{error}</p> : null}
-
-        <div className="mt-[18px]">
-          <Button full disabled={!allChecked || !investment || busy} onClick={submit}>
-            {busy ? "확인 중" : "확인하고 다음으로"}
-          </Button>
-        </div>
-
-        <p className="mt-[18px] text-center text-12 text-muted">
-          투자 위험과 적합성 기준 자세히 보기
-        </p>
+        {children}
       </div>
     </div>
   );
@@ -169,7 +190,7 @@ function IneligibleView({
 
   if (identityBlocked) {
     return (
-      <PanelShell className="max-w-modal">
+      <Overlay projectId={projectId} width="max-w-modal">
         <h1 className="text-24 font-bold text-ink">본인확인을 먼저 마쳐 주세요</h1>
         <p className="mt-3 text-13 leading-6 text-muted">
           {investment.eligibilityMemo ?? "첫 투자 전에는 본인확인이 필요합니다."}
@@ -202,12 +223,12 @@ function IneligibleView({
         <p className="mt-5 text-12 text-muted">
           FarmFi는 실명·성인 여부 등 필요한 확인값만 저장하고 신분증 원문은 보관하지 않아요.
         </p>
-      </PanelShell>
+      </Overlay>
     );
   }
 
   return (
-    <PanelShell className="max-w-modal">
+    <Overlay projectId={projectId} width="max-w-modal">
       <h1 className="text-24 font-bold text-ink">지금은 투자 신청이 어려워요</h1>
       <p className="mt-3 text-13 leading-6 text-muted">
         {investment.eligibilityMemo ?? "신청 조건을 충족하지 못했습니다."}
@@ -258,7 +279,7 @@ function IneligibleView({
       <p className="mt-5 text-12 text-muted">
         표시된 한도가 실제와 다르면 한도 안내에서 확인을 요청할 수 있어요. 판정 결과는 투자 신청 기록에 남습니다.
       </p>
-    </PanelShell>
+    </Overlay>
   );
 }
 
