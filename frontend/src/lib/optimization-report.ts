@@ -22,7 +22,7 @@ import {
   annealJointSchedule,
   recipeOptimization,
   operationsSavingsReport,
-  TARIFF_TOU_GENERAL,
+  TARIFF_FLAT_GENERAL,
   TARIFF_FLAT_AGRI,
   type DliPlan,
   type DliFeedback,
@@ -235,7 +235,7 @@ export function buildOptimizationReport(
   const cropKey = input.cropKey ?? "leafy";
   const crop = getCrop(cropKey);
   const tariffKey = input.tariffKey ?? "tou";
-  const tariff = tariffKey === "agri" ? TARIFF_FLAT_AGRI : TARIFF_TOU_GENERAL;
+  const tariff = tariffKey === "agri" ? TARIFF_FLAT_AGRI : TARIFF_FLAT_GENERAL;
   const ledPowerKw = input.ledPowerKw ?? 4;
   const indoor = input.indoor ?? true;
   const sites = input.sites ?? 20;

@@ -26,7 +26,7 @@ import {
 import { toNormalized, fromNormalized } from "./crop-normalize";
 import { getCrop } from "./crop-profiles";
 import { PARAMS } from "./optimization-params";
-import { resolveLighting, ledThermalCostPerHour, TARIFF_TOU_GENERAL } from "./optimization";
+import { resolveLighting, ledThermalCostPerHour, TARIFF_FLAT_GENERAL } from "./optimization";
 import { co2InjectionKgPerDay, CO2_AMBIENT_PPM } from "./optimization-climate";
 
 export interface ProfitCostBreakdown {
@@ -158,7 +158,7 @@ export function profitOptimalRecipe(
     cropPricePerKg: opts.cropPricePerKg ?? PARAMS.cropPricePerKg.value,
     co2CostPerKg: opts.co2CostPerKg ?? PARAMS.co2CostPerKg.value,
     avgTariff:
-      opts.avgTariff ?? TARIFF_TOU_GENERAL.reduce((a, b) => a + b, 0) / TARIFF_TOU_GENERAL.length,
+      opts.avgTariff ?? TARIFF_FLAT_GENERAL.reduce((a, b) => a + b, 0) / TARIFF_FLAT_GENERAL.length,
     externalTempC: opts.externalTempC ?? PARAMS.targetRoomTempC.value,
   };
 

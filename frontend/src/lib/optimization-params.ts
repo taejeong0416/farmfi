@@ -29,18 +29,25 @@ function p<T>(value: T, meta: Omit<Param<T>, "value">): Param<T> {
   return { value, ...meta };
 }
 
-// 2026.4 한전 요금 개편(49년 만의 시간대 개편) 구조 반영:
-//  - 낮 11~15시: 태양광 잉여로 경부하성 시간대로 재분류
-//  - 저녁 18~21시: 최대부하로 편입
-const TOU_GENERAL = [
-  110, 110, 110, 110, 110, 110, 110, 110, 110, // 00~08 경부하
-  150, 150,                                     // 09~10 중간부하
-  130, 130, 130, 130,                           // 11~14 낮 할인(개편 신설)
-  150, 150, 150,                                // 15~17 중간부하
-  210, 210, 210,                                // 18~20 최대부하(개편 편입)
-  150, 150,                                     // 21~22 중간부하
-  110,                                          // 23    경부하
-];
+// 한전 일반용전력(갑)Ⅰ 저압 — 계약전력 300kW 이하, 표준전압 110~380V.
+// **계절별 단가만 있고 시간대별 구분이 없다.** 시간대별(계시별) 요금은 일반용(을)과
+// 일반용(갑)Ⅱ에 있는데, (을)은 계약전력 300kW 초과이고 (갑)Ⅱ 요금표에는 저압 행 자체가
+// 없다 — 고압A(3,300~66,000V)와 고압B(154,000V 이상)뿐이다. 7kW 저압 매장이 들어갈 수
+// 있는 계시별 요금제는 존재하지 않는다.
+//
+// 그래서 이 요금제에서는 LED 점등 시각을 옮겨 얻는 절감이 0원이다. 남는 레버는 시간을
+// 옮기는 것이 아니라 전력량 자체를 줄이는 것뿐이며, 그 수단이 CO2 시비다(optimization-climate).
+const GENERAL_A1_SEASON = { summer: 132.4, shoulder: 91.9, winter: 119.0 };
+
+// 월 수 가중 연평균 — 여름 3개월(6~8) · 봄가을 5개월(3~5, 9~10) · 겨울 4개월(11~2).
+const GENERAL_A1_YEAR_AVG =
+  Math.round(
+    ((GENERAL_A1_SEASON.summer * 3 +
+      GENERAL_A1_SEASON.shoulder * 5 +
+      GENERAL_A1_SEASON.winter * 4) /
+      12) *
+      100
+  ) / 100;
 
 // 시간대별 계통 탄소집약도 배율 — 낮(태양광 다량)은 배출이 낮고 저녁 피크는 높다.
 // TOU 요금과 같은 방향이라, LED를 저렴 시간대로 옮기면 원과 CO2가 함께 준다.
@@ -52,12 +59,18 @@ const CARBON_INTENSITY = [
 ];
 
 export const PARAMS = {
-  tariffTouGeneral: p(TOU_GENERAL, {
-    basis: "추정",
-    label: "시간대별 전력량요금 (일반용 을, 저압)",
-    source: "한전 전기요금표 2026.4 개편 구조 기준 근사(원/kWh)",
-    asOf: "2026-04",
-    replaceWith: "확정 계약종의 고시 단가",
+  tariffGeneralA1Season: p(GENERAL_A1_SEASON, {
+    basis: "고시",
+    label: "계절별 전력량요금 (일반용전력(갑)Ⅰ 저압, 원/kWh)",
+    source: "한전 전기요금표 — 여름 6~8월 · 봄가을 3~5·9~10월 · 겨울 11~2월",
+    asOf: "2026-08",
+    display: "여름 132.4 · 봄가을 91.9 · 겨울 119.0",
+  }),
+  tariffFlatGeneral: p(Array(24).fill(GENERAL_A1_YEAR_AVG) as number[], {
+    basis: "고시",
+    label: "전력량요금 24시간 배열 (갑Ⅰ 저압 연평균)",
+    source: "계절 단가의 월 수 가중 연평균 — 시간대 구분이 없어 24칸이 모두 같다",
+    asOf: "2026-08",
   }),
   tariffFlatAgri: p(Array(24).fill(53) as number[], {
     basis: "추정",
@@ -66,12 +79,11 @@ export const PARAMS = {
     asOf: "2026-04",
     replaceWith: "농사용 적용 확정 시 고시 단가",
   }),
-  demandChargePerKw: p(8320, {
-    basis: "추정",
+  demandChargePerKw: p(6160, {
+    basis: "고시",
     label: "기본요금 단가 (원/kW·월)",
-    source: "일반용(을) 저압 기본요금 근사",
-    asOf: "2026-04",
-    replaceWith: "확정 계약종의 고시 단가",
+    source: "한전 전기요금표 일반용전력(갑)Ⅰ 저압 기본요금",
+    asOf: "2026-08",
   }),
   gridEmissionFactor: p(0.459, {
     basis: "고시",
@@ -98,6 +110,22 @@ export const PARAMS = {
     source: "종자 30 + 양액 80 + 배분 전기 250 + 포장·자재 190",
     asOf: "2026-08",
     replaceWith: "1호점 원가 실적",
+  }),
+  // 전기를 실비로 따로 세는 계산(광량 상향 판단 등)에서는 배분 전기 250원을 뺀 값을 쓴다.
+  // 550을 그대로 쓰면 전기가 두 번 들어간다.
+  unitVariableCostExElectric: p(300, {
+    basis: "가정",
+    label: "포기당 변동비 — 전기 제외 (원)",
+    source: "종자 30 + 양액 80 + 포장·자재 190",
+    asOf: "2026-08",
+    replaceWith: "1호점 원가 실적",
+  }),
+  headMassG: p(150, {
+    basis: "가정",
+    label: "포기당 수확 중량 (g)",
+    source: "도심 직판 엽채류 1포기 규격",
+    asOf: "2026-08",
+    replaceWith: "1호점 수확 실적",
   }),
   unitSalePrice: p(2000, {
     basis: "추정",
@@ -192,6 +220,15 @@ export const PARAMS = {
     source: "액화탄산 벌크 공급가 근사",
     asOf: "2026-08",
     replaceWith: "공급 계약 단가",
+  }),
+  // 이 값 하나가 절감률을 −7.7%(200ppm) ~ −14.5%(450ppm)로 벌린다. 요금이 고시로
+  // 확정된 지금, 절감 주장을 흔들 수 있는 유일한 파라미터다.
+  co2HalfSaturationPpm: p(300, {
+    basis: "추정",
+    label: "광합성 CO2 반포화 상수 Km (ppm)",
+    source: "광-CO2-온도 반응면 문헌(ASHS JASHS 147(2), 2022)의 엽채류 범위 근사",
+    asOf: "2026-08",
+    replaceWith: "1호점 시비 농도별 수확 실적",
   }),
   co2LossRatePerHour: p(0.35, {
     basis: "가정",

@@ -20,7 +20,7 @@ import {
   operationsSavingsReport,
   thompsonAllocation,
   peakStagger,
-  TARIFF_TOU_GENERAL,
+  TARIFF_FLAT_GENERAL,
 } from "./optimization";
 import { profitOptimization, photoperiodSafeDli } from "./optimization-advanced";
 import { unifiedCoOptimize } from "./optimization-unified";
@@ -58,7 +58,7 @@ test("resolveLighting: 명기는 최대광주기를, 암기는 최소치를 지�
 });
 
 test("dliSchedule: 점등은 연속 블록이고 관행보다 비싸지 않다", () => {
-  const plan = dliSchedule({ cropKey: "leafy", ledPowerKw: LED_KW, tariff: TARIFF_TOU_GENERAL });
+  const plan = dliSchedule({ cropKey: "leafy", ledPowerKw: LED_KW, tariff: TARIFF_FLAT_GENERAL });
   assert.equal(plan.litHours.length, plan.requiredHours);
   // 연속 블록: 인접 시간이 원형 24h에서 1씩 증가
   for (let i = 1; i < plan.litHours.length; i++) {

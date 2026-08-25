@@ -10,14 +10,14 @@
 // 근거: 광-CO2-온도 상호작용 반응면 문헌(ASHS JASHS 147(2), 2022) 및
 //       광·CO2 비용 동시 최적화 사례(Expert Systems with Applications, 2023).
 
-import { resolveLighting, TARIFF_TOU_GENERAL } from "./optimization";
+import { resolveLighting, TARIFF_FLAT_GENERAL } from "./optimization";
 import { getCrop } from "./crop-profiles";
 import { PARAMS } from "./optimization-params";
 
 /** 대기 CO2 농도 (ppm) — 시비의 기준선 */
 export const CO2_AMBIENT_PPM = 400;
-/** 광합성 CO2 반포화 상수 (ppm) — 반응면 문헌의 엽채류 범위 근사 */
-export const CO2_HALF_SATURATION_PPM = 300;
+/** 광합성 CO2 반포화 상수 (ppm) — 절감률을 가장 크게 흔드는 값이라 레지스트리에 둔다 */
+export const CO2_HALF_SATURATION_PPM = PARAMS.co2HalfSaturationPpm.value;
 /** CO2 밀도 (kg/m³, 상온) */
 const CO2_DENSITY = 1.98;
 
@@ -102,7 +102,7 @@ export function co2LightCoOptimize(opts: {
   // 하므로 호출부가 실효 단가를 넘긴다. 생략 시 기저 TOU 24시간 평균.
   const avgTariff =
     opts.avgTariff ??
-    TARIFF_TOU_GENERAL.reduce((a, b) => a + b, 0) / TARIFF_TOU_GENERAL.length;
+    TARIFF_FLAT_GENERAL.reduce((a, b) => a + b, 0) / TARIFF_FLAT_GENERAL.length;
   const co2Cost = opts.co2CostPerKg ?? PARAMS.co2CostPerKg.value;
   const maxCo2 = opts.maxCo2Ppm ?? 1200;
   const ymax = PARAMS.yieldMaxKgM2.value;
@@ -125,15 +125,23 @@ export function co2LightCoOptimize(opts: {
       areaM2: area,
     });
     const co2CostPerDay = co2Kg * co2Cost;
-    const revenue = (yieldKgM2 * area * price) / crop.cycleDays;
+    // 수확이 늘면 종자·양액·포장자재도 는다. 이 항이 빠지면 광량·시비를 올릴수록 무조건
+    // 이득이 되어 최적점이 실제보다 높은 DLI로 밀린다. 전기는 위에서 실비로 따로 센다.
+    const kgPerDay = (yieldKgM2 * area) / crop.cycleDays;
+    const variableCostPerDay =
+      kgPerDay *
+      (PARAMS.unitVariableCostExElectric.value / (PARAMS.headMassG.value / 1000));
+    const revenue = kgPerDay * price;
     return {
       co2Ppm: ppm,
       dli,
       yieldKgM2: Math.round(yieldKgM2 * 100) / 100,
       lightCostPerDay: Math.round(lightCost),
       co2CostPerDay: Math.round(co2CostPerDay),
-      totalCostPerDay: Math.round(lightCost + co2CostPerDay),
-      profitPerDay: Math.round(revenue - lightCost - co2CostPerDay),
+      totalCostPerDay: Math.round(lightCost + co2CostPerDay + variableCostPerDay),
+      profitPerDay: Math.round(
+        revenue - lightCost - co2CostPerDay - variableCostPerDay
+      ),
     };
   };
 

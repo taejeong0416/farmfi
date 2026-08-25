@@ -14,7 +14,7 @@
 
 import {
   resolveLighting,
-  TARIFF_TOU_GENERAL,
+  TARIFF_FLAT_GENERAL,
   ledThermalCostPerHour,
 } from "./optimization";
 import { getCrop } from "./crop-profiles";
@@ -77,7 +77,7 @@ export function backtestSchedule(opts: {
   baselineStartHour?: number;
   targetTempC?: number;
 }): BacktestResult {
-  const tariff = opts.tariff ?? TARIFF_TOU_GENERAL;
+  const tariff = opts.tariff ?? TARIFF_FLAT_GENERAL;
   const baselineStart = opts.baselineStartHour ?? 8;
   const TARGET = opts.targetTempC ?? 20;
   const heatCoef = PARAMS.heatCreditPerKwh.value;

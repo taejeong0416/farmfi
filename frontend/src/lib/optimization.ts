@@ -1,12 +1,13 @@
 // ── AI 운영 최적화 엔진 ─────────────────────────────────────────────────────
 // 검증(iot-health)과 같은 센서 데이터를 운영 최적화에 이중 활용한다.
-// ① 전력비: 시간대별 요금(TOU) 연동 LED 광주기 스케줄링
+// ① 전력비: 요금 연동 LED 광주기 스케줄링
 // ② 관리비: 센서 드리프트 기반 예지보전(계획 방문 전환)
 // ③ 자원: 수요 예측 연동 파종·양액 보정 권고
 //
-// 실내팜은 광주기를 통째로 옮길 수 있는 유일한 농업이므로, "몇 시에 켤 것인가"가
-// 곧 전기 원가다. 요금표·전력량은 전부 주입 가능 — 농사용(을) 확정 시 flat 요금을
-// 넣으면 절감폭이 작아지는 것까지 정직하게 계산된다.
+// 실내팜은 광주기를 통째로 옮길 수 있는 유일한 농업이지만, 그 자유도가 돈이 되려면
+// 시간대별 단가 차이가 있어야 한다. 1호점 계약종인 일반용전력(갑)Ⅰ 저압은 계절별
+// 단일 단가라 시간 이동으로 얻는 절감이 0원이다 — 그 사실이 계산에 그대로 드러나도록
+// 요금표는 전부 주입 가능하게 두고, 기본값을 평탄 단가로 둔다.
 
 import { IoTReading, HEALTHY_RANGES } from "./iot-health";
 import { getCrop } from "./crop-profiles";
@@ -17,8 +18,16 @@ import { PARAMS } from "./optimization-params";
 // 한 곳에 모아둬야 "이 숫자 어디서 왔나"에 답할 수 있고 교체 지점도 한눈에 보인다.
 export const GRID_EMISSION_FACTOR = PARAMS.gridEmissionFactor.value;
 export const CARBON_INTENSITY_FACTOR: number[] = PARAMS.carbonIntensityFactor.value;
-export const TARIFF_TOU_GENERAL: number[] = PARAMS.tariffTouGeneral.value;
+export const TARIFF_FLAT_GENERAL: number[] = PARAMS.tariffFlatGeneral.value;
 export const TARIFF_FLAT_AGRI: number[] = PARAMS.tariffFlatAgri.value;
+export const TARIFF_GENERAL_SEASON = PARAMS.tariffGeneralA1Season.value;
+
+/** 계절 단가를 24시간 배열로 편다. 갑Ⅰ은 시간대 구분이 없어 24칸이 모두 같다. */
+export function tariffForSeason(
+  season: keyof typeof TARIFF_GENERAL_SEASON
+): number[] {
+  return Array(24).fill(TARIFF_GENERAL_SEASON[season]);
+}
 
 export interface LedBlock {
   startHour: number; // 0~23
@@ -55,7 +64,7 @@ export function optimizeLedSchedule(opts: {
   tariff?: number[];
   baselineStartHour?: number; // 관행 스케줄(기본 08시 점등)
 }): PowerPlan {
-  const tariff = opts.tariff ?? TARIFF_TOU_GENERAL;
+  const tariff = opts.tariff ?? TARIFF_FLAT_GENERAL;
   const P = opts.photoperiodHours;
   const baseline: LedBlock[] = [
     { startHour: opts.baselineStartHour ?? 8, hours: P },
@@ -257,7 +266,7 @@ export function dliSchedule(opts: {
   ppfd?: number;
 }): DliPlan {
   const crop = getCrop(opts.cropKey);
-  const tariff = opts.tariff ?? TARIFF_TOU_GENERAL;
+  const tariff = opts.tariff ?? TARIFF_FLAT_GENERAL;
   const dliTarget = opts.dliTarget ?? crop.dliTarget;
   const light = resolveLighting({
     cropKey: opts.cropKey,
@@ -902,7 +911,7 @@ export function annealJointSchedule(opts: {
   iterations?: number;
   seed?: number;
 }): JointSchedule {
-  const tariff = opts.tariff ?? TARIFF_TOU_GENERAL;
+  const tariff = opts.tariff ?? TARIFF_FLAT_GENERAL;
   const rand = mulberry32(opts.seed ?? 42);
   const iters = opts.iterations ?? 30000;
   const P = opts.photoperiodHours;

@@ -6,7 +6,7 @@
 
 import { getCrop } from "./crop-profiles";
 import {
-  TARIFF_TOU_GENERAL,
+  TARIFF_FLAT_GENERAL,
   dliSchedule,
   resolveLighting,
   ledThermalCostPerHour,
@@ -58,7 +58,7 @@ export function photoperiodSafeDli(opts: {
   ppfd?: number;
 }): PhotoperiodSafePlan {
   const crop = getCrop(opts.cropKey);
-  const tariff = opts.tariff ?? TARIFF_TOU_GENERAL;
+  const tariff = opts.tariff ?? TARIFF_FLAT_GENERAL;
   const plan = dliSchedule(opts);
   const kw = plan.ledPowerKwUsed;
 
@@ -112,7 +112,7 @@ export function thermalCoupledSchedule(opts: {
   heatCoef?: number; // 난방 원/kWh열 (히트펌프 COP 반영 근사)
   coolCoef?: number; // 냉방 원/kWh열
 }): ThermalCoupledPlan {
-  const tariff = opts.tariff ?? TARIFF_TOU_GENERAL;
+  const tariff = opts.tariff ?? TARIFF_FLAT_GENERAL;
   const P = opts.requiredHours;
   const heatCoef = opts.heatCoef ?? PARAMS.heatCreditPerKwh.value;
   const coolCoef = opts.coolCoef ?? PARAMS.coolCostPerKwh.value;
@@ -203,7 +203,7 @@ export function robustSchedule(opts: {
   lambda?: number; // CVaR 가중
   seed?: number;
 }): RobustPlan {
-  const base = opts.baseTariff ?? TARIFF_TOU_GENERAL;
+  const base = opts.baseTariff ?? TARIFF_FLAT_GENERAL;
   const rand = mulberry32(opts.seed ?? 42);
   const gauss = gaussFrom(rand);
   const N = opts.scenarios ?? 200;
@@ -296,7 +296,7 @@ export function profitOptimization(opts: {
   /**
    * LED 1kWh의 실효 단가(원). 광량을 늘릴지는 "추가 전기비 대 추가 수율"의 비교이므로
    * 이 단가가 결정적이다 — 계약종이 바뀌면(농사용 53원) 최적 DLI도 바뀐다.
-   * 생략하면 기저 TOU의 24시간 평균을 쓴다.
+   * 생략하면 기저 요금표의 24시간 평균을 쓴다.
    */
   avgTariff?: number;
 }): ProfitPlan {
@@ -305,7 +305,12 @@ export function profitOptimization(opts: {
   const price = opts.cropPricePerKg ?? PARAMS.cropPricePerKg.value;
   const ymax = opts.yieldMaxKgM2 ?? PARAMS.yieldMaxKgM2.value;
   const k = opts.yieldK ?? PARAMS.yieldLightK.value;
-  const avgTariff = opts.avgTariff ?? meanTariff(TARIFF_TOU_GENERAL);
+  const avgTariff = opts.avgTariff ?? meanTariff(TARIFF_FLAT_GENERAL);
+  // 수확이 늘면 종자·양액·포장자재도 함께 는다. 이 항이 빠지면 "광량을 올릴수록 이득"이
+  // 무한정 성립해 최적 DLI가 실제보다 높게 나온다. 전기는 아래에서 실비로 따로 세므로
+  // 배분 전기를 뺀 변동비를 쓴다.
+  const variableCostPerKg =
+    PARAMS.unitVariableCostExElectric.value / (PARAMS.headMassG.value / 1000);
 
   const yieldOf = (dli: number) => ymax * (1 - Math.exp(-k * dli));
   // 광주기·정격 상한을 넘겨야만 만들어지는 DLI는 후보에서 제외(null).
@@ -318,11 +323,12 @@ export function profitOptimization(opts: {
     if (!light.feasible || !light.photoperiodSafe) return null;
     return light.ledPowerKw * light.hours * avgTariff; // 원/일 (사이트 전체 LED)
   };
-  // 이익 = 수율가치(원/일 환산) − 전기비. 수율은 사이클(cycleDays)에 걸쳐 실현 → 일 환산.
+  // 이익 = 수율가치 − 변동비 − 전기비. 수율은 사이클(cycleDays)에 걸쳐 실현 → 일 환산.
   const profitOf = (dli: number): number | null => {
     const cost = costOf(dli);
     if (cost === null) return null;
-    return (yieldOf(dli) * area * price) / crop.cycleDays - cost;
+    const kgPerDay = (yieldOf(dli) * area) / crop.cycleDays;
+    return kgPerDay * (price - variableCostPerKg) - cost;
   };
   const maxFeasibleDli =
     Math.floor(((crop.maxPpfd * 3600) / 1e6) * crop.maxPhotoperiodH * 10) / 10;

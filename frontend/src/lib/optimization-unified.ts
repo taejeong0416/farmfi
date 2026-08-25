@@ -17,7 +17,7 @@
 
 import { getCrop } from "./crop-profiles";
 import {
-  TARIFF_TOU_GENERAL,
+  TARIFF_FLAT_GENERAL,
   CARBON_INTENSITY_FACTOR,
   GRID_EMISSION_FACTOR,
   resolveLighting,
@@ -67,7 +67,7 @@ export function unifiedCoOptimize(opts: {
   seed?: number;
 }): UnifiedResult {
   const crop = getCrop(opts.cropKey);
-  const tariff = opts.tariff ?? TARIFF_TOU_GENERAL;
+  const tariff = opts.tariff ?? TARIFF_FLAT_GENERAL;
   const price = opts.cropPricePerKg ?? PARAMS.cropPricePerKg.value;
   const area = opts.areaM2 ?? PARAMS.growRoomAreaM2.value;
   const vol = opts.priceVolatility ?? 0.35;
