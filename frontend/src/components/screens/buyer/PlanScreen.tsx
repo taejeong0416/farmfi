@@ -35,30 +35,20 @@ export function PlanScreen() {
   }
 
   const point = (data?.pickupPoints ?? []).find((p) => p.id === draft.projectId);
-  // 지점이 지금 내줄 수 있는 작물 수. 이걸 넘는 팩은 다음 단계에서 구성할 수 없으니 아예 보여주지 않는다.
+  /*
+   * 지점이 지금 내줄 수 있는 작물 수. 이걸 넘는 팩은 다음 단계에서 구성할 수 없다.
+   * 목록에서 빼면 3종만 있는 지점에서는 선택지가 하나로 보여 5·7종이 있다는 것조차
+   * 모른다. 그래서 자리는 그대로 두고 잠근 뒤, 왜 잠겼는지 카드 위에 적는다.
+   */
   const selectableCount = (data?.crops ?? []).filter((c) => c.available).length;
   const countKnown = !isLoading && Boolean(data);
-  const sizes = countKnown
-    ? PACK_SIZES.filter((size) => size <= selectableCount)
-    : PACK_SIZES;
-  const hidden = PACK_SIZES.length - sizes.length;
+  const openCount = countKnown
+    ? PACK_SIZES.filter((size) => size <= selectableCount).length
+    : PACK_SIZES.length;
 
   function choose(size: PackSize) {
     update({ packSize: size, productIds: [] });
     router.push("/subscribe/compose");
-  }
-
-  if (sizes.length === 0) {
-    return (
-      <Shell>
-        <SubscribeStepLine current="plan" />
-        <EmptyState
-          title="이 지점은 지금 믹스팩을 만들 만큼 작물이 없습니다"
-          desc={`가장 작은 팩도 작물 ${PACK_SIZES[0]}종이 필요합니다. 다른 지점을 골라 주세요.`}
-          action={<Button href="/subscribe">지점 다시 고르기</Button>}
-        />
-      </Shell>
-    );
   }
 
   return (
@@ -99,45 +89,89 @@ export function PlanScreen() {
         ))}
       </div>
 
-      {hidden > 0 ? (
+      {countKnown && openCount < PACK_SIZES.length ? (
         <p className="mt-6 text-12 text-muted">
-          이 지점은 지금 작물 {selectableCount}종을 내줄 수 있어 {sizes.join("·")}종
-          팩만 열려 있습니다.
+          이 지점은 이번 주에 작물 {selectableCount}종을 내줄 수 있습니다.
+          {openCount === 0
+            ? " 지금은 어떤 팩도 구성할 수 없어요 — 다른 지점을 골라 주세요."
+            : " 작물이 모이면 더 큰 팩도 열립니다."}
         </p>
       ) : null}
 
       <div className="mt-6 grid grid-cols-3 gap-5">
-        {sizes.map((size) => {
+        {PACK_SIZES.map((size) => {
           const price = monthlyPrice(size, draft.perWeek);
           const selected = draft.packSize === size;
+          const locked = countKnown && size > selectableCount;
           return (
-            <Card
-              key={size}
-              className={selected ? "border-brand bg-brand-soft" : ""}
-            >
-              <h2 className="text-20 font-bold text-ink">{size}종 믹스팩</h2>
-              <p className="mt-2 text-13 text-muted">
-                작물 {size}종 · 드레싱 2봉
-              </p>
-              <p className="mt-5 font-num text-22 font-medium text-brand">
-                월 {won(price)}
-              </p>
-              <p className="mt-4 text-12 text-muted">
-                다음 단계에서 {point?.name ?? "지점"}의 작물·드레싱을 고릅니다.
-              </p>
-              <div className="mt-6">
-                <Button full onClick={() => choose(size)}>
-                  {size}종 구성하기
-                </Button>
-              </div>
-            </Card>
+            <div key={size} className="relative">
+              <Card
+                className={`h-full ${
+                  selected && !locked ? "border-brand bg-brand-soft" : ""
+                }`}
+              >
+                <h2 className="text-20 font-bold text-ink">{size}종 믹스팩</h2>
+                <p className="mt-2 text-13 text-muted">
+                  작물 {size}종 · 드레싱 2봉
+                </p>
+                <p className="mt-5 font-num text-22 font-medium text-brand">
+                  월 {won(price)}
+                </p>
+                <p className="mt-4 text-12 text-muted">
+                  다음 단계에서 {point?.name ?? "지점"}의 작물·드레싱을 고릅니다.
+                </p>
+                <div className="mt-6">
+                  <Button full disabled={locked} onClick={() => choose(size)}>
+                    {size}종 구성하기
+                  </Button>
+                </div>
+              </Card>
+
+              {locked ? (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-10 bg-white/75 px-5 text-center backdrop-blur-[1px]">
+                  <LockIcon />
+                  <p className="text-13 font-bold text-ink">
+                    작물이 {size}종에 모자라요
+                  </p>
+                  <p className="text-12 text-body">
+                    이번 주 이 지점에서 고를 수 있는 작물은 {selectableCount}종입니다.
+                  </p>
+                </div>
+              ) : null}
+            </div>
           );
         })}
       </div>
+
+      {countKnown && openCount === 0 ? (
+        <div className="mt-6">
+          <Button href="/subscribe" variant="ghost">
+            지점 다시 고르기
+          </Button>
+        </div>
+      ) : null}
 
       <p className="mt-6 text-12 text-muted">
         표시 금액은 월 기준이며, 픽업 회차는 지점 운영 일정에 따라 달라질 수 있습니다.
       </p>
     </Shell>
+  );
+}
+
+function LockIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      className="text-muted"
+      aria-hidden
+    >
+      <rect x="4" y="8.5" width="12" height="8" rx="2" />
+      <path d="M7 8.5V6a3 3 0 0 1 6 0v2.5" />
+    </svg>
   );
 }
