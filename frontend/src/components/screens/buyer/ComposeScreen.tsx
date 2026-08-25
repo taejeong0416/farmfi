@@ -94,6 +94,10 @@ export function ComposeScreen() {
     draft.productIds.length === packSize &&
     draft.dressings.length === DRESSING_COUNT;
 
+  // 고를 수 있는 작물이 팩 크기보다 적으면 이 단계는 끝낼 수 없다. 막다른 길이 되지 않게 이유와 되돌아갈 길을 보여준다.
+  const selectableCount = crops.filter((c) => c.available).length;
+  const notEnoughCrops = selectableCount < packSize;
+
   return (
     <Shell>
       <SubscribeStepLine current="compose" />
@@ -115,6 +119,26 @@ export function ComposeScreen() {
           {draft.productIds.length} / {packSize} 선택
         </span>
       </div>
+
+      {notEnoughCrops ? (
+        <div className="mt-4 rounded-10 border border-line bg-surface px-5 py-4">
+          <p className="text-13 font-medium text-ink">
+            이 지점에서 지금 고를 수 있는 작물은 {selectableCount}종입니다
+          </p>
+          <p className="mt-1.5 text-12 text-body">
+            {packSize}종 믹스팩은 구성할 수 없습니다. 팩 크기를 {selectableCount}종
+            이하로 바꾸거나 다른 지점을 골라 주세요.
+          </p>
+          <div className="mt-4 flex gap-2">
+            <Button size="sm" variant="secondary" href="/subscribe/plan">
+              팩 크기 바꾸기
+            </Button>
+            <Button size="sm" variant="ghost" href="/subscribe">
+              지점 다시 고르기
+            </Button>
+          </div>
+        </div>
+      ) : null}
 
       <div className="mt-4 grid grid-cols-4 gap-3">
         {crops.map((c) => {
@@ -188,9 +212,12 @@ export function ComposeScreen() {
             작물 {draft.productIds.length}종 · 드레싱 {draft.dressings.length}봉
           </span>
         </div>
-        <div className="mt-5">
+        <div className="mt-5 flex gap-3">
+          <Button variant="ghost" href="/subscribe/plan">
+            팩 크기 다시 고르기
+          </Button>
           <Button
-            full
+            className="flex-1"
             disabled={!ready2}
             onClick={() => router.push("/subscribe/order")}
           >

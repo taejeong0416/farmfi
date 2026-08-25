@@ -10,7 +10,7 @@ import { useCatalog, useSubscribeDraft } from "./useSubscribeDraft";
 export function PlanScreen() {
   const router = useRouter();
   const { draft, update, ready } = useSubscribeDraft();
-  const { data } = useCatalog(draft.projectId);
+  const { data, isLoading } = useCatalog(draft.projectId);
 
   if (!ready) {
     return (
@@ -21,6 +21,9 @@ export function PlanScreen() {
   }
 
   const point = (data?.pickupPoints ?? []).find((p) => p.id === draft.projectId);
+  // 지점이 지금 내줄 수 있는 작물 수. 이걸 넘는 팩은 다음 단계에서 구성할 수 없으니 여기서 막는다.
+  const selectableCount = (data?.crops ?? []).filter((c) => c.available).length;
+  const countKnown = Boolean(draft.projectId) && !isLoading && Boolean(data);
 
   function choose(size: PackSize) {
     update({ packSize: size, productIds: [] });
@@ -69,6 +72,7 @@ export function PlanScreen() {
         {PACK_SIZES.map((size) => {
           const price = monthlyPrice(size, draft.perWeek);
           const selected = draft.packSize === size;
+          const tooBig = countKnown && size > selectableCount;
           return (
             <Card
               key={size}
@@ -82,11 +86,13 @@ export function PlanScreen() {
                 월 {won(price)}
               </p>
               <p className="mt-4 text-12 text-muted">
-                다음 단계에서 {point?.name ?? "지점"}의 작물·드레싱을 고릅니다.
+                {tooBig
+                  ? `이 지점은 지금 ${selectableCount}종까지 고를 수 있습니다.`
+                  : `다음 단계에서 ${point?.name ?? "지점"}의 작물·드레싱을 고릅니다.`}
               </p>
               <div className="mt-6">
-                <Button full onClick={() => choose(size)}>
-                  {size}종 구성하기
+                <Button full disabled={tooBig} onClick={() => choose(size)}>
+                  {tooBig ? "작물이 모자랍니다" : `${size}종 구성하기`}
                 </Button>
               </div>
             </Card>
