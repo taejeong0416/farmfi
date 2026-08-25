@@ -29,6 +29,7 @@
 | `optimization-rationale.md` | 운영최적화 계산 해설 — 식·가정·한계·파라미터 근거 | 근거 |
 | `growth-recipe-rationale.md` | 생육 레시피 계산 해설 — 좌표계·품종 이전·불확실성·목적함수 | 근거 |
 | `qa/web-qa-sheet.xlsx` | 웹 QA 시트 — TC·요청사항(REQ)·인수 테스트 판정 (`qa/README.md`에 탭 설명) | 기록 |
+| `ai-usage.md` | AI 활용 내역 — 쓴 도구·활용 범위·AI 생성 코드의 검증과 수정 방식 | 레퍼런스 |
 | `dev-log.md` | 진행상황·결정 기록 | 기록 |
 
 디자인이 코드에 얼마나 옮겨졌는지는 `tools/figma`가 기계로 센다. 대조는 두 겹이다 —
