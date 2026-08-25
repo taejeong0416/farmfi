@@ -4,12 +4,15 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { AuthShell, Button, Checkbox, Field, TextInput } from "@/components/ui";
+import { safeNext, withNext } from "@/lib/safe-next";
 import { useAuth } from "@/lib/useAuth";
 
 export function LoginScreen() {
   const router = useRouter();
   const params = useSearchParams();
-  const next = params?.get("next") ?? "/start";
+  // 보던 화면에서 왔으면 그리로 돌려보낸다. 외부 주소는 safeNext가 걸러낸다.
+  const back = safeNext(params?.get("next") ?? undefined);
+  const next = back ?? "/start";
   const { login } = useAuth();
 
   const [email, setEmail] = useState("");
@@ -86,7 +89,7 @@ export function LoginScreen() {
 
         <p className="text-center text-12 text-muted">
           아직 계정이 없으신가요?{" "}
-          <Link href="/signup" className="font-medium text-brand">
+          <Link href={withNext("/signup", back)} className="font-medium text-brand">
             회원가입
           </Link>
         </p>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { Button, Card } from "@/components/ui";
+import { useAuth } from "@/lib/useAuth";
 import { postJson, shortDate, won, type Investment } from "../api";
 
 const QUESTIONS = [
@@ -31,9 +32,20 @@ export function InvestEligibilityScreen({ projectId }: { projectId: string }) {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [rejected, setRejected] = useState<Investment | null>(null);
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
 
-  // 화면에 들어오면 신청 한 건을 만들어 둔다. 같은 프로젝트에 진행 중인 건이 있으면 그것을 잇는다.
+  /*
+   * 화면에 들어오면 신청 한 건을 만들어 둔다. 같은 프로젝트에 진행 중인 건이 있으면
+   * 그것을 잇는다. 이 주소를 로그인 없이 바로 열면 신청을 만들 수 없으므로,
+   * 오류 문구 대신 로그인으로 보내고 끝나면 입력 금액 그대로 여기로 돌아온다.
+   */
   useEffect(() => {
+    if (authLoading) return;
+    if (!isAuthenticated) {
+      const here = `/projects/${projectId}/invest/eligibility?amount=${amount}`;
+      router.replace(`/login?next=${encodeURIComponent(here)}`);
+      return;
+    }
     let cancelled = false;
     postJson<{ investment: Investment }>("/api/investments", {
       projectId,
@@ -48,7 +60,7 @@ export function InvestEligibilityScreen({ projectId }: { projectId: string }) {
     return () => {
       cancelled = true;
     };
-  }, [projectId, amount]);
+  }, [projectId, amount, isAuthenticated, authLoading, router]);
 
   async function submit() {
     if (!investment) return;

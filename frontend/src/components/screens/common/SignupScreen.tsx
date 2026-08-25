@@ -4,9 +4,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { AuthShell, Button, Checkbox, Field, TextInput } from "@/components/ui";
+import { withNext } from "@/lib/safe-next";
 import { useAuth } from "@/lib/useAuth";
 
-export function SignupScreen() {
+/** next: 가입·본인확인을 마친 뒤 돌아갈 앱 내부 경로. 보던 화면에서 왔을 때 넘어온다. */
+export function SignupScreen({ next }: { next?: string }) {
   const router = useRouter();
   const { signup } = useAuth();
 
@@ -40,7 +42,7 @@ export function SignupScreen() {
         password,
         role: "investor",
       });
-      router.push("/verify");
+      router.push(withNext("/verify", next));
     } catch (err) {
       setError(err instanceof Error ? err.message : "가입에 실패했습니다.");
     } finally {
@@ -128,7 +130,7 @@ export function SignupScreen() {
 
         <p className="mt-6 text-center text-12 text-muted">
           이미 계정이 있으신가요?{" "}
-          <Link href="/login" className="font-medium text-brand">
+          <Link href={withNext("/login", next)} className="font-medium text-brand">
             로그인
           </Link>
         </p>
