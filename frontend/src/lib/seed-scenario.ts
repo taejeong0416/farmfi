@@ -17,6 +17,9 @@ const DAY = 24 * 60 * 60 * 1000;
 //  않도록 여기서만 상수를 복제한다.)
 const MILESTONE_TIMEOUT_DAYS = 180;
 
+// 시드가 만드는 계정의 이메일 도메인. 리셋이 지우는 범위를 이것으로 가른다.
+const SEED_EMAIL_DOMAIN = "@farmfi.test";
+
 function milestoneDeadlines(fundingStart: Date, count: number): Date[] {
   return Array.from(
     { length: count },
@@ -29,6 +32,15 @@ function milestoneDeadlines(fundingStart: Date, count: number): Date[] {
  * `prisma/seed.ts`(CLI)와 `/api/demo/reset`(런타임)이 같은 함수를 호출해 드리프트를 막는다.
  */
 export async function seedScenario(prisma: PrismaClient) {
+  // 리셋은 시연 데이터를 되돌리는 동작이지 가입자를 지우는 동작이 아니다.
+  // 시드가 만드는 계정은 전부 @farmfi.test 이므로, 그 밖의 계정과 그 계정에
+  // 붙은 본인확인 기록은 지우지 않고 남긴다.
+  const kept = await prisma.user.findMany({
+    where: { NOT: { email: { endsWith: SEED_EMAIL_DOMAIN } } },
+    select: { id: true },
+  });
+  const keptUserIds = kept.map((u) => u.id);
+
   // 재실행 가능하도록 기존 데이터 정리 (FK 자식 먼저)
   // ─── 자식 → 부모 순서로 지운다. 하나라도 빠지면 project/user deleteMany가
   //     FK 위반으로 죽고 데모 리셋 자체가 안 된다.
@@ -74,14 +86,16 @@ export async function seedScenario(prisma: PrismaClient) {
   await prisma.escrow.deleteMany();
   await prisma.aiCache.deleteMany();
   await prisma.demoCache.deleteMany();
-  await prisma.identityVerification.deleteMany();
+  await prisma.identityVerification.deleteMany({
+    where: { OR: [{ userId: null }, { userId: { notIn: keptUserIds } }] },
+  });
   await prisma.iotData.deleteMany();
   await prisma.product.deleteMany();
   await prisma.project.deleteMany();
   await prisma.institution.deleteMany();
   await prisma.operatorApplication.deleteMany();
   await prisma.space.deleteMany();
-  await prisma.user.deleteMany();
+  await prisma.user.deleteMany({ where: { email: { endsWith: SEED_EMAIL_DOMAIN } } });
 
   // 동의 문서와 교육 과정은 시나리오 데이터가 아니라 기준 데이터다.
   // 지우지 않고 코드에 맞춘다.
