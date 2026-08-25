@@ -56,14 +56,23 @@ export function ComposeScreen() {
   const crops = data?.crops ?? [];
   const dressings = data?.dressings ?? [];
 
-  if (crops.length === 0) {
+  // 지점을 고르기 전에는 보여줄 작물 자체가 없다. 지점이 없어서인지, 지점에 작물이 없어서인지 구분해 말한다.
+  if (!draft.projectId || crops.length === 0) {
     return (
       <Shell>
         <SubscribeStepLine current="compose" />
         <EmptyState
-          title="이 지점에서 고를 수 있는 작물이 없습니다"
-          desc="다른 픽업 지점을 골라 주세요."
-          action={<Button href="/subscribe">지점 다시 고르기</Button>}
+          title={
+            draft.projectId
+              ? "이 지점에서 고를 수 있는 작물이 없습니다"
+              : "픽업 지점을 먼저 골라 주세요"
+          }
+          desc={
+            draft.projectId
+              ? "다른 픽업 지점을 골라 주세요."
+              : "지점을 정하면 그 지점의 작물과 드레싱을 고를 수 있습니다."
+          }
+          action={<Button href="/subscribe">지점 고르기</Button>}
         />
       </Shell>
     );

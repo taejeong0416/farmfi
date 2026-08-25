@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Button, Card, Shell, SkeletonBlock } from "@/components/ui";
+import { Button, Card, EmptyState, Shell, SkeletonBlock } from "@/components/ui";
 import { monthlyPrice, PACK_SIZES, type PackSize } from "@/lib/pickup-subscription";
 import { won } from "../api";
 import { SubscribeStepLine } from "./SubscribeStepLine";
@@ -16,6 +16,20 @@ export function PlanScreen() {
     return (
       <Shell>
         <SkeletonBlock height={360} />
+      </Shell>
+    );
+  }
+
+  // 주소로 바로 들어오면 지점이 비어 있다. 팩 크기는 지점의 작물 수에 달렸으니 먼저 고르게 한다.
+  if (!draft.projectId) {
+    return (
+      <Shell>
+        <SubscribeStepLine current="plan" />
+        <EmptyState
+          title="픽업 지점을 먼저 골라 주세요"
+          desc="지점마다 고를 수 있는 작물이 달라서, 지점을 정해야 팩 크기를 고를 수 있습니다."
+          action={<Button href="/subscribe">지점 고르기</Button>}
+        />
       </Shell>
     );
   }

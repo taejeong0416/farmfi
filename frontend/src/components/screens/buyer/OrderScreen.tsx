@@ -6,11 +6,16 @@ import {
   Button,
   Card,
   Checkbox,
+  EmptyState,
   Modal,
   Shell,
   SkeletonBlock,
 } from "@/components/ui";
-import { monthlyPrice, upcomingPickups } from "@/lib/pickup-subscription";
+import {
+  DRESSING_COUNT,
+  monthlyPrice,
+  upcomingPickups,
+} from "@/lib/pickup-subscription";
 import { shortDate, won } from "../api";
 import { SubscribeStepLine } from "./SubscribeStepLine";
 import { useCatalog, useSubscribeDraft } from "./useSubscribeDraft";
@@ -90,7 +95,36 @@ export function OrderScreen() {
     );
   }
 
-  const packSize = draft.packSize ?? 5;
+  // 주소로 바로 들어오면 앞 단계 선택이 비어 있다. 빈 주문서를 보여주는 대신 그 단계로 돌려보낸다.
+  if (!draft.projectId || !draft.packSize) {
+    return (
+      <Shell>
+        <SubscribeStepLine current="order" />
+        <EmptyState
+          title="픽업 지점을 먼저 골라 주세요"
+          desc="지점과 팩 크기를 정해야 주문서를 만들 수 있습니다."
+          action={<Button href="/subscribe">지점 고르기</Button>}
+        />
+      </Shell>
+    );
+  }
+  if (
+    draft.productIds.length !== draft.packSize ||
+    draft.dressings.length !== DRESSING_COUNT
+  ) {
+    return (
+      <Shell>
+        <SubscribeStepLine current="order" />
+        <EmptyState
+          title="구성을 마저 골라 주세요"
+          desc={`작물 ${draft.packSize}종과 드레싱 ${DRESSING_COUNT}봉을 정하면 주문서가 만들어집니다.`}
+          action={<Button href="/subscribe/compose">구성 고르기</Button>}
+        />
+      </Shell>
+    );
+  }
+
+  const packSize = draft.packSize;
   const point = (data?.pickupPoints ?? []).find((p) => p.id === draft.projectId);
   const crops = data?.crops ?? [];
   const chosen = crops.filter((c) => draft.productIds.includes(c.productId));
