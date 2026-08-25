@@ -43,4 +43,3 @@ cd frontend && node scripts/qa-prod-round.mjs
 ## 남은 것
 
 - 배포할 때마다 3차 TC 를 다시 돌린다. 지금 판정은 `e81d8a05` 기준이다.
-- REQ-008 검수. 엄수 규칙 ⑥ 으로 담당자와 검수자는 같은 사람일 수 없다.
