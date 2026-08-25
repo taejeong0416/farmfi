@@ -729,7 +729,7 @@ cacheKey = `${signalType}:${sha256(imageBase64).slice(0, 16)}`
 | LLM이 고를 수 있는 도구 | 실제 계산 |
 |:---|:---|
 | `maintenanceRisk` | 센서 드리프트 기반 예지보전 |
-| `dliSchedule` | TOU 요금 연동 광주기 스케줄 |
+| `dliSchedule` | 요금·탄소집약도 연동 광주기 스케줄 (갑Ⅰ 저압은 평탄단가라 요금 절감 0원) |
 | `cusumDrift` | MAD-CUSUM 관리도 |
 | `holtWintersForecast` | 수요 예측 |
 | `seedingPlan` | 파종량 계획 |
