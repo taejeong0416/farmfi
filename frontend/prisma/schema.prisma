@@ -1093,6 +1093,14 @@ model OperatorCredential {
    * 검증한다 — 없는 VC를 있는 척하지 않는다.
    */
   vcId          String?
+  /**
+   * Open DID 발급 오퍼. 보증서를 발급할 때 Issuer에서 받아 둔다 — 운영자가
+   * DID 지갑으로 이 오퍼를 스캔하면 VC가 발급된다. 오퍼가 있다고 VC가 있는 건
+   * 아니다: 아무도 수령하지 않으면 vcId는 계속 null이다.
+   */
+  vcOfferId     String?
+  vcPlanId      String?
+  vcOfferAt     DateTime?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

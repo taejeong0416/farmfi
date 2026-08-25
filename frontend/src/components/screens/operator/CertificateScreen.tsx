@@ -123,6 +123,29 @@ export function CertificateScreen() {
             </div>
           ) : null}
 
+          {/* Open DID VC 발급 오퍼. 운영자가 DID 지갑으로 스캔하면 보증서가
+              VC로 발급된다. 오퍼가 있다고 VC가 있는 건 아니라서, 수령 전에는
+              위의 번호 검증이 계속 정본이다. */}
+          {credential.vcOfferQrDataUrl ? (
+            <div className="mt-4 flex items-center gap-6 rounded-14 bg-white/95 p-6">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={credential.vcOfferQrDataUrl}
+                alt="Open DID 보증서 VC 발급 QR"
+                width={128}
+                height={128}
+                className="h-32 w-32 shrink-0"
+              />
+              <div className="min-w-0">
+                <p className="text-14 font-semibold text-ink">DID 지갑으로 발급받기</p>
+                <p className="mt-2 text-12 leading-5 text-body">
+                  Open DID 지갑 앱으로 이 QR을 스캔하면 보증서가 검증가능
+                  자격증명(VC)으로 발급됩니다. 수령 전까지는 보증서 번호로 검증합니다.
+                </p>
+              </div>
+            </div>
+          ) : null}
+
           <p className="mt-8 text-11 text-brand-soft">
             {active && daysLeft <= 30
               ? `유효기간이 ${daysLeft}일 남았습니다. 계약 갱신 후 재발급받으세요.`

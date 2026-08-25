@@ -1,3 +1,4 @@
+import { requestIssueOffer } from "@/lib/identity/opendid-issuer";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
@@ -123,6 +124,14 @@ export async function POST(request: NextRequest) {
   const expiresAt = new Date();
   expiresAt.setMonth(expiresAt.getMonth() + span);
 
+  // Open DID Issuer에서 발급 오퍼를 받아 둔다 (라온시큐어 피드백 — 보증서 발급에
+  // Open DID를 쓴다). 실패해도 발급을 막지 않는다: 번호 기반 검증이 이미 성립하고,
+  // Issuer가 죽었다고 운영자가 매장에 못 들어가는 건 과한 결합이다.
+  //
+  // 오퍼는 VC가 아니다. 운영자가 DID 지갑으로 수령해야 VC가 생기므로 vcId는
+  // 계속 null이고, 화면은 "번호로 검증"을 그대로 표시한다.
+  const offer = await requestIssueOffer();
+
   const created = await prisma.operatorCredential.create({
     data: {
       credentialNo: credentialNo(applicationId),
@@ -132,6 +141,9 @@ export async function POST(request: NextRequest) {
       projectId: typeof projectId === "string" && projectId ? projectId : null,
       status: "active",
       expiresAt,
+      vcOfferId: offer?.offerId ?? null,
+      vcPlanId: offer?.vcPlanId ?? null,
+      vcOfferAt: offer ? new Date() : null,
     },
   });
 

@@ -4,6 +4,7 @@ import { requireRole } from "@/lib/auth";
 import QRCode from "qrcode";
 
 import { checkCredential, CREDENTIAL_STATUS_LABEL } from "@/lib/credential";
+import { offerPayloadFor, openDidIssuerStatus } from "@/lib/identity/opendid-issuer";
 
 /**
  * GET /api/operator/credential — 내 보증서 (O-08 · 앱 M-02).
@@ -58,10 +59,29 @@ export async function GET() {
       }).catch(() => null)
     : null;
 
+  // Open DID 발급 오퍼 QR. 운영자가 DID 지갑으로 스캔하면 보증서가 VC로 발급된다.
+  // 오퍼가 없거나 이미 수령했으면(vcId 존재) 만들지 않는다.
+  const vcOffer =
+    credential.vcOfferId && credential.vcPlanId && !credential.vcId
+      ? await QRCode.toDataURL(
+          offerPayloadFor({
+            offerId: credential.vcOfferId,
+            vcPlanId: credential.vcPlanId,
+            issuer: "did:omn:issuer",
+            validUntil: (credential.vcOfferAt ?? new Date()).toISOString(),
+          }),
+          { errorCorrectionLevel: "M", margin: 2, width: 320 },
+        ).catch(() => null)
+      : null;
+
   return NextResponse.json({
     credential: {
       credentialNo: credential.credentialNo,
       qrDataUrl,
+      // VC 발급 경로 (Open DID). 오퍼가 있어도 수령 전에는 vcId가 null이다.
+      vcOfferQrDataUrl: vcOffer,
+      vcPlanId: credential.vcPlanId,
+      vcIssuer: openDidIssuerStatus().enabled ? "opendid" : null,
       operatorName: credential.user.name,
       project: credential.project,
       status: credential.status,

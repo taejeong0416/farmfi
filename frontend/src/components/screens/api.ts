@@ -718,6 +718,10 @@ export type OperatorCredential = {
   credentialNo: string;
   /** 앱이 스캔할 QR (data URI). 유효하지 않은 보증서는 서버가 만들지 않아 null이다. */
   qrDataUrl?: string | null;
+  /** Open DID VC 발급 오퍼 QR. 수령 전에만 나온다. */
+  vcOfferQrDataUrl?: string | null;
+  vcPlanId?: string | null;
+  vcIssuer?: string | null;
   operatorName: string;
   spaceAddress: string | null;
   status: string;
