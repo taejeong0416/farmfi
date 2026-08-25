@@ -118,16 +118,17 @@ echo "  $URL"
 # 멀쩡한 터널을 두 번 죽은 것으로 오판했다.
 #
 # 그래서 두 가지를 한다.
-#   1) 대기는 dig로 한다 — 시스템 리졸버를 거치지 않아 음성 캐시를 만들지 않는다.
+#   1) 대기는 node:dns로 한다 — c-ares가 직접 질의하므로 시스템 리졸버의 음성
+#      캐시를 만들지 않는다. dig 없는 윈도우에서도 돌아간다(node는 준비물이다).
 #   2) 확인 curl은 --resolve로 IP를 직접 물려 리졸버를 통째로 건너뛴다.
 # 어차피 실제 트래픽은 Vercel에서 나가므로 이 노트북의 DNS 캐시와는 무관하다.
 echo "▸ 터널 DNS 전파 대기"
 HOST="${URL#https://}"
 TUNNEL_IP=""
 for _ in $(seq 1 30); do
-  # `|| true` 없으면 아직 안 뜬 동안 grep이 1을 반환하고, set -e+pipefail이
-  # 그 자리에서 스크립트를 죽인다 — 아래 안내 문구에 닿지도 못한다.
-  TUNNEL_IP="$(dig +short "$HOST" 2>/dev/null | grep -E '^[0-9.]+$' | head -1 || true)"
+  # `|| true` 없으면 아직 안 뜬 동안 node가 1로 죽고, set -e가 그 자리에서
+  # 스크립트를 끝낸다 — 아래 안내 문구에 닿지도 못한다.
+  TUNNEL_IP="$(node -e 'require("node:dns").promises.resolve4(process.argv[1]).then((a)=>console.log(a[0])).catch(()=>process.exit(1))' "$HOST" 2>/dev/null || true)"
   [ -n "$TUNNEL_IP" ] && break
   sleep 2
 done
