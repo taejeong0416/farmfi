@@ -70,6 +70,8 @@ export function VerifyMobileIdScreen({ next }: { next?: string }) {
   const eligibility = statusQuery.data?.eligibility;
   const expired = left === 0;
   const failed = status === "failed" || expired;
+  // 최초 렌더는 mutate 직전이라 isPending이 아직 false다. idle까지 발급 중으로 본다.
+  const issuing = offerMutation.isIdle || offerMutation.isPending;
 
   useEffect(() => {
     if (status === "verified") {
@@ -94,15 +96,22 @@ export function VerifyMobileIdScreen({ next }: { next?: string }) {
 
       <div className="mt-6 rounded-10 border border-line px-6 py-7">
         <div className="mx-auto flex h-[174px] w-[166px] items-center justify-center rounded-10 border border-line bg-surface p-3">
-          {!offer ? (
-            <span className="text-11 text-muted">요청 발급 중</span>
-          ) : offer.qrData.startsWith("data:image") ? (
+          {offer?.qrData.startsWith("data:image") ? (
             // OACX는 QR을 PNG 데이터 URI로 준다. 그 외 제공자는 스캔할 페이로드 문자열.
             /* eslint-disable-next-line @next/next/no-img-element */
             <img src={offer.qrData} alt="본인확인 QR" className="h-full w-full object-contain" />
-          ) : (
+          ) : offer?.qrData ? (
             <span className="break-all text-center font-mono text-[9px] leading-[1.5] text-body">
               {offer.qrData}
+            </span>
+          ) : issuing ? (
+            <span className="text-11 text-muted">요청 발급 중</span>
+          ) : (
+            // 발급이 실패해도 빈 칸으로 두지 않는다 — 여기서 멈춘 줄 모르면 아무도 다시 누르지 않는다.
+            <span className="text-center text-11 leading-4 text-danger">
+              QR을 발급하지 못했어요
+              <br />
+              <span className="text-muted">아래에서 다시 발급해 주세요</span>
             </span>
           )}
         </div>
@@ -123,7 +132,7 @@ export function VerifyMobileIdScreen({ next }: { next?: string }) {
           >
             QR 새로 발급
           </Button>
-          {offer ? (
+          {offer?.deeplink ? (
             <Button size="sm" variant="secondary" href={offer.deeplink}>
               모바일 신분증 앱 열기
             </Button>
