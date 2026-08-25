@@ -60,13 +60,26 @@ export function OrderScreen() {
   /** 코드를 직접 넣어 적용한다 (`.fig` B-04). 없는 코드면 이유를 적는다. */
   function applyCouponCode() {
     const code = couponInput.trim().toUpperCase();
+    if (!code) {
+      setCouponError("쿠폰 코드를 입력하거나 보유 쿠폰에서 골라 주세요.");
+      return;
+    }
     const found = COUPONS.find((c) => c.code === code);
     if (!found) {
       setCouponError("쓸 수 없는 쿠폰 코드입니다.");
       return;
     }
     setCouponError(null);
+    setCouponInput("");
     update({ couponCode: found.code, discount: found.discount });
+  }
+
+  /** 목록에서 골라 적용한다. 코드 입력칸에 남은 오류는 함께 지운다. */
+  function applyCoupon(code: string, discount: number) {
+    setCouponError(null);
+    setCouponInput("");
+    update({ couponCode: code, discount });
+    setCouponOpen(false);
   }
 
   if (!ready) {
@@ -83,6 +96,7 @@ export function OrderScreen() {
   const chosen = crops.filter((c) => draft.productIds.includes(c.productId));
   const base = monthlyPrice(packSize, draft.perWeek);
   const total = Math.max(0, base - draft.discount);
+  const applied = COUPONS.find((c) => c.code === draft.couponCode) ?? null;
   const firstPickup = upcomingPickups(draft.perWeek, 1)[0];
   // 다음 자동결제 — 다음 달 1일. 도면의 `매월 1일 자동결제`와 같은 날이다.
   const nextBilling = (() => {
@@ -148,11 +162,20 @@ export function OrderScreen() {
               <div>
                 <p className="text-15 text-muted">쿠폰 · 할인</p>
                 <p className="mt-2 text-15 font-medium text-ink">
-                  {draft.couponCode
-                    ? (COUPONS.find((c) => c.code === draft.couponCode)?.title ??
-                      draft.couponCode)
-                    : "적용된 쿠폰 없음"}
+                  {applied?.title ?? draft.couponCode ?? "적용된 쿠폰 없음"}
                 </p>
+                {draft.couponCode ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCouponError(null);
+                      update({ couponCode: null, discount: 0 });
+                    }}
+                    className="mt-2 text-12 text-muted underline underline-offset-4 hover:text-ink"
+                  >
+                    쿠폰 빼기
+                  </button>
+                ) : null}
               </div>
               <Button size="sm" variant="ghost" onClick={() => setCouponOpen(true)}>
                 보유 쿠폰 {COUPONS.length}장
@@ -198,7 +221,7 @@ export function OrderScreen() {
               <p className="mb-3 text-18 font-medium text-ink">결제 요약</p>
               <Row label={`${packSize}종 믹스팩`} value={won(base)} />
               <Row
-                label="첫 구독 쿠폰"
+                label={applied?.title ?? "쿠폰 할인"}
                 value={draft.discount ? `-${won(draft.discount)}` : "-"}
               />
               <Row label="픽업 비용" value={won(0)} />
@@ -278,10 +301,7 @@ export function OrderScreen() {
                 <button
                   key={c.code}
                   type="button"
-                  onClick={() => {
-                    update({ couponCode: c.code, discount: c.discount });
-                    setCouponOpen(false);
-                  }}
+                  onClick={() => applyCoupon(c.code, c.discount)}
                   className={`w-full rounded-10 border px-5 py-4 text-left ${
                     draft.couponCode === c.code
                       ? "border-brand bg-brand-soft"
@@ -292,7 +312,9 @@ export function OrderScreen() {
                     {c.recommended ? "추천 · " : ""}
                     {c.title}
                   </p>
-                  <p className="mt-1.5 text-12 text-muted">{c.desc}</p>
+                  <p className="mt-1.5 text-12 text-muted">
+                    {c.desc} · 코드 <span className="font-num">{c.code}</span>
+                  </p>
                   <p className="mt-2 font-num text-12 text-brand">
                     적용하면 {won(Math.max(0, base - c.discount))}
                   </p>
