@@ -269,12 +269,26 @@ export function ProjectDetailScreen({ id }: { id: string }) {
                   href={`/api/projects/${id}/documents/${d.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between border-b border-surface py-4 last:border-b-0 hover:bg-surface"
+                  className="group -mx-3 flex items-center gap-3 rounded-8 border-b border-surface px-3 py-4 transition-colors last:border-b-0 hover:bg-surface"
                 >
-                  <span className="text-13 text-ink underline-offset-2 group-hover:underline">
+                  <span className="flex-1 text-13 text-ink transition-colors group-hover:text-brand">
                     {d.name}
                   </span>
                   <span className="text-12 text-muted">{d.date}</span>
+                  <svg
+                    viewBox="0 0 16 16"
+                    aria-hidden
+                    className="h-3.5 w-3.5 shrink-0 text-muted opacity-0 transition-opacity group-hover:opacity-100"
+                  >
+                    <path
+                      d="M8 1.5v8m0 0L5 6.5m3 3 3-3M2.5 11v2A1.5 1.5 0 0 0 4 14.5h8a1.5 1.5 0 0 0 1.5-1.5v-2"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.4"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
                 </a>
               ))}
             </div>

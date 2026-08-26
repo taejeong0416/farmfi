@@ -20,14 +20,19 @@ const BRAND = rgb(0x14 / 255, 0x54 / 255, 0x2e / 255);
 
 // 폰트는 요청마다 디스크를 때리지 않게 프로세스 단위로 잡아 둔다.
 // public/ 아래에 두는 건 demo mock 이미지와 같은 이유다 — Vercel이 항상 배포한다.
+//
+// .subset.ttf 를 쓰는 이유 — pdf-lib의 embedFont(subset: true)가 한글 글리프를
+// 대부분 떨어뜨린다("온천장 스마트팜 1호점" → "트팜 1"). 그래서 런타임 subset은 끄고,
+// 대신 scripts/subset-fonts.mts 가 미리 KS X 1001 2,350자로 줄여 둔 폰트를 넣는다.
+// (원본 2.6MB → 431KB. 글자를 다시 늘리려면 그 스크립트의 CHARSET을 고치고 재생성.)
 let fontCache: { regular: Uint8Array; bold: Uint8Array } | null = null;
 
 async function loadFontBytes() {
   if (fontCache) return fontCache;
   const dir = path.join(process.cwd(), "public", "fonts");
   const [regular, bold] = await Promise.all([
-    fs.readFile(path.join(dir, "Pretendard-Regular.ttf")),
-    fs.readFile(path.join(dir, "Pretendard-Bold.ttf")),
+    fs.readFile(path.join(dir, "Pretendard-Regular.subset.ttf")),
+    fs.readFile(path.join(dir, "Pretendard-Bold.subset.ttf")),
   ]);
   fontCache = { regular, bold };
   return fontCache;
@@ -51,9 +56,10 @@ export class DocBuilder {
     const bytes = await loadFontBytes();
     b.doc = await PDFDocument.create();
     b.doc.registerFontkit(fontkit);
-    // subset: true — 쓴 글자만 넣어야 2.7MB 원본이 통째로 따라오지 않는다.
-    b.regular = await b.doc.embedFont(bytes.regular, { subset: true });
-    b.bold = await b.doc.embedFont(bytes.bold, { subset: true });
+    // subset: false — 위 주석 참고. 폰트는 이미 줄여 둔 것이라 켤 필요가 없고,
+    // 켜면 pdf-lib이 한글 글리프를 떨어뜨린다.
+    b.regular = await b.doc.embedFont(bytes.regular, { subset: false });
+    b.bold = await b.doc.embedFont(bytes.bold, { subset: false });
     b.newPage();
     return b;
   }

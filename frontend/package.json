@@ -11,7 +11,8 @@
     "seed": "tsx prisma/seed.ts",
     "seed:opendata": "tsx prisma/seed-opendata.ts",
     "prisma:push": "npx prisma db push",
-    "prisma:generate": "npx prisma generate"
+    "prisma:generate": "npx prisma generate",
+    "fonts:subset": "tsx scripts/subset-fonts.mts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.100.1",
@@ -29,6 +30,7 @@
     "openai": "^6.41.0",
     "pdf-lib": "^1.17.1",
     "pg": "^8.21.0",
+    "pretendard": "^1.3.9",
     "prisma": "^7.8.0",
     "qrcode": "^1.5.4",
     "react": "^18",
@@ -47,6 +49,7 @@
     "eslint-config-next": "14.2.35",
     "playwright": "^1.62.1",
     "postcss": "^8",
+    "subset-font": "^2.5.0",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }
