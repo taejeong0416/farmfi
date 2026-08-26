@@ -32,6 +32,7 @@
 | `qa/web-qa-sheet.xlsx` | 웹 QA 시트 — TC·요청사항(REQ)·인수 테스트 판정 (`qa/README.md`에 탭 설명) | 기록 |
 | `ai-usage.md` | AI 활용 내역 — 쓴 도구·활용 범위·AI 생성 코드의 검증과 수정 방식 | 레퍼런스 |
 | `dev-log.md` | 진행상황·결정 기록 | 기록 |
+| `submission/presentation.pdf` | 최종 발표자료 | 레퍼런스 |
 | `submission/banner.jpg` | 최종 제출 배너 | 레퍼런스 |
 | `submission/business-model.html` | 손익 시뮬레이터 — 투자안별 하루 필요 판매량·개설 가능성 계산 | 레퍼런스 |
 
