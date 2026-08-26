@@ -9,13 +9,23 @@ import { prisma } from "@/lib/db";
 import { resolveConfirmedRecord } from "@/lib/period-record";
 import { calculateSettlement } from "@/lib/waterfall";
 
-export const PAYOUT_CATEGORIES = ["dividend", "landlord_rent", "operator_settlement"] as const;
+// equipment_tranche만 성격이 다르다. 나머지 셋은 기간 정산(POST /api/payouts)이
+// 만드는 월 단위 지급이고, 이것은 마일스톤이 집행될 때 그 자리에서 한 건씩 생긴다
+// (POST /api/milestones/[id]/complete). 조성자금이 운영자를 거치지 않고 설비업체
+// 계좌로 곧장 간다는 것을 원장에 남기는 것이 목적이다.
+export const PAYOUT_CATEGORIES = [
+  "dividend",
+  "landlord_rent",
+  "operator_settlement",
+  "equipment_tranche",
+] as const;
 export type PayoutCategory = (typeof PAYOUT_CATEGORIES)[number];
 
 export const PAYOUT_CATEGORY_LABEL: Record<PayoutCategory, string> = {
   dividend: "투자자 회수금",
   landlord_rent: "건물주 임대료",
   operator_settlement: "운영자 정산",
+  equipment_tranche: "설비업체 집행",
 };
 
 // processing = 어댑터에 이체를 넘긴 상태. 이 값이 있어야 동시 요청 둘이 같은 건을

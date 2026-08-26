@@ -97,6 +97,33 @@ export async function POST(
         },
       });
 
+      // 집행액은 운영자를 거치지 않고 설비업체 계좌로 곧장 간다. 그 사실을 지급
+      // 원장에도 남겨야 "누가 얼마를 받았나"가 에스크로 차감액과 맞물린다 —
+      // 여기서 만들지 않으면 자금이 나간 기록만 있고 받은 사람이 없다.
+      //
+      // 수취인이 등록돼 있지 않으면 건너뛴다. 설비업체 없이 만들어진 옛 프로젝트도
+      // 집행 자체는 막지 않는다 — 대신 그런 프로젝트는 원장에 집행 건이 안 남는다.
+      const vendor = await tx.projectPartner.findFirst({
+        where: { projectId: milestone.projectId, role: "equipment_partner" },
+      });
+      if (vendor) {
+        const now = new Date();
+        const period = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+        await tx.payout.create({
+          data: {
+            projectId: milestone.projectId,
+            category: "equipment_tranche",
+            // @@unique([projectId, period, category, payeeName]) 때문에 단계를 이름에
+            // 붙인다. 한 달에 두 단계가 집행되면 벤더명만으로는 두 번째가 막힌다.
+            payeeName: `${vendor.name} (${milestone.seq}단계)`,
+            payeeUserId: vendor.userId,
+            amount: releaseAmount,
+            period,
+            memo: `${milestone.seq}단계 ${milestone.name} 집행 — 에스크로 직불`,
+          },
+        });
+      }
+
       // Activate next milestone
       const nextMilestone = await tx.milestone.findUnique({
         where: {

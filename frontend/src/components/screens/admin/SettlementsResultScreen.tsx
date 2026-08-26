@@ -27,6 +27,7 @@ const CATEGORY_LABEL: Record<string, string> = {
   dividend: "투자자 회수금",
   landlord_rent: "임대료",
   operator_settlement: "운영자 정산",
+  equipment_tranche: "설비업체 집행",
 };
 
 /** 이번 달 앞의 달 — 매출이 마감된 기간이 정산 대상이다. */

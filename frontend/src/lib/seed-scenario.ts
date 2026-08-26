@@ -115,6 +115,12 @@ export async function seedScenario(prisma: PrismaClient) {
   const landlord = await prisma.user.create({
     data: { name: "최영호", role: "landlord", email: "landlord@farmfi.test", passwordHash: pw },
   });
+  // 설비업체는 조성자금을 직접 받는 수취인이다. 마일스톤이 집행될 때
+  // POST /api/milestones/[id]/complete 가 이 계정 앞으로 지급 건을 만든다.
+  // 계정이 있어야 지급 실행(POST /api/payouts/[id]/execute)이 계좌를 찾을 수 있다.
+  const vendor = await prisma.user.create({
+    data: { name: "그린셀 스마트팜", role: "vendor", email: "vendor@farmfi.test", passwordHash: pw },
+  });
   // 투자자 3명 — 본인인증 완료·연간한도 20M (청약 데모 대상)
   const verifiedInvestor = (name: string, email: string) => ({
     name, role: "investor", email, passwordHash: pw,
@@ -193,6 +199,7 @@ export async function seedScenario(prisma: PrismaClient) {
       bankFor(investor3, "신한은행", "1003"),
       bankFor(operator, "농협은행", "2001"),
       bankFor(landlord, "우리은행", "3001"),
+      bankFor(vendor, "기업은행", "4001"),
     ],
   });
 
@@ -347,6 +354,9 @@ export async function seedScenario(prisma: PrismaClient) {
   await prisma.projectPartner.create({
     data: { projectId: p1.id, role: "landlord", name: "최영호", userId: landlord.id, monthlyRecoveryAmount: BigInt(500_000) },
   });
+  await prisma.projectPartner.create({
+    data: { projectId: p1.id, role: "equipment_partner", name: "그린셀 스마트팜", userId: vendor.id },
+  });
   await prisma.tokenHolding.create({
     data: { userId: investor1.id, projectId: p1.id, amount: 50, avgPrice: BigInt(10_000) },
   });
@@ -394,6 +404,9 @@ export async function seedScenario(prisma: PrismaClient) {
   });
   await prisma.projectPartner.create({
     data: { projectId: p3.id, role: "landlord", name: "박건물", monthlyRecoveryAmount: BigInt(450_000) },
+  });
+  await prisma.projectPartner.create({
+    data: { projectId: p3.id, role: "equipment_partner", name: "그린셀 스마트팜", userId: vendor.id },
   });
   // 기청약 3,480구좌의 보유 내역 — soldTokens와 반드시 합이 같아야 한다.
   // 배당(POST /api/dividends/distribute)의 perToken 분모가 soldTokens가 아니라 TokenHolding
