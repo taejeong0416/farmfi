@@ -566,7 +566,7 @@ $ cd contracts && git submodule update --init && forge test
 
 ### 5. 소개 및 시연영상
 
-[▶️ **FarmFi 시연 영상 보기**](https://youtu.be/5ORpNagNhGg)
+[<img width="700px" alt="FarmFi 소개 및 시연영상" src="docs/images/demo-thumbnail.jpg" />](https://youtu.be/5ORpNagNhGg)
 
 투자 신청부터 마일스톤 증빙 제출, AI 검증, 단계 집행, 정산·수익 배분까지 전 과정을 실제 화면으로 보여준다.
 
