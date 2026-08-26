@@ -1,6 +1,7 @@
 // 백엔드(frontend/src/app/api/**) 응답 계약과 픽셀아트 UI 사이의 변환 계층.
 // 화면은 이 파일의 타입만 알면 되고, 목데이터는 어디에도 남기지 않는다.
 import type { CropKind, RackId } from "./data";
+import type { Severity } from "./theme";
 
 // ─── GET /api/inventory ───
 export type InventoryItem = {
@@ -220,15 +221,27 @@ export function formatReading(key: SensorKey, value: number): string {
   return `${value.toFixed(m.digits)}${m.unit}`;
 }
 
-// 정상 범위 안이면 normal, 벗어나면 critical. 등급을 더 잘게 나누지 않는다.
+// 두 범위가 겹겹이다. 고장 게이트(healthyRanges)를 뚫으면 설비가 죽었다는 뜻이라
+// 위험, 게이트 안이지만 농학 최적대(optimalRanges)를 벗어나면 수확량이 깎이기
+// 시작한 것이라 주의다. 최적대를 안 주면 위험만 가린다.
 export function readingSeverity(
   key: SensorKey,
   value: number,
-  ranges?: Record<string, [number, number]>
-): "normal" | "critical" {
-  const r = ranges?.[key];
-  if (!r) return "normal";
-  return value < r[0] || value > r[1] ? "critical" : "normal";
+  gate?: Record<string, [number, number]>,
+  optimal?: Record<string, [number, number]>
+): Severity {
+  const g = gate?.[key];
+  if (g && (value < g[0] || value > g[1])) return "critical";
+  const o = optimal?.[key];
+  if (o && (value < o[0] || value > o[1])) return "warning";
+  return "normal";
+}
+
+// 여러 센서의 등급 중 가장 나쁜 것 — 베드 배지가 이 값을 쓴다.
+export function worstSeverity(list: Severity[]): Severity {
+  if (list.includes("critical")) return "critical";
+  if (list.includes("warning")) return "warning";
+  return "normal";
 }
 
 // ─── 성숙도 → 생육 단계 문구 ───

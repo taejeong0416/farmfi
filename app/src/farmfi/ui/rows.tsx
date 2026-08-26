@@ -124,7 +124,7 @@ export function BedCard({
   cropKind?: CropKind;
   stage: string;
   severity: Severity;
-  readings: { label: string; value: string; alert?: boolean }[];
+  readings: { label: string; value: string; severity?: Severity }[];
   deviceLabel: string;
   devicePercent: number;
   updatedAt: string;
@@ -150,7 +150,14 @@ export function BedCard({
         {readings.map((r) => (
           <View style={s.bedReading} key={r.label}>
             <Text style={s.bedReadingLabel}>{r.label}</Text>
-            <Text style={[s.bedReadingValue, r.alert && { color: C.danger }]}>{r.value}</Text>
+            <Text
+              style={[
+                s.bedReadingValue,
+                r.severity && r.severity !== "normal" && { color: SEVERITY[r.severity].fg },
+              ]}
+            >
+              {r.value}
+            </Text>
           </View>
         ))}
       </View>
@@ -252,16 +259,21 @@ export function SensorTile({
   onPress?: () => void;
   style?: StyleProp<ViewStyle>;
 }) {
-  const critical = severity === "critical";
+  // 정상만 흰 바탕에 테두리를 두른다. 주의·위험은 물든 바탕이 테두리를 대신한다.
+  const spec = SEVERITY[severity];
+  const tinted = severity !== "normal";
   return (
-    <Pressable onPress={onPress} style={[s.sensorTile, style]}>
+    <Pressable
+      onPress={onPress}
+      style={[
+        s.sensorTile,
+        tinted && { backgroundColor: spec.bg, borderColor: spec.bg },
+        style,
+      ]}
+    >
       <Text style={s.sensorLabel}>{label}</Text>
-      <Text style={[s.sensorValue, critical && { color: C.danger }]}>{value}</Text>
-      {severity !== "normal" && (
-        <Text style={[s.sensorState, critical && { color: C.danger }]}>
-          {SEVERITY[severity].label}
-        </Text>
-      )}
+      <Text style={[s.sensorValue, tinted && { color: spec.fg }]}>{value}</Text>
+      {tinted && <Text style={[s.sensorState, { color: spec.fg }]}>{spec.label}</Text>}
     </Pressable>
   );
 }

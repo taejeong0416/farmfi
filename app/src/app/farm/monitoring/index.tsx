@@ -10,6 +10,7 @@ import {
   formatStamp,
   rackIdAt,
   readingSeverity,
+  worstSeverity,
   stageLabel,
   type InventoryResponse,
   type MonitoringDetailResponse,
@@ -43,16 +44,17 @@ export default function MonitoringScreen() {
 
   const items = inv.data?.projects[0]?.items ?? [];
   const latest = mon.data?.points.at(-1) ?? null;
-  const ranges = mon.data?.healthyRanges;
+  const gate = mon.data?.healthyRanges;
+  const optimal = mon.data?.optimalRanges;
   const loading = inv.loading || mon.loading;
 
   const readings = KEYS.map((k) => ({
     label: SENSOR_META[k].label,
     value: latest ? formatReading(k, latest[k]) : "—",
-    alert: latest ? readingSeverity(k, latest[k], ranges) === "critical" : false,
+    severity: latest ? readingSeverity(k, latest[k], gate, optimal) : ("normal" as const),
   }));
 
-  const anyAlert = readings.some((r) => r.alert);
+  const worst = worstSeverity(readings.map((r) => r.severity));
 
   return (
     <AppShell
@@ -94,7 +96,7 @@ export default function MonitoringScreen() {
               crop={item.productName}
               cropKind={cropKindOf(item.productName, item.category)}
               stage={stageLabel(item.maturityPercent)}
-              severity={anyAlert ? "critical" : "normal"}
+              severity={worst}
               readings={readings}
               deviceLabel={`성숙도 ${Math.round(item.maturityPercent)}%`}
               devicePercent={item.maturityPercent}

@@ -12,6 +12,9 @@ export const C = {
   brand: "#14542E",
   brandSoft: "#EAF6EE",
   danger: "#A34A3D",
+  dangerSoft: "#FBF0EE",
+  warn: "#A8762A",
+  warnSoft: "#FDF6EA",
   paper: "#FFFFFF",
 
   // 기존 픽셀아트 화면이 쓰는 이름. 값은 위 팔레트를 가리킨다.
@@ -21,11 +24,12 @@ export const C = {
   stageBg: "#F2F2F0",
 } as const;
 
-// 상태는 색으로 등급 매기지 않는다 — 글자로 말한다. 배지 배경은 전부 surface고
-// 위험만 danger 글자색을 쓴다. (`build-plan.md` 그라운드 룰)
+// 등급마다 배경과 글자색이 한 쌍으로 움직인다 (`App_Badge` · `App_SensorTile` 심볼).
+// 배지와 센서 타일이 같은 표를 보므로 한 화면에서 "주의인데 배지는 회색" 같은
+// 어긋남이 생기지 않는다.
 export const SEVERITY = {
-  critical: { bg: C.surface, fg: C.danger, label: "위험" },
-  warning: { bg: C.surface, fg: C.body, label: "주의" },
+  critical: { bg: C.dangerSoft, fg: C.danger, label: "위험" },
+  warning: { bg: C.warnSoft, fg: C.warn, label: "주의" },
   normal: { bg: C.brandSoft, fg: C.brand, label: "정상" },
 } as const;
 

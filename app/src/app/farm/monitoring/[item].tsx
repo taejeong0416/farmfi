@@ -13,6 +13,7 @@ import {
   formatStamp,
   rackIdAt,
   readingSeverity,
+  worstSeverity,
   stageLabel,
   type DeviceCommandResult,
   type DeviceKind,
@@ -94,7 +95,11 @@ export default function BedDetailScreen() {
   };
 
   const latest = mon.data?.points.at(-1) ?? null;
-  const ranges = mon.data?.healthyRanges;
+  const gate = mon.data?.healthyRanges;
+  const optimal = mon.data?.optimalRanges;
+  const severities = KEYS.map((k) =>
+    latest ? readingSeverity(k, latest[k], gate, optimal) : ("normal" as const)
+  );
 
   const devices = [...(dev.data?.devices ?? [])].sort(
     (a, b) => KIND_ORDER.indexOf(a.kind) - KIND_ORDER.indexOf(b.kind)
@@ -155,9 +160,7 @@ export default function BedDetailScreen() {
   }
 
   const bedName = `베드 ${bed}`;
-  const anyAlert = KEYS.some(
-    (k) => latest && readingSeverity(k, latest[k], ranges) === "critical"
-  );
+  const worst = worstSeverity(severities);
 
   return (
     <DetailShell
@@ -179,7 +182,7 @@ export default function BedDetailScreen() {
             <Text style={s.sceneCrop}>{item.productName}</Text>
             <Text style={s.sceneStage}>{stageLabel(item.maturityPercent)}</Text>
           </View>
-          <Badge severity={anyAlert ? "critical" : "normal"} />
+          <Badge severity={worst} />
         </View>
         <View style={s.sceneBar}>
           <ProgressBar percent={item.maturityPercent} height={10} />
@@ -198,21 +201,23 @@ export default function BedDetailScreen() {
         <CardTitle>환경 센서</CardTitle>
         {mon.error && <StateNotice tone="error" message={mon.error} onRetry={mon.reload} />}
         <View style={s.sensorGrid}>
-          {KEYS.map((k) => (
+          {KEYS.map((k, i) => (
             <SensorTile
               key={k}
               label={SENSOR_META[k].label}
               value={latest ? formatReading(k, latest[k]) : "—"}
-              severity={latest ? readingSeverity(k, latest[k], ranges) : "normal"}
+              severity={severities[i]}
               onPress={() => go.push("/farm/monitoring/history")}
               style={s.sensorTile}
             />
           ))}
         </View>
-        {ranges && (
+        {/* 타일이 주의로 물드는 선, 곧 최적대다. 위험선(고장 게이트)은 더 바깥이라
+            여기 같이 적으면 어느 숫자가 지금 색을 정했는지 읽히지 않는다. */}
+        {optimal && (
           <Text style={s.rangeNote}>
-            기준 온도 {ranges.temperature?.[0]}~{ranges.temperature?.[1]}℃ · CO₂{" "}
-            {ranges.co2Level?.[0]}~{ranges.co2Level?.[1]}ppm
+            기준 온도 {optimal.temperature?.[0]}~{optimal.temperature?.[1]}℃ · CO₂{" "}
+            {optimal.co2Level?.[0]}~{optimal.co2Level?.[1]}ppm
           </Text>
         )}
       </Card>
