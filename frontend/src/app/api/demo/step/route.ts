@@ -116,22 +116,32 @@ async function subscribe(
   };
 }
 
+// verify-photo가 요구하는 milestoneType. 사진을 보는 단계는 3(반입)·4(설치 완료)뿐이고
+// 나머지는 서류·센서로 판정하므로 값만 채운다.
 const milestoneTypeBySeq: Record<number, string> = {
   1: "construction",
-  2: "trial_run",
-  3: "harvest",
-  4: "operation",
+  2: "construction",
+  3: "delivery",
+  4: "installation",
+  5: "operation",
 };
 
-// public/demo/의 mock 증빙 이미지
+// public/demo/의 mock 증빙 이미지. 시드의 requiredSignals와 짝이 맞아야 한다 —
+// 여기 없는 신호는 verify가 이미지 없이 호출돼 판정이 실패한다.
 const mockImagesBySeq: Record<
   number,
-  { contract?: string; receipt?: string; photo?: string }
+  { contract?: string; receipt?: string; photo?: string; inspection?: string }
 > = {
-  1: { contract: "mock-contract.jpg", receipt: "mock-receipt-1.jpg", photo: "mock-photo-1.jpg" }, // 설비 영수증
-  2: {}, // IoT 14일 가동률만 검증 (이미지 없음)
-  3: { receipt: "mock-receipt-2.jpg", photo: "mock-photo-3.jpg" }, // 판매 영수증 + 수확 사진
-  4: { receipt: "mock-receipt-2.jpg" }, // IoT 60일 + 복수 판매 영수증
+  // 1 계약 체결 — 공간사용 협약서
+  1: { contract: "mock-contract.jpg" },
+  // 2 설비 발주·제작 — 발주서(계약서 서식) + 계약금 영수증
+  2: { contract: "mock-contract.jpg", receipt: "mock-receipt-1.jpg" },
+  // 3 반입·설치 착수 — 반입 현장 사진 + 운송 영수증
+  3: { photo: "mock-photo-1.jpg", receipt: "mock-receipt-1.jpg" },
+  // 4 설치 완료·검수 — 설치 완료 사진 + 검수확인서
+  4: { photo: "mock-photo-3.jpg", inspection: "mock-inspection.jpg" },
+  // 5 시운전·영업 개시 — IoT 14일 가동률 + 첫 판매 영수증
+  5: { receipt: "mock-receipt-2.jpg" },
 };
 
 async function loadMockImageBase64(filename: string): Promise<string> {
@@ -153,11 +163,11 @@ async function submitDemoEvidence(
   authHeader: string
 ) {
   const files = mockImagesBySeq[seq] ?? {};
-  const urls = [files.contract, files.receipt, files.photo]
+  const urls = [files.contract, files.receipt, files.photo, files.inspection]
     .filter((f): f is string => !!f)
     .map((f) => `/demo/${f}`);
-  // seq 2는 IoT 가동률만 본다 — 첨부할 문서가 없다. 가동 현장 사진 한 장으로 제출
-  // 형식을 맞춘다. 판정 근거는 어차피 센서 데이터다.
+  // 센서만 보는 단계는 첨부할 문서가 없다. 가동 현장 사진 한 장으로 제출 형식을
+  // 맞춘다 — 판정 근거는 어차피 센서 데이터다.
   if (urls.length === 0) urls.push("/demo/mock-photo-1.jpg");
 
   const res = await fetch(`${baseUrl}/api/milestones/${milestoneId}/evidence`, {
@@ -197,6 +207,9 @@ async function verifyAndCompleteMilestone(
   }
   if (milestone.requiredSignals.includes("photo") && mockImages.photo) {
     body.photoImage = await loadMockImageBase64(mockImages.photo);
+  }
+  if (milestone.requiredSignals.includes("inspection") && mockImages.inspection) {
+    body.inspectionImage = await loadMockImageBase64(mockImages.inspection);
   }
 
   // 증빙이 아직 없으면 먼저 제출한다 — 게이트가 증빙 없는 검증을 400으로 막는다.
@@ -324,7 +337,9 @@ async function distributeDividends(baseUrl: string, authHeader: string) {
 type StepExecutor = () => Promise<any>;
 
 // 3호점(모집중, 시드 3,480구좌) 잔여 920구좌 청약 → 4,400구좌 완납 · 신탁 4,400만 →
-// 마일스톤 seq1~4 순차 집행(트랜치 합계 4,400만 = 잔여 정확히 0) + 스텝7 수수료 풀 배당.
+// 마일스톤 seq1~5 순차 집행(집행 합계 4,400만 = 잔여 정확히 0) + 스텝8 수수료 풀 회수금.
+// 회수금 분배를 마지막 단계 앞에 두는 것은, 매장이 다 지어지기 전에도 운영 실적이
+// 나오면 투자자에게 회수가 시작된다는 것을 보여주기 위해서다.
 function buildStepExecutors(baseUrl: string, authHeader: string): Record<number, StepExecutor> {
   return {
     1: () => subscribe("김투자", 300, baseUrl, authHeader),
@@ -333,13 +348,14 @@ function buildStepExecutors(baseUrl: string, authHeader: string): Record<number,
     4: () => verifyAndCompleteMilestone(1, baseUrl, authHeader),
     5: () => verifyAndCompleteMilestone(2, baseUrl, authHeader),
     6: () => verifyAndCompleteMilestone(3, baseUrl, authHeader),
-    7: () => distributeDividends(baseUrl, authHeader),
-    8: () => verifyAndCompleteMilestone(4, baseUrl, authHeader),
+    7: () => verifyAndCompleteMilestone(4, baseUrl, authHeader),
+    8: () => distributeDividends(baseUrl, authHeader),
+    9: () => verifyAndCompleteMilestone(5, baseUrl, authHeader),
   };
 }
 
-// 마일스톤 검증 스텝(4·5·6·8)은 verify.passed가 true여야 성공.
-// 그 외 스텝(청약 1·2·3, 배당 7)은 error 필드가 없으면 성공으로 본다.
+// 마일스톤 검증 스텝(4·5·6·7·9)은 verify.passed가 true여야 성공.
+// 그 외 스텝(청약 1·2·3, 회수금 분배 8)은 error 필드가 없으면 성공으로 본다.
 // 실패한 스텝은 캐시하지 않는다 (cached 모드에서 실패를 재생하지 않도록).
 function isStepSuccess(result: any): boolean {
   if (!result || typeof result !== "object") return false;
@@ -378,9 +394,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { step } = body;
 
-    if (!step || step < 1 || step > 8) {
+    if (!step || step < 1 || step > 9) {
       return NextResponse.json(
-        { error: "Invalid step (1-8)" },
+        { error: "Invalid step (1-9)" },
         { status: 400 }
       );
     }
