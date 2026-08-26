@@ -187,7 +187,9 @@ OmniOne CX 표준인증창 호출 (QR/딥링크)
 |:---|:---|
 | Web / API | Next.js 14 (App Router) · Prisma 7 · Supabase(PostgreSQL) |
 | Mobile App | Expo React Native (SDK 57) |
-| On-chain | Foundry(Solidity) · Polygon Amoy · 서버 실행은 viem |
+| On-chain | Foundry(Solidity) · OmniOne Chain(BESU) · 서버 실행은 viem (Polygon Amoy 폴백) |
+| 결제 | 토스페이먼츠 가상계좌 (입금 통지 웹훅) |
+| 파일 | Supabase Storage (증빙 사진·문서) |
 | AI | Google Gemini Vision · OCR (서버사이드 SDK) |
 | 신원 | OmniOne OpenDID (Verifier 자체 호스팅) |
 | Deploy | Vercel(웹·API) · Supabase(DB) · EAS(앱) |
@@ -252,7 +254,9 @@ OmniOne CX 표준인증창 호출 (QR/딥링크)
 |:---|:---|:---|
 | `/api/auth/signup`, `/api/auth/login`, `/api/auth/me` | POST/GET | 이메일+비밀번호 인증·세션 (웹 쿠키 / 앱 Bearer) |
 | `/api/identity/offer`, `/api/identity/status`, `/api/identity/confirm` | POST/GET | OpenDID 신원인증 오퍼·상태·확정 |
-| `/api/subscribe` | POST | STO 청약 (신원인증·연간 투자한도 게이트) |
+| `/api/investments`, `/api/investments/[id]` | POST/GET | STO 청약 (신원인증·연간 투자한도 게이트) |
+| `/api/investments/[id]/virtual-account`, `/deposit-status` | POST/GET | 가상계좌 발급 · 입금 상태 조회 |
+| `/api/webhooks/toss/deposits` | POST | 토스페이먼츠 입금 통지 (계좌별 secret 대조·멱등) |
 | `/api/projects`, `/api/projects/[id]` | GET | 프로젝트·보관 잔액·마일스톤 조회 |
 | `/api/milestones/[id]/verify` | POST | AI 멀티시그널 마일스톤 검증 + 온체인 기록 |
 | `/api/milestones/[id]/complete` | POST | 트랜치 집행 (검증 통과분만) |
@@ -276,7 +280,8 @@ OmniOne CX 표준인증창 호출 (QR/딥링크)
 │   ├── src/lib/            # 도메인 로직 (청약·정산·온체인·AI·최적화)
 │   └── prisma/             # 스키마 · 시드
 ├── app/                    # Expo React Native 운영자 앱
-├── contracts/              # Foundry — Escrow · FarmToken · Dividend · RoundGate
+├── contracts/              # Foundry — Escrow · FarmToken · Dividend · RoundGate · ProjectRegistry · AuditTrail
+├── design/                 # Figma 원본 · 화면별 좌표·색·폰트 덤프
 ├── docs/                   # 기획 문서 · API 명세 · 개발 로그 · 온보딩
 └── README.md
 ```
@@ -330,7 +335,7 @@ Claude Code로 코드 생성·리팩터링·문서화를 진행했고, 멀티에
 
 | 증빙 | 내용 |
 |:---|:---|
-| GitHub 커밋 | 6주간 136건 이상, 시기별 이력 확보 |
+| GitHub 커밋 | 6주간 450건 이상, 시기별 이력 확보 |
 | 실제 화면 | 웹 5화면, 갤럭시 S25 실기기 앱 검증 |
 | AI 데모 리허설 | Gemini 검증부터 트랜치 집행까지 로그 확보 |
 | 온체인 증빙 | OmniOne Chain(chainId 1337)에 컨트랙트 4종 배포·발행 트랜잭션 확보. Polygon Amoy 배포분도 유지 |
@@ -383,7 +388,9 @@ $ cd contracts && git submodule update --init && forge test
 
 ### 5. 소개 및 시연 영상
 
-> 시연 영상은 개발 완료 후 추가 예정입니다.
+**▶️ [FarmFi 시연 영상](https://youtu.be/5ORpNagNhGg)**
+
+투자자 청약부터 마일스톤 증빙 제출, AI 검증, 트랜치 집행, 정산·배당까지 전 과정을 실제 화면으로 보여준다.
 
 <br/>
 
