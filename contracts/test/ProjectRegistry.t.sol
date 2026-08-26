@@ -100,4 +100,79 @@ contract ProjectRegistryTest is Test {
         (bool sent, ) = address(reg).call{value: 1 ether}("");
         assertFalse(sent);
     }
+    // ─── 투자안 (기획 0826 슬라이드 36·37) ───
+
+    /// 회수 조건이 체인에서 조회된다 — 화면 숫자와 맞춰볼 수 있다
+    function test_terms_areQueryable() public {
+        vm.prank(relay);
+        reg.setInvestmentTerms(keccak256("t1"), P, 600, 24, 80_000_000);
+        assertTrue(reg.isCurrentTerms(P, 600, 24, 80_000_000));
+        assertFalse(reg.isCurrentTerms(P, 600, 18, 80_000_000), unicode"기간이 다르면 거짓");
+        assertFalse(reg.isCurrentTerms(P, 800, 24, 80_000_000), unicode"프리미엄이 다르면 거짓");
+    }
+
+    /// 한 번 박으면 다시 못 박는다 — 조건을 통째로 갈아치우는 길을 막는다
+    function test_terms_cannotBeReset() public {
+        vm.startPrank(relay);
+        reg.setInvestmentTerms(keccak256("t2"), P, 600, 24, 80_000_000);
+        vm.expectRevert("ProjectRegistry: terms already set");
+        reg.setInvestmentTerms(keccak256("t3"), P, 1200, 12, 80_000_000);
+        vm.stopPrank();
+        assertTrue(reg.isCurrentTerms(P, 600, 24, 80_000_000));
+    }
+
+    /// 기간 연장은 허용한다 — 실적이 안 나올 때 최대 36개월(슬라이드 37 각주)
+    function test_recovery_canExtendUpTo36() public {
+        vm.startPrank(relay);
+        reg.setInvestmentTerms(keccak256("t4"), P, 600, 24, 80_000_000);
+        reg.extendRecovery(keccak256("t5"), P, 36);
+        vm.stopPrank();
+        assertTrue(reg.isCurrentTerms(P, 600, 36, 80_000_000));
+    }
+
+    /// 기간 단축은 거부한다 — 투자자가 받을 기간을 조용히 깎을 수 없다
+    function test_recovery_cannotShorten() public {
+        vm.startPrank(relay);
+        reg.setInvestmentTerms(keccak256("t6"), P, 600, 24, 80_000_000);
+        vm.expectRevert("ProjectRegistry: cannot shorten");
+        reg.extendRecovery(keccak256("t7"), P, 18);
+        vm.expectRevert("ProjectRegistry: exceeds 36 months");
+        reg.extendRecovery(keccak256("t8"), P, 48);
+        vm.stopPrank();
+        assertTrue(reg.isCurrentTerms(P, 600, 24, 80_000_000));
+    }
+
+    /// 등록되지 않은 프로젝트에는 조건을 박을 수 없다
+    function test_terms_requireRegisteredProject() public {
+        vm.prank(relay);
+        vm.expectRevert("ProjectRegistry: not registered");
+        reg.setInvestmentTerms(keccak256("t9"), keccak256("ghost"), 600, 24, 80_000_000);
+    }
+
+    function test_terms_requireRelayRole() public {
+        vm.prank(stranger);
+        vm.expectRevert();
+        reg.setInvestmentTerms(keccak256("tA"), P, 600, 24, 80_000_000);
+    }
+
+    /// 재시도가 조건을 두 번 먹이지 않는다
+    function test_terms_sameEventIdIsIdempotent() public {
+        vm.startPrank(relay);
+        reg.setInvestmentTerms(keccak256("tB"), P, 600, 24, 80_000_000);
+        reg.extendRecovery(keccak256("tC"), P, 30);
+        reg.extendRecovery(keccak256("tC"), P, 36); // 같은 eventId — 무시돼야 한다
+        vm.stopPrank();
+        assertTrue(reg.isCurrentTerms(P, 600, 30, 80_000_000));
+    }
+
+    function test_terms_rejectBadInputs() public {
+        vm.startPrank(relay);
+        vm.expectRevert("ProjectRegistry: zero premium");
+        reg.setInvestmentTerms(keccak256("tD"), P, 0, 24, 80_000_000);
+        vm.expectRevert("ProjectRegistry: bad months");
+        reg.setInvestmentTerms(keccak256("tE"), P, 600, 48, 80_000_000);
+        vm.expectRevert("ProjectRegistry: zero principal");
+        reg.setInvestmentTerms(keccak256("tF"), P, 600, 24, 0);
+        vm.stopPrank();
+    }
 }

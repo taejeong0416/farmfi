@@ -76,6 +76,54 @@ const REGISTRY_ABI = [
   },
   {
     type: "function",
+    name: "setInvestmentTerms",
+    inputs: [
+      { name: "eventId", type: "bytes32" },
+      { name: "projectRef", type: "bytes32" },
+      { name: "annualPremiumBp", type: "uint16" },
+      { name: "recoveryMonths", type: "uint16" },
+      { name: "principal", type: "uint256" },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "extendRecovery",
+    inputs: [
+      { name: "eventId", type: "bytes32" },
+      { name: "projectRef", type: "bytes32" },
+      { name: "newMonths", type: "uint16" },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "terms",
+    inputs: [{ name: "", type: "bytes32" }],
+    outputs: [
+      { name: "annualPremiumBp", type: "uint16" },
+      { name: "recoveryMonths", type: "uint16" },
+      { name: "principal", type: "uint256" },
+      { name: "setAt", type: "uint256" },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "isCurrentTerms",
+    inputs: [
+      { name: "projectRef", type: "bytes32" },
+      { name: "annualPremiumBp", type: "uint16" },
+      { name: "recoveryMonths", type: "uint16" },
+      { name: "principal", type: "uint256" },
+    ],
+    outputs: [{ name: "", type: "bool" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
     name: "isCurrentContract",
     inputs: [
       { name: "projectRef", type: "bytes32" },
@@ -222,6 +270,116 @@ export async function syncProjectStateOnChain(
     return hash;
   } catch (e) {
     console.error("ProjectRegistry.syncState 실패:", e);
+    return null;
+  }
+}
+
+/**
+ * 투자안(연 프리미엄·회수기간·원금)을 체인에 박는다.
+ *
+ * 계약서 해시만으로는 "그 문서 안의 숫자"를 체인이 답하지 못한다. 회수 조건은
+ * 투자자가 얼마를 언제까지 받느냐를 정하므로 조용히 바뀌면 안 된다.
+ *
+ * 한 번만 박힌다. 이미 있으면 아무것도 하지 않는다 — 기간을 늘려야 하면
+ * `extendRecoveryOnChain`을 쓴다(단축·인하는 컨트랙트가 거부한다).
+ */
+export async function setInvestmentTermsOnChain(input: {
+  projectId: string;
+  annualPremiumRate: number; // 0.06 = 연 6%
+  recoveryMonths: number;
+  principal: number;
+}): Promise<string | null> {
+  if (!isProjectRegistryEnabled()) return null;
+  if (input.principal <= 0 || input.recoveryMonths <= 0) return null;
+
+  try {
+    // 프로젝트가 먼저 등록돼 있어야 조건을 붙일 수 있다.
+    await ensureProjectOnChain(input.projectId);
+
+    const projectRef = ref("project", input.projectId);
+    const { wallet, pub } = getClients();
+
+    const current = (await pub.readContract({
+      address: REGISTRY_ADDRESS as `0x${string}`,
+      abi: REGISTRY_ABI,
+      functionName: "terms",
+      args: [projectRef],
+    })) as readonly [number, number, bigint, bigint];
+    if (current[3] > BigInt(0)) return null; // 이미 박혀 있다
+
+    // basis point로 옮긴다 — 컨트랙트가 정수만 다룬다.
+    const bp = Math.round(input.annualPremiumRate * 10_000);
+    const hash = await wallet.writeContract({
+      address: REGISTRY_ADDRESS as `0x${string}`,
+      abi: REGISTRY_ABI,
+      functionName: "setInvestmentTerms",
+      args: [
+        ref("terms", input.projectId, String(bp), String(input.recoveryMonths)),
+        projectRef,
+        bp,
+        input.recoveryMonths,
+        BigInt(Math.round(input.principal)),
+      ],
+      ...GAS_OPTS,
+    });
+    await pub.waitForTransactionReceipt({ hash });
+    return hash;
+  } catch (e) {
+    console.error("ProjectRegistry.setInvestmentTerms 실패:", e);
+    return null;
+  }
+}
+
+/** 회수 기간을 늘린다. 실적이 안 나올 때 최대 36개월(기획 0826 슬라이드 37). */
+export async function extendRecoveryOnChain(
+  projectId: string,
+  newMonths: number,
+): Promise<string | null> {
+  if (!isProjectRegistryEnabled()) return null;
+  try {
+    const { wallet, pub } = getClients();
+    const hash = await wallet.writeContract({
+      address: REGISTRY_ADDRESS as `0x${string}`,
+      abi: REGISTRY_ABI,
+      functionName: "extendRecovery",
+      args: [
+        ref("extend", projectId, String(newMonths)),
+        ref("project", projectId),
+        newMonths,
+      ],
+      ...GAS_OPTS,
+    });
+    await pub.waitForTransactionReceipt({ hash });
+    return hash;
+  } catch (e) {
+    console.error("ProjectRegistry.extendRecovery 실패:", e);
+    return null;
+  }
+}
+
+/** 화면에 띄운 회수 조건이 체인 기록과 같은가. */
+export async function areTermsCurrentOnChain(input: {
+  projectId: string;
+  annualPremiumRate: number;
+  recoveryMonths: number;
+  principal: number;
+}): Promise<boolean | null> {
+  if (!isProjectRegistryEnabled()) return null;
+  try {
+    const { pub } = getClients();
+    return (await pub.readContract({
+      address: REGISTRY_ADDRESS as `0x${string}`,
+      abi: REGISTRY_ABI,
+      functionName: "isCurrentTerms",
+      args: [
+        ref("project", input.projectId),
+        Math.round(input.annualPremiumRate * 10_000),
+        input.recoveryMonths,
+        BigInt(Math.round(input.principal)),
+      ],
+    })) as boolean;
+  } catch (e) {
+    console.error("ProjectRegistry.isCurrentTerms 실패:", e);
     return null;
   }
 }

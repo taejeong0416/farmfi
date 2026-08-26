@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 import { serializeBigInt as serialize } from "@/lib/serialize";
 import { requireRole } from "@/lib/auth";
 import { recordAudit } from "@/lib/audit";
-import { calculateFeePool } from "@/lib/waterfall";
+import { calculateSettlement } from "@/lib/waterfall";
 
 export async function POST(request: NextRequest) {
   let session;
@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     throw err;
   }
   try {
-    const { projectId, period: periodInput, experienceRevenue, b2bIncrementalRevenue } =
+    const { projectId, period: periodInput, unitsSold } =
       await request.json();
 
     if (!projectId) {
@@ -60,13 +60,6 @@ export async function POST(request: NextRequest) {
 
     const totalRevenue = Number(record.revenue);
 
-    // 배당 재원은 운영자 매출이 아니라 FarmFi 수수료 풀 (기획안 v18 §2 설계 원칙 2).
-    // totalRevenue는 차감 대상이 아니라 체험 수수료 추정 입력값으로만 쓰인다.
-    const feePool = await calculateFeePool(projectId, totalRevenue, {
-      experienceRevenue: experienceRevenue ?? undefined,
-      b2bIncrementalRevenue: b2bIncrementalRevenue ?? undefined,
-    });
-
     const project = await prisma.project.findUniqueOrThrow({
       where: { id: projectId },
       include: { tokenHoldings: true },
@@ -76,10 +69,19 @@ export async function POST(request: NextRequest) {
       (sum, h) => sum + h.amount,
       0
     );
+    // 투자 원금 = 보유 구좌 × 구좌 단가. 투자안이 정하는 회수액의 근거다.
+    const investedPrincipal = totalTokensHeld * Number(project.tokenPrice ?? 0);
+
+    // 배분 재원은 매출에서 월 비용을 뺀 이익이고, 배분액은 투자안이 정한 회수액이다
+    // (기획 0826 슬라이드 38·36·37). 이익이 모자라면 있는 만큼만 나간다.
+    const settlement = await calculateSettlement(projectId, totalRevenue, {
+      unitsSold: unitsSold ?? undefined,
+      investedPrincipal,
+    });
 
     const perToken =
       totalTokensHeld > 0
-        ? Math.floor(feePool.investorDividend / totalTokensHeld)
+        ? Math.floor(settlement.investorPayout / totalTokensHeld)
         : 0;
 
     const result = await prisma.$transaction(async (tx) => {
@@ -87,7 +89,7 @@ export async function POST(request: NextRequest) {
         data: {
           projectId,
           totalRevenue: BigInt(Math.floor(totalRevenue)),
-          totalDividend: BigInt(Math.floor(feePool.investorDividend)),
+          totalDividend: BigInt(Math.floor(settlement.investorPayout)),
           perToken: BigInt(perToken),
           period,
         },
@@ -134,18 +136,18 @@ export async function POST(request: NextRequest) {
       entityType: "dividend",
       entityId: result.id,
       projectId,
-      summary: `${period} 회수금 분배 — 총 ${feePool.investorDividend.toLocaleString("ko-KR")}원, 구좌당 ${perToken.toLocaleString("ko-KR")}원 (보유자 ${project.tokenHoldings.length}명)`,
+      summary: `${period} 회수금 분배 — 총 ${settlement.investorPayout.toLocaleString("ko-KR")}원, 구좌당 ${perToken.toLocaleString("ko-KR")}원 (보유자 ${project.tokenHoldings.length}명)`,
       detail: {
         period,
         perToken,
-        totalDividend: feePool.investorDividend,
+        totalDividend: settlement.investorPayout,
         holders: project.tokenHoldings.length,
       },
     });
 
     return NextResponse.json(
       serialize({
-        feePool,
+        settlement,
         dividend: result,
         txHash: null,
       })

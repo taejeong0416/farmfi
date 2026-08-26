@@ -476,14 +476,37 @@ model SettlementRule {
   id                 String  @id @default(cuid())
   projectId          String  @unique
   project            Project @relation(fields: [projectId], references: [id])
-  monthlyPlatformFee BigInt  @default(200000) // 플랫폼 이용료 월 정액
-  experienceFeeRate  Float   @default(0.3)    // 체험 중개 수수료율
-  b2bFeeRate         Float   @default(0.08)   // B2B 신규계약 성사 수수료율
-  // 우선배분/전환 — 흑자 전환 전에는 투자자 배분을 높게 두고(우선배분),
-  // 기간 매출이 breakEvenRevenue 이상이면 흑자 구간 비율로 전환한다.
-  deficitInvestorShare Float  @default(0.6)
-  surplusInvestorShare Float  @default(0.6)
-  breakEvenRevenue     BigInt @default(0) // 0 = 전환 없음 (항상 흑자 구간 비율)
+
+  // ─── 월 비용 (기획 0826 슬라이드 35·38) ───
+  // 매출에서 아래를 빼면 "투자자 배분 전 이익"이 된다.
+  /** 팩당 변동비(원). 판매량에 비례한다 — 고정비가 아니다. */
+  unitVariableCost   BigInt  @default(1500)
+  /** 결제 수수료율. 매출에 비례. */
+  paymentFeeRate     Float   @default(0.015)
+  /** 운영자 보수(월). 매출과 무관하게 먼저 나간다. */
+  operatorPay        BigInt  @default(700000)
+  /** 전기·관리·수도(월). */
+  facilityCost       BigInt  @default(1230000)
+  /** 소모품·유지보수(월). 유닛 수에 비례하지만 기간 내 고정으로 본다. */
+  unitUpkeepCost     BigInt  @default(476000)
+  /** 팜피 서비스 이용료(월). 팜피 수익이지 배당 재원이 아니다. */
+  platformFee        BigInt  @default(50000)
+
+  // ─── 투자자 회수 (기획 0826 슬라이드 36·37) ───
+  // 배분액은 남은 이익을 나누는 게 아니라 투자안이 먼저 정한다.
+  // 매장은 그 회수액을 감당할 수 있는지 검증받는다(필요 판매량 ≤ 기준 판매량).
+  /** 연 프리미엄. 0.06 = 연 6%. */
+  annualPremiumRate  Float   @default(0.06)
+  /** 회수 기간(개월). 실적이 안 나오면 최대 36개월까지 연장. */
+  recoveryMonths     Int     @default(24)
+
+  monthlyPlatformFee BigInt  @default(200000) // [폐기] v18 수수료 풀 잔재
+  experienceFeeRate  Float   @default(0.3)    // [폐기]
+  b2bFeeRate         Float   @default(0.08)   // [폐기]
+  deficitInvestorShare Float  @default(0.6)   // [폐기]
+  surplusInvestorShare Float  @default(0.6)   // [폐기]
+  breakEvenRevenue     BigInt @default(0)     // [폐기]
+
   updatedById        String?
   updatedAt          DateTime @updatedAt
 }

@@ -7,7 +7,7 @@
 
 import { prisma } from "@/lib/db";
 import { resolveConfirmedRecord } from "@/lib/period-record";
-import { calculateFeePool } from "@/lib/waterfall";
+import { calculateSettlement } from "@/lib/waterfall";
 
 export const PAYOUT_CATEGORIES = ["dividend", "landlord_rent", "operator_settlement"] as const;
 export type PayoutCategory = (typeof PAYOUT_CATEGORIES)[number];
@@ -56,7 +56,7 @@ export interface PayoutPlan {
   recordConfirmed: boolean;
   /** 확정 입력값의 운영 비용 합계. 운영자 정산 몫에서만 차감한다. */
   operatingCost: number;
-  feePool: Awaited<ReturnType<typeof calculateFeePool>>;
+  settlement: Awaited<ReturnType<typeof calculateSettlement>>;
   perToken: number;
   lines: PayoutLine[];
   total: bigint;
@@ -88,7 +88,10 @@ export async function buildPayoutPlan(
   const [project, partners, holdings, sales, record] = await Promise.all([
     prisma.project.findUniqueOrThrow({
       where: { id: projectId },
-      select: { id: true, name: true, operatorId: true, operator: { select: { name: true } } },
+      select: {
+        id: true, name: true, operatorId: true, tokenPrice: true,
+        operator: { select: { name: true } },
+      },
     }),
     prisma.projectPartner.findMany({ where: { projectId, role: "landlord" } }),
     prisma.tokenHolding.findMany({
@@ -97,7 +100,8 @@ export async function buildPayoutPlan(
     }),
     prisma.salesRecord.aggregate({
       where: { projectId, soldAt: { gte: parsed.start, lt: parsed.end } },
-      _sum: { amount: true },
+      // 수량은 팩당 변동비 산출에 쓴다. 취소·환불이 음수로 들어와 순판매가 된다.
+      _sum: { amount: true, quantity: true },
     }),
     resolveConfirmedRecord(projectId, period),
   ]);
@@ -110,14 +114,19 @@ export async function buildPayoutPlan(
     : Math.max(0, inputRevenue);
   const operatingCost = record?.totalCost ?? 0;
 
-  const feePool = await calculateFeePool(projectId, operatorRevenue, {
-    experienceRevenue: actuals?.experienceRevenue,
-    b2bIncrementalRevenue: actuals?.b2bIncrementalRevenue,
+  const totalTokensHeld = holdings.reduce((sum, h) => sum + h.amount, 0);
+  // 투자 원금 = 보유 구좌 × 구좌 단가. 회수액이 여기서 나온다.
+  const investedPrincipal = totalTokensHeld * Number(project.tokenPrice ?? 0);
+
+  const settlement = await calculateSettlement(projectId, operatorRevenue, {
+    unitsSold: sales._sum.quantity ?? 0,
+    investedPrincipal,
   });
 
-  const totalTokensHeld = holdings.reduce((sum, h) => sum + h.amount, 0);
+  // 배분액은 남은 이익을 나누는 게 아니라 투자안이 정한 회수액이다(기획 0826 §36·37).
+  // 이익이 모자라면 있는 만큼만 나가고 부족분은 recoveryShortfall로 남는다.
   const perToken =
-    totalTokensHeld > 0 ? Math.floor(feePool.investorDividend / totalTokensHeld) : 0;
+    totalTokensHeld > 0 ? Math.floor(settlement.investorPayout / totalTokensHeld) : 0;
 
   const lines: PayoutLine[] = [];
 
@@ -147,26 +156,25 @@ export async function buildPayoutPlan(
     });
   }
 
-  // ③ 운영자 정산 — 운영자는 매출을 직접 보유하고 이용료·임대료·운영비를 지불한다
-  // (v18 설계 원칙 2). 여기 등록하는 금액은 그 차액(운영자가 최종적으로 손에 쥐는 몫)이고,
-  // 음수 구간은 0으로 눕히되 원값을 memo에 남긴다 — 지급 원장에 마이너스 지급 건은 의미가 없다.
-  // 운영비는 확정된 기간 입력값에서만 온다. 투자자 회수금은 이 비용에 영향받지 않는다.
+  // ③ 운영자 정산 — 두 몫을 합친다.
+  //   · 운영자 보수: 월 비용에 이미 잡혀 있는 고정 몫(기획 0826 슬라이드 38)
+  //   · 배분 후 잔여: 투자자 회수액을 채우고 남은 이익. 매장에 남는다.
+  // 임대료는 여기서 뺀다 — 건물주에게 따로 지급되는 돈이라 이중 계상을 막는다.
+  // 음수 구간은 0으로 눕히되 원값을 memo에 남긴다. 마이너스 지급 건은 원장에서 의미가 없다.
   if (project.operatorId) {
     const net =
-      BigInt(Math.round(operatorRevenue)) -
-      BigInt(feePool.platformUsageFee) -
-      rentTotal -
-      BigInt(operatingCost);
+      BigInt(settlement.operatorPay) +
+      BigInt(Math.round(settlement.storeRetained)) -
+      rentTotal;
     lines.push({
       category: "operator_settlement",
       payeeUserId: project.operatorId,
       payeeName: project.operator?.name ?? "운영자",
       amount: net > BigInt(0) ? net : BigInt(0),
       memo:
-        `매출 ${Math.round(operatorRevenue).toLocaleString("ko-KR")}` +
-        ` − 이용료 ${feePool.platformUsageFee.toLocaleString("ko-KR")}` +
-        ` − 임대료 ${Number(rentTotal).toLocaleString("ko-KR")}` +
-        (operatingCost > 0 ? ` − 운영비 ${operatingCost.toLocaleString("ko-KR")}` : "") +
+        `보수 ${settlement.operatorPay.toLocaleString("ko-KR")}` +
+        ` + 배분 후 잔여 ${Math.round(settlement.storeRetained).toLocaleString("ko-KR")}` +
+        (rentTotal > BigInt(0) ? ` − 임대료 ${Number(rentTotal).toLocaleString("ko-KR")}` : "") +
         ` = ${Number(net).toLocaleString("ko-KR")}원`,
     });
   }
@@ -177,7 +185,7 @@ export async function buildPayoutPlan(
     operatorRevenueMeasured,
     recordConfirmed: record != null,
     operatingCost,
-    feePool,
+    settlement,
     perToken,
     lines,
     total: lines.reduce((sum, l) => sum + l.amount, BigInt(0)),
