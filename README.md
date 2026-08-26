@@ -252,6 +252,7 @@ OmniOne CX 표준인증창 호출 (QR/딥링크)
 
 ##### `투자 목록 / 상세` (웹)
 - 프로젝트 목록, 펀딩 진행률, 보관 잔액, 마일스톤 타임라인, 온체인 증거(트랜잭션 해시)
+- 공개 문서 4종(핵심 안내서 · 임대차 계약서 요약본 · 마일스톤 집행 계획서 · 운영사 소개)을 PDF로 내려받기. 문안은 고정 파일이 아니라 그 프로젝트의 실제 단계·집행액·에스크로 잔액으로 생성된다
 
 ##### `청약 / 포트폴리오` (웹)
 - 신원인증 게이트 → 청약 폼(구좌·한도 검증) → 보유 지분·배당 내역 조회
@@ -287,13 +288,14 @@ OmniOne CX 표준인증창 호출 (QR/딥링크)
 | `/api/investments/[id]/virtual-account`, `/deposit-status` | POST/GET | 가상계좌 발급 · 입금 상태 조회 |
 | `/api/webhooks/toss/deposits` | POST | 토스페이먼츠 입금 통지 (계좌별 secret 대조·멱등) |
 | `/api/projects`, `/api/projects/[id]` | GET | 프로젝트·보관 잔액·마일스톤 조회 |
+| `/api/projects/[id]/documents/[slug]` | GET | 공개 문서 PDF 생성 (실제 프로젝트 데이터로 조판) |
 | `/api/milestones/[id]/verify` | POST | AI 멀티시그널 마일스톤 검증 + 온체인 기록 |
 | `/api/milestones/[id]/complete` | POST | 트랜치 집행 (검증 통과분만) |
 | `/api/milestones/[id]/deadline`, `/timeout` | POST | 데드라인 설정 · 타임아웃 실패 전환 |
 | `/api/projects/[id]/refund` | POST | 미집행 잔여금 비례 환불 |
 | `/api/dividends/distribute` | POST | 배당 산정·분배 |
 | `/api/portfolio` | GET | 투자자 보유 지분·배당 내역 |
-| `/api/ai/verify-contract`, `/verify-receipt`, `/verify-photo` | POST | 계약서·영수증·현장사진 AI 판독 |
+| `/api/ai/verify-contract`, `/verify-receipt`, `/verify-photo`, `/verify-inspection` | POST | 계약서·영수증·현장사진·검수확인서 AI 판독 |
 | `/api/ai/detect-anomaly` | POST | IoT 이상 탐지 |
 | `/api/tasks/today` | GET | 재고-생육 연동 '오늘 할 일'(수확·보충) |
 | `/api/sales`, `/api/sales/trend` | POST/GET | 판매 입력 · 품목별 판매 추이 |
@@ -326,7 +328,8 @@ AI는 단순 API 호출이 아니라 자금 집행의 게이트 역할을 한다
 
 | AI 기능 | 내용 | 기대 효과 |
 |:---|:---|:---|
-| 마일스톤 증빙 검증 | Gemini 비전·OCR로 계약서·영수증·현장사진 판독 후 교차검증 | 자금 유용 차단, 검증 기준의 재현성 확보 |
+| 마일스톤 증빙 검증 | Gemini 비전·OCR로 계약서·영수증·현장사진·검수확인서 판독 후 교차검증 | 자금 유용 차단, 검증 기준의 재현성 확보 |
+| 검수확인서 판독 | 합격 여부와 하자 목록을 추출해, 하자가 남으면 사진이 멀쩡해도 집행을 막는다 | 서류만 앞선 완료 처리 차단 |
 | 생육 이상 탐지 | 센서 데이터 Z-score + 도메인 정상범위(수직농장 상추 문헌 기반) 판정 | 지속성 고장·스파이크 이상 조기 감지 |
 | 판매-재배 최적화 | 품목별 판매 추이 분석 → 다음 재배 사이클 증산/감축 추천 | 안 팔리는 작물 과잉생산 방지 |
 | 생육레시피 | 환경↔수율 반응표면 학습 → 수익 최적 환경조건 도출. 문헌·다른 품종·자체 데이터를 정밀도로 합성하고 불확실성을 구간으로 낸다 | 비전공 운영자 진입장벽 완화 |
