@@ -17,30 +17,9 @@ import {
   upcomingPickups,
 } from "@/lib/pickup-subscription";
 import { shortDate, won } from "../api";
+import { COUPONS } from "./coupons";
 import { SubscribeStepLine } from "./SubscribeStepLine";
 import { useCatalog, useSubscribeDraft } from "./useSubscribeDraft";
-
-const COUPONS = [
-  {
-    code: "FIRST5000",
-    title: "첫 구독 5,000원 할인",
-    desc: "20,000원 이상 · 오늘까지",
-    discount: 5_000,
-    recommended: true,
-  },
-  {
-    code: "FRIEND3000",
-    title: "픽업 친구 추천 3,000원",
-    desc: "15,000원 이상 · 이번 달까지",
-    discount: 3_000,
-  },
-  {
-    code: "DRESSING",
-    title: "드레싱 2봉 무료",
-    desc: "다음 2회차까지",
-    discount: 2_000,
-  },
-];
 
 const CONSENTS = [
   { key: "autopay", label: "정기구독 및 자동결제에 동의합니다. (필수)", required: true },

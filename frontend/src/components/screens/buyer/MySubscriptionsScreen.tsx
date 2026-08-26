@@ -19,6 +19,7 @@ import {
   useSubscriptions,
   won,
 } from "../api";
+import { couponLabel } from "./coupons";
 
 const STATUS_LABEL: Record<string, string> = {
   active: "이용 중",
@@ -193,6 +194,16 @@ export function MySubscriptionsScreen() {
                           선택 작물 {s.productIds.length}종 + 드레싱{" "}
                           {s.dressings.join("·")} 각 1봉
                         </p>
+                        {s.couponCode === "DRESSING" ? (
+                          <p className="mt-1.5 text-13 text-accent-investor">
+                            + 드레싱 2봉 무료 (쿠폰)
+                          </p>
+                        ) : null}
+                        {couponLabel(s.couponCode, s.discount) ? (
+                          <p className="mt-3 border-t border-line-soft pt-3 text-12 text-muted">
+                            적용 쿠폰 · {couponLabel(s.couponCode, s.discount)}
+                          </p>
+                        ) : null}
                       </div>
                       <div className="mt-5 flex gap-3">
                         <Button href={`/subscriptions/pickup/${next.id}`}>

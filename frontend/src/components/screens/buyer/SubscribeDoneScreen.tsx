@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { Button, Card, EmptyState, PanelShell, SkeletonBlock } from "@/components/ui";
 import { formatDate } from "@/lib/format";
 import { useSubscriptions, won } from "../api";
+import { couponLabel } from "./coupons";
 import { SubscribeStepLine } from "./SubscribeStepLine";
 
 export function SubscribeDoneScreen() {
@@ -35,6 +36,7 @@ export function SubscribeDoneScreen() {
   }
 
   const first = subscription.pickups[0];
+  const coupon = couponLabel(subscription.couponCode, subscription.discount);
 
   return (
     <PanelShell>
@@ -64,6 +66,7 @@ export function SubscribeDoneScreen() {
             label="구성"
             value={`${subscription.packSize}종 믹스팩 + ${subscription.dressings.join("·")} 드레싱`}
           />
+          {coupon ? <Row label="적용 쿠폰" value={coupon} /> : null}
           <Row
             label="오늘 결제"
             value={`${won(subscription.monthlyPrice)} · ${subscription.paymentMethod ?? "등록 카드"}`}
