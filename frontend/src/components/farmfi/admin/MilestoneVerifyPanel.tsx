@@ -43,12 +43,14 @@ const DEMO_IMAGES: Record<Signal, { label: string; url: string }[]> = {
   ],
 };
 
-// verify-photo/receipt 라우트가 요구하는 milestoneType 키 (마일스톤 seq 기준)
+// verify-photo/receipt 라우트가 요구하는 milestoneType 키 (마일스톤 seq 기준).
+// 5단계 집행: 계약 체결 → 설비 발주·제작 → 반입·설치 착수 → 설치 완료·검수 → 시운전·영업 개시.
 const MILESTONE_TYPE: Record<number, string> = {
   1: "construction",
-  2: "trial_run",
-  3: "harvest",
-  4: "operation",
+  2: "construction",
+  3: "delivery",
+  4: "installation",
+  5: "operation",
 };
 
 function won(n: number): string {

@@ -173,6 +173,7 @@ export const SIGNAL_LABEL: Record<string, string> = {
   contract: "계약서",
   receipt: "영수증",
   photo: "현장 사진",
+  inspection: "검수확인서",
   iot: "센서 데이터",
   crossCheck: "교차검증",
 };
@@ -196,7 +197,7 @@ export function reviewSignalsOf(m: {
  * 근거 증빙 지정은 파일이 필요한 항목에만 요구한다. IoT·교차검증은 수집 데이터와
  * 대조 결과라 지정할 파일이 없다.
  */
-const FILE_BACKED = new Set(["contract", "receipt", "photo"]);
+const FILE_BACKED = new Set(["contract", "receipt", "photo", "inspection"]);
 
 export function canApproveItems(
   signals: string[],

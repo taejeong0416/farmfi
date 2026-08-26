@@ -23,6 +23,7 @@ const SIGNAL_LABEL: Record<string, string> = {
   contract: "설비 계약서",
   receipt: "설비 영수증",
   photo: "현장 사진",
+  inspection: "검수확인서",
   iot: "센서 데이터",
 };
 

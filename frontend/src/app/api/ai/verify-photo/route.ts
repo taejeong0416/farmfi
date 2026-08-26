@@ -3,9 +3,22 @@ import { withAICache } from "@/lib/ai-cache";
 import { extractFromImage } from "@/lib/ai-vision";
 import { requireRole } from "@/lib/auth";
 
-type MilestoneType = "construction" | "trial_run" | "harvest" | "operation";
+// 5단계 집행(계약 → 발주 → 반입 → 설치 완료 → 영업 개시)에서 사진을 보는 단계는
+// 반입(delivery)과 설치 완료(installation) 둘이다. 나머지 단계는 서류·센서로 본다.
+// construction 이하 네 키는 이전 4단계 시절 캐시·호출이 400으로 죽지 않게 남겨 둔다.
+type MilestoneType =
+  | "delivery"
+  | "installation"
+  | "construction"
+  | "trial_run"
+  | "harvest"
+  | "operation";
 
 const PROMPTS: Record<MilestoneType, string> = {
+  delivery:
+    "이 사진에서 현장에 반입된 설비 자재(포장 상태의 기자재, LED 조명, 재배대, 센서, 관수 설비)를 식별해주세요.",
+  installation:
+    "이 사진에서 설치가 끝난 설비(LED 조명, 센서, 재배대, 관수 설비)가 조립·고정되어 있는지 확인해주세요.",
   construction:
     "이 사진에서 LED 조명, 센서, 재배대, 관수 설비를 식별해주세요.",
   trial_run:

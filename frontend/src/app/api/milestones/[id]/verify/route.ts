@@ -29,6 +29,28 @@ function crossCheckReceiptPhoto(
 }
 
 /**
+ * 설치 완료 단계(M4)의 교차검증 — 사진 ↔ 검수확인서.
+ *
+ * 서류는 "몇 유닛을 합격 처리했다"고 말하고 사진은 "설비가 거기 있다"고 말한다.
+ * 둘 중 하나만으로는 설치 완료를 확정할 수 없다. 서류가 유닛 수를 주장하는데
+ * 사진에 재배 설비가 안 보이면 서류만 앞선 것이고, 하자가 남아 있으면 사진이
+ * 아무리 그럴듯해도 완료가 아니다.
+ */
+function crossCheckPhotoInspection(
+  photoObjects: string[],
+  inspection: { unitCount?: number; defects?: string[] } | undefined
+): boolean {
+  if (!inspection) return false;
+  const claimsUnits = (inspection.unitCount ?? 0) > 0;
+  const defectFree = (inspection.defects ?? []).length === 0;
+  const photoText = photoObjects.join(" ").toLowerCase();
+  const equipmentSeen = CROSS_CHECK_CATEGORIES.some((category) =>
+    category.some((k) => photoText.includes(k))
+  );
+  return claimsUnits && defectFree && equipmentSeen;
+}
+
+/**
  * 자동 검증 결과를 조건 항목의 **초안**으로 저장한다 (명세 9.8).
  *
  * 초안일 뿐이라 `verdict`를 `met`로 확정하지 않는다 — 사람이 항목을 확인해야
@@ -84,7 +106,13 @@ export async function POST(
     };
 
     const body = await request.json();
-    const { contractImage, receiptImage, photoImage, milestoneType } = body;
+    const {
+      contractImage,
+      receiptImage,
+      photoImage,
+      inspectionImage,
+      milestoneType,
+    } = body;
 
     const milestone = await prisma.milestone.findUnique({
       where: { id },
@@ -155,6 +183,21 @@ export async function POST(
           signalDetails.photo = data;
           break;
         }
+        case "inspection": {
+          const res = await fetch(`${baseUrl}/api/ai/verify-inspection`, {
+            method: "POST",
+            headers: internalHeaders,
+            body: JSON.stringify({
+              imageBase64: inspectionImage,
+              milestoneId: id,
+              milestoneType,
+            }),
+          });
+          const data = await res.json();
+          signals.inspection = !!data.passed;
+          signalDetails.inspection = data;
+          break;
+        }
         case "iot": {
           const res = await fetch(`${baseUrl}/api/ai/detect-anomaly`, {
             method: "POST",
@@ -183,6 +226,26 @@ export async function POST(
       const photoObjects: string[] =
         signalDetails.photo?.detectedObjects ?? [];
       signals.crossCheck = crossCheckReceiptPhoto(receiptItems, photoObjects);
+    }
+
+    // 발주 단계(M2) — 발주서의 현장·설비가 계약금 영수증과 맞물리는지 본다.
+    if (milestone.crossCheck === "contract↔receipt") {
+      const receiptItems: string[] =
+        signalDetails.receipt?.extractedData?.items ?? [];
+      signals.crossCheck =
+        signals.contract === true &&
+        signals.receipt === true &&
+        receiptItems.length > 0;
+    }
+
+    // 설치 완료 단계(M4) — 사진에 보이는 설비와 검수확인서의 합격 유닛 수 대조.
+    if (milestone.crossCheck === "photo↔inspection") {
+      const photoObjects: string[] =
+        signalDetails.photo?.detectedObjects ?? [];
+      signals.crossCheck = crossCheckPhotoInspection(
+        photoObjects,
+        signalDetails.inspection?.extractedData,
+      );
     }
 
     const passed = Object.values(signals).every((v) => v === true);
