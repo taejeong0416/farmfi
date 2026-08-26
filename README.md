@@ -122,9 +122,37 @@ FarmFi는 투자자와 공실 운영자를 연결해, 공실을 스마트팜 기
 
 #### 2.1. 시스템 구성도
 
-<div align="center">
-<img src="docs/images/system-architecture.jpg" alt="FarmFi 시스템 구성도" width="700" />
-</div>
+```
+[ 사용자 채널 ]
+   투자자·구매자 웹  (Next.js 14 App Router)
+   운영자 앱        (Expo React Native)
+        │
+        │  HTTPS · 세션 — 웹은 쿠키, 앱은 Bearer
+        ▼
+[ FarmFi 서버 — Next.js API Routes (Vercel) ]
+
+   신원·자격     OmniOne CX 본인확인 → OpenDID Verifier
+                 → 실명·연령·투자한도 판별 / 운영자 보증서(VC) 발급
+   자금·집행     청약 게이트 → 에스크로 분리보관 → 5단계 트랜치 → 설비업체 직불
+   AI 게이트     Gemini Vision·OCR — 계약서·영수증·현장사진·검수확인서
+                 문서 간 교차검증 → 통과분만 집행. 강제 통과 경로 없음
+   운영·최적화   생육 모니터링 · 재고-생육 연동 · 판매-재배 최적화 · 생육 레시피
+   정산·지급     매출 확정 → 워터폴 분배 → 지급 어댑터
+   기록 중계     Outbox → Chain Relay (운영지갑이 서명)
+        │
+        ├─▶ [ 데이터 ]     Supabase PostgreSQL — 계정·검증결과·보유 원장
+        │                  Supabase Storage — 증빙 원본, SHA-256 해시로 대조
+        │
+        ├─▶ [ 외부 연동 ]  토스페이먼츠 — 가상계좌 발급 · 입금 통지 웹훅
+        │                  POS · IoT 센서 — 판매·생육 데이터 수집
+        │
+        └─▶ [ 기록 원장 ]  OmniOne Chain (BESU) — 가스 0, 운영지갑 서명
+                           Escrow · FarmToken · Dividend · RoundGate
+                           ProjectRegistry · AuditTrail
+                           Custody Wallet — 1인 1지갑, AES-256-GCM 봉인
+```
+
+**원칙** — 원화는 금융기관 계좌에 보관하고, 블록체인에는 자금의 배정·집행·정산 **상태와 결과**를 기록한다. 투자자는 지갑 주소·개인키·가스비를 직접 다루지 않는다. 수탁 지갑을 서버가 만들고 관리하며, 키는 봉인해 보관한다.
 
 #### 2.2. 자금 집행 구조
 
