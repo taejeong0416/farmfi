@@ -11,6 +11,7 @@ import {
   Shell,
   SkeletonBlock,
 } from "@/components/ui";
+import { PROJECT_DOCUMENTS } from "@/lib/project-document-list";
 import { useAuth } from "@/lib/useAuth";
 import {
   MILESTONE_STATUS_LABEL,
@@ -44,12 +45,11 @@ const RISKS: { label: string; text: string }[] = [
   },
 ];
 
-const DOCUMENTS = [
-  { name: "프로젝트 핵심 안내서.pdf", date: "2026.02.28" },
-  { name: "임대차 계약서 요약본.pdf", date: "2026.02.20" },
-  { name: "마일스톤 · 집행 계획서.pdf", date: "2026.02.28" },
-  { name: "운영사 소개 · 재배 계획.pdf", date: "2026.03.02" },
-];
+const DOCUMENTS = PROJECT_DOCUMENTS.map((d) => ({
+  slug: d.slug,
+  name: `${d.name}.pdf`,
+  date: d.issuedAt,
+}));
 
 export function ProjectDetailScreen({ id }: { id: string }) {
   const { data: p, isLoading, isError } = useProject(id);
@@ -264,13 +264,18 @@ export function ProjectDetailScreen({ id }: { id: string }) {
           <Card className="mt-4" padded={false}>
             <div className="px-6">
               {DOCUMENTS.map((d) => (
-                <div
-                  key={d.name}
-                  className="flex items-center justify-between border-b border-surface py-4 last:border-b-0"
+                <a
+                  key={d.slug}
+                  href={`/api/projects/${id}/documents/${d.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between border-b border-surface py-4 last:border-b-0 hover:bg-surface"
                 >
-                  <span className="text-13 text-ink">{d.name}</span>
+                  <span className="text-13 text-ink underline-offset-2 group-hover:underline">
+                    {d.name}
+                  </span>
                   <span className="text-12 text-muted">{d.date}</span>
-                </div>
+                </a>
               ))}
             </div>
           </Card>
