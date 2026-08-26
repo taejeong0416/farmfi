@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FarmFi | 단위경제 타당성</title>
+<meta name="description" content="매장 하나가 운영비와 투자자 회수를 함께 감당하려면 하루 몇 팩을 팔아야 하는지 계산합니다.">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+  /* FarmFi 웹 팔레트. frontend/tailwind.config.ts 토큰과 같은 값. */
+  :root{
+    --ink:#1A1A1A; --body:#4A4A4A; --muted:#8A8A8A;
+    --line:#E5E5E3; --line-soft:#EDEDEB; --surface:#F1F4F2;
+    --brand:#14542E; --operator:#8C6114; --danger:#DC2626;
+    /* 스택 바: 매장이 먹는 몫은 순수 무채 4단, 투자자 회수만 브랜드 그린.
+       색상(무채↔녹)과 명도를 함께 벌려 다섯 구간이 겹쳐 보이지 않게 한다. */
+    --take-1:#4A4A4A; --take-2:#7A7A7A; --take-3:#A8A8A6; --take-4:#D4D4D2; --take-inv:#14542E;
+    --sans:Inter,"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:#fff;color:var(--ink);font-family:var(--sans);
+    line-height:1.5;letter-spacing:0;word-break:keep-all;
+    font-feature-settings:"tnum" 1;-webkit-font-smoothing:antialiased;
+  }
+  .shell{width:min(100% - 40px,1020px);margin:0 auto;padding:32px 0 64px}
+  :focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:4px}
+  input[type=number]{-moz-appearance:textfield}
+  input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+
+  /* ── 헤더 ───────────────────────────────── */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding-bottom:20px;margin-bottom:24px;border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:800;letter-spacing:-.02em;color:var(--brand)}
+  .brand::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--brand)}
+  .tag{color:var(--muted);font-size:13px;font-weight:600;text-align:right}
+
+  /* ── 가정값 ─────────────────────────────
+     이름 / 단위 / 값 세 줄을 고정 자리에 두어 칸마다 값의 baseline이 맞는다. */
+  .assume{
+    background:#fff;border:1px solid var(--line);border-radius:8px;
+    overflow:hidden;margin-bottom:36px;
+  }
+  /* 단가 6 · 월 비용 4 · 조달 3. 줄당 칸 수를 묶음 크기의 약수로만 두어
+     어느 폭에서도 줄이 꽉 차고 칸 폭이 벌어지지 않는다. */
+  .g6{display:grid;grid-template-columns:repeat(6,1fr)}
+  .g4{display:grid;grid-template-columns:repeat(4,1fr)}
+  .g3{display:grid;grid-template-columns:repeat(3,1fr)}
+  .a{
+    min-width:0;
+    background:#fff;padding:14px 16px;display:grid;align-content:start;
+    border-left:1px solid var(--line);border-top:1px solid var(--line);
+    margin:-1px 0 0 -1px;
+  }
+  .a .name{font-size:12.5px;font-weight:700;color:var(--body)}
+  .a .u{min-height:17px;margin-top:1px;font-size:11px;font-weight:500;color:var(--muted)}
+  .a input,.a .val{
+    margin-top:8px;width:100%;background:transparent;border:none;padding:0;
+    font-family:var(--sans);font-size:19px;font-weight:700;letter-spacing:-.015em;color:var(--ink);
+  }
+  .a input:focus{outline:none}
+  .a .val{color:var(--brand)}
+  .a .over{color:var(--danger)}
+
+  /* ── 히어로 ─────────────────────────────── */
+  .hero{
+    border:1px solid rgba(13,50,31,.12);border-radius:8px;background:#fff;
+    box-shadow:0 10px 28px rgba(20,50,27,.055);
+    padding:28px 30px;margin-bottom:40px;
+  }
+  .hero-top{
+    display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;
+    margin-bottom:20px;font-size:13px;font-weight:600;color:var(--body);
+  }
+  .basis{
+    display:inline-flex;align-items:center;gap:8px;
+    border:1px solid var(--line);border-radius:8px;
+    padding:7px 12px;font-size:13px;font-weight:700;color:var(--brand);
+  }
+  .thr-field{display:inline-flex;align-items:baseline;gap:4px;color:var(--body)}
+  .thr-field input{
+    width:3.5ch;background:transparent;border:none;border-bottom:1.5px solid var(--line);
+    padding:0 0 2px;text-align:center;
+    font-family:var(--sans);font-size:14px;font-weight:800;color:var(--ink);
+  }
+  .thr-field input:focus{outline:none;border-bottom-color:var(--brand)}
+  .thr-field input.over{color:var(--danger);border-bottom-color:var(--danger)}
+
+  .need{margin-bottom:6px;font-size:12px;font-weight:700;color:var(--body)}
+  .num{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 12px}
+  .num .n{font-size:64px;font-weight:800;line-height:1;letter-spacing:-.035em;color:var(--brand)}
+  .num .u{font-size:16px;font-weight:700;color:var(--body)}
+  .verdict{display:inline-flex;align-items:center;gap:9px;margin-top:14px;font-size:13.5px;font-weight:700}
+  .verdict .dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
+  .v-go{color:var(--brand)} .v-go .dot{background:var(--brand)}
+  .v-warn{color:var(--operator)} .v-warn .dot{background:var(--operator)}
+  .v-over{color:var(--danger)} .v-over .dot{background:var(--danger)}
+  .broken{display:none;align-items:center;color:var(--danger);font-size:15px;font-weight:700;padding:6px 0 4px}
+
+  .stack{margin-top:28px;border-top:1px solid var(--line-soft);padding-top:22px}
+  .stack .cap{font-size:12px;font-weight:700;color:var(--body);margin-bottom:10px}
+  .bar{display:flex;height:34px;border-radius:8px;overflow:hidden;background:var(--surface)}
+  .seg{
+    display:flex;align-items:center;justify-content:center;
+    font-size:11.5px;font-weight:700;color:#fff;min-width:0;white-space:nowrap;
+  }
+  .seg.op{background:var(--take-1)}
+  .seg.fx{background:var(--take-2)}
+  .seg.un{background:var(--take-3);color:var(--ink)}
+  .seg.ff{background:var(--take-4);color:var(--ink)}
+  .seg.inv{background:var(--take-inv)}
+  .skey{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:12px;font-size:12px;font-weight:600;color:var(--muted)}
+  .skey i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:middle}
+  .skey .invest{color:var(--brand)}
+
+  .basis-note{margin-top:22px;padding-top:20px;border-top:1px solid var(--line-soft);font-size:13.5px;line-height:1.75;color:var(--body)}
+  .basis-note b{font-weight:700;color:var(--ink)}
+
+  /* ── 매트릭스 ───────────────────────────── */
+  .section-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 16px;margin-bottom:14px}
+  .section-head h2{font-size:19px;font-weight:800;letter-spacing:-.015em}
+  .section-head .hint{font-size:13px;font-weight:600;color:var(--muted)}
+  .table-wrap{
+    border:1px solid rgba(13,50,31,.12);border-radius:8px;background:#fff;
+    box-shadow:0 10px 28px rgba(20,50,27,.055);padding:18px 20px;overflow-x:auto;
+  }
+  table{width:100%;border-collapse:collapse;min-width:540px}
+  thead th{font-size:12px;font-weight:700;color:var(--muted);padding:0 4px 10px}
+  thead th.corner{text-align:left;color:var(--brand);font-weight:800;white-space:nowrap}
+  tbody th{font-size:13px;font-weight:700;color:var(--ink);text-align:right;padding-right:14px;white-space:nowrap}
+  td{padding:0;text-align:center}
+  .cell{
+    display:block;width:calc(100% - 6px);margin:3px;
+    border:none;border-radius:8px;padding:11px 4px;background:#fff;
+    font-family:var(--sans);font-size:18px;font-weight:800;letter-spacing:-.02em;text-align:center;
+  }
+  .cell .d{display:block;margin-top:2px;font-size:10px;font-weight:600;color:var(--muted);letter-spacing:0}
+  /* 테두리는 격자 역할만 한다. 구간은 숫자 색 하나로만 가른다. */
+  button.cell{cursor:pointer;box-shadow:inset 0 0 0 1px var(--line);transition:transform 140ms ease,box-shadow 140ms ease}
+  button.cell:hover{transform:translateY(-2px);box-shadow:inset 0 0 0 1px var(--muted),0 6px 16px rgba(20,50,27,.1)}
+  .c-go{color:var(--brand)}
+  .c-warn{color:var(--operator)}
+  .c-over{color:var(--danger)}
+  button.cell.is-sel,
+  button.cell.is-sel:hover{box-shadow:inset 0 0 0 2px var(--brand),0 6px 16px rgba(20,50,27,.14)}
+  .baseline th{font-size:12px;font-weight:600;color:var(--muted)}
+  .baseline .cell{box-shadow:none;color:var(--muted);border:1px dashed var(--line);font-size:15px;font-weight:700}
+
+  /* 범례도 칸과 같은 방식으로 읽힌다 — 색은 숫자에만 있다. */
+  .legend{display:grid;gap:8px;margin-top:18px;font-size:12.5px;color:var(--body)}
+  .legend span{display:flex;align-items:baseline;gap:10px}
+  .legend b{flex:0 0 auto;min-width:88px;font-weight:800}
+  .legend b.go{color:var(--brand)}
+  .legend b.warn{color:var(--operator)}
+  .legend b.over{color:var(--danger)}
+  .legend b.dash{color:var(--muted)}
+  .legend em{font-style:normal;color:var(--muted);font-weight:500}
+
+  /* 계산이 성립하지 않는 입력에서는 결과를 감춘다. */
+  body.is-broken .need,
+  body.is-broken .num,
+  body.is-broken .verdict,
+  body.is-broken .stack,
+  body.is-broken #matrixBlock{display:none}
+  body.is-broken .broken{display:flex}
+
+  @media(max-width:1000px){ .g6{grid-template-columns:repeat(3,1fr)} }
+  @media(max-width:700px){ .g4{grid-template-columns:repeat(2,1fr)} }
+  @media(max-width:560px){ .g6{grid-template-columns:repeat(2,1fr)} }
+
+  @media(max-width:640px){
+    .shell{width:min(100% - 24px,1020px);padding:22px 0 48px}
+    .hero{padding:22px 18px}
+    .table-wrap{padding:14px}
+    .num .n{font-size:46px}
+    .tag{font-size:12px}
+    .section-head{flex-direction:column;align-items:flex-start}
+    .legend span{flex-wrap:wrap}
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <header class="topbar">
+    <div class="brand">FarmFi</div>
+    <div class="tag">단위경제 타당성 · 매장 운영 검증</div>
+  </header>
+
+  <div class="assume">
+   <div class="grp g6">
+    <div class="a"><span class="name">유닛 개수</span><span class="u">개</span><input id="units" type="number" value="15" inputmode="numeric" aria-label="유닛 개수"></div>
+    <div class="a"><span class="name">월 판매량</span><span class="u" id="salesSub">팩/월 · 하루 49팩</span><span class="val" id="salesOut">1,485</span></div>
+    <div class="a"><span class="name">판매가</span><span class="u">원/팩</span><input id="price" type="number" value="5500" inputmode="numeric" aria-label="판매가"></div>
+    <div class="a"><span class="name">팩당 변동비</span><span class="u">원/팩</span><input id="cogs" type="number" value="1800" inputmode="numeric" aria-label="팩당 변동비"></div>
+    <div class="a"><span class="name">변동 운영비</span><span class="u">만원/월 · 매출의 1.5%</span><span class="val" id="feeOut">12.3</span></div>
+    <div class="a"><span class="name">팩당 마진</span><span class="u">원/팩</span><span class="val" id="marginOut">3,617</span></div>
+   </div>
+
+   <div class="grp g4">
+    <div class="a"><span class="name">운영자 생계</span><span class="u">만원/월</span><input id="op" type="number" value="100" inputmode="numeric" aria-label="운영자 생계"></div>
+    <div class="a"><span class="name">고정 운영비</span><span class="u">만원/월 · 전기·관리·수도</span><input id="opex" type="number" value="90" inputmode="numeric" aria-label="고정 운영비"></div>
+    <div class="a"><span class="name">팜피 구독료</span><span class="u">만원/월</span><input id="ff" type="number" value="30" inputmode="numeric" aria-label="팜피 구독료"></div>
+    <div class="a"><span class="name">유닛 연동비</span><span class="u">만원/월 · 소모품·유지보수</span><span class="val" id="unitOut">89.3</span></div>
+   </div>
+
+   <div class="grp g3">
+    <div class="a"><span class="name">초기 조성비</span><span class="u">만원</span><input id="total" type="number" value="5000" inputmode="numeric" aria-label="초기 조성비"></div>
+    <div class="a"><span class="name">공공 지원</span><span class="u">만원 · 공간·리모델링</span><input id="gov" type="number" value="3000" inputmode="numeric" aria-label="공공 지원"></div>
+    <div class="a"><span class="name">투자자 조달</span><span class="u">만원 · 설비투자금</span><span class="val" id="capexOut">2,000</span></div>
+   </div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-top">
+      <span class="basis" id="basis">연 10% 프리미엄 · 18개월 회수</span>
+      <span class="thr-field">목표 <input id="thr" type="number" value="49" inputmode="numeric" aria-label="목표 일판매"> 팩/일</span>
+    </div>
+
+    <div class="broken"><span id="brokenMsg"></span></div>
+
+    <div class="need">필요</div>
+    <div class="num"><span class="n" id="hlNum">–</span><span class="u">팩 / 일</span></div>
+    <div class="verdict" id="verdict"><span class="dot"></span><span id="vtext"></span></div>
+
+    <div class="stack">
+      <div class="cap">이 판매량을 누가 가져가는가</div>
+      <div class="bar" id="bar"></div>
+      <div class="skey">
+        <span><i style="background:var(--take-1)"></i>운영자 생계</span>
+        <span><i style="background:var(--take-2)"></i>고정 운영비</span>
+        <span><i style="background:var(--take-3)"></i>유닛 연동비</span>
+        <span><i style="background:var(--take-4)"></i>팜피 구독료</span>
+        <span class="invest"><i style="background:var(--take-inv)"></i>투자자 회수</span>
+      </div>
+    </div>
+
+    <p class="basis-note">
+      소비자 설문 <b>107명</b> 가운데 <b>97명</b>이 야간에 신선식품을 살 곳이 없다고 답했다.
+      한두 끼 분량의 소량 구매를 선호한 응답이 98명, 매장을 보면 그 자리에서 사겠다는 응답이 93명이다.
+    </p>
+  </section>
+
+  <div id="matrixBlock">
+    <div class="section-head">
+      <h2>투자 조건별 필요 판매량</h2>
+      <span class="hint">칸을 누르면 위 조건이 바뀐다</span>
+    </div>
+    <div class="table-wrap">
+      <table id="matrix"></table>
+    </div>
+    <div class="legend">
+      <span><b class="go" id="lgGo"></b><em>유닛이 내는 양 안에서 여유가 있다</em></span>
+      <span><b class="warn" id="lgWarn"></b><em>낼 수 있는 양을 거의 다 팔아야 닿는다</em></span>
+      <span><b class="over" id="lgOver"></b><em>유닛을 늘리거나 조달 조건을 다시 잡아야 한다</em></span>
+      <span><b class="dash">점선 칸</b><em>투자자 배당을 뺀 매장 운영선</em></span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const PREM=[6,8,10,12], MON=[12,15,18,24,30];
+const num=v=>Math.round(v).toLocaleString('ko-KR');
+const YIELD=110, SELL=0.9;              // 유닛당 월 생산량(팩) · 판매율
+const UNIT_COST=50000*1.07+6000;        // 유닛당 월 소모품·재배비 + 유지보수비
+const FEE_RATE=0.015;                   // 결제 수수료 — 매출의 1.5%
+let sel={prem:10,mon:18};
+
+function read(){
+  const units=Math.max(0,+$('units').value||0);
+  const price=+$('price').value||0, cogs=+$('cogs').value||0;
+  const fee=Math.round(price*FEE_RATE);
+  const total=+$('total').value||0, gov=+$('gov').value||0;
+  return {units, price, cogs, fee,
+    margin:price-cogs-fee,
+    thr:+$('thr').value||0,
+    capacity:units*YIELD*SELL,
+    opex:(+$('opex').value||0)*1e4,
+    ff:(+$('ff').value||0)*1e4, op:(+$('op').value||0)*1e4, unit:units*UNIT_COST,
+    capex:Math.max(0,total-gov)*1e4};
+}
+const invMonthly=(c,r,T)=>c*(1+(r/100)*(T/12))/T;
+function dayReq(v,r,T){
+  const inv=invMonthly(v.capex,r,T);
+  return {day:((v.op+v.opex+v.ff+v.unit+inv)/v.margin)/30, inv};
+}
+// 목표 하루 판매량의 85%까지가 여유, 100%까지가 빠듯, 넘으면 못 판다.
+// 칸에 적히는 반올림값으로 갈라 색과 범례가 어긋나지 않게 한다.
+const EASE=0.85;
+const cls=(d,thr)=>{
+  const n=Math.round(d);
+  return n<=Math.floor(thr*EASE)?'c-go':n<=thr?'c-warn':'c-over';
+};
+
+function render(){
+  const v=read();
+  // 수수료는 매출에 비례하니 팩당 마진에서 빼고, 칸에는 이 규모에서 월 얼마인지 적는다.
+  $('feeOut').textContent=(v.fee*v.capacity/1e4).toFixed(1);
+  $('marginOut').textContent=num(v.margin);
+  $('unitOut').textContent=(v.unit/1e4).toFixed(1);
+  $('capexOut').textContent=num(v.capex/1e4);
+
+  // 월 판매량은 유닛이 내는 양 그대로다. 하루 몇 팩인지만 아래에 적고 수식은 적지 않는다.
+  const capDay=Math.floor(v.capacity/30);
+  $('salesOut').textContent=num(v.capacity);
+  $('salesSub').textContent=`팩/월 · 하루 ${capDay}팩`;
+  // 목표를 그 위로 올리면 팔 수 없는 양이므로 목표 칸에서 알린다.
+  $('thr').classList.toggle('over',v.thr>capDay);
+
+  const bad = v.units<1  ? '유닛을 1개 이상 두어야 계산이 선다.'
+            : v.margin<=0 ? '판매가가 팩당 변동비와 결제 수수료를 넘어야 계산이 선다.'
+            : v.thr<1   ? '목표 일판매를 1팩 이상으로 잡아야 한다.' : '';
+  document.body.classList.toggle('is-broken',!!bad);
+  if(bad){ $('brokenMsg').textContent=bad; return; }
+
+  // 매트릭스 — 각 칸이 기준안 선택 버튼이다.
+  let h='<thead><tr><th class="corner">연 프리미엄</th>';
+  MON.forEach(m=>h+=`<th>${m}개월 회수</th>`); h+='</tr></thead><tbody>';
+  PREM.forEach(r=>{
+    h+=`<tr><th>${r}%</th>`;
+    MON.forEach(m=>{
+      const d=dayReq(v,r,m).day;
+      const on=(r===sel.prem&&m===sel.mon);
+      h+=`<td><button type="button" class="cell ${cls(d,v.thr)}${on?' is-sel':''}"`
+        +` data-r="${r}" data-m="${m}" aria-pressed="${on}">${d.toFixed(0)}<span class="d">팩/일</span></button></td>`;
+    });
+    h+='</tr>';
+  });
+  const base=(v.op+v.opex+v.ff+v.unit)/v.margin/30;
+  h+='<tr class="baseline"><th>배당 전 운영선</th>';
+  MON.forEach(()=>h+=`<td><div class="cell">${base.toFixed(0)}<span class="d">팩/일</span></div></td>`);
+  h+='</tr></tbody>';
+  $('matrix').innerHTML=h;
+
+  // 범례 — 지금 목표에서 각 구간이 실제 몇 팩인지 적는다.
+  const ease=Math.floor(v.thr*EASE);
+  $('lgGo').textContent=`${ease}팩 이하`;
+  $('lgWarn').textContent=v.thr>ease?`${ease+1}–${v.thr}팩`:'해당 없음';
+  $('lgOver').textContent=`${v.thr+1}팩 이상`;
+
+  // 히어로
+  const res=dayReq(v,sel.prem,sel.mon);
+  $('basis').textContent=`연 ${sel.prem}% 프리미엄 · ${sel.mon}개월 회수`;
+  $('hlNum').textContent=res.day.toFixed(0);
+  const copy={
+    'c-go':['v-go',`목표 ${v.thr}팩 안에서 매장과 투자자가 함께 돌아간다`],
+    'c-warn':['v-warn',`목표 ${v.thr}팩을 거의 다 팔아야 닿는다. 비수기 판매를 따로 잡아야 한다`],
+    'c-over':['v-over',`목표 ${v.thr}팩을 넘는다. 유닛을 늘리거나 조달 조건을 다시 잡아야 한다`]
+  }[cls(res.day,v.thr)];
+  $('verdict').className='verdict '+copy[0];
+  $('vtext').textContent=copy[1];
+
+  // 스택 — 하루 몇 팩이 어디로 가는가
+  const per=x=>x/v.margin/30;
+  const parts=[['op',per(v.op)],['fx',per(v.opex)],['un',per(v.unit)],['ff',per(v.ff)],['inv',per(res.inv)]];
+  const tot=parts.reduce((s,p)=>s+p[1],0);
+  $('bar').innerHTML=parts.map(p=>{
+    const w=(p[1]/tot*100).toFixed(1);
+    return `<div class="seg ${p[0]}" style="width:${w}%">${p[1]>=tot*0.1?p[1].toFixed(0):''}</div>`;
+  }).join('');
+}
+
+$('matrix').addEventListener('click',e=>{
+  const b=e.target.closest('button.cell');
+  if(!b) return;
+  sel={prem:+b.dataset.r,mon:+b.dataset.m};
+  render();
+});
+// 판매량 쪽에서 손으로 고치는 값은 하루 목표 하나다. 월 판매량은 그 30배로 따라온다.
+// 유닛 개수를 건드리면 목표가 유닛이 내는 양(110팩 · 판매율 90%)으로 다시 채워진다.
+// 내림으로 채워야 재채움 직후에 능력 초과로 잡히지 않는다.
+document.querySelectorAll('input').forEach(e=>e.addEventListener('input',()=>{
+  if(e.id==='units') $('thr').value=Math.floor((+$('units').value||0)*YIELD*SELL/30);
+  render();
+}));
+render();
+</script>
+</body>
+</html>
