@@ -4,7 +4,7 @@
 
 ## 규칙
 
-- 파일명은 영문 kebab-case (`feature-spec.md`).
+- 파일명은 영문 kebab-case (`spec/feature-spec.md`).
 - 문서를 수정하면 개발 단위로 커밋한다.
 - 문서는 세 종류로 나눠 다룬다.
   - **레퍼런스** (현재 상태만): 제자리에서 수정하고 낡은 내용은 지운다. 날짜별 사본을 만들지 않는다 (이력은 git history).
@@ -17,18 +17,17 @@
 | 파일 | 내용 | 종류 |
 |---|---|---|
 | `service-plan.md` | 서비스 기획안 — 문제 정의·이해관계자·제품 3종·비즈니스 모델. 기획 수치의 정본 | 레퍼런스 |
-| `feature-spec.md` | 웹 기능명세서 — 투자·구독·운영자·관리자 전 범위 | 레퍼런스 |
-| `app-feature-spec.md` | 운영자 앱 기능명세서 — 매장 운영·모니터링·픽업·증빙 | 레퍼런스 |
-| `build-plan.md` | 웹 화면 62개 + 기능 개발 계획 — 체크박스가 진행 상황의 정본 | 레퍼런스 |
-| `figma-route-map.md` | Figma 화면 ID ↔ Next.js 라우트 · 티어 · 역할 내비 | 레퍼런스 |
-| `architecture.md` | 구조 설계 근거 — 상정한 부정 6가지와 그것을 막는 관문·대가·약한 근거 | 근거 |
-| `identity-and-signing.md` | 신원 확인(OACX)과 체인 서명(운영지갑)의 경계 — 왜 다른 주체가 하는지, 함수 리전이 왜 서울이어야 하는지 | 근거 |
-| `oacx-status.md` | OACX 운영 절차 — 리전 실측·구조·확인 방법·되돌리기 | 레퍼런스 |
-| `identity-wallet-setup.md` | 신원 지갑 준비 — 모바일 운전면허증 발급법·OpenDID 지갑 부재·시연 선택지 | 레퍼런스 |
-| `opendid-verifier-연동.md` | 오라클 자체호스팅 OpenDID 구축 기록 — 포트·정책ID·크리덴셜 체인·삽질 로그 | 기록 |
-| `toss-setup.md` | 토스페이먼츠 가상계좌 연동 절차 — 키·웹훅·확인·되돌리기·시연 입금 | 레퍼런스 |
-| `optimization-rationale.md` | 운영최적화 계산 해설 — 식·가정·한계·파라미터 근거 | 근거 |
-| `growth-recipe-rationale.md` | 생육 레시피 계산 해설 — 좌표계·품종 이전·불확실성·목적함수 | 근거 |
+| `spec/feature-spec.md` | 웹 기능명세서 — 투자·구독·운영자·관리자 전 범위 | 레퍼런스 |
+| `spec/app-feature-spec.md` | 운영자 앱 기능명세서 — 매장 운영·모니터링·픽업·증빙 | 레퍼런스 |
+| `spec/figma-route-map.md` | Figma 화면 ID ↔ Next.js 라우트 · 티어 · 역할 내비 | 레퍼런스 |
+| `rationale/architecture.md` | 구조 설계 근거 — 상정한 부정 6가지와 그것을 막는 관문·대가·약한 근거 | 근거 |
+| `rationale/identity-and-signing.md` | 신원 확인(OACX)과 체인 서명(운영지갑)의 경계 — 왜 다른 주체가 하는지, 함수 리전이 왜 서울이어야 하는지 | 근거 |
+| `ops/oacx-status.md` | OACX 운영 절차 — 리전 실측·구조·확인 방법·되돌리기 | 레퍼런스 |
+| `ops/identity-wallet-setup.md` | 신원 지갑 준비 — 모바일 운전면허증 발급법·OpenDID 지갑 부재·시연 선택지 | 레퍼런스 |
+| `ops/opendid-verifier-연동.md` | 오라클 자체호스팅 OpenDID 구축 기록 — 포트·정책ID·크리덴셜 체인·삽질 로그 | 기록 |
+| `ops/toss-setup.md` | 토스페이먼츠 가상계좌 연동 절차 — 키·웹훅·확인·되돌리기·시연 입금 | 레퍼런스 |
+| `rationale/optimization-rationale.md` | 운영최적화 계산 해설 — 식·가정·한계·파라미터 근거 | 근거 |
+| `rationale/growth-recipe-rationale.md` | 생육 레시피 계산 해설 — 좌표계·품종 이전·불확실성·목적함수 | 근거 |
 | `qa/web-qa-sheet.xlsx` | 웹 QA 시트 — TC·요청사항(REQ)·인수 테스트 판정 (`qa/README.md`에 탭 설명) | 기록 |
 | `ai-usage.md` | AI 활용 내역 — 쓴 도구·활용 범위·AI 생성 코드의 검증과 수정 방식 | 레퍼런스 |
 | `dev-log.md` | 진행상황·결정 기록 | 기록 |
@@ -37,11 +36,11 @@
 | `submission/business-model.html` | 손익 시뮬레이터 — 투자안별 하루 필요 판매량·개설 가능성 계산 | 레퍼런스 |
 
 디자인이 코드에 얼마나 옮겨졌는지는 `tools/figma`가 기계로 센다. 대조는 두 겹이다 —
-`labels.py`+`audit.mjs`가 "문구가 있는가"(Phase X), `geometry.py`+`geometry.mjs`가
-"어디에, 얼마나 크게"(Phase Y). 결과는 `build-plan.md`의 그 두 절이다.
+`labels.py`+`audit.mjs`가 "문구가 있는가", `geometry.py`+`geometry.mjs`가 "어디에, 얼마나 크게".
+결과는 도구가 그때그때 표준출력으로 낸다.
 
 유저플로우는 별도 파일로 두지 않는다. 화면 ID·라우트·흐름도가 각 명세서 안에 있다(웹 1.4~1.5, 앱 1장). 화면을 고칠 때 흐름도를 같이 고치라고 한 문서에 넣은 것이다.
 
-웹·앱 접점(보증서 확인·설비 연결·픽업 스캔·증빙 제출)은 `app-feature-spec.md` 0.2 표가 정본이다.
+웹·앱 접점(보증서 확인·설비 연결·픽업 스캔·증빙 제출)은 `spec/app-feature-spec.md` 0.2 표가 정본이다.
 
-명세와 근거 문서는 역할이 다르다. 명세는 **무엇을 만들지**, 근거 문서는 **그 계산이 왜 그런지**를 적는다. 운영최적화의 설계 원칙(명세 9.0)과 신뢰도 규칙(명세 9.10)은 `optimization-rationale.md`에서 나온 것이라 한쪽만 고치면 어긋난다.
+명세와 근거 문서는 역할이 다르다. 명세는 **무엇을 만들지**, 근거 문서는 **그 계산이 왜 그런지**를 적는다. 운영최적화의 설계 원칙(명세 9.0)과 신뢰도 규칙(명세 9.10)은 `rationale/optimization-rationale.md`에서 나온 것이라 한쪽만 고치면 어긋난다.

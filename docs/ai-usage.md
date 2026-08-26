@@ -19,7 +19,7 @@
 단위 테스트, 문서. 커밋 446건 중 대부분의 코드 라인이 AI 생성 초안에서 출발했다.
 
 **사람이 정한 것** — 무엇을 만들지와 어떤 값이 맞는지다. 화면 62개 목록과 순서
-(`build-plan.md`), 색·좌표·폰트(`design/*.fig`가 기준), 도메인 규칙(트랜치 집행 조건,
+(`spec/feature-spec.md`·`spec/figma-route-map.md`), 색·좌표·폰트(`design/*.fig`가 기준), 도메인 규칙(트랜치 집행 조건,
 "확정 발행 합 == 청약 합" 같은 불변식), 스키마 설계, 배포 구성.
 
 **AI에 맡기지 않은 것** — 운영 키·계정 발급(Supabase·Vercel·토스페이먼츠·OACX),
@@ -36,8 +36,8 @@
 
 **(2) 도면 대조 (기계)** — AI가 만든 화면이 Figma와 얼마나 벌어졌는지를 사람 눈 대신
 스크립트로 센다. `tools/figma`의 `labels.py`+`audit.mjs`가 "그 문구가 화면에 있는가",
-`geometry.py`+`geometry.mjs`가 "어디에, 얼마나 크게" 있는가를 대조한다. 결과는
-`build-plan.md` Phase X·Y에 남고 문구 일치율이 낮으면서 발표 동선에 있는 화면부터 고쳤다.
+`geometry.py`+`geometry.mjs`가 "어디에, 얼마나 크게" 있는가를 대조한다. 문구 일치율이 낮으면서
+발표 동선에 있는 화면부터 고쳤다.
 
 **(3) 멀티에이전트 코드리뷰** — 변경분을 여러 리뷰 에이전트에 나눠 돌리고 발견 건마다
 별도 에이전트가 반증을 시도해 살아남은 것만 채택했다. AI 리뷰가 그럴듯하게 틀린 지적을
@@ -78,5 +78,5 @@
 강제 통과 경로는 없다. provider는 키가 설정된 것만 Gemini → OpenAI → Anthropic 순으로
 시도하며 현재 키는 Gemini만 넣어 두었다.
 
-계산의 식·가정·한계는 `optimization-rationale.md`와 `growth-recipe-rationale.md`,
-기능 명세는 `feature-spec.md`에 있다.
+계산의 식·가정·한계는 `rationale/optimization-rationale.md`와 `rationale/growth-recipe-rationale.md`,
+기능 명세는 `spec/feature-spec.md`에 있다.

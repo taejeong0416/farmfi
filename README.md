@@ -588,7 +588,7 @@ $ cd contracts && git submodule update --init && forge test
 
 **환경 변수:** 자세한 키 목록은 [CONTRIBUTING.md](CONTRIBUTING.md) 참고. 최소 구동은 `DATABASE_URL` · `JWT_SECRET` · `GEMINI_API_KEY`면 되고, 온체인·본인인증 키가 없으면 해당 기능이 비활성으로 떨어진다.
 
-**신규 합류자는** [docs/service-plan.md](docs/service-plan.md)(기획 정본)를 먼저 읽고, [docs/feature-spec.md](docs/feature-spec.md)(웹)와 [docs/app-feature-spec.md](docs/app-feature-spec.md)(앱)로 기능 범위와 화면 흐름을 파악하면 된다.
+**신규 합류자는** [docs/service-plan.md](docs/service-plan.md)(기획 정본)를 먼저 읽고, [docs/spec/feature-spec.md](docs/spec/feature-spec.md)(웹)와 [docs/spec/app-feature-spec.md](docs/spec/app-feature-spec.md)(앱)로 기능 범위와 화면 흐름을 파악하면 된다.
 <br/>
 
 ### 5. 소개 및 시연영상

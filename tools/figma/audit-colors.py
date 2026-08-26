@@ -13,7 +13,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from extract import DESIGN, hexcolor, load  # noqa: E402
 
-# docs/build-plan.md 그라운드 룰의 팔레트
+# CLAUDE.md 그라운드 룰의 팔레트
 ALLOWED = {'#1A1A1A', '#4A4A4A', '#8A8A8A', '#E5E5E3', '#EDEDEB', '#F2F2F0',
            '#14542E', '#A34A3D', '#EAF6EE', '#FFFFFF', '#000000'}
 

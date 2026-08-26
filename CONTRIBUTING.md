@@ -1,6 +1,6 @@
 # Contributing
 
-FarmFi 개발 가이드. 기능 범위와 화면 흐름은 [docs/feature-spec.md](docs/feature-spec.md)(웹)·[docs/app-feature-spec.md](docs/app-feature-spec.md)(앱)를 먼저 읽으면 빠르다.
+FarmFi 개발 가이드. 기능 범위와 화면 흐름은 [docs/spec/feature-spec.md](docs/spec/feature-spec.md)(웹)·[docs/spec/app-feature-spec.md](docs/spec/app-feature-spec.md)(앱)를 먼저 읽으면 빠르다.
 
 ## 기술 스택
 - **웹/백엔드**: Next.js 14 (App Router + API Routes), TypeScript
@@ -63,6 +63,6 @@ FarmFi 개발 가이드. 기능 범위와 화면 흐름은 [docs/feature-spec.md
 ## 문서
 | 파일 | 내용 |
 |---|---|
-| [docs/feature-spec.md](docs/feature-spec.md) | 웹 기능명세서 |
-| [docs/app-feature-spec.md](docs/app-feature-spec.md) | 운영자 앱 기능명세서 |
+| [docs/spec/feature-spec.md](docs/spec/feature-spec.md) | 웹 기능명세서 |
+| [docs/spec/app-feature-spec.md](docs/spec/app-feature-spec.md) | 운영자 앱 기능명세서 |
 | [docs/dev-log.md](docs/dev-log.md) | 진행상황·결정 기록 |
