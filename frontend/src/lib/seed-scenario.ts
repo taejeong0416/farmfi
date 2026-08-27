@@ -252,7 +252,7 @@ export async function seedScenario(prisma: PrismaClient) {
       tokenSymbol: "MF01", tokenPrice: BigInt(10_000), totalTokens: 4400, soldTokens: 4400,
       targetAmount: BigInt(44_000_000), currentAmount: BigInt(44_000_000), totalCapex: BigInt(44_000_000),
       fundingStart: p1FundingStart, fundingEnd: new Date(now.getTime() - 30 * DAY),
-      contractAddress: process.env.NEXT_PUBLIC_ESCROW_ADDRESS || "0xa855f6398fb71ad197ec055853007007d3f7d452",
+      contractAddress: process.env.NEXT_PUBLIC_ESCROW_ADDRESS || "0x64192509ed43efdb070805e1479974d259201b75",
     },
   });
   const p2 = await prisma.project.create({
@@ -328,7 +328,7 @@ export async function seedScenario(prisma: PrismaClient) {
       // 완판 4,400만 전액 락업 · 마일스톤1이 아직 in_progress라 집행액 0 → 잔액 = 락업액.
       totalLocked: BigInt(44_000_000), totalReleased: BigInt(0), remaining: BigInt(44_000_000),
       status: "active",
-      contractAddress: process.env.NEXT_PUBLIC_ESCROW_ADDRESS || "0xa855f6398fb71ad197ec055853007007d3f7d452",
+      contractAddress: process.env.NEXT_PUBLIC_ESCROW_ADDRESS || "0x64192509ed43efdb070805e1479974d259201b75",
     },
   });
   // 트랜치 = 목표조달 4,400만 × releasePct (10/20/30/25/15)
@@ -378,7 +378,7 @@ export async function seedScenario(prisma: PrismaClient) {
       tokenSymbol: "MF03", tokenPrice: BigInt(10_000), totalTokens: 4400, soldTokens: 3480,
       targetAmount: BigInt(44_000_000), currentAmount: BigInt(34_800_000), totalCapex: BigInt(44_000_000),
       fundingStart: now, fundingEnd: new Date(now.getTime() + 30 * DAY),
-      contractAddress: process.env.NEXT_PUBLIC_ESCROW_ADDRESS || "0xa855f6398fb71ad197ec055853007007d3f7d452",
+      contractAddress: process.env.NEXT_PUBLIC_ESCROW_ADDRESS || "0x64192509ed43efdb070805e1479974d259201b75",
     },
   });
   await prisma.escrow.create({
@@ -387,7 +387,7 @@ export async function seedScenario(prisma: PrismaClient) {
       // 모집 중이므로 락업액 = 현재까지 청약된 3,480만(= currentAmount), 집행 0.
       totalLocked: BigInt(34_800_000), totalReleased: BigInt(0), remaining: BigInt(34_800_000),
       status: "active",
-      contractAddress: process.env.NEXT_PUBLIC_ESCROW_ADDRESS || "0xa855f6398fb71ad197ec055853007007d3f7d452",
+      contractAddress: process.env.NEXT_PUBLIC_ESCROW_ADDRESS || "0x64192509ed43efdb070805e1479974d259201b75",
     },
   });
   // 1호점과 동일한 표준 트랜치 — 목표 4,400만 기준 1,540/1,320/880/660만(합계 4,400만).

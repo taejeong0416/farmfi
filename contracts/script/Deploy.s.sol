@@ -20,17 +20,22 @@ contract Deploy is Script {
         FarmToken farmToken = new FarmToken("FarmFi MiniParm 1", "MF01", 4400);
 
         // 2. Deploy Escrow
-        string[] memory milestoneNames = new string[](4);
-        milestoneNames[0] = "Space Prep";
-        milestoneNames[1] = "Trial Run";
-        milestoneNames[2] = "First Harvest";
-        milestoneNames[3] = "Sustained Ops";
+        // 기획안 §6.1 — 설비 조성 5단계. 초반(계약)을 낮게 잡아 투자자 리스크를 줄이고,
+        // 하드웨어가 현장에 들어오는 반입 시점(누적 60%)에 대금을 크게 실어 설비업체의
+        // 외상 구간을 좁힌 뒤, 마지막 15%는 실제 개점까지 확인한 유보금으로 남긴다.
+        string[] memory milestoneNames = new string[](5);
+        milestoneNames[0] = "Contract";        // 계약 체결
+        milestoneNames[1] = "Equipment Order"; // 설비 발주·제작
+        milestoneNames[2] = "Delivery";        // 반입·설치 착수
+        milestoneNames[3] = "Installation";    // 설치 완료·검수
+        milestoneNames[4] = "Commissioning";   // 시운전·영업 개시
 
-        uint256[] memory milestonePcts = new uint256[](4);
-        milestonePcts[0] = 3500;
-        milestonePcts[1] = 3000;
-        milestonePcts[2] = 2000;
-        milestonePcts[3] = 1500;
+        uint256[] memory milestonePcts = new uint256[](5);
+        milestonePcts[0] = 1000; // 10%
+        milestonePcts[1] = 2000; // 20%
+        milestonePcts[2] = 3000; // 30%
+        milestonePcts[3] = 2500; // 25%
+        milestonePcts[4] = 1500; // 15%
 
         uint256 tokenPrice = 0.001 ether; // ~5000 KRW on testnet
 
