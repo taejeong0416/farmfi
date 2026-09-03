@@ -44,7 +44,7 @@ FarmFi 개발 가이드. 기능 범위와 화면 흐름은 [docs/spec/feature-sp
 
 ## 검증 방법
 
-로컬 `npm run build`는 경로 한글(`D:\해커톤`) + Node 22/Next 14.2의 `readlink` EISDIR로 실패한다. 클린 상태에서도 재현되는 환경 문제이며 코드 문제가 아니다. 프로덕션 빌드는 Vercel(Linux)에서 돈다.
+저장소를 한글이 섞인 경로에 두면 `npm run build`가 `readlink` EISDIR로 실패한다(Node 22/Next 14.2). ASCII 경로에서는 정상으로 돈다. 프로덕션 빌드는 Vercel(Linux)에서 돈다.
 
 로컬 검증은 `npx tsc --noEmit` + `npm run dev` + curl 조합으로 한다. 이 조합이 못 잡는 것이 있다는 점은 알고 있어야 한다 — `tsconfig` target이 es2017이라 BigInt 리터럴(`0n`)은 로컬 tsc를 통과하고 Vercel 빌드에서 깨진다. `BigInt(0)` 생성자를 쓴다.
 

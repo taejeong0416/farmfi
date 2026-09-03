@@ -1241,7 +1241,7 @@ A-08의 조건 항목별 판정을 사람이 처음부터 채우지 않도록, �
 
 ### 10.5 Chain Relay 책임
 
-- BESU RPC 및 해커톤 콘솔 API Key 관리
+- BESU RPC 및 체인 콘솔 API Key 관리
 - 컨트랙트 ABI·주소·네트워크 ID 관리
 - 운영키 서명 및 nonce 직렬화
 - 투자자 수탁 지갑 생성 요청과 `keyRef` 관리
