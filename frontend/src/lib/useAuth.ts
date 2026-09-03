@@ -93,6 +93,10 @@ export function useAuth() {
     queryKey: AUTH_ME_QUERY_KEY,
     queryFn: fetchCurrentUser,
     retry: false,
+    // 세션은 전역 staleTime(30초)을 따르지 않는다. 본인확인처럼 다른 화면에서
+    // 바뀐 값이 화면마다 반영돼야 하는데, 캐시를 물고 있으면 새로고침을 해야
+    // 반영된다. 진입할 때마다 서버 값을 다시 본다.
+    staleTime: 0,
   });
 
   const login = useCallback(
