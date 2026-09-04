@@ -4,7 +4,7 @@
 
 **공간 · 사람 · 자본을 연결해 도심 공실을 지속 가능한 스마트팜 매장으로 전환하는 플랫폼**
 
-**🔗 라이브 데모 — 웹 [farmfi.co.kr](https://farmfi.co.kr) · 앱 [GitHub Pages](https://pnu-2026-ai-hackathon.github.io/pnuai-b-01-b301/login)** (운영자 앱 데모 계정 `operator@farmfi.test` / `farmfi123`)
+**🔗 라이브 데모 — 웹 [farmfi.co.kr](https://farmfi.co.kr) · 앱 [GitHub Pages](https://taejeong0416.github.io/farmfi/login)** (운영자 앱 데모 계정 `operator@farmfi.test` / `farmfi123`)
 
 </div>
 
