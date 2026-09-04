@@ -56,7 +56,7 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true,
-      "baseUrl": "/pnuai-b-01-b301"
+      "baseUrl": "/farmfi"
     }
   }
 }
