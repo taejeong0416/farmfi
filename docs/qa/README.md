@@ -42,4 +42,4 @@ cd frontend && node scripts/qa-prod-round.mjs
 
 ## 남은 것
 
-- 배포할 때마다 3차 TC 를 다시 돌린다. 지금 판정은 `e81d8a05` 기준이다.
+- 배포할 때마다 3차 TC 를 다시 돌린다. 지금 판정은 `694b9600` 기준이다.
