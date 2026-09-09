@@ -158,6 +158,44 @@ export function ProjectDetailScreen({ id }: { id: string }) {
                 bordered
               />
             </div>
+            {/*
+              목록 카드가 쓰는 두 값을 신청 패널과 같은 높이에 둔다. 목록에서
+              "목표 115% · 15개월"을 보고 들어온 사람이 정작 금액을 넣는 화면에서
+              그 숫자를 못 보면 무엇을 기대하고 넣는지 알 수 없다.
+              값이 없는 지점(펀딩 전 운영 지점)은 그 칸을 그리지 않는다.
+            */}
+            {p.targetReturnPct != null || p.paybackMonths != null ? (
+              <>
+                <div
+                  className={`grid border-t border-line-soft ${
+                    p.targetReturnPct != null && p.paybackMonths != null
+                      ? "grid-cols-2"
+                      : "grid-cols-1"
+                  }`}
+                >
+                  {p.targetReturnPct != null ? (
+                    <Metric
+                      label="목표 총 회수율"
+                      value={`${p.targetReturnPct}%`}
+                      small
+                      accent
+                    />
+                  ) : null}
+                  {p.paybackMonths != null ? (
+                    <Metric
+                      label="예상 회수기간"
+                      value={`${p.paybackMonths}개월`}
+                      small
+                      bordered={p.targetReturnPct != null}
+                    />
+                  ) : null}
+                </div>
+                <p className="border-t border-line-soft bg-surface px-6 py-3.5 text-11 leading-5 text-muted">
+                  ※ 회수기간과 목표 총 회수율은 각 점포의 사업계획 기준 예상치이며,
+                  실제 매출과 운영비에 따라 달라질 수 있습니다. 원금은 보장되지 않습니다.
+                </p>
+              </>
+            ) : null}
           </Card>
 
           {navInfo?.available ? (
