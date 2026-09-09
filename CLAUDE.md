@@ -28,7 +28,7 @@ accent-investor #207349 · accent-operator #8C6114
 ## 구조
 - `frontend/` — Next.js 14 (App Router) + Prisma + API Routes (웹 + 백엔드)
 - `app/` — Expo React Native 운영자 앱
-- `contracts/` — Foundry (Escrow · FarmToken · Dividend · RoundGate)
+- `contracts/` — Foundry (Escrow · FarmToken · Dividend · RoundGate · ProjectRegistry · AuditTrail)
 - `docs/` — 공유 문서 (feature-spec / app-feature-spec / dev-log)
 
 ## 명령어 (frontend/)

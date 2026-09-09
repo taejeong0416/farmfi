@@ -1,4 +1,4 @@
-# 웹 화면 61개 · 라우트 매핑
+# 웹 화면 62개 · 라우트 매핑
 
 Figma 화면 ID를 Next.js 라우트와 짝지은 표. 화면을 만들 때 이 표의 라우트를 쓴다.
 덤프 원본은 `design/screens/farmfi-web/<페이지>/<ID>.txt`이고, 페이지는 `_핵심_UI` · `관리자_콘솔` · `비핵심_UI_관리자_콘솔_제외_` 셋이다.
@@ -99,7 +99,7 @@ Figma 화면 ID를 Next.js 라우트와 짝지은 표. 화면을 만들 때 이 
 
 ## 만들지 않는 화면
 
-`/wallet`, `/wallet/reconnect`로 들어오면 `/verify/account`로 리다이렉트한다(H2).
+`/wallet`, `/wallet/register`, `/wallet/reconnect`로 들어오면 `/verify/account`로 리다이렉트한다(H2).
 `MVP 필수 배지`는 화면이 아니라 Figma 범례다.
 
 ## 역할별 내비게이션

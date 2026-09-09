@@ -196,7 +196,7 @@ Next.js App Router 기준 경로다. 화면 ID는 `design/farmfi-web.fig`를 따
 | 통합 마이페이지 | `/mypage` |
 | 서비스 소개 | `/about` |
 
-`지갑 주소 등록`·`지갑 재연결` 경로는 만들지 않는다. 기존 URL로 들어오면 `/verify/account` 또는 `/verify/done`으로 리다이렉트한다.
+`지갑 주소 등록`·`지갑 재연결` 경로는 만들지 않는다. 기존 URL(`/wallet`, `/wallet/register`, `/wallet/reconnect`)로 들어오면 `/verify/account`로 리다이렉트한다.
 
 ### 1.5 화면 흐름
 
