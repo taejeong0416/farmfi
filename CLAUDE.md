@@ -19,10 +19,12 @@ Figma가 기준이다. 원본은 `design/*.fig`, 화면별 좌표·색·폰트 �
 ```
 ink #1A1A1A · body #4A4A4A · muted #8A8A8A
 line #E5E5E3 · line-soft #EDEDEB · surface #F1F4F2
-brand #14542E · danger #DC2626
+brand #14542E · danger #9B2F2F
 accent-investor #207349 · accent-operator #8C6114
 ```
 - 값은 `.fig`에서 그대로 뽑은 것이다. Figma와 코드가 갈리면 Figma가 맞다.
+- **예외는 `danger` 하나다.** `.fig`의 `#DC2626`은 채도가 높아 brand 초록과 나란히 두면
+  두 색이 서로 밀어낸다. 코드는 같은 명도대의 `#9B2F2F`를 쓴다 — 여기서는 코드가 맞다.
 - 제3자 브랜드 로고(B-05 결제수단)는 원본 색을 쓴다.
 
 ## 구조

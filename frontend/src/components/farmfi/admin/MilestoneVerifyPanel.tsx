@@ -297,7 +297,7 @@ export function MilestoneVerifyPanel() {
                 {milestone.evidenceNote ? ` · ${milestone.evidenceNote}` : ""}
               </p>
             ) : (
-              <p className="muted" style={{ color: "var(--danger, #DC2626)" }}>
+              <p className="muted" style={{ color: "var(--danger, #9B2F2F)" }}>
                 운영자 증빙이 아직 제출되지 않았습니다. 증빙 없이는 검증·집행할 수
                 없습니다 (O-11 제출 대기).
               </p>
@@ -328,7 +328,7 @@ export function MilestoneVerifyPanel() {
               {Object.entries(verify.signals).map(([k, ok]) => (
                 <li key={k}>
                   <span className="muted">{k}</span>
-                  <strong style={{ color: ok ? "var(--green-700)" : "#c0392b" }}>
+                  <strong style={{ color: ok ? "var(--green-700)" : "#9B2F2F" }}>
                     {ok ? "통과 ✓" : "미통과 ✗"}
                   </strong>
                 </li>
@@ -338,7 +338,7 @@ export function MilestoneVerifyPanel() {
               style={{
                 marginTop: 12,
                 fontWeight: 800,
-                color: verify.passed ? "var(--green-700)" : "#c0392b",
+                color: verify.passed ? "var(--green-700)" : "#9B2F2F",
               }}
             >
               {verify.passed
@@ -364,7 +364,7 @@ export function MilestoneVerifyPanel() {
             {completeMsg}
           </p>
         ) : null}
-        {error ? <p style={{ color: "#c0392b" }}>{error}</p> : null}
+        {error ? <p style={{ color: "#9B2F2F" }}>{error}</p> : null}
       </div>
     </article>
   );

@@ -106,7 +106,7 @@ export default function MonitoringPage() {
         desc: `${p.affectedSensors
           .map((s) => SENSOR_META[s].label)
           .join(", ")} 급변 (${p.anomalyScore.toFixed(1)}σ)`,
-        color: "#DC2626",
+        color: "#9B2F2F",
       }));
     const driftEvents = data.drift
       .filter((d) => d.detected && d.detectedAt)
@@ -603,8 +603,8 @@ function SensorChart({
                   fillOpacity={0.07}
                   stroke="none"
                 />
-                <ReferenceLine y={gLo} stroke="#DC2626" strokeDasharray="3 4" strokeOpacity={0.5} />
-                <ReferenceLine y={gHi} stroke="#DC2626" strokeDasharray="3 4" strokeOpacity={0.5} />
+                <ReferenceLine y={gLo} stroke="#9B2F2F" strokeDasharray="3 4" strokeOpacity={0.5} />
+                <ReferenceLine y={gHi} stroke="#9B2F2F" strokeDasharray="3 4" strokeOpacity={0.5} />
               </>
             )}
             {driftTs && (
@@ -681,7 +681,7 @@ function SensorChart({
                       cx={props.cx}
                       cy={props.cy}
                       r={3.5}
-                      fill="#DC2626"
+                      fill="#9B2F2F"
                       stroke="#fff"
                       strokeWidth={1}
                     />

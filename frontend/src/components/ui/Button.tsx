@@ -8,7 +8,7 @@ const variantClass: Record<Variant, string> = {
   primary: "bg-brand text-white border border-brand hover:bg-[#0F4325]",
   secondary: "bg-white text-brand border border-brand hover:bg-brand-soft",
   ghost: "bg-white text-ink border border-line hover:bg-surface",
-  danger: "bg-white text-danger border border-danger hover:bg-[#FBF3F2]",
+  danger: "bg-white text-danger border border-danger hover:bg-[#F7F0F0]",
 };
 
 const sizeClass: Record<Size, string> = {

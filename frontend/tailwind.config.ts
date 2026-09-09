@@ -19,7 +19,7 @@ const config: Config = {
         surface: "#F1F4F2",
         brand: "#14542E",
         "brand-soft": "#F1F4F2",
-        danger: "#DC2626",
+        danger: "#9B2F2F",
         // 역할 배지. .fig가 투자자와 운영자를 이 두 색으로 나눈다.
         "accent-investor": "#207349",
         "accent-operator": "#8C6114",

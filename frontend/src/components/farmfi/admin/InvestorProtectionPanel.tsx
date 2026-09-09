@@ -315,7 +315,7 @@ export function InvestorProtectionPanel() {
               style={{
                 marginTop: 14,
                 fontWeight: 800,
-                color: msg.ok ? "var(--green-700)" : "#b02a2a",
+                color: msg.ok ? "var(--green-700)" : "#9B2F2F",
               }}
             >
               {msg.text}

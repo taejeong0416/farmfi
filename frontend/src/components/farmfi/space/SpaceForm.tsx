@@ -209,7 +209,7 @@ export function SpaceForm() {
         </div>
 
         {submitMutation.isError && (
-          <p style={{ color: "#c0392b", fontSize: 13, marginTop: 12 }}>
+          <p style={{ color: "#9B2F2F", fontSize: 13, marginTop: 12 }}>
             {submitMutation.error.message}
           </p>
         )}
@@ -362,7 +362,7 @@ function PhotoUpload({
       </label>
 
       {error && (
-        <p style={{ color: "#c0392b", fontSize: 12, marginTop: 6 }}>{error}</p>
+        <p style={{ color: "#9B2F2F", fontSize: 12, marginTop: 6 }}>{error}</p>
       )}
 
       {photos.length > 0 && (

@@ -149,10 +149,15 @@ export function ProjectDetailScreen({ id }: { id: string }) {
         <Badge tone={p.status === "funding" ? "pass" : "plain"}>
           {PROJECT_STATUS_LABEL[p.status] ?? p.status}
         </Badge>
-        <span className="rounded-full border border-danger px-3 py-1 text-11 font-medium text-danger">
+        {/*
+          세 배지는 같은 층위의 사실이다. 테두리까지 각자 색을 가지면 셋이 서로 다른
+          무게로 읽히고, 면까지 깔리면 그 하나만 떠오른다. 테두리는 선 색으로 묶고
+          뜻은 글자 색으로만 구분한다.
+        */}
+        <span className="rounded-full border border-line px-3 py-1 text-11 font-medium text-danger">
           원금 비보장
         </span>
-        <span className="rounded-full border border-brand bg-brand-soft px-3 py-1 text-11 font-medium text-brand">
+        <span className="rounded-full border border-line px-3 py-1 text-11 font-medium text-brand">
           회수기간 변동 가능
         </span>
         <span className="rounded-full border border-line px-3 py-1 text-11 font-medium text-body">
@@ -308,9 +313,15 @@ export function ProjectDetailScreen({ id }: { id: string }) {
                 </div>
               </div>
 
-              <p className="border-t border-line-soft bg-danger/5 px-6 py-3.5 text-12 leading-6 text-danger">
-                하루 <b className="font-semibold">{scenario.breakEven}팩</b> 아래로 떨어지면
-                그 달 배분은 <b className="font-semibold">0원</b>입니다. 부진이 이어지면
+              {/*
+                경고를 붉은 면으로 깔지 않는다. 브랜드 초록과 채도가 맞지 않아 두 색이
+                따로 놀고, 면이 넓을수록 읽기도 나빠진다. 붉은색은 원금 비보장 배지와
+                같은 무게로 — 숫자 몇 개에만 쓴다.
+              */}
+              <p className="border-t border-line-soft bg-surface px-6 py-3.5 text-12 leading-6 text-body">
+                하루 <b className="font-semibold text-danger">{scenario.breakEven}팩</b>{" "}
+                아래로 떨어지면 그 달 배분은{" "}
+                <b className="font-semibold text-danger">0원</b>입니다. 부진이 이어지면
                 회수 기간이 최대 {MAX_RECOVERY_MONTHS}개월까지 늘어나고, 원금 전액을
                 돌려받지 못할 수 있습니다.
               </p>
@@ -440,7 +451,7 @@ export function ProjectDetailScreen({ id }: { id: string }) {
                 }
                 className={`flex h-[45px] items-center justify-between rounded-8 border px-5 text-13 transition-colors ${
                   openSection === s.key
-                    ? "border-brand bg-brand-soft font-medium text-brand"
+                    ? "border-ink bg-surface font-medium text-ink"
                     : "border-line text-ink hover:bg-surface"
                 }`}
               >
@@ -588,9 +599,10 @@ export function ProjectDetailScreen({ id }: { id: string }) {
             금액을 넣는 순간 그 금액의 회수 시나리오가 이 자리에서 계산된다.
             화면을 떠나야 알 수 있으면 판단에 쓰이지 않는다. 단일 확정액으로 읽히지
             않도록 숫자에는 "예상"을, 상자 안에는 원금 미달 가능성을 함께 둔다.
+            신청 버튼 바로 위라 강조가 필요한데, 면을 칠하는 대신 테두리를 두껍게 준다.
           */}
           {scenario && amount >= unit ? (
-            <div className="mt-3 rounded-8 border border-brand bg-brand-soft px-4 py-3">
+            <div className="mt-3 rounded-8 border-2 border-brand px-4 py-3">
               <p className="text-11 font-semibold text-brand">
                 이 금액의 회수 시나리오
               </p>
@@ -790,16 +802,20 @@ function FlowRow({
       <span className={`text-13 ${total ? "font-medium text-brand" : "text-body"}`}>
         {label}
       </span>
+      {/*
+        비용은 사고가 아니라 정상 지출이다. 붉게 칠하면 경고와 같은 무게가 되어
+        정작 하방 경고가 묻힌다. 회색으로 두고, 초록은 마지막 배분 재원 한 줄에만 쓴다.
+      */}
       <span
         className={`h-2 rounded-4 ${
-          amount < 0 ? "bg-muted/40" : total ? "bg-brand" : "bg-brand/70"
+          total ? "bg-brand" : amount < 0 ? "bg-muted/40" : "bg-line"
         }`}
         style={{ width: `${width}%` }}
       />
       <span
         className={`text-right font-num text-13 ${
           amount < 0
-            ? "text-danger"
+            ? "text-body"
             : total
               ? "font-semibold text-brand"
               : "font-semibold text-ink"
