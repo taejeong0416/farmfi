@@ -22,3 +22,6 @@ __pycache__/
 
 # Vercel CLI 링크 (프로젝트 ID). 로컬 전용.
 .vercel
+
+# 산출물 폴더 — 문서·목업 등 저장소가 관리하지 않는 결과물.
+output/
