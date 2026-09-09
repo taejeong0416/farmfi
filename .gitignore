@@ -19,3 +19,6 @@ tools/figma/geometry-report.json
 # 묶여 있어(cpython-313) 다른 버전을 쓰는 사람에게는 무의미하다.
 __pycache__/
 *.pyc
+
+# Vercel CLI 링크 (프로젝트 ID). 로컬 전용.
+.vercel
