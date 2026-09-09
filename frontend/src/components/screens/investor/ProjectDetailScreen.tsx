@@ -599,10 +599,12 @@ export function ProjectDetailScreen({ id }: { id: string }) {
             금액을 넣는 순간 그 금액의 회수 시나리오가 이 자리에서 계산된다.
             화면을 떠나야 알 수 있으면 판단에 쓰이지 않는다. 단일 확정액으로 읽히지
             않도록 숫자에는 "예상"을, 상자 안에는 원금 미달 가능성을 함께 둔다.
-            신청 버튼 바로 위라 강조가 필요한데, 면을 칠하는 대신 테두리를 두껍게 준다.
+            상자로 두르지 않는다. 이 패널은 이미 카드이고 그 안에 입력창과 버튼이라는
+            사각형이 있다. 여기에 또 테두리를 두르면 정작 초점이어야 할 입력창과
+            경쟁한다. 가로줄로만 끊고 크기와 색으로 구분한다.
           */}
           {scenario && amount >= unit ? (
-            <div className="mt-3 rounded-8 border-2 border-brand px-4 py-3">
+            <div className="mt-4 border-y border-line-soft py-3.5">
               <p className="text-11 font-semibold text-brand">
                 이 금액의 회수 시나리오
               </p>

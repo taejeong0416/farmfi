@@ -59,7 +59,9 @@ export function monthlyBreakdown(
   const packs = dailyPacks * DAYS_PER_MONTH;
   const revenue = packs * PLAN_PACK_PRICE;
   const variableCost = packs * rule.unitVariableCost;
-  const paymentFee = revenue * rule.paymentFeeRate;
+  // 원화에는 소수점이 없다. 비율에서 나온 값은 여기서 끊는다 — 화면까지 흘려보내면
+  // "월 38,482.955원" 같은 금액이 그대로 찍힌다.
+  const paymentFee = Math.round(revenue * rule.paymentFeeRate);
   const fixedCost = monthlyFixedCost(rule);
   return {
     revenue,
@@ -119,5 +121,5 @@ export function myMonthlyShare(
   targetAmount: number,
 ): number {
   if (targetAmount <= 0) return 0;
-  return pool * (myAmount / targetAmount);
+  return Math.round(pool * (myAmount / targetAmount));
 }
