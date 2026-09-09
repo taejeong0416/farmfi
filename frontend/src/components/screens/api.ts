@@ -147,6 +147,29 @@ export type ProjectDetail = ProjectSummary & {
     status: string;
   } | null;
   fundingStart: string | null;
+  buildingType: string | null;
+  areaSqm: number | null;
+  totalCapex: number;
+  operator: { id: string; name: string } | null;
+  partners: {
+    id: string;
+    role: string;
+    name: string;
+    totalContribution: number;
+  }[];
+  settlementRule: SettlementRule | null;
+};
+
+/** 회수 조건 계산에 쓰는 정산 규칙. 폐기 필드는 화면이 쓰지 않으므로 싣지 않는다. */
+export type SettlementRule = {
+  unitVariableCost: number;
+  paymentFeeRate: number;
+  operatorPay: number;
+  facilityCost: number;
+  unitUpkeepCost: number;
+  platformFee: number;
+  annualPremiumRate: number;
+  recoveryMonths: number;
 };
 
 /**
