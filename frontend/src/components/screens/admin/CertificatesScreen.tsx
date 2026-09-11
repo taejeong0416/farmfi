@@ -263,14 +263,14 @@ export function CertificatesScreen() {
       {/* `.fig` A-03 — 발급 전에 무엇이 나가는지 보여준다. */}
       <h2 className="mt-8 text-15 font-bold text-ink">미리보기</h2>
       <div className="mt-4 max-w-[420px] rounded-14 bg-brand px-6 py-6">
-        <p className="text-11 font-medium text-[#D1E0D6]">FARMFI OPERATOR</p>
+        <p className="text-11 font-medium text-brand-muted">FARMFI OPERATOR</p>
         <p className="mt-2 text-24 font-bold text-white">운영자 보증서</p>
-        <p className="mt-5 text-12 text-[#D1E0D6]">
+        <p className="mt-5 text-12 text-brand-muted">
           {pending[0]
             ? `${pending[0].user.name} · ${pending[0].region}`
             : (credentials[0]?.user.name ?? "발급 대상 없음")}
         </p>
-        <p className="mt-1 text-12 text-[#D1E0D6]">
+        <p className="mt-1 text-12 text-brand-muted">
           교육 수료 · 공간 최종 확정 · 계약 서명 완료
         </p>
       </div>

@@ -19,7 +19,7 @@ Figma가 기준이다. 원본은 `design/*.fig`, 화면별 좌표·색·폰트 �
 ```
 ink #1A1A1A · body #4A4A4A · muted #8A8A8A
 line #E5E5E3 · line-soft #EDEDEB · surface #F1F4F2
-brand #14542E · brand-soft #F1F4F2
+brand #14542E · brand-soft #F1F4F2 · brand-muted #D1E0D6
 danger #9B2F2F · danger-soft #F7F0F0
 accent-investor #207349 · accent-operator #8C6114
 ```

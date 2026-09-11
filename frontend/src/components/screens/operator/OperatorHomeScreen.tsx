@@ -152,7 +152,7 @@ export function OperatorHomeScreen() {
           {/* `.fig` O-09 ProgressCard — 왼쪽 라벨·퍼센트, 오른쪽 막대와 안내문. */}
           <div className="flex items-center gap-10 rounded-14 bg-brand px-6 py-6">
             <div className="shrink-0">
-              <p className="text-13 font-medium text-[#D1E0D6]">전체 준비도</p>
+              <p className="text-13 font-medium text-brand-muted">전체 준비도</p>
               <p className="mt-1 font-num text-[34px] font-bold leading-tight text-white">
                 {progress}%
               </p>
@@ -164,7 +164,7 @@ export function OperatorHomeScreen() {
                   style={{ width: `${progress}%` }}
                 />
               </div>
-              <p className="mt-3 text-11 text-[#D1E0D6]">
+              <p className="mt-3 text-11 text-brand-muted">
                 {application.certificateNo
                   ? "보증서가 발급됐어요. 이제 공간과 설비 준비를 마치면 운영을 시작할 수 있어요."
                   : "남은 단계를 마치면 보증서가 발급됩니다."}

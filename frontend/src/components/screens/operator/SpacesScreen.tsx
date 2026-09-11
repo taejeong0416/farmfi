@@ -66,7 +66,7 @@ function MapPanel({ spaces }: { spaces: SpaceItem[] }) {
           style={{ top: `${y}%` }}
         />
       ))}
-      <span className="absolute left-[6%] top-[6%] h-[88%] w-[18%] rounded-[30px] bg-[#D1E0D6]" />
+      <span className="absolute left-[6%] top-[6%] h-[88%] w-[18%] rounded-[30px] bg-brand-muted" />
 
       {spaces.map((s) => {
         const tone = pinTone(s.status);
@@ -239,7 +239,7 @@ export function SpacesScreen() {
                 알림 받기
               </Link>
             </div>
-            <p className="mt-2 text-12 text-[#D1E0D6]">
+            <p className="mt-2 text-12 text-brand-muted">
               새 공간이 등록되면 알려드릴게요
             </p>
           </div>

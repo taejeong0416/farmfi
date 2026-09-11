@@ -20,7 +20,7 @@ const MAX_PHOTOS = 10;
 // applied via inline style so we don't have to touch globals.css.
 const ACTIVE_SEG_STYLE = {
   borderColor: "#14542e",
-  background: "#eaf6ee",
+  background: "var(--green-100)",
   color: "var(--green-800)",
   cursor: "pointer",
 } as const;

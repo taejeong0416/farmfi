@@ -19,6 +19,8 @@ const config: Config = {
         surface: "#F1F4F2",
         brand: "#14542E",
         "brand-soft": "#F1F4F2",
+        // 진한 brand 면 위에 얹는 흐린 글자. 흰 바탕의 muted에 해당한다.
+        "brand-muted": "#D1E0D6",
         danger: "#9B2F2F",
         // danger 위에 깔리는 옅은 면. 앱 팔레트의 `dangerSoft`와 같은 값이다.
         "danger-soft": "#F7F0F0",

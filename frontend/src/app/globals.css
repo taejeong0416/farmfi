@@ -359,7 +359,7 @@ h2 strong {
 .bars span {
   flex: 1;
   border-radius: 6px 6px 0 0;
-  background: linear-gradient(180deg, #14542e, #eaf6ee);
+  background: linear-gradient(180deg, var(--green-800), var(--green-100));
 }
 
 .form-grid {
@@ -419,7 +419,7 @@ h2 strong {
 
 .seg span:first-child {
   border-color: #14542e;
-  background: #eaf6ee;
+  background: var(--green-100);
   color: var(--green-800);
 }
 
@@ -644,7 +644,7 @@ h2 strong {
 .seg span.is-active,
 .seg.is-interactive span.is-active {
   border-color: #14542e;
-  background: #eaf6ee;
+  background: var(--green-100);
   color: var(--green-800);
 }
 
@@ -667,7 +667,7 @@ h2 strong {
 }
 .stepline .step.is-active {
   border-color: #14542e;
-  background: #eaf6ee;
+  background: var(--green-100);
   color: var(--green-800);
 }
 .stepline .step.is-done {
