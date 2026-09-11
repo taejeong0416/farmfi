@@ -150,18 +150,12 @@ export function ProjectDetailScreen({ id }: { id: string }) {
           {PROJECT_STATUS_LABEL[p.status] ?? p.status}
         </Badge>
         {/*
-          세 배지는 같은 층위의 사실이다. 테두리까지 각자 색을 가지면 셋이 서로 다른
-          무게로 읽히고, 면까지 깔리면 그 하나만 떠오른다. 테두리는 선 색으로 묶고
-          뜻은 글자 색으로만 구분한다.
+          제목 옆에는 위험 고지 하나만 둔다. 회수기간이 변한다는 것은 아래 회수 조건이
+          슬라이더로 직접 보여주고, 단계별 집행은 투자금 사용 과정이 금액까지 적는다.
+          같은 말을 배지로 먼저 해두면 정작 읽어야 할 이 한 줄이 묻힌다.
         */}
         <span className="rounded-full border border-line px-3 py-1 text-11 font-medium text-danger">
           원금 비보장
-        </span>
-        <span className="rounded-full border border-line px-3 py-1 text-11 font-medium text-brand">
-          회수기간 변동 가능
-        </span>
-        <span className="rounded-full border border-line px-3 py-1 text-11 font-medium text-body">
-          단계별 집행 공개
         </span>
       </div>
       <p className="mt-3 text-13 text-muted">
