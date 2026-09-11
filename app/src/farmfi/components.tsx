@@ -15,6 +15,7 @@ import Animated, {
 
 import { CROP_CELL, LEAFY_SLOTS, TOMATO_SLOTS, type CropKind } from "./data";
 import { CROP_PLANT, CROP_SPRITE, RACK_BASE } from "./assets";
+import { C } from "./theme";
 
 // ─── 작물 스프라이트 크롭 (3열×2행에서 한 칸을 잘라 쓴다) ───
 const CROP_SIZE = { tiny: 23, small: 31, medium: 40, large: 54 } as const;
@@ -158,6 +159,6 @@ export function GrowthRackScene({
 }
 
 const styles = StyleSheet.create({
-  rackScene: { width: "100%", height: "100%", overflow: "hidden", backgroundColor: "#F2F2F0" },
+  rackScene: { width: "100%", height: "100%", overflow: "hidden", backgroundColor: C.surface },
   rackBase: { width: "100%", height: "100%" },
 });
