@@ -20,6 +20,8 @@ const config: Config = {
         brand: "#14542E",
         "brand-soft": "#F1F4F2",
         danger: "#9B2F2F",
+        // danger 위에 깔리는 옅은 면. 앱 팔레트의 `dangerSoft`와 같은 값이다.
+        "danger-soft": "#F7F0F0",
         // 역할 배지. .fig가 투자자와 운영자를 이 두 색으로 나눈다.
         "accent-investor": "#207349",
         "accent-operator": "#8C6114",

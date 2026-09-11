@@ -1,6 +1,8 @@
 // 앱 디자인 토큰 — 웹(`frontend/tailwind.config.ts`)과 같은 팔레트를 쓴다.
-// Figma 앱 원본은 초록이 #1B5E3F, 웹은 #14542E로 서로 달랐다. 웹 값으로 맞춘다.
-// 치환 근거는 `docs/figma-color-map.md`. 여기 없는 hex를 화면 코드에 직접 적지 않는다.
+// 앱 `.fig`와 웹 `.fig`가 갈리는 값은 웹을 따른다(초록 #1B5E3F→#14542E,
+// 연초록 #EAF6EE→#F1F4F2). 같은 이름의 토큰이 두 값을 가지면 공유 팔레트가 아니다.
+// `warn`은 웹에 대응 토큰이 없어 앱 `.fig` 값(#A8762A)을 그대로 쓴다.
+// 여기 없는 hex를 화면 코드에 직접 적지 않는다.
 
 export const C = {
   ink: "#1A1A1A",
@@ -8,9 +10,9 @@ export const C = {
   muted: "#8A8A8A",
   line: "#E5E5E3",
   lineSoft: "#EDEDEB",
-  surface: "#F2F2F0",
+  surface: "#F1F4F2",
   brand: "#14542E",
-  brandSoft: "#EAF6EE",
+  brandSoft: "#F1F4F2",
   danger: "#9B2F2F",
   dangerSoft: "#F7F0F0",
   warn: "#A8762A",
@@ -20,8 +22,8 @@ export const C = {
   // 기존 픽셀아트 화면이 쓰는 이름. 값은 위 팔레트를 가리킨다.
   green: "#14542E",
   greenDark: "#0F3D21",
-  greenSoft: "#EAF6EE",
-  stageBg: "#F2F2F0",
+  greenSoft: "#F1F4F2",
+  stageBg: "#F1F4F2",
 } as const;
 
 // 등급마다 배경과 글자색이 한 쌍으로 움직인다 (`App_Badge` · `App_SensorTile` 심볼).

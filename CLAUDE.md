@@ -19,12 +19,16 @@ Figma가 기준이다. 원본은 `design/*.fig`, 화면별 좌표·색·폰트 �
 ```
 ink #1A1A1A · body #4A4A4A · muted #8A8A8A
 line #E5E5E3 · line-soft #EDEDEB · surface #F1F4F2
-brand #14542E · danger #9B2F2F
+brand #14542E · brand-soft #F1F4F2
+danger #9B2F2F · danger-soft #F7F0F0
 accent-investor #207349 · accent-operator #8C6114
 ```
 - 값은 `.fig`에서 그대로 뽑은 것이다. Figma와 코드가 갈리면 Figma가 맞다.
 - **예외는 `danger` 하나다.** `.fig`의 `#DC2626`은 채도가 높아 brand 초록과 나란히 두면
   두 색이 서로 밀어낸다. 코드는 같은 명도대의 `#9B2F2F`를 쓴다 — 여기서는 코드가 맞다.
+- **앱(`app/src/farmfi/theme.ts`)은 이 팔레트를 그대로 쓴다.** 앱 `.fig`와 웹 `.fig`가
+  갈리는 값은 웹을 따른다. 같은 이름의 토큰이 두 값을 가지면 공유 팔레트가 아니다.
+  앱에만 있는 `warn #A8762A`는 웹에 대응 토큰이 없어 앱 `.fig` 값을 쓴다.
 - 제3자 브랜드 로고(B-05 결제수단)는 원본 색을 쓴다.
 
 ## 구조
