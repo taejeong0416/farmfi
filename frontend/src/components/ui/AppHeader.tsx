@@ -92,6 +92,13 @@ export function AppFooter() {
           <p className="mt-2 text-11 text-muted">
             도심 유휴공실을 스마트팜 매장으로 전환하는 자금을 모으고, 검증된 단계에만 집행합니다.
           </p>
+          {/* 역할 진입로가 아닌 설명 화면은 헤더가 아니라 여기서 들어간다. */}
+          <Link
+            href="/about"
+            className="mt-3 inline-block text-11 font-medium text-body hover:text-ink"
+          >
+            서비스 소개
+          </Link>
         </div>
         <p className="text-11 text-muted">
           투자 원금은 보장되지 않습니다. 투자 전 계약 조건과 위험을 확인하세요.

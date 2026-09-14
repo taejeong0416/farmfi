@@ -78,7 +78,10 @@ export function SiteHeader() {
       right={
         isLoading ? null : isAuthenticated ? (
           <div className="flex items-center gap-3">
-            <span className="text-12 text-body">{user?.name}</span>
+            {/* 이름이 곧 계정 화면으로 가는 길이다 — 마이페이지는 여기 말고 들어갈 자리가 없다. */}
+            <Link href="/mypage" className="text-12 text-body hover:text-ink">
+              {user?.name}
+            </Link>
             {isAdmin ? null : (
               <button
                 type="button"

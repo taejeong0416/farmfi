@@ -18,6 +18,8 @@ const NAV: { label: string; href: string; activeWhen: RegExp }[] = [
   { label: "외부전문가 판정", href: "/admin/expert-review", activeWhen: /^\/admin\/expert-review/ },
   { label: "정산 규칙 설정", href: "/admin/settlement-rules", activeWhen: /^\/admin\/settlement-rules/ },
   { label: "정산 결과", href: "/admin/settlements", activeWhen: /^\/admin\/settlements/ },
+  { label: "보유 구좌 발행", href: "/admin/issuances", activeWhen: /^\/admin\/issuances/ },
+  { label: "기관 성과 리포트", href: "/admin/reports", activeWhen: /^\/admin\/reports/ },
   { label: "감사 로그 조회", href: "/admin/audit-logs", activeWhen: /^\/admin\/audit-logs/ },
   { label: "권한 관리", href: "/admin/roles", activeWhen: /^\/admin\/roles/ },
   { label: "알림 발송", href: "/admin/notifications", activeWhen: /^\/admin\/notifications/ },
