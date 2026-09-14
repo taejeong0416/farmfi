@@ -78,8 +78,17 @@ export function SiteHeader() {
       right={
         isLoading ? null : isAuthenticated ? (
           <div className="flex items-center gap-3">
-            {/* 이름이 곧 계정 화면으로 가는 길이다 — 마이페이지는 여기 말고 들어갈 자리가 없다. */}
-            <Link href="/mypage" className="text-12 text-body hover:text-ink">
+            {/*
+              이름이 곧 계정 화면으로 가는 길이다 — 마이페이지는 여기 말고 들어갈 자리가
+              없다. 옆의 로그아웃과 같은 상자를 입혀 둘이 같은 종류의 조작으로 읽히게 한다.
+            */}
+            <Link
+              href="/mypage"
+              className="flex h-9 items-center gap-2 rounded-6 border border-line py-0 pl-1.5 pr-3 text-12 font-medium text-ink hover:bg-surface"
+            >
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-soft text-11 font-bold text-brand">
+                {user?.name?.slice(0, 1)}
+              </span>
               {user?.name}
             </Link>
             {isAdmin ? null : (
