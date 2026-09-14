@@ -14,7 +14,6 @@ type Shell = {
 const PUBLIC: Shell = {
   nav: [
     { label: "홈", href: "/" },
-    { label: "타당성", href: "/breakeven" },
     { label: "정기구독하기", href: "/subscribe" },
     { label: "투자자 시작하기", href: "/projects" },
     { label: "운영자 시작하기", href: "/operator/spaces" },

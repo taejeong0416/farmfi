@@ -367,6 +367,17 @@ export function ProjectDetailScreen({ id }: { id: string }) {
                   total
                 />
               </Card>
+              {/*
+                이 표는 지점 하나의 수치다. 같은 비용 구조가 매장 일반에서 성립하는지는
+                한 단계 위의 질문이라 따로 계산하는 화면으로 보낸다.
+              */}
+              <p className="mt-3 text-12 text-muted">
+                이 비용 구조가 매장 하나에서 성립하는지 직접 재보려면{" "}
+                <Link href="/breakeven" className="font-medium text-brand underline underline-offset-2">
+                  단위경제 타당성
+                </Link>
+                에서 유닛 수·판매가·조달 조건을 바꿔볼 수 있습니다.
+              </p>
             </>
           ) : null}
 
