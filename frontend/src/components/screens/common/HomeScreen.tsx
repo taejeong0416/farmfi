@@ -277,26 +277,16 @@ export function HomeScreen() {
               프로젝트 둘러보기
             </Link>
             <Link
-              href="/subscribe"
+              href="/about"
               className="flex h-[46px] items-center rounded-6 border border-brand bg-white px-6 text-14 font-medium text-brand"
             >
-              신선 구독 만나보기
+              서비스 소개
             </Link>
           </div>
           <p className="mt-5 text-11 font-medium text-white">
             공간을 직접 운영하고 싶나요?{" "}
             <Link href="/operator/spaces" className="underline underline-offset-4">
               운영 가능한 공간 보기 →
-            </Link>
-          </p>
-          {/*
-            아래로 내려가면 바로 프로젝트 카드다. 구조를 먼저 알고 싶은 사람이 첫 화면에서
-            나갈 길을 여기 둔다 — 푸터까지 내려가야만 닿으면 없는 것과 같다.
-          */}
-          <p className="mt-2 text-11 font-medium text-white">
-            자금이 어떤 단계로 집행되는지 궁금한가요?{" "}
-            <Link href="/about" className="underline underline-offset-4">
-              서비스 소개 보기 →
             </Link>
           </p>
         </div>
