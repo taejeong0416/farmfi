@@ -62,13 +62,12 @@ function shellFor(pathname: string): Shell | null {
 
 export function SiteHeader() {
   const pathname = usePathname() ?? "/";
-  const { user, isAuthenticated, isLoading, logout } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const shell = shellFor(pathname);
   const returnTo = useReturnTo(pathname);
 
   if (!shell) return null;
 
-  const isAdmin = shell === ADMIN;
   const next = encodeURIComponent(returnTo);
 
   return (
@@ -77,30 +76,20 @@ export function SiteHeader() {
       badge={shell.badge}
       right={
         isLoading ? null : isAuthenticated ? (
-          <div className="flex items-center gap-3">
-            {/*
-              이름이 곧 계정 화면으로 가는 길이다 — 마이페이지는 여기 말고 들어갈 자리가
-              없다. 옆의 로그아웃과 같은 상자를 입혀 둘이 같은 종류의 조작으로 읽히게 한다.
-            */}
-            <Link
-              href="/mypage"
-              className="flex h-9 items-center gap-2 rounded-6 border border-line py-0 pl-1.5 pr-3 text-12 font-medium text-ink hover:bg-surface"
-            >
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-soft text-11 font-bold text-brand">
-                {user?.name?.slice(0, 1)}
-              </span>
-              {user?.name}
-            </Link>
-            {isAdmin ? null : (
-              <button
-                type="button"
-                onClick={() => void logout()}
-                className="h-9 rounded-6 border border-line px-4 text-12 font-medium text-ink hover:bg-surface"
-              >
-                로그아웃
-              </button>
-            )}
-          </div>
+          /*
+            이름이 곧 계정 화면으로 가는 길이다 — 마이페이지는 여기 말고 들어갈 자리가 없다.
+            로그아웃은 마이페이지 안에 있으므로 헤더에 또 두지 않는다. 헤더에서 세션을 끊을
+            수 있으면 화면을 보다가 실수로 누르기도 쉽다.
+          */
+          <Link
+            href="/mypage"
+            className="flex h-9 items-center gap-2 rounded-6 border border-line pl-1.5 pr-3 text-12 font-medium text-ink hover:bg-surface"
+          >
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-soft text-11 font-bold text-brand">
+              {user?.name?.slice(0, 1)}
+            </span>
+            {user?.name}
+          </Link>
         ) : (
           <div className="flex items-center gap-4">
             <Link

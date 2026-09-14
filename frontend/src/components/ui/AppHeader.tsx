@@ -97,12 +97,12 @@ export function AppFooter() {
             muted 설명문이라 색만으로는 누를 수 있는지 안 보인다 — 본문 링크와 같은
             brand·밑줄을 준다.
           */}
+          {/* 화살표를 별도 칸으로 두면 밑줄이 사이에서 끊긴다. 한 줄의 글자로 둔다. */}
           <Link
             href="/about"
-            className="mt-3 inline-flex items-center gap-1 text-11 font-medium text-brand underline underline-offset-4 hover:text-ink"
+            className="mt-3 inline-block text-11 font-medium text-brand underline underline-offset-4 hover:text-ink"
           >
-            서비스 소개
-            <span aria-hidden>→</span>
+            서비스 소개 →
           </Link>
         </div>
         <p className="text-11 text-muted">
