@@ -133,6 +133,23 @@ export function AboutScreen() {
       </section>
 
       <section className="pt-12">
+        <Card className="flex items-center justify-between">
+          <div>
+            <p className="text-15 font-bold text-ink">
+              매장 하나가 이 구조를 감당하는지 직접 확인해보세요
+            </p>
+            <p className="mt-2 text-12 leading-5 text-muted">
+              유닛 수와 판매가, 조달 조건을 넣으면 운영비와 투자자 회수를 함께 감당하는 데
+              하루 몇 팩이 필요한지 나옵니다.
+            </p>
+          </div>
+          <Button variant="ghost" href="/breakeven">
+            타당성 계산
+          </Button>
+        </Card>
+      </section>
+
+      <section className="pt-12">
         <Card className="flex items-center justify-between bg-brand">
           <div>
             <p className="text-17 font-bold text-white">
