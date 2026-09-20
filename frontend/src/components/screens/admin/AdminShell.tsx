@@ -7,6 +7,8 @@ import { useAuth } from "@/lib/useAuth";
 
 // A-01 사이드바 15항목. A-05 구독·픽업 예외는 .fig에 도면이 없어 넣지 않는다.
 // 마일스톤 설정(A-07)은 프로젝트를 고른 뒤 열리므로 목록을 거쳐 들어간다.
+// 데모 콘솔은 .fig에 없는 시연 도구라 운영 메뉴 뒤에 둔다. 링크가 한 곳도 없으면
+// 주소를 외운 사람만 닿는다.
 const NAV: { label: string; href: string; activeWhen: RegExp }[] = [
   { label: "콘솔 홈", href: "/admin", activeWhen: /^\/admin$/ },
   { label: "보증서 관리", href: "/admin/certificates", activeWhen: /^\/admin\/certificates/ },
@@ -25,6 +27,7 @@ const NAV: { label: string; href: string; activeWhen: RegExp }[] = [
   { label: "알림 발송", href: "/admin/notifications", activeWhen: /^\/admin\/notifications/ },
   { label: "AML · 이상거래 관리", href: "/admin/aml", activeWhen: /^\/admin\/aml/ },
   { label: "매출·비용 입력", href: "/admin/ledger", activeWhen: /^\/admin\/ledger/ },
+  { label: "데모 콘솔", href: "/admin/demo", activeWhen: /^\/admin\/demo/ },
 ];
 
 /** 관리자 화면 공통 좌측 메뉴. 콘솔 안에서만 쓴다. */

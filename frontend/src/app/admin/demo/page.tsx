@@ -1,17 +1,11 @@
-import { redirect } from "next/navigation";
-import { getServerSession } from "@/lib/auth";
 import { Card } from "@/components/ui";
 import { AdminShell } from "@/components/screens/admin/AdminShell";
 import { DemoConsole } from "./DemoConsole";
 import { InvestorProtectionPanel } from "@/components/farmfi/admin/InvestorProtectionPanel";
 
-// 다른 관리자 화면과 같은 서버 게이트. 렌더 전에 서버에서 막는다.
-export default async function AdminDemoPage() {
-  const session = await getServerSession();
-  if (!session || session.role !== "admin") {
-    redirect("/");
-  }
-
+// 관문은 /admin 레이아웃의 requirePageRole 하나다. 여기서 role만 따로 보면
+// 시연 계정이 콘솔 안에서 이 화면 하나에만 못 들어간다 — 시연 도구인데 그렇다.
+export default function AdminDemoPage() {
   return (
     <AdminShell
       label="데모 콘솔"
