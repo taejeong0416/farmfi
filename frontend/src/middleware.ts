@@ -20,11 +20,19 @@ const REDIRECTS: Record<string, string> = {
  * 열려 있었고 **로컬에서 앱을 띄우면 API 호출이 전부 막혔다** — 앱 개발자가
  * 브라우저로 화면을 확인할 방법이 없었다는 뜻이다.
  *
+ * 기본값에 오리진이 둘인 이유는 앱 데모가 두 곳에 올라가 있어서다 — 어느 한쪽만
+ * 적으면 다른 쪽에서 앱의 모든 API 호출이 "서버에 연결할 수 없습니다"로 끝난다.
+ *
  * 와일드카드(`*`)는 쓰지 않는다(프로젝트 보안 규칙). 대신 허용 목록에 있을 때만
  * 요청 오리진을 그대로 돌려준다. 개발 환경에서는 localhost를 포트에 상관없이
  * 허용한다 — Expo가 쓰는 포트가 실행마다 달라진다. 프로덕션에서는 열지 않는다.
  */
-const ALLOWED_ORIGINS = (process.env.CORS_ALLOWED_ORIGINS ?? "https://pnu-2026-ai-hackathon.github.io")
+const DEFAULT_ORIGINS = [
+  "https://pnu-2026-ai-hackathon.github.io",
+  "https://taejeong0416.github.io",
+].join(",");
+
+const ALLOWED_ORIGINS = (process.env.CORS_ALLOWED_ORIGINS ?? DEFAULT_ORIGINS)
   .split(",")
   .map((o) => o.trim())
   .filter(Boolean);
