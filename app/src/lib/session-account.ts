@@ -9,6 +9,6 @@
  * 되살리거나 기기별 프로비저닝으로 바꿔야 한다. 지금은 시연용 전제다.
  */
 export const SESSION_ACCOUNT = {
-  email: "operator@farmfi.test",
+  email: "demo@farmfi.test",
   password: "farmfi123",
 } as const;

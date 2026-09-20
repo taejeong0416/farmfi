@@ -4,7 +4,7 @@
 
 **공간 · 사람 · 자본을 연결해 도심 공실을 지속 가능한 스마트팜 매장으로 전환하는 플랫폼**
 
-**🔗 라이브 데모 — 웹 [farmfi.co.kr](https://farmfi.co.kr) · 앱 [GitHub Pages](https://taejeong0416.github.io/farmfi/login)** (운영자 앱 데모 계정 `operator@farmfi.test` / `farmfi123`)
+**🔗 라이브 데모 — 웹 [farmfi.co.kr](https://farmfi.co.kr) · 앱 [GitHub Pages](https://taejeong0416.github.io/farmfi/login)** (운영자 앱 데모 계정 `demo@farmfi.test` / `farmfi123`)
 
 </div>
 
@@ -589,7 +589,7 @@ $ cd app && npm install && npx expo start
 $ cd contracts && git submodule update --init && forge test
 ```
 
-**시드 로그인 계정:** `operator@farmfi.test` / `admin@farmfi.test` (비밀번호 `farmfi123`)
+**시드 로그인 계정:** `demo@farmfi.test` / `admin@farmfi.test` (비밀번호 `farmfi123`)
 
 **환경 변수:** 자세한 키 목록은 [CONTRIBUTING.md](CONTRIBUTING.md) 참고. 최소 구동은 `DATABASE_URL` · `JWT_SECRET` · `GEMINI_API_KEY`면 되고 온체인·본인인증 키가 없으면 해당 기능이 비활성으로 떨어진다.
 

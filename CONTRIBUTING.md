@@ -36,7 +36,7 @@ FarmFi 개발 가이드. 기능 범위와 화면 흐름은 [docs/spec/feature-sp
 3. `npm run prisma:generate` → `npm run prisma:push` → `npm run seed`
    - `prisma db push`(DDL)는 **세션 pooler(5432)** 필요 — 일반 URL이 6543(트랜잭션 pooler)이면 `--url`로 5432 오버라이드. 시드(DML)는 6543으로 OK.
 4. `npm run dev` → http://localhost:3000
-   - 시드 로그인 계정: `operator@farmfi.test` / `admin@farmfi.test` (비밀번호 `farmfi123`)
+   - 시드 로그인 계정: `demo@farmfi.test` / `admin@farmfi.test` (비밀번호 `farmfi123`)
 
 **운영자 앱**: `cd app && npm install && npx expo start`
 
