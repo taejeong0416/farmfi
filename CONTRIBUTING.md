@@ -65,4 +65,3 @@ FarmFi 개발 가이드. 기능 범위와 화면 흐름은 [docs/spec/feature-sp
 |---|---|
 | [docs/spec/feature-spec.md](docs/spec/feature-spec.md) | 웹 기능명세서 |
 | [docs/spec/app-feature-spec.md](docs/spec/app-feature-spec.md) | 운영자 앱 기능명세서 |
-| [docs/dev-log.md](docs/dev-log.md) | 진행상황·결정 기록 |

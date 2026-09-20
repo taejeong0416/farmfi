@@ -15,7 +15,7 @@ const FREQUENCY_QUALIFIERS = ["복수", "다수", "여러", "반복", "지속", 
 // M4처럼 "IoT 60일 가동률 90% 이상, 복수 판매 영수증"으로 IoT+영수증이 한 문장에
 // 묶여 있으면, 영수증 검증기가 IoT 절이나 "복수(여러 건)" 빈도 요건까지 대조하려다
 // 실패한다. 쉼표/구분자로 절을 분리해 영수증 관련 절만 남기고, 빈도 수식어를 제거한다
-// (dev-log 06-21 이슈 재발 방지 — 영수증은 "판매 발생" 사실만 증명 가능).
+// (06-21 이슈 재발 방지 — 영수증은 "판매 발생" 사실만 증명 가능).
 function extractReceiptCondition(conditionText: string | null): string | null {
   if (!conditionText) return null;
   const clauses = conditionText

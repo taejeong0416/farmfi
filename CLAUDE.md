@@ -35,7 +35,7 @@ accent-investor #207349 · accent-operator #8C6114
 - `frontend/` — Next.js 14 (App Router) + Prisma + API Routes (웹 + 백엔드)
 - `app/` — Expo React Native 운영자 앱
 - `contracts/` — Foundry (Escrow · FarmToken · Dividend · RoundGate · ProjectRegistry · AuditTrail)
-- `docs/` — 공유 문서 (feature-spec / app-feature-spec / dev-log)
+- `docs/` — 공유 문서 (feature-spec / app-feature-spec / rationale)
 
 ## 명령어 (frontend/)
 - 개발: `npm run dev`
@@ -52,4 +52,4 @@ accent-investor #207349 · accent-operator #8C6114
 ## 작업 규칙
 - 커밋: 하나의 논리가 **settled**(타입/렌더 통과 + 더 안 고칠 상태)됐을 때 한 번. 편집마다 ❌, 끝에 몰아서 ❌, `git add .` ❌.
 - 메시지: `feat:`/`fix:`/`docs:`/`chore:` 접두. 무관한 변경 섞지 않기.
-- 문서: `docs/README.md` 규칙 준수 (레퍼런스=제자리 갱신 / 기록=dev-log append).
+- 문서: `docs/README.md` 규칙 준수 (레퍼런스는 제자리 갱신). 작업 경과는 커밋 메시지에 남긴다.
