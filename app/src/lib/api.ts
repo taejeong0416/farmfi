@@ -3,8 +3,11 @@ import * as SecureStore from "expo-secure-store";
 import { API_BASE_URL } from "./config";
 
 const TOKEN_KEY = "farmfi.token";
+// 확인을 마친 보증서 번호. 명세 M-01이 "보증서 연결 이력이 없으면 M-02로 간다"고
+// 정하므로, 그 이력을 기기에 둔다. 유효성 판정은 서버가 다시 한다.
+const CREDENTIAL_KEY = "farmfi.credential";
 
-// ─── 토큰 저장소 ───
+// ─── 로컬 저장소 ───
 // 네이티브는 SecureStore(안드 Keystore 기반 보안 저장). expo-secure-store는 웹을
 // 지원하지 않아(Android·iOS·tvOS 전용) 웹에서 호출하면 네이티브 모듈이 없어 터진다.
 // 웹은 localStorage로 내린다 — Keystore 수준의 보호는 없고 데모 배포용 경로다.
@@ -13,24 +16,32 @@ const isWeb = Platform.OS === "web";
 const webStore = (): Storage | null =>
   typeof localStorage === "undefined" ? null : localStorage;
 
-export async function getToken(): Promise<string | null> {
-  if (isWeb) return webStore()?.getItem(TOKEN_KEY) ?? null;
-  return SecureStore.getItemAsync(TOKEN_KEY);
+async function readKey(key: string): Promise<string | null> {
+  if (isWeb) return webStore()?.getItem(key) ?? null;
+  return SecureStore.getItemAsync(key);
 }
-export async function setToken(token: string): Promise<void> {
+async function writeKey(key: string, value: string): Promise<void> {
   if (isWeb) {
-    webStore()?.setItem(TOKEN_KEY, token);
+    webStore()?.setItem(key, value);
     return;
   }
-  await SecureStore.setItemAsync(TOKEN_KEY, token);
+  await SecureStore.setItemAsync(key, value);
 }
-export async function clearToken(): Promise<void> {
+async function deleteKey(key: string): Promise<void> {
   if (isWeb) {
-    webStore()?.removeItem(TOKEN_KEY);
+    webStore()?.removeItem(key);
     return;
   }
-  await SecureStore.deleteItemAsync(TOKEN_KEY);
+  await SecureStore.deleteItemAsync(key);
 }
+
+export const getToken = (): Promise<string | null> => readKey(TOKEN_KEY);
+export const setToken = (token: string): Promise<void> => writeKey(TOKEN_KEY, token);
+export const clearToken = (): Promise<void> => deleteKey(TOKEN_KEY);
+
+export const getLinkedCredential = (): Promise<string | null> => readKey(CREDENTIAL_KEY);
+export const setLinkedCredential = (no: string): Promise<void> => writeKey(CREDENTIAL_KEY, no);
+export const clearLinkedCredential = (): Promise<void> => deleteKey(CREDENTIAL_KEY);
 
 // ─── API 오류 — 화면이 401/403(로그인·권한)과 그 외를 구분해 안내할 수 있도록
 // HTTP 상태를 함께 싣는다. status 0은 네트워크 도달 실패. ───

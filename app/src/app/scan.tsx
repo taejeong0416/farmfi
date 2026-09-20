@@ -22,6 +22,7 @@ import { C, FRAME_MAX_WIDTH, FS, FW, R, SP } from "@/farmfi/theme";
 import { AppIcon } from "@/farmfi/icons";
 import { useGo } from "@/farmfi/ui";
 import { apiFetch, describeApiError } from "@/lib/api";
+import { useAuth } from "@/lib/auth";
 import { credentialNoFrom } from "@/farmfi/credential-qr";
 import { QrScanner } from "@/farmfi/qr-scanner";
 
@@ -41,6 +42,7 @@ type Stage =
 
 export default function ScanScreen() {
   const go = useGo();
+  const { markCredentialLinked, logout } = useAuth();
   const [stage, setStage] = useState<Stage>({ kind: "scanning" });
   const [manual, setManual] = useState("");
   const [manualOpen, setManualOpen] = useState(false);
@@ -100,6 +102,8 @@ export default function ScanScreen() {
         });
         return;
       }
+      // 확인한 번호를 남긴다. 다음 실행부터 이 화면을 다시 거치지 않는다.
+      await markCredentialLinked(res.credential.credentialNo);
       setStage({
         kind: "approved",
         operatorName: res.credential.operatorName,
@@ -153,8 +157,8 @@ export default function ScanScreen() {
           >
             <Text style={s.approvedNext}>다시 스캔</Text>
           </Pressable>
-          <Pressable onPress={() => go.replace("/store-select")} hitSlop={8}>
-            <Text style={s.skip}>나중에 하기</Text>
+          <Pressable onPress={() => void logout()} hitSlop={8}>
+            <Text style={s.skip}>다른 계정으로 로그인</Text>
           </Pressable>
         </View>
       </SafeAreaView>
@@ -166,11 +170,6 @@ export default function ScanScreen() {
   return (
     <SafeAreaView style={s.stage} edges={["top", "bottom"]}>
       <View style={s.frame}>
-        {/* 스캔은 로그인 없이 열리는 화면이라 닫으면 시작 화면으로 돌아간다. */}
-        <Pressable onPress={() => go.back("/")} hitSlop={12} style={s.close}>
-          <AppIcon name="x" size={22} color={C.paper} />
-        </Pressable>
-
         <View style={s.copy}>
           <Text style={s.title}>QR을 스캔해주세요.</Text>
           <Text style={s.hint}>FarmFi 웹 &gt; 보증서 &gt; 운영자 보증서</Text>
@@ -251,10 +250,10 @@ export default function ScanScreen() {
           {checking ? "보증서를 확인하는 중입니다" : "스캔 영역에 QR을 맞춰주세요"}
         </Text>
 
-        {/* 막다른 길을 만들지 않는다. 보증서가 아직 없거나 카메라를 못 쓰는 사람도
-            매장 화면까지는 간다 — 거기서 운영 데이터는 서버 권한이 다시 막는다. */}
-        <Pressable onPress={() => go.replace("/store-select")} hitSlop={8}>
-          <Text style={s.skip}>나중에 하기</Text>
+        {/* 보증서 확인은 앱 진입 조건이라 건너뛸 수 없다(명세 1장). 번호를 직접
+            입력하는 길이 위에 있고, 계정을 잘못 골랐을 때 빠져나갈 길만 둔다. */}
+        <Pressable onPress={() => void logout()} hitSlop={8}>
+          <Text style={s.skip}>다른 계정으로 로그인</Text>
         </Pressable>
       </View>
     </SafeAreaView>
@@ -273,7 +272,6 @@ const s = StyleSheet.create({
     gap: SP.lg,
     paddingHorizontal: SP.lg,
   },
-  close: { position: "absolute", top: SP.lg, right: SP.lg, padding: SP.sm },
 
   copy: { alignItems: "center", gap: SP.sm },
   title: { fontSize: FS.hero, fontWeight: FW.bold, color: C.paper },

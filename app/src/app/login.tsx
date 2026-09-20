@@ -86,12 +86,6 @@ export default function LoginScreen() {
           <Pressable onPress={onDemo} disabled={busy} hitSlop={8}>
             <Text style={s.demo}>데모 계정으로 바로 들어가기</Text>
           </Pressable>
-
-          {/* 보증서 확인(M-02) 입구. 스플래시에도 같은 버튼이 있지만 그 화면은 1.1초
-              뒤 자동으로 넘어가서 누를 틈이 없다. 머무는 화면에도 길을 둔다. */}
-          <Pressable onPress={() => go.push("/scan")} hitSlop={8}>
-            <Text style={s.scanLink}>QR로 보증서 확인</Text>
-          </Pressable>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -115,11 +109,5 @@ const s = StyleSheet.create({
   form: { gap: SP.md },
   error: { fontSize: FS.cap, color: C.danger, textAlign: "center" },
   submit: { marginTop: SP.sm },
-  scanLink: {
-    fontSize: FS.body,
-    color: C.body,
-    textAlign: "center",
-    paddingVertical: SP.xs,
-  },
   demo: { fontSize: FS.cap, color: C.body, textAlign: "center", paddingVertical: SP.sm },
 });
